@@ -159,7 +159,12 @@ const TopicHub = {
 
   toggleGroup: function(folderId, groupName) {
     var key = folderId + '|' + groupName;
-    this.collapsed[key] = !this.collapsed[key];
+    // If undefined, it's currently collapsed (default) — expand it
+    if (this.collapsed[key] === undefined || this.collapsed[key] === true) {
+      this.collapsed[key] = false;
+    } else {
+      this.collapsed[key] = true;
+    }
     var folder = FOLDERS.find(function(f) { return f.id === folderId; });
     if (folder) this.render(document.getElementById('app-main'), folder);
   },
