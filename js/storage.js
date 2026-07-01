@@ -146,8 +146,8 @@ var Storage = {
           }
         }
         self.save(current);
-        alert('Imported ' + added + ' new attempts. Refreshing...');
-        router.navigate('#/');
+        alert('Imported ' + added + ' new attempts.');
+        Dashboard.render(document.getElementById('app-main'));
       } catch(err) {
         alert('Failed to parse file: ' + err.message);
       }

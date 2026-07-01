@@ -1,13 +1,6 @@
 const Dashboard = {
   render(container) {
-    var html = '<div class="toolbar">' +
-      '<button class="btn btn-outline btn-sm" onclick="Storage.exportData()" title="Download progress as JSON">\u{1F4E5} Export</button>' +
-      '<span style="color:var(--text-muted);font-size:0.7rem;margin:0 0.25rem;">|</span>' +
-      '<button class="btn btn-outline btn-sm" onclick="document.getElementById(\'import-file\').click()" title="Load progress from a file">\u{1F4E4} Import</button>' +
-      '<input type="file" id="import-file" accept=".json" style="display:none" onchange="Storage.importData(this.files[0])">' +
-    '</div>';
-
-    html += '<div class="dashboard">';
+    var html = '<div class="dashboard">';
     for (var i = 0; i < FOLDERS.length; i++) {
       var folder = FOLDERS[i];
       var stats = Storage.getFolderStats(folder.id);
@@ -54,6 +47,14 @@ const Dashboard = {
       '</div>';
     }
     html += '</div>';
+
+    // Import/Export at bottom
+    html += '<div class="toolbar" style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">' +
+      '<span style="font-size:0.75rem;color:var(--text-muted);">Progress saved to this device. Move between devices: </span>' +
+      '<button class="btn btn-outline btn-sm" onclick="Storage.exportData()">\u{1F4E5} Export</button>' +
+      '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="document.getElementById(\'import-file\').click()">\u{1F4E4} Import</button>' +
+      '<input type="file" id="import-file" accept=".json" style="display:none" onchange="Storage.importData(this.files[0])">' +
+    '</div>';
 
     container.innerHTML = html;
   },
