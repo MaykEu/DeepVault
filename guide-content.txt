@@ -1,1 +1,134 @@
-# DeepVault Guide\n\nWelcome to DeepVault \u2014 an interactive learning fortress for mastering C++, Unreal Engine, and the computer systems beneath them.\n\n## How This Works\n\nEvery folder on the dashboard contains **Learn** notes and **Quiz** exercises:\n\n| Mode | What It Does |\n|---|---|\n| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. Password-protected. |\n| **Quiz** | 5-10 randomized questions per note \u2014 multiple choice and text input. Instant feedback. Scores saved locally on your device. |\n\n### Tracking Your Progress\n\nProgress is based on **quiz scores only** \u2014 reading a note does not count. Here's how it works:\n\n| Status | What It Means |\n|---|---|\n| **NOT STARTED** | You haven't taken the quiz yet |\n| **IN PROGRESS** | At least 1 attempt, but best score is below 80% |\n| **COMPLETED** | You scored 80% or higher on at least one attempt |\n\nThe folder header shows your overall completion percentage (completedNotes / totalNotes). Quiz scores and attempt history are saved locally via localStorage \u2014 they never leave your device.\n\n**Wiki links** like [[CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page. Links to notes not yet available show \"(coming soon)\".\n\n**Recent notes** appear on the dashboard below your folders \u2014 quick jump back to what you were studying.\n\n---\n\n## Master Study Order\n\nThis vault is designed to be read in order. Each note builds on the ones before it.\n\n### Layer 1 \u2014 Computer Systems (start here)\n\nWithout understanding the hardware, C++ is just magic words. Start with the physical reality.\n\n1. [[Bits, Bytes & Number Systems]] \u2014 What a bit physically IS\n2. [[Negative Numbers & Endianness]] \u2014 Two's complement, signed vs unsigned\n3. [[Assembly Language]] \u2014 The bridge between C++ and hardware\n4. [[CPU Architecture]] \u2014 Fetch-decode-execute, pipelining, branch prediction\n5. [[Memory Hierarchy]] \u2014 Cache lines, L1/L2/L3, why RAM is slow\n6. [[RAM & Virtual Memory]] \u2014 Page tables, TLB, mmap, swap\n7. [[Storage]] \u2014 HDD vs SSD, filesystems, page cache\n8. [[Function Calls & Stack Frames]] \u2014 How call and ret actually work\n9. [[Compiler Pipeline]] \u2014 Preprocessor to assembler to linker\n10. [[Linking & Executables]] \u2014 Static vs dynamic linking, DLLs\n11. [[Syscalls & Kernel]] \u2014 Protection rings, syscall instruction, futex\n12. [[Threads & Processes]] \u2014 Scheduler, context switching, thread pools\n13. [[Concurrency & Synchronization]] \u2014 Mutexes, atomics, memory ordering\n14. [[GPU Architecture Overview]] \u2014 SIMT, VRAM, compute shaders\n\nUse the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.\n\n### Layer 2 \u2014 C++ Fundamentals\n\nOnce you understand the hardware, learn the language that runs on it.\n\n1. **Memory & Ownership** \u2014 [[Stack vs Heap]], [[Object Memory Layout]], [[std vector & Container Internals]], [[RAII, Lifetimes & The Rule of Five]]\n2. **Smart Pointers** \u2014 [[Smart Pointers & Ownership]], [[Move Semantics & Perfect Forwarding]], [[References]], [[const Correctness]], [[static in C++]]\n3. **Core Language** \u2014 [[Enums & enum class]], [[Preprocessor & Macros]], [[Type Deduction \u2014 auto, decltype]], [[Structured Bindings]]\n4. **Types & Data** \u2014 [[Operator Overloading]]\n5. **OOP & Polymorphism** \u2014 [[Inheritance & Virtual Functions]], [[Lambdas & Function Objects]]\n6. **Cross-Cutting** \u2014 [[C++ Casting & RTTI]], [[Templates & Concepts]], [[C++ vs UE C++ \u2014 Key Differences]], [[String Types & string_view]], [[Explicit & Implicit Conversion]]\n\n### Layer 3 \u2014 Game Math\n\nThe mathematics that make 3D worlds possible. Start with [[From Trigonometry to 3D Transformations]] for the big picture, then dive into:\n\n1. [[Trigonometry & Vectors]] \u2014 The foundation of all 3D\n2. [[Matrices & Coordinate Systems]] \u2014 Transforming objects in space\n3. [[Quaternions & 3D Rotations]] \u2014 Why gimbals lock and quaternions don't\n4. [[Curves, Interpolation & Kinematics]] \u2014 Smooth motion and animation\n5. [[Collision Detection Math]] \u2014 How engines detect when things touch\n6. [[Geometric Algebra]] \u2014 The unified framework behind it all\n\nThen bridge to UE: [[FVector, FRotator, FQuat \u2014 The Core Types]], [[FTransform & FMatrix]], [[FMath \u2014 Interpolation & Utility]], [[Collision & Intersection Math]], [[Curves, Ranges & Random]].\n\n### Layer 4 \u2014 Unreal Engine Core\n\nHow UE turns C++ into a game engine. Start with [[From UCLASS to Running Object \u2014 The UE Core Pipeline]] for the map, then:\n\n1. [[UHT, Macros & Reflection]] \u2014 How the header tool works\n2. [[Pointer Ecosystem]] \u2014 TObjectPtr vs TSharedPtr vs TUniquePtr\n3. [[FName vs FString vs FText]] \u2014 UE's string types\n4. [[Casting in Unreal Engine]] \u2014 Cast<T> vs dynamic_cast\n5. [[UE Inheritance & UObject System]] \u2014 The class hierarchy\n6. [[TArray Internals]], [[TMap Internals]], [[TSet Internals]] \u2014 UE's containers\n7. [[UE Enums & Flags]] \u2014 UENUM and bitflags\n8. [[UE Templates & T-Containers]]\n9. [[Move Semantics in UE]]\n\n### Layer 5 \u2014 UE Networking\n\nMultiplayer from the hardware up. Start with [[From Input to Replication \u2014 The Networking Pipeline]], then:\n\n1. [[Network Roles]] \u2014 Authority, autonomy, simulated proxies\n2. [[RPCs in Unreal Engine]] \u2014 Client/Server/Multicast\n3. [[RepNotifies & OnRep]] \u2014 Replicating state\n4. [[PushModel & Dirty Marking]] \u2014 Optimizing replication\n5. [[Iris Replication System Overview]] \u2014 UE5's replication architecture\n6. [[Iris Filtering & Prioritization]] \u2014 Who sees what\n7. [[GAS Networking & Prediction]] \u2014 Ability System multiplayer\n\n### Layer 6 \u2014 Big O & Algorithms\n\n[[The Big O Complexity Spectrum]], [[Amortized Analysis & Real Profiling Data]], [[Applied Examples - Raw C++ vs Unreal Engine]].\n\n---\n\n## Reference\n\n- [[Glossary]] \u2014 Every acronym defined (MMU, TLB, PTE, MESI, PLT, GOT...)\n- [[Learning Path]] \u2014 The full Computer Systems reading order with phase descriptions\n- Use the right-side table of contents to jump between sections in any note\n- Check the dashboard for recently viewed notes and quiz scores\n\n---\n\nDeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. ### Moving Between Devices\n\nYour quiz progress lives in your browser's localStorage. To continue studying on another device:\n\n1. Export on your current device \u2014 downloads a JSON file\n2. Transfer the file (email, AirDrop, cloud)\n3. Import on the new device \u2014 merges all your scores\n\nExport and Import buttons are at the bottom of the dashboard. No account needed.\n\n---\n\nDouble-click index.html to launch. Everything stays on your device.
+# DeepVault Guide
+
+Welcome to DeepVault — an interactive learning fortress for mastering C++, Unreal Engine, and the computer systems beneath them.
+
+## How This Works
+
+Every folder on the dashboard contains **Learn** notes and **Quiz** exercises:
+
+| Mode | What It Does |
+|---|---|
+| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. Password-protected. |
+| **Quiz** | 5-10 randomized questions per note — multiple choice and text input. Instant feedback. Scores saved locally on your device. |
+
+### Tracking Your Progress
+
+Progress is based on **quiz scores only** — reading a note does not count. Here's how it works:
+
+| Status | What It Means |
+|---|---|
+| **NOT STARTED** | You haven't taken the quiz yet |
+| **IN PROGRESS** | At least 1 attempt, but best score is below 80% |
+| **COMPLETED** | You scored 80% or higher on at least one attempt |
+
+The folder header shows your overall completion percentage (completedNotes / totalNotes). Quiz scores and attempt history are saved locally via localStorage — they never leave your device.
+
+**Wiki links** like [[CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page. Links to notes not yet available show "(coming soon)".
+
+**Recent notes** appear on the dashboard below your folders — quick jump back to what you were studying.
+
+---
+
+## Master Study Order
+
+This vault is designed to be read in order. Each note builds on the ones before it.
+
+### Layer 1 — Computer Systems (start here)
+
+Without understanding the hardware, C++ is just magic words. Start with the physical reality.
+
+1. [[Bits, Bytes & Number Systems]] — What a bit physically IS
+2. [[Negative Numbers & Endianness]] — Two's complement, signed vs unsigned
+3. [[Assembly Language]] — The bridge between C++ and hardware
+4. [[CPU Architecture]] — Fetch-decode-execute, pipelining, branch prediction
+5. [[Memory Hierarchy]] — Cache lines, L1/L2/L3, why RAM is slow
+6. [[RAM & Virtual Memory]] — Page tables, TLB, mmap, swap
+7. [[Storage]] — HDD vs SSD, filesystems, page cache
+8. [[Function Calls & Stack Frames]] — How call and ret actually work
+9. [[Compiler Pipeline]] — Preprocessor to assembler to linker
+10. [[Linking & Executables]] — Static vs dynamic linking, DLLs
+11. [[Syscalls & Kernel]] — Protection rings, syscall instruction, futex
+12. [[Threads & Processes]] — Scheduler, context switching, thread pools
+13. [[Concurrency & Synchronization]] — Mutexes, atomics, memory ordering
+14. [[GPU Architecture Overview]] — SIMT, VRAM, compute shaders
+
+Use the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.
+
+### Layer 2 — C++ Fundamentals
+
+Once you understand the hardware, learn the language that runs on it.
+
+1. **Memory & Ownership** — [[Stack vs Heap]], [[Object Memory Layout]], [[std vector & Container Internals]], [[RAII, Lifetimes & The Rule of Five]]
+2. **Smart Pointers** — [[Smart Pointers & Ownership]], [[Move Semantics & Perfect Forwarding]], [[References]], [[const Correctness]], [[static in C++]]
+3. **Core Language** — [[Enums & enum class]], [[Preprocessor & Macros]], [[Type Deduction — auto, decltype]], [[Structured Bindings]]
+4. **Types & Data** — [[Operator Overloading]]
+5. **OOP & Polymorphism** — [[Inheritance & Virtual Functions]], [[Lambdas & Function Objects]]
+6. **Cross-Cutting** — [[C++ Casting & RTTI]], [[Templates & Concepts]], [[C++ vs UE C++ — Key Differences]], [[String Types & string_view]], [[Explicit & Implicit Conversion]]
+
+### Layer 3 — Game Math
+
+The mathematics that make 3D worlds possible. Start with [[From Trigonometry to 3D Transformations]] for the big picture, then dive into:
+
+1. [[Trigonometry & Vectors]] — The foundation of all 3D
+2. [[Matrices & Coordinate Systems]] — Transforming objects in space
+3. [[Quaternions & 3D Rotations]] — Why gimbals lock and quaternions don't
+4. [[Curves, Interpolation & Kinematics]] — Smooth motion and animation
+5. [[Collision Detection Math]] — How engines detect when things touch
+6. [[Geometric Algebra]] — The unified framework behind it all
+
+Then bridge to UE: [[FVector, FRotator, FQuat — The Core Types]], [[FTransform & FMatrix]], [[FMath — Interpolation & Utility]], [[Collision & Intersection Math]], [[Curves, Ranges & Random]].
+
+### Layer 4 — Unreal Engine Core
+
+How UE turns C++ into a game engine. Start with [[From UCLASS to Running Object — The UE Core Pipeline]] for the map, then:
+
+1. [[UHT, Macros & Reflection]] — How the header tool works
+2. [[Pointer Ecosystem]] — TObjectPtr vs TSharedPtr vs TUniquePtr
+3. [[FName vs FString vs FText]] — UE's string types
+4. [[Casting in Unreal Engine]] — Cast<T> vs dynamic_cast
+5. [[UE Inheritance & UObject System]] — The class hierarchy
+6. [[TArray Internals]], [[TMap Internals]], [[TSet Internals]] — UE's containers
+7. [[UE Enums & Flags]] — UENUM and bitflags
+8. [[UE Templates & T-Containers]]
+9. [[Move Semantics in UE]]
+
+### Layer 5 — UE Networking
+
+Multiplayer from the hardware up. Start with [[From Input to Replication — The Networking Pipeline]], then:
+
+1. [[Network Roles]] — Authority, autonomy, simulated proxies
+2. [[RPCs in Unreal Engine]] — Client/Server/Multicast
+3. [[RepNotifies & OnRep]] — Replicating state
+4. [[PushModel & Dirty Marking]] — Optimizing replication
+5. [[Iris Replication System Overview]] — UE5's replication architecture
+6. [[Iris Filtering & Prioritization]] — Who sees what
+7. [[GAS Networking & Prediction]] — Ability System multiplayer
+
+### Layer 6 — Big O & Algorithms
+
+[[The Big O Complexity Spectrum]], [[Amortized Analysis & Real Profiling Data]], [[Applied Examples - Raw C++ vs Unreal Engine]].
+
+---
+
+## Reference
+
+- [[Glossary]] — Every acronym defined (MMU, TLB, PTE, MESI, PLT, GOT...)
+- [[Learning Path]] — The full Computer Systems reading order with phase descriptions
+- Use the right-side table of contents to jump between sections in any note
+- Check the dashboard for recently viewed notes and quiz scores
+
+---
+
+DeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. ### Moving Between Devices
+
+Your quiz progress lives in your browser's localStorage. To continue studying on another device:
+
+1. Export on your current device — downloads a JSON file
+2. Transfer the file (email, AirDrop, cloud)
+3. Import on the new device — merges all your scores
+
+Export and Import buttons are at the bottom of the dashboard. No account needed.
+
+---
+
+Double-click index.html to launch. Everything stays on your device.
