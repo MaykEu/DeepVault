@@ -2,7 +2,15 @@
 
 Thanks for wanting to help! Here's how.
 
-## Ways to Contribute
+## 🤖 Use AI
+
+**The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from 58 commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
+
+This entire project was built with AI. You should contribute with it too.
+
+---
+
+## Ways to Contribute## Ways to Contribute
 
 ### 1. Add Quiz Questions
 Find a note that needs quizzes, read the note content, and add questions to `QUIZ_DATA` in `js/data.js`.
@@ -77,16 +85,6 @@ See the full guide in [README.md](README.md#add-a-brand-new-category). Short ver
 
 ### 5. Improve Documentation
 Fix typos, improve explanations, add examples. Update the Obsidian vault source, then run `python convert.py`.
-
-## AI Contributors
-
-**Use an AI with [SKILL.md](SKILL.md) loaded.** The skill file documents 10 critical rules, the markdown renderer architecture, every pitfall, and the exact convert.py rebuild procedure. Without it, your AI WILL break things — we learned this the hard way.
-
-Recommended workflow:
-1. Load SKILL.md into your AI's context
-2. Describe your change
-3. Review the AI's plan before letting it execute
-4. Verify with `node -c js/data.js` after any file changes
 
 ## Pull Request Process
 
