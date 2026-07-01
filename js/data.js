@@ -29,17 +29,88 @@ const NOTES = {
 };
 
 const QUIZ_NOTES = {
-  'computer-systems': ['Bits, Bytes & Number Systems', 'Negative Numbers & Endianness', 'Assembly Language', 'CPU Architecture', 'Memory Hierarchy', 'RAM & Virtual Memory', 'Storage', 'Function Calls & Stack Frames', 'Compiler Pipeline', 'Linking & Executables', 'Syscalls & Kernel', 'Threads & Processes', 'Concurrency & Synchronization', 'GPU Architecture Overview'],
-  'cpp-fundamentals': [],
-  'game-math': [],
-  'ue-core': [
-    'UHT, Macros & Reflection', 'Pointer Ecosystem', 'FName vs FString vs FText',
-    'Casting in Unreal Engine', 'UE Inheritance & UObject System', 'Move Semantics in UE',
-    'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Templates & T-Containers'
+  'computer-systems': [
+    'Function Calls & Stack Frames',
+    'Syscalls & Kernel',
+    'GPU Architecture Overview',
+    'Threads & Processes',
+    'Bits, Bytes & Number Systems',
+    'Negative Numbers & Endianness',
+    'Assembly Language',
+    'RAM & Virtual Memory',
+    'Memory Hierarchy',
+    'CPU Architecture',
+    'Compiler Pipeline',
+    'Concurrency & Synchronization',
+    'Storage',
+    'Linking & Executables'
   ],
-  'ue-networking': ['Network Roles', 'RPCs in Unreal Engine', 'RepNotifies & OnRep', 'PushModel & Dirty Marking', 'Iris Replication System Overview', 'Iris Filtering & Prioritization', 'GAS Networking & Prediction'],
-  'big-o': [],
+  'cpp-fundamentals': [
+    'Templates & Concepts',
+    'const Correctness',
+    'Type Deduction — auto, decltype',
+    'Operator Overloading',
+    'Inheritance & Virtual Functions',
+    'C++ vs UE C++ — Key Differences',
+    'C++ Casting & RTTI',
+    'Move Semantics & Perfect Forwarding',
+    'Smart Pointers & Ownership',
+    'Preprocessor & Macros',
+    'static in C++',
+    'Enums & enum class',
+    'Object Memory Layout',
+    'std vector & Container Internals',
+    'References',
+    'String Types & string_view',
+    'RAII, Lifetimes & The Rule of Five',
+    'Lambdas & Function Objects',
+    'Stack vs Heap',
+    'Explicit & Implicit Conversion',
+    'Structured Bindings'
+  ],
+  'game-math': [
+    'FVector, FRotator, FQuat — The Core Types',
+    'Geometric Algebra',
+    'FMath — Interpolation & Utility',
+    'Quaternions & 3D Rotations',
+    'Matrices & Coordinate Systems',
+    'Curves, Ranges & Random',
+    'Trigonometry & Vectors',
+    'Collision Detection Math',
+    'Collision & Intersection Math',
+    'FTransform & FMatrix',
+    'Curves, Interpolation & Kinematics'
+  ],
+  'ue-core': [
+    'UE Inheritance & UObject System',
+    'UE Enums & Flags',
+    'UE Templates & T-Containers',
+    'TMap Internals',
+    'TSet Internals',
+    'FName vs FString vs FText',
+    'Move Semantics in UE',
+    'Pointer Ecosystem',
+    'UHT, Macros & Reflection',
+    'TArray Internals',
+    'Casting in Unreal Engine'
+  ],
+  'ue-networking': [
+    'Network Roles',
+    'RepNotifies & OnRep',
+    'Iris Filtering & Prioritization',
+    'PushModel & Dirty Marking',
+    'RPCs in Unreal Engine',
+    'Iris Replication System Overview',
+    'GAS Networking & Prediction'
+  ],
+  'big-o': [
+    'The Big O Complexity Spectrum',
+    'Amortized Analysis & Real Profiling Data',
+    'Applied Examples - Raw C++ vs Unreal Engine'
+  ],
 };
+
+
 
 const QUIZ_DATA = {};
 
@@ -2903,6 +2974,908 @@ QUIZ_DATA['Lambdas & Function Objects'] = {
         "captures by value"
       ],
       "explanation": "[=] captures all local variables by value (copy). [&] captures by reference. [x, &y] captures x by value, y by reference."
+    }
+  ]
+};
+
+QUIZ_DATA['Stack vs Heap'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the stack physically?",
+      "options": [
+        "A dedicated hardware chip",
+        "A region of regular RAM with a pointer (RSP) tracking the top",
+        "A separate memory bank",
+        "Cache memory"
+      ],
+      "correctIndex": 1,
+      "explanation": "The stack is NOT special hardware \u2014 it's regular RAM."
+    },
+    {
+      "type": "text_input",
+      "question": "Which is faster: stack allocation or heap allocation? Why?",
+      "correctAnswer": "Stack \u2014 it's a single CPU instruction. Heap requires malloc/free.",
+      "acceptableAnswers": [
+        "stack",
+        "stack is faster",
+        "stack allocation"
+      ],
+      "explanation": "Stack: sub rsp, N (1 cycle). Heap: malloc searches free lists (~100+ cycles)."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens to stack variables when a function returns?",
+      "options": [
+        "They stay forever",
+        "The stack pointer moves back \u2014 memory is freed by adjusting RSP",
+        "They are garbage collected",
+        "They move to heap"
+      ],
+      "correctIndex": 1,
+      "explanation": "RSP is restored \u2014 local variables are now above the stack pointer, effectively freed with zero deallocation work."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "Why can't you return a pointer to a local stack variable?",
+      "options": [
+        "It works fine",
+        "The memory is reclaimed \u2014 the pointer becomes dangling",
+        "The compiler prevents it",
+        "It moves to heap"
+      ],
+      "correctIndex": 1,
+      "explanation": "After the function returns, that stack space may be overwritten by the next function call."
+    }
+  ]
+};
+
+QUIZ_DATA['Object Memory Layout'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What determines the size of a struct?",
+      "options": [
+        "Only member sizes",
+        "Member sizes + alignment padding",
+        "Number of members",
+        "Compiler mood"
+      ],
+      "correctIndex": 1,
+      "explanation": "The compiler inserts padding between members to satisfy alignment requirements."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does the compiler add padding?",
+      "correctAnswer": "To satisfy alignment \u2014 CPUs can only read multi-byte values from aligned addresses",
+      "acceptableAnswers": [
+        "alignment",
+        "aligned addresses",
+        "CPU alignment"
+      ],
+      "explanation": "Reading a 4-byte int from address 0x1003 requires two memory accesses or faults."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the size of an empty class in C++?",
+      "options": [
+        "0 bytes",
+        "1 byte",
+        "4 bytes",
+        "8 bytes"
+      ],
+      "correctIndex": 1,
+      "explanation": "Every object needs a unique address. 1 byte is the smallest addressable unit."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does the virtual keyword add to an object's layout?",
+      "options": [
+        "Extra padding",
+        "A vtable pointer (8 bytes on x64)",
+        "The object becomes larger",
+        "Nothing"
+      ],
+      "correctIndex": 1,
+      "explanation": "A hidden vptr as the first member \u2014 8 bytes on x64 \u2014 pointing to the virtual function table."
+    }
+  ]
+};
+
+QUIZ_DATA['std vector & Container Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How does std::vector grow when capacity is exceeded?",
+      "options": [
+        "By 1 element",
+        "Allocates a new larger array (1.5x or 2x) and moves copies existing elements",
+        "Uses a linked list",
+        "Never grows"
+      ],
+      "correctIndex": 1,
+      "explanation": "Reallocates to a bigger buffer and moves/copies all existing elements. Amortized O(1)."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the difference between size() and capacity()?",
+      "correctAnswer": "size() is current element count; capacity() is allocated slots before reallocation",
+      "acceptableAnswers": [
+        "size is count capacity is space",
+        "current vs total"
+      ],
+      "explanation": "size() = number of valid elements. capacity() = number of allocated slots."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens to iterators after reallocation?",
+      "options": [
+        "They remain valid",
+        "They are invalidated \u2014 point to old freed buffer",
+        "They auto-update",
+        "Only end() invalidated"
+      ],
+      "correctIndex": 1,
+      "explanation": "Reallocation moves elements to new memory. All iterators/references/pointers become invalid."
+    }
+  ]
+};
+
+QUIZ_DATA['RAII, Lifetimes & The Rule of Five'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does RAII stand for?",
+      "options": [
+        "Runtime Allocation Is Immediate",
+        "Resource Acquisition Is Initialization \u2014 acquire in constructor, release in destructor",
+        "Random Access Iterator Implementation",
+        "Reusable Abstract Interface Implementation"
+      ],
+      "correctIndex": 1,
+      "explanation": "Constructor acquires the resource. Destructor releases it. No manual cleanup needed."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the Rule of Five?",
+      "correctAnswer": "If you define any of destructor, copy constructor, copy assignment, move constructor, or move assignment \u2014 define all five",
+      "acceptableAnswers": [
+        "define all five",
+        "all five special members",
+        "five special functions"
+      ],
+      "explanation": "The compiler won't generate correct defaults for resource-managing classes."
+    }
+  ]
+};
+
+QUIZ_DATA['Smart Pointers & Ownership'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::unique_ptr guarantee?",
+      "options": [
+        "Multiple owners",
+        "Single ownership \u2014 only one unique_ptr can own the object",
+        "Shared ownership",
+        "No ownership"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cannot be copied \u2014 only moved. When destroyed, the owned object is deleted."
+    },
+    {
+      "type": "text_input",
+      "question": "When should you use std::shared_ptr instead of std::unique_ptr?",
+      "correctAnswer": "When multiple objects share ownership of the same resource",
+      "acceptableAnswers": [
+        "shared ownership",
+        "multiple owners",
+        "reference counted"
+      ],
+      "explanation": "Uses reference counting. Last shared_ptr to release frees the memory."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does std::weak_ptr prevent?",
+      "options": [
+        "Memory leaks",
+        "Circular references \u2014 doesn't keep the object alive",
+        "Null pointers",
+        "Buffer overflows"
+      ],
+      "correctIndex": 1,
+      "explanation": "weak_ptr breaks shared_ptr reference cycles."
+    }
+  ]
+};
+
+QUIZ_DATA['References'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the key difference between a reference and a pointer?",
+      "options": [
+        "Pointers are faster",
+        "A reference cannot be null and cannot be reassigned",
+        "References use more memory",
+        "No difference"
+      ],
+      "correctIndex": 1,
+      "explanation": "A reference is an alias \u2014 must be initialized, can't be null, can't be changed."
+    },
+    {
+      "type": "text_input",
+      "question": "Why are references preferred over pointers for function parameters?",
+      "correctAnswer": "They guarantee a valid object \u2014 no null check needed",
+      "acceptableAnswers": [
+        "no null check",
+        "guaranteed valid",
+        "valid object"
+      ],
+      "explanation": "Clear intent: this function needs this object. No if(ptr != nullptr) required."
+    }
+  ]
+};
+
+QUIZ_DATA['const Correctness'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does const int* p mean?",
+      "options": [
+        "p is a const pointer",
+        "p is a pointer to const int \u2014 can't modify the int through p",
+        "Both are const",
+        "Neither is const"
+      ],
+      "correctIndex": 1,
+      "explanation": "Read right-to-left: pointer to int that is const."
+    },
+    {
+      "type": "text_input",
+      "question": "What does a const member function guarantee?",
+      "correctAnswer": "The function will not modify the observable state of the object",
+      "acceptableAnswers": [
+        "won't modify",
+        "no modification",
+        "read-only"
+      ],
+      "explanation": "Enforced by compiler. const objects can only call const member functions."
+    }
+  ]
+};
+
+QUIZ_DATA['static in C++'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a static local variable do?",
+      "options": [
+        "Destroyed on return",
+        "Persists across calls \u2014 initialized once, keeps its value",
+        "Allocated on heap",
+        "Only accessible in if statements"
+      ],
+      "correctIndex": 1,
+      "explanation": "static int count = 0; inside a function: initialized once, retains value across calls."
+    },
+    {
+      "type": "text_input",
+      "question": "What does static mean for a global function?",
+      "correctAnswer": "Internal linkage \u2014 only visible within this .cpp file",
+      "acceptableAnswers": [
+        "internal linkage",
+        "only in this file",
+        "file scope"
+      ],
+      "explanation": "Not callable from other translation units."
+    }
+  ]
+};
+
+QUIZ_DATA['Enums & enum class'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of enum class over plain enum?",
+      "options": [
+        "It's faster",
+        "Values are scoped \u2014 Color::Red, no implicit int conversion",
+        "Less memory",
+        "More values"
+      ],
+      "correctIndex": 1,
+      "explanation": "Prevents name collisions between enums. No accidental int conversions."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you convert an enum class to its underlying integer?",
+      "correctAnswer": "static_cast<int>(value)",
+      "acceptableAnswers": [
+        "static_cast",
+        "static_cast<int>",
+        "cast"
+      ],
+      "explanation": "enum class doesn't implicitly convert to int."
+    }
+  ]
+};
+
+QUIZ_DATA['Type Deduction — auto, decltype'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does auto deduce?",
+      "options": [
+        "Largest type",
+        "The type of the initializer",
+        "void",
+        "Template type"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto x = 5 \u2192 int. auto strips references and top-level const by default."
+    },
+    {
+      "type": "text_input",
+      "question": "What does decltype do?",
+      "correctAnswer": "Gives the declared type of an expression without evaluating it",
+      "acceptableAnswers": [
+        "declared type",
+        "type of expression"
+      ],
+      "explanation": "Unlike auto, decltype preserves references and const."
+    }
+  ]
+};
+
+QUIZ_DATA['Structured Bindings'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does structured binding (C++17) do?",
+      "options": [
+        "Binds variables to struct members",
+        "Unpacks a tuple/pair/struct into individually named variables",
+        "Creates a new structure",
+        "Binds a lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto [x, y, z] = point3d; declares and binds x, y, z to members."
+    }
+  ]
+};
+
+QUIZ_DATA['Operator Overloading'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Which operators CANNOT be overloaded?",
+      "options": [
+        "+ and -",
+        ":: (scope), . (member), .* (ptr-to-member), ?: (ternary)",
+        "== and !=",
+        "* and &"
+      ],
+      "correctIndex": 1,
+      "explanation": "These four are the only non-overloadable operators in C++."
+    }
+  ]
+};
+
+QUIZ_DATA['Inheritance & Virtual Functions'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the virtual keyword do?",
+      "options": [
+        "Makes function faster",
+        "Enables dynamic dispatch based on object's actual type",
+        "Makes function static",
+        "Prevents inheritance"
+      ],
+      "correctIndex": 1,
+      "explanation": "Base* ptr = new Derived; ptr->foo() \u2014 if virtual, Derived::foo() is called via vtable."
+    },
+    {
+      "type": "text_input",
+      "question": "What is a pure virtual function (= 0)?",
+      "correctAnswer": "Makes the class abstract \u2014 cannot be instantiated. Derived classes must override.",
+      "acceptableAnswers": [
+        "abstract",
+        "cannot instantiate",
+        "must override"
+      ],
+      "explanation": "virtual void draw() = 0; defines an interface."
+    }
+  ]
+};
+
+QUIZ_DATA['C++ Casting & RTTI'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does static_cast do?",
+      "options": [
+        "Runtime check",
+        "Compile-time cast \u2014 no runtime overhead",
+        "Dynamic dispatch",
+        "Moves objects"
+      ],
+      "correctIndex": 1,
+      "explanation": "Converts between related types at compile time. Fast but unsafe for downcasting."
+    },
+    {
+      "type": "text_input",
+      "question": "When does dynamic_cast return nullptr?",
+      "correctAnswer": "When the cast fails \u2014 the object is not of the target type",
+      "acceptableAnswers": [
+        "when cast fails",
+        "not the target type",
+        "wrong type"
+      ],
+      "explanation": "Safe downcast. Requires RTTI (virtual functions)."
+    }
+  ]
+};
+
+QUIZ_DATA['Templates & Concepts'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "When is a function template instantiated?",
+      "options": [
+        "When defined",
+        "When first called with specific types",
+        "At startup",
+        "Never"
+      ],
+      "correctIndex": 1,
+      "explanation": "The compiler generates concrete code only when the template is used."
+    },
+    {
+      "type": "text_input",
+      "question": "What problem do C++20 concepts solve?",
+      "correctAnswer": "Constrain template parameters \u2014 giving clear error messages instead of template vomit",
+      "acceptableAnswers": [
+        "constrain templates",
+        "clear errors",
+        "type constraints"
+      ],
+      "explanation": "Requires std::integral<T> checks at compile time."
+    }
+  ]
+};
+
+QUIZ_DATA['C++ vs UE C++ — Key Differences'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Why does UE disable C++ exceptions?",
+      "options": [
+        "They don't work on consoles",
+        "Table-based unwinding adds overhead even when not thrown",
+        "Epic doesn't like them",
+        "Memory leaks"
+      ],
+      "correctIndex": 1,
+      "explanation": "Exception handling metadata adds branches to every function. UE uses check/ensure macros instead."
+    },
+    {
+      "type": "text_input",
+      "question": "What replaces dynamic_cast in Unreal?",
+      "correctAnswer": "Cast<T>()",
+      "acceptableAnswers": [
+        "Cast",
+        "Cast<T>",
+        "Cast<T>()"
+      ],
+      "explanation": "UE's reflection-based cast. Faster and doesn't require C++ RTTI."
+    }
+  ]
+};
+
+QUIZ_DATA['String Types & string_view'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is std::string_view?",
+      "options": [
+        "A copy of a string",
+        "A non-owning view \u2014 pointer + length, no allocation",
+        "A mutable string",
+        "A string builder"
+      ],
+      "correctIndex": 1,
+      "explanation": "Read-only reference to a character sequence. No copy, no allocation."
+    }
+  ]
+};
+
+QUIZ_DATA['Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the explicit keyword prevent?",
+      "options": [
+        "Copy construction",
+        "Implicit conversions \u2014 constructor must be called explicitly",
+        "Move construction",
+        "Inheritance"
+      ],
+      "correctIndex": 1,
+      "explanation": "Prevents MyClass obj = 5; You must write MyClass obj(5);"
+    },
+    {
+      "type": "text_input",
+      "question": "Why should most single-argument constructors be explicit?",
+      "correctAnswer": "To prevent surprising implicit conversions that can cause bugs",
+      "acceptableAnswers": [
+        "prevent implicit",
+        "avoid bugs",
+        "explicit is safer"
+      ],
+      "explanation": "void foo(MyClass m); foo(42); \u2014 without explicit, 42 implicitly constructs MyClass."
+    }
+  ]
+};
+
+QUIZ_DATA['Trigonometry & Vectors'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the dot product tell you?",
+      "options": [
+        "A vector",
+        "How aligned two vectors are \u2014 A\u00b7B = |A||B|cos(\u03b8)",
+        "The angle only",
+        "A perpendicular vector"
+      ],
+      "correctIndex": 1,
+      "explanation": "Result > 0: similar direction. 0: perpendicular. < 0: opposite."
+    },
+    {
+      "type": "text_input",
+      "question": "What does the cross product produce?",
+      "correctAnswer": "A vector perpendicular to both inputs",
+      "acceptableAnswers": [
+        "perpendicular vector",
+        "a vector",
+        "perpendicular"
+      ],
+      "explanation": "Magnitude = |A||B|sin(\u03b8) = area of parallelogram."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is normalization?",
+      "options": [
+        "Making longer",
+        "Dividing by length \u2014 unit vector of length 1",
+        "Adding vectors",
+        "Converting to degrees"
+      ],
+      "correctIndex": 1,
+      "explanation": "v / |v|. Result has length 1, same direction. Used for surface normals, light direction."
+    }
+  ]
+};
+
+QUIZ_DATA['Matrices & Coordinate Systems'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a 4x4 transformation matrix store?",
+      "options": [
+        "Only rotation",
+        "Translation, rotation, and scale in one matrix",
+        "Only scale",
+        "Only translation"
+      ],
+      "correctIndex": 1,
+      "explanation": "3x3 rotation/scale in top-left, translation in last column, perspective in bottom row."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the difference between row-major and column-major?",
+      "options": [
+        "Different results",
+        "Memory layout \u2014 row-major stores rows contiguously, column-major stores columns",
+        "One is faster",
+        "One is 2D only"
+      ],
+      "correctIndex": 1,
+      "explanation": "Mathematically equivalent. OpenGL uses column-major, DirectX/Unreal use row-major."
+    }
+  ]
+};
+
+QUIZ_DATA['Quaternions & 3D Rotations'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What problem do quaternions solve?",
+      "options": [
+        "They're faster",
+        "Gimbal lock \u2014 Euler angles lose a degree of freedom",
+        "Less memory",
+        "Easier to visualize"
+      ],
+      "correctIndex": 1,
+      "explanation": "Quaternions represent rotation without gimbals \u2014 no lock possible."
+    },
+    {
+      "type": "text_input",
+      "question": "How many numbers does a quaternion store?",
+      "correctAnswer": "4 \u2014 (x, y, z, w)",
+      "acceptableAnswers": [
+        "4",
+        "four",
+        "x y z w"
+      ],
+      "explanation": "q = (x,y,z,w). Axis determines xyz direction; w encodes rotation amount."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Interpolation & Kinematics'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::Lerp do?",
+      "options": [
+        "Loops a value",
+        "Linear interpolation: A + (B-A) * Alpha",
+        "Creates a curve",
+        "Lerps backwards"
+      ],
+      "correctIndex": 1,
+      "explanation": "Returns A when Alpha=0, B when Alpha=1."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision Detection Math'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is an AABB?",
+      "options": [
+        "A sphere",
+        "Axis-Aligned Bounding Box \u2014 edges parallel to world axes",
+        "A rotating box",
+        "A circle"
+      ],
+      "correctIndex": 1,
+      "explanation": "Defined by min and max points. Fast to test \u2014 just compare coordinate ranges."
+    }
+  ]
+};
+
+QUIZ_DATA['Geometric Algebra'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What advantage does Geometric Algebra offer?",
+      "options": [
+        "Faster",
+        "Unified system \u2014 handles rotations, reflections, translations, and projections",
+        "Less memory",
+        "Older"
+      ],
+      "correctIndex": 1,
+      "explanation": "Rotors replace quaternions. Same algebra works in any dimension."
+    }
+  ]
+};
+
+QUIZ_DATA['FVector, FRotator, FQuat — The Core Types'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How many components does FVector store?",
+      "options": [
+        "2 (x,y)",
+        "3 (X,Y,Z) \u2014 each a float",
+        "4 (x,y,z,w)",
+        "1"
+      ],
+      "correctIndex": 1,
+      "explanation": "FVector = 3 floats: X, Y, Z. Used for positions, directions, velocities."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you convert FRotator to FQuat?",
+      "correctAnswer": "FQuat(FRotator)",
+      "acceptableAnswers": [
+        "FQuat",
+        "FQuat()"
+      ],
+      "explanation": "FQuat constructor takes FRotator. Converts Euler angles to quaternion."
+    }
+  ]
+};
+
+QUIZ_DATA['FTransform & FMatrix'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What three components make an FTransform?",
+      "options": [
+        "Position, rotation, scale",
+        "Translation, projection, view",
+        "X, Y, Z",
+        "Forward, right, up"
+      ],
+      "correctIndex": 0,
+      "explanation": "FTransform = Translation (FVector) + Rotation (FQuat) + Scale3D (FVector)."
+    }
+  ]
+};
+
+QUIZ_DATA['FMath — Interpolation & Utility'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::Clamp do?",
+      "options": [
+        "Returns random value",
+        "Constrains a value between Min and Max",
+        "Makes larger",
+        "Converts to radians"
+      ],
+      "correctIndex": 1,
+      "explanation": "Keeps health 0-100, speeds within limits, etc."
+    },
+    {
+      "type": "text_input",
+      "question": "What does FInterpTo do that Lerp doesn't?",
+      "correctAnswer": "Moves toward target at rate based on DeltaTime \u2014 framerate-independent",
+      "acceptableAnswers": [
+        "framerate independent",
+        "delta time",
+        "smooth following"
+      ],
+      "explanation": "Consistent speed regardless of framerate."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision & Intersection Math'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::LineBoxIntersection do?",
+      "options": [
+        "Draws a box",
+        "Tests if a line segment intersects an AABB",
+        "Projects a line",
+        "Creates a box"
+      ],
+      "correctIndex": 1,
+      "explanation": "Returns true if the line segment intersects the box."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Ranges & Random'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is FRichCurve used for?",
+      "options": [
+        "Random numbers",
+        "Keyframe-based animation curves",
+        "Mathematical proofs",
+        "UI layout"
+      ],
+      "correctIndex": 1,
+      "explanation": "Stores keyframes with interpolation. Used by UTimeline, UCurveFloat."
+    },
+    {
+      "type": "text_input",
+      "question": "What does FMath::RandRange do?",
+      "correctAnswer": "Returns a random integer between Min and Max (inclusive)",
+      "acceptableAnswers": [
+        "random integer",
+        "random int",
+        "random"
+      ],
+      "explanation": "FMath::FRandRange for floating point."
+    }
+  ]
+};
+
+QUIZ_DATA['The Big O Complexity Spectrum'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does O(1) mean?",
+      "options": [
+        "Always fast",
+        "Constant time \u2014 same steps regardless of input size",
+        "Linear time",
+        "Uses 1 byte"
+      ],
+      "correctIndex": 1,
+      "explanation": "Array indexing, hash lookup, stack push \u2014 same cost for n=10 or n=1,000,000."
+    },
+    {
+      "type": "text_input",
+      "question": "What complexity does binary search have?",
+      "correctAnswer": "O(log n)",
+      "acceptableAnswers": [
+        "O(log n)",
+        "log n",
+        "logarithmic"
+      ],
+      "explanation": "Halves search space each iteration. 1M items \u2192 ~20 comparisons."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does O(n\u00b2) indicate?",
+      "options": [
+        "Recursion",
+        "Nested loops \u2014 for each, iterate all again",
+        "A single loop",
+        "Constant time"
+      ],
+      "correctIndex": 1,
+      "explanation": "for(i){for(j){...}} = O(n\u00b2). 1K items \u2192 1M operations."
+    }
+  ]
+};
+
+QUIZ_DATA['Amortized Analysis & Real Profiling Data'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does amortized O(1) mean for TArray::Add?",
+      "options": [
+        "Every Add is O(1)",
+        "Most Adds O(1), occasional O(n) reallocation \u2014 average is constant",
+        "Add is O(n)",
+        "Add is O(log n)"
+      ],
+      "correctIndex": 1,
+      "explanation": "Usually writes to next slot. But when buffer full, copies all elements \u2014 one O(n) spike."
+    },
+    {
+      "type": "text_input",
+      "question": "When would TArray::Add cause a frame spike?",
+      "correctAnswer": "During reallocation \u2014 copying thousands of elements in one frame",
+      "acceptableAnswers": [
+        "reallocation",
+        "resizing",
+        "buffer full"
+      ],
+      "explanation": "Use Reserve() to prevent reallocations at runtime."
+    }
+  ]
+};
+
+QUIZ_DATA['Applied Examples - Raw C++ vs Unreal Engine'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Why is linear search sometimes faster than hash lookup for small N?",
+      "options": [
+        "Hash always slower",
+        "Cache locality \u2014 scanning 5 contiguous items beats hash + scattered memory access",
+        "Linear always faster",
+        "Hash uses more memory"
+      ],
+      "correctIndex": 1,
+      "explanation": "For N < ~10-20, cache-friendly linear scan wins over hash function overhead + cache miss."
+    },
+    {
+      "type": "text_input",
+      "question": "How do spatial structures reduce collision from O(n\u00b2) to O(n)?",
+      "correctAnswer": "Divide space into cells/trees \u2014 each object only checks nearby objects",
+      "acceptableAnswers": [
+        "divide space",
+        "only check nearby",
+        "spatial partitioning"
+      ],
+      "explanation": "Octrees, BVH, spatial hashing bucket objects by location."
     }
   ]
 };
