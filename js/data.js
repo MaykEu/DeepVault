@@ -3571,3 +3571,31 @@ QUIZ_DATA['FVector, FRotator, FQuat — The Core Types'] = {
     }
   ]
 };
+
+QUIZ_DATA['std array & C Arrays'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of std::array over a C array?",
+      "options": [
+        "Faster",
+        "Knows its size \u2014 .size() works, doesn't decay to pointer",
+        "Less memory",
+        "Can grow"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::array<T,N> wraps a fixed C array with .size(), iterators, .at() bounds checking, and no pointer decay."
+    },
+    {
+      "type": "text_input",
+      "question": "Can std::array grow after creation?",
+      "correctAnswer": "No \u2014 the size is fixed at compile time",
+      "acceptableAnswers": [
+        "no",
+        "fixed",
+        "compile time"
+      ],
+      "explanation": "std::array<int,5> always has 5 elements. Unlike vector, it can't resize. Stack-friendly."
+    }
+  ]
+};
