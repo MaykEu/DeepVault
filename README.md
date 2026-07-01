@@ -7,13 +7,24 @@
 
 ---
 
+## What Is This?
+
+DeepVault is an interactive learning platform built to master the stack beneath Unreal Engine — from silicon transistors to C++ templates to multiplayer replication. It comes pre-loaded with 68 notes and 67 quizzes covering:
+
+- **Computer Systems** — 14 notes from bits through CPU architecture to GPU
+- **C++ Fundamentals** — 22 notes across Core Language, Memory, OOP, and Types
+- **Game Math** — 11 notes: trigonometry, matrices, quaternions, collision, UE math
+- **Unreal Engine Core** — 11 notes: UHT, reflection, containers, casting, inheritance
+- **UE Networking** — 7 notes: RPCs, replication, Iris, GAS prediction
+- **Algorithms & Complexity** — 3 notes: Big O, amortized analysis, applied examples
+
+Everything stays on your device — no accounts, no servers, no tracking. Just double-click.
+
 ## Quick Start
 
-1. **Fork** this repository
-2. **Clone** your fork
-3. **Double-click** `index.html` — you're in
-4. Or visit the [live demo](https://maykeu.github.io/DeepVault/)
-
+1. **Clone** this repository — `git clone https://github.com/MaykEu/DeepVault.git`
+2. **Double-click** `index.html` — you're studying
+3. Or use the [live demo](https://maykeu.github.io/DeepVault/) — no download needed
 ## What It Does
 
 | Feature | Description |
