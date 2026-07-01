@@ -2,6 +2,18 @@
 
 Thanks for wanting to help! Here's how.
 
+## How It Works
+
+```
+Obsidian vault (.md files) → python convert.py → js/data.js → index.html
+```
+
+- The vault is the **source of truth** — all educational content lives there
+- `convert.py` reads the vault and builds `data.js` automatically
+- `data.js` is a **compiled file** — don't manually edit notes in it (except quiz questions)
+- Users who clone the repo get the compiled `data.js` — they don't need a vault or Python
+
+
 ## 🤖 Use AI
 
 **The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from 58 commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
