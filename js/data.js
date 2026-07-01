@@ -2809,3 +2809,100 @@ QUIZ_DATA['GAS Networking & Prediction'] = {
     }
   ]
 };
+
+QUIZ_DATA['Move Semantics & Perfect Forwarding'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::move actually do?",
+      "options": [
+        "Moves the object",
+        "Casts to rvalue reference \u2014 enables move instead of copy",
+        "Deletes the object",
+        "Copies the object"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::move is just a cast \u2014 it converts an lvalue to an rvalue reference, allowing the compiler to select the move constructor/assignment instead of copy."
+    },
+    {
+      "type": "text_input",
+      "question": "What state is a moved-from object in?",
+      "correctAnswer": "Valid but unspecified \u2014 it can be destroyed or assigned to, but reading its value is undefined",
+      "acceptableAnswers": [
+        "valid but unspecified",
+        "unspecified",
+        "can be destroyed",
+        "cannot read"
+      ],
+      "explanation": "After moving, the source is in a 'valid but unspecified' state. You can destroy it or assign a new value, but reading it is UB."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does std::forward do?",
+      "options": [
+        "Forwards a function call",
+        "Perfect forwarding \u2014 preserves the value category (lvalue/rvalue) of the argument",
+        "Deletes the argument",
+        "Casts to void"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::forward<T>(arg) preserves whether arg was an lvalue or rvalue, enabling perfect forwarding through template functions."
+    }
+  ]
+};
+
+QUIZ_DATA['Preprocessor & Macros'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does #include literally do?",
+      "options": [
+        "Links a library",
+        "Copies the entire file content inline \u2014 text substitution",
+        "Imports a module",
+        "Declares a function"
+      ],
+      "correctIndex": 1,
+      "explanation": "#include is text copy-paste. The preprocessor reads the included file and inserts its content at the #include line."
+    },
+    {
+      "type": "text_input",
+      "question": "Why are function-like macros dangerous?",
+      "correctAnswer": "Double evaluation \u2014 MAX(x++, y) increments x twice. Or no type checking.",
+      "acceptableAnswers": [
+        "double evaluation",
+        "no type checking",
+        "text substitution bugs"
+      ],
+      "explanation": "#define MAX(a,b) ((a)>(b)?(a):(b)). MAX(x++, 10) increments x TWICE. Prefer inline functions or constexpr."
+    }
+  ]
+};
+
+QUIZ_DATA['Lambdas & Function Objects'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a lambda compile to?",
+      "options": [
+        "A separate executable",
+        "An anonymous class with operator() \u2014 a function object (functor)",
+        "A function pointer",
+        "A template"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto f = [](int x){return x+1;}; generates an anonymous class with an inline operator(). Zero overhead."
+    },
+    {
+      "type": "text_input",
+      "question": "What does [=] capture in a lambda?",
+      "correctAnswer": "All local variables by value",
+      "acceptableAnswers": [
+        "by value",
+        "everything by value",
+        "captures by value"
+      ],
+      "explanation": "[=] captures all local variables by value (copy). [&] captures by reference. [x, &y] captures x by value, y by reference."
+    }
+  ]
+};
