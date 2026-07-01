@@ -24,7 +24,7 @@ const NOTES = {
     'From Input to Replication — The Networking Pipeline', 'GAS Networking & Prediction', 'Iris Filtering & Prioritization', 'Iris Replication System Overview', 'Network Roles', 'PushModel & Dirty Marking', 'RPCs in Unreal Engine', 'RepNotifies & OnRep'
   ],
   'big-o': [
-    'Amortized Analysis & Profiling', 'Amortized Analysis & Real Profiling Data', 'Applied Examples', 'Applied Examples - Raw C++ vs Unreal Engine', 'The Big O Complexity Spectrum'
+    'Amortized Analysis & Real Profiling Data', 'Applied Examples - Raw C++ vs Unreal Engine', 'The Big O Complexity Spectrum'
   ],
 };
 
@@ -3876,6 +3876,47 @@ QUIZ_DATA['Applied Examples - Raw C++ vs Unreal Engine'] = {
         "spatial partitioning"
       ],
       "explanation": "Octrees, BVH, spatial hashing bucket objects by location."
+    }
+  ]
+};
+
+QUIZ_DATA['std array & C Arrays'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of std::array over a C-style array?",
+      "options": [
+        "It's faster",
+        "It knows its size \u2014 .size() works, and it doesn't decay to a pointer",
+        "It uses less memory",
+        "It can grow at runtime"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::array<T, N> wraps a fixed-size C array but provides .size(), iterators, bounds-checked .at(), and doesn't decay to a pointer when passed to functions."
+    },
+    {
+      "type": "text_input",
+      "question": "Can std::array grow after creation?",
+      "correctAnswer": "No \u2014 the size is fixed at compile time",
+      "acceptableAnswers": [
+        "no",
+        "no it's fixed",
+        "fixed size",
+        "compile time"
+      ],
+      "explanation": "std::array<int, 5> has exactly 5 elements forever. Unlike std::vector, it cannot shrink or grow. It's stack-friendly \u2014 no heap allocation."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does std::to_array do? (C++20)",
+      "options": [
+        "Converts array to vector",
+        "Creates a std::array from a C-style array or initializer list, deducing the type and size",
+        "Converts to string",
+        "Sorts the array"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto arr = std::to_array({1, 2, 3}); creates std::array<int, 3>. Deduces both type and size. Cleaner than specifying both template parameters."
     }
   ]
 };
