@@ -44,12 +44,85 @@ const NOTES = {
 };
 
 const QUIZ_NOTES = {
-  'computer-systems': ['Assembly Language', 'Bits, Bytes & Number Systems', 'CPU Architecture', 'Compiler Pipeline', 'Concurrency & Synchronization', 'Function Calls & Stack Frames', 'GPU Architecture Overview', 'Linking & Executables', 'Memory Hierarchy', 'Negative Numbers & Endianness', 'RAM & Virtual Memory', 'Storage', 'Syscalls & Kernel', 'Threads & Processes'],
-  'cpp-fundamentals': ['C++ vs UE C++ — Key Differences'],
-  'game-math': ['Matrices & Coordinate Systems', 'Quaternions & 3D Rotations', 'Trigonometry & Vectors'],
-  'ue-core': ['Casting in Unreal Engine', 'FName vs FString vs FText', 'Move Semantics in UE', 'Pointer Ecosystem', 'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Inheritance & UObject System', 'UE Templates & T-Containers', 'UHT, Macros & Reflection'],
-  'ue-networking': ['GAS Networking & Prediction', 'Iris Filtering & Prioritization', 'Iris Replication System Overview', 'Network Roles', 'PushModel & Dirty Marking', 'RPCs in Unreal Engine', 'RepNotifies & OnRep'],
-  'big-o': ['Amortized Analysis & Real Profiling Data', 'Applied Examples - Raw C++ vs Unreal Engine', 'The Big O Complexity Spectrum'],
+  'computer-systems': [
+    'Assembly Language',
+    'Bits, Bytes & Number Systems',
+    'CPU Architecture',
+    'Compiler Pipeline',
+    'Concurrency & Synchronization',
+    'Function Calls & Stack Frames',
+    'GPU Architecture Overview',
+    'Linking & Executables',
+    'Memory Hierarchy',
+    'Negative Numbers & Endianness',
+    'RAM & Virtual Memory',
+    'Storage',
+    'Syscalls & Kernel',
+    'Threads & Processes'
+  ],
+  'cpp-fundamentals': [
+    'C++ vs UE C++ — Key Differences',
+    'Enums & enum class',
+    'Explicit & Implicit Conversion',
+    'Move Semantics & Perfect Forwarding',
+    'Preprocessor & Macros',
+    'RAII, Lifetimes & The Rule of Five',
+    'References',
+    'Structured Bindings',
+    'Type Deduction — auto, decltype',
+    'const Correctness',
+    'static in C++',
+    'Object Memory Layout',
+    'Smart Pointers & Ownership',
+    'Stack vs Heap',
+    'std vector & Container Internals',
+    'C++ Casting & RTTI',
+    'Inheritance & Virtual Functions',
+    'Lambdas & Function Objects',
+    'Operator Overloading',
+    'String Types & string_view',
+    'Templates & Concepts'
+  ],
+  'game-math': [
+    'Matrices & Coordinate Systems',
+    'Quaternions & 3D Rotations',
+    'Trigonometry & Vectors',
+    'Collision Detection Math',
+    'Curves, Interpolation & Kinematics',
+    'Geometric Algebra',
+    'Collision & Intersection Math',
+    'Curves, Ranges & Random',
+    'FMath — Interpolation & Utility',
+    'FTransform & FMatrix',
+    'FVector, FRotator, FQuat — The Core Types'
+  ],
+  'ue-core': [
+    'Casting in Unreal Engine',
+    'FName vs FString vs FText',
+    'Move Semantics in UE',
+    'Pointer Ecosystem',
+    'TArray Internals',
+    'TMap Internals',
+    'TSet Internals',
+    'UE Enums & Flags',
+    'UE Inheritance & UObject System',
+    'UE Templates & T-Containers',
+    'UHT, Macros & Reflection'
+  ],
+  'ue-networking': [
+    'GAS Networking & Prediction',
+    'Iris Filtering & Prioritization',
+    'Iris Replication System Overview',
+    'Network Roles',
+    'PushModel & Dirty Marking',
+    'RPCs in Unreal Engine',
+    'RepNotifies & OnRep'
+  ],
+  'big-o': [
+    'Amortized Analysis & Real Profiling Data',
+    'Applied Examples - Raw C++ vs Unreal Engine',
+    'The Big O Complexity Spectrum'
+  ],
 };
 
 const QUIZ_DATA = {};
@@ -2965,4 +3038,536 @@ const REFERENCE = {
   'Glossary': "# Glossary\n\nQuick definitions for every acronym and term used across the Computer Systems notes.\n\n## A\u2013C\n\n| Term | Definition |\n|---|---|\n| **ALU** | Arithmetic Logic Unit \u2014 the circuit inside the CPU that performs addition, subtraction, bitwise operations, and comparisons |\n| **ASLR** | Address Space Layout Randomization \u2014 randomizes where code, stack, and heap are placed in memory to make buffer overflow attacks harder |\n| **ASM / Assembly** | Human-readable representation of machine code; one assembly instruction = one CPU instruction |\n| **Branch Predictor** | A circuit that guesses whether a conditional jump will be taken, keeping the pipeline full |\n\n## D\u2013F\n\n| Term | Definition |\n|---|---|\n| **DRAM** | Dynamic Random Access Memory \u2014 the technology behind RAM sticks; stores each bit as charge in a capacitor that must be refreshed ~64 ms |\n| **ELF** | Executable and Linkable Format \u2014 the file format for executables on Linux |\n| **Futex** | Fast Userspace muTEX \u2014 a Linux kernel primitive for efficient locking; fast path stays in userspace with atomics, slow path calls the kernel to sleep/wake threads |\n| **FTL** | Flash Translation Layer \u2014 the SSD controller firmware that maps logical block addresses to physical NAND pages, handles wear leveling and garbage collection |\n\n## G\u2013J\n\n| Term | Definition |\n|---|---|\n| **GOT** | Global Offset Table \u2014 a table in dynamically-linked executables that holds the actual addresses of external functions; populated by the dynamic linker at load time |\n| **IPC** | Instructions Per Clock \u2014 how many instructions the CPU completes per clock cycle; modern CPUs achieve 2-4 IPC through superscalar execution |\n| **IR** | Intermediate Representation \u2014 a compiler-internal format between source code and machine code; LLVM IR and GCC GIMPLE are examples |\n\n## K\u2013M\n\n| Term | Definition |\n|---|---|\n| **KPTI** | Kernel Page Table Isolation \u2014 a mitigation for the Meltdown vulnerability; the kernel's memory is unmapped from userspace page tables, so every syscall must switch page tables (adding 100-500+ cycles) |\n| **LAPIC** | Local Advanced Programmable Interrupt Controller \u2014 the per-core interrupt controller that handles timer interrupts for the scheduler |\n| **LSB / MSB** | Least/Most Significant Byte \u2014 the byte at the lowest/highest positional weight in a multi-byte number |\n| **MESI** | Modified, Exclusive, Shared, Invalid \u2014 the four states of the cache coherence protocol that keeps all CPU cores' caches consistent |\n| **MMU** | Memory Management Unit \u2014 the hardware that translates virtual addresses to physical addresses using the page table and TLB |\n| **\u03bcop** | Micro-operation \u2014 the CPU decodes complex x86 instructions into simpler internal \u03bcops that the execution units actually process |\n\n## N\u2013P\n\n| Term | Definition |\n|---|---|\n| **NAND Flash** | The storage technology behind SSDs; stores bits by trapping charge in floating-gate transistors; organized as pages (write unit) within blocks (erase unit) |\n| **NUMA** | Non-Uniform Memory Access \u2014 multi-socket systems where each CPU has faster access to its own local RAM than to another socket's RAM |\n| **NX / DEP** | No-eXecute / Data Execution Prevention \u2014 marks memory pages as non-executable so attackers can't run code injected into data buffers |\n| **PE** | Portable Executable \u2014 the file format for executables on Windows (EXE and DLL) |\n| **PLT** | Procedure Linkage Table \u2014 a table of stubs for dynamically-linked functions; on first call, the stub invokes the dynamic linker to resolve the address |\n| **PTE** | Page Table Entry \u2014 one entry in the page table; stores the physical frame number, permissions (read/write/execute), and flags (present, dirty, accessed) |\n\n## Q\u2013S\n\n| Term | Definition |\n|---|---|\n| **ROB** | Reorder Buffer \u2014 a CPU structure that tracks in-flight instructions and retires them in program order; Zen 4: 320 entries, Raptor Lake: 512 entries |\n| **SMT** | Simultaneous Multi-Threading \u2014 Intel's marketing term is Hyper-Threading; a single physical core exposes two logical cores by duplicating architectural state (registers) while sharing execution units |\n| **SSE / AVX** | Streaming SIMD Extensions / Advanced Vector Extensions \u2014 x86 instruction set extensions for vector operations (SIMD = Single Instruction, Multiple Data) |\n| **SSO** | Small String Optimization \u2014 `std::string` stores short strings inside the object itself (no heap allocation); typically 15-23 characters depending on standard library |\n\n## T\u2013Z\n\n| Term | Definition |\n|---|---|\n| **TLB** | Translation Lookaside Buffer \u2014 a small, fast cache inside the MMU that stores recent virtual\u2192physical address translations; a TLB miss requires walking the page table (4 memory accesses for 4-level paging) |\n| **TCO** | Tail Call Optimization \u2014 when a function's last action is calling another function, the compiler reuses the current stack frame instead of creating a new one; prevents stack overflow in recursive functions |\n| **UHT** | Unreal Header Tool \u2014 UE's custom pre-compilation tool that parses UCLASS/UPROPERTY/UFUNCTION macros and generates reflection code |\n| **VMA** | Virtual Memory Area \u2014 the kernel's internal data structure (`vm_area_struct` on Linux) that describes one contiguous region of a process's virtual address space |\n| **vDSO** | Virtual Dynamic Shared Object \u2014 a small shared library the kernel maps into every process; contains frequently-called syscall implementations that run entirely in userspace (e.g., `gettimeofday`) |\n\n## See Also\n\n- [[From Transistor to Running Program]] \u2014 The big-picture overview\n- [[Learning Path]] \u2014 Recommended reading order\n- [[DeepVault Guide]] \u2014 Full vault navigation",
   'Learning Path': "# Computer Systems \u2014 Learning Path\n\n## \ud83d\ude80 Start Here \u2014 Read This First\n\n**Read [[From Transistor to Running Program]] before anything else.** It is the 1-page map of the entire stack. Then follow the reading order below.\n\n> [!info] Need help with acronyms? Check the [[Glossary]].\n\n## Recommended Reading Order\n\n### Phase 1 \u2014 The Hardware Foundation\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 1 | [[Bits, Bytes & Number Systems]] | What a bit physically IS. Positional notation. Binary-to-hex with the left-padding trap. |\n| 2 | [[Negative Numbers & Endianness]] | Two's complement as an odometer. Signed/unsigned lens. Endianness. IEEE 754. |\n\n### Phase 2 \u2014 How the CPU Works\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 3 | [[Assembly Language]] | x86-64 registers, addressing modes, core instructions, Intel vs AT&T, reading disassembly in a debugger. |\n| 4 | [[CPU Architecture]] | Clock, registers, fetch-decode-execute, pipelining, branch prediction, OoO, SIMD, thermal throttling. |\n| 5 | [[Memory Hierarchy]] | Why RAM is slow. Cache lines (64 bytes). L1/L2/L3. MESI. False sharing. AoS vs SoA. Prefetching. |\n\n### Phase 3 \u2014 Memory & Storage\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 6 | [[RAM & Virtual Memory]] | DRAM cells. Virtual memory. Page tables and TLB. Page faults. mmap. Swap. Boot process. |\n| 7 | [[Storage]] | HDD mechanics. NAND flash physics. NVMe vs SATA. Filesystems. Page cache. DMA. PCIe bus. |\n\n### Phase 4 \u2014 The Software-Hardware Boundary\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 8 | [[Function Calls & Stack Frames]] | RSP/RBP. Stack frame layout. Calling conventions. Buffer overflow. Recursion. |\n| 9 | [[Compiler Pipeline]] | Preprocessor \u2192 compiler \u2192 assembler. Optimization levels. Concrete trace of `int x = 5`. |\n| 10 | [[Linking & Executables]] | Symbols. Static vs dynamic linking. PLT/GOT. DLL loading. PE vs ELF. |\n| 11 | [[Syscalls & Kernel]] | Protection rings. Syscall instruction trace. Futex. vDSO. Interrupts. I/O ports. |\n\n### Phase 5 \u2014 Concurrency\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 12 | [[Threads & Processes]] | Process vs thread. Scheduler. Context switching. SMT. Thread pools. Real-time scheduling. |\n| 13 | [[Concurrency & Synchronization]] | Data races. Mutex/futex. CMPXCHG. Memory ordering. Spinlocks. Condition variables. |\n\n### Phase 6 \u2014 Beyond the CPU\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 14 | [[GPU Architecture Overview]] | SIMT execution. Thousands of cores vs CPU's ~16. VRAM vs system RAM. PCIe bandwidth. Compute shaders. |\n\n## Reference\n\n| Note | Purpose |\n|---|---|\n| [[Glossary]] | Quick definitions for every acronym (MMU, TLB, PTE, futex, PLT, GOT, etc.) |\n\n## How to Use This Folder\n\n1. Start with [[From Transistor to Running Program]] for the big picture\n2. Read in order \u2014 each note lists its prerequisites at the top\n3. Sections marked \"Deep Dive\" can be skipped on first read\n4. Complete the exercises at the end of each note before moving on\n5. Cross-reference with the [[DeepVault Guide]] for C++ and Unreal Engine connections",
   'DeepVault Guide': "# DeepVault Guide\n\nWelcome to DeepVault \u2014 an interactive learning fortress for mastering C++, Unreal Engine, and the computer systems beneath them.\n\n## How This Works\n\nEvery folder on the dashboard contains **Learn** notes and **Quiz** exercises:\n\n| Mode | What It Does |\n|---|---|\n| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. Password-protected. |\n| **Quiz** | 5-10 randomized questions per note \u2014 multiple choice and text input. Instant feedback. Scores saved locally on your device. |\n\n### Tracking Your Progress\n\nProgress is based on **quiz scores only** \u2014 reading a note does not count. Here's how it works:\n\n| Status | What It Means |\n|---|---|\n| **NOT STARTED** | You haven't taken the quiz yet |\n| **IN PROGRESS** | At least 1 attempt, but best score is below 80% |\n| **COMPLETED** | You scored 80% or higher on at least one attempt |\n\nThe folder header shows your overall completion percentage (completedNotes / totalNotes). Quiz scores and attempt history are saved locally via localStorage \u2014 they never leave your device.\n\n**Wiki links** like [[CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page. Links to notes not yet available show \"(coming soon)\".\n\n**Recent notes** appear on the dashboard below your folders \u2014 quick jump back to what you were studying.\n\n---\n\n## Master Study Order\n\nThis vault is designed to be read in order. Each note builds on the ones before it.\n\n### Layer 1 \u2014 Computer Systems (start here)\n\nWithout understanding the hardware, C++ is just magic words. Start with the physical reality.\n\n1. [[Bits, Bytes & Number Systems]] \u2014 What a bit physically IS\n2. [[Negative Numbers & Endianness]] \u2014 Two's complement, signed vs unsigned\n3. [[Assembly Language]] \u2014 The bridge between C++ and hardware\n4. [[CPU Architecture]] \u2014 Fetch-decode-execute, pipelining, branch prediction\n5. [[Memory Hierarchy]] \u2014 Cache lines, L1/L2/L3, why RAM is slow\n6. [[RAM & Virtual Memory]] \u2014 Page tables, TLB, mmap, swap\n7. [[Storage]] \u2014 HDD vs SSD, filesystems, page cache\n8. [[Function Calls & Stack Frames]] \u2014 How call and ret actually work\n9. [[Compiler Pipeline]] \u2014 Preprocessor to assembler to linker\n10. [[Linking & Executables]] \u2014 Static vs dynamic linking, DLLs\n11. [[Syscalls & Kernel]] \u2014 Protection rings, syscall instruction, futex\n12. [[Threads & Processes]] \u2014 Scheduler, context switching, thread pools\n13. [[Concurrency & Synchronization]] \u2014 Mutexes, atomics, memory ordering\n14. [[GPU Architecture Overview]] \u2014 SIMT, VRAM, compute shaders\n\nUse the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.\n\n### Layer 2 \u2014 C++ Fundamentals\n\nOnce you understand the hardware, learn the language that runs on it.\n\n1. **Memory & Ownership** \u2014 [[Stack vs Heap]], [[Object Memory Layout]], [[std vector & Container Internals]], [[RAII, Lifetimes & The Rule of Five]]\n2. **Smart Pointers** \u2014 [[Smart Pointers & Ownership]], [[Move Semantics & Perfect Forwarding]], [[References]], [[const Correctness]], [[static in C++]]\n3. **Core Language** \u2014 [[Enums & enum class]], [[Preprocessor & Macros]], [[Type Deduction \u2014 auto, decltype]], [[Structured Bindings]]\n4. **Types & Data** \u2014 [[Operator Overloading]]\n5. **OOP & Polymorphism** \u2014 [[Inheritance & Virtual Functions]], [[Lambdas & Function Objects]]\n6. **Cross-Cutting** \u2014 [[C++ Casting & RTTI]], [[Templates & Concepts]], [[C++ vs UE C++ \u2014 Key Differences]], [[String Types & string_view]], [[Explicit & Implicit Conversion]]\n\n### Layer 3 \u2014 Game Math\n\nThe mathematics that make 3D worlds possible. Start with [[From Trigonometry to 3D Transformations]] for the big picture, then dive into:\n\n1. [[Trigonometry & Vectors]] \u2014 The foundation of all 3D\n2. [[Matrices & Coordinate Systems]] \u2014 Transforming objects in space\n3. [[Quaternions & 3D Rotations]] \u2014 Why gimbals lock and quaternions don't\n4. [[Curves, Interpolation & Kinematics]] \u2014 Smooth motion and animation\n5. [[Collision Detection Math]] \u2014 How engines detect when things touch\n6. [[Geometric Algebra]] \u2014 The unified framework behind it all\n\nThen bridge to UE: [[FVector, FRotator, FQuat \u2014 The Core Types]], [[FTransform & FMatrix]], [[FMath \u2014 Interpolation & Utility]], [[Collision & Intersection Math]], [[Curves, Ranges & Random]].\n\n### Layer 4 \u2014 Unreal Engine Core\n\nHow UE turns C++ into a game engine. Start with [[From UCLASS to Running Object \u2014 The UE Core Pipeline]] for the map, then:\n\n1. [[UHT, Macros & Reflection]] \u2014 How the header tool works\n2. [[Pointer Ecosystem]] \u2014 TObjectPtr vs TSharedPtr vs TUniquePtr\n3. [[FName vs FString vs FText]] \u2014 UE's string types\n4. [[Casting in Unreal Engine]] \u2014 Cast<T> vs dynamic_cast\n5. [[UE Inheritance & UObject System]] \u2014 The class hierarchy\n6. [[TArray Internals]], [[TMap Internals]], [[TSet Internals]] \u2014 UE's containers\n7. [[UE Enums & Flags]] \u2014 UENUM and bitflags\n8. [[UE Templates & T-Containers]]\n9. [[Move Semantics in UE]]\n\n### Layer 5 \u2014 UE Networking\n\nMultiplayer from the hardware up. Start with [[From Input to Replication \u2014 The Networking Pipeline]], then:\n\n1. [[Network Roles]] \u2014 Authority, autonomy, simulated proxies\n2. [[RPCs in Unreal Engine]] \u2014 Client/Server/Multicast\n3. [[RepNotifies & OnRep]] \u2014 Replicating state\n4. [[PushModel & Dirty Marking]] \u2014 Optimizing replication\n5. [[Iris Replication System Overview]] \u2014 UE5's replication architecture\n6. [[Iris Filtering & Prioritization]] \u2014 Who sees what\n7. [[GAS Networking & Prediction]] \u2014 Ability System multiplayer\n\n### Layer 6 \u2014 Big O & Algorithms\n\n[[The Big O Complexity Spectrum]], [[Amortized Analysis & Real Profiling Data]], [[Applied Examples - Raw C++ vs Unreal Engine]].\n\n---\n\n## Reference\n\n- [[Glossary]] \u2014 Every acronym defined (MMU, TLB, PTE, MESI, PLT, GOT...)\n- [[Learning Path]] \u2014 The full Computer Systems reading order with phase descriptions\n- Use the right-side table of contents to jump between sections in any note\n- Check the dashboard for recently viewed notes and quiz scores\n\n---\n\nDeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. ### Moving Between Devices\n\nYour quiz progress lives in your browser's localStorage. To continue studying on another device:\n\n1. Export on your current device \u2014 downloads a JSON file\n2. Transfer the file (email, AirDrop, cloud)\n3. Import on the new device \u2014 merges all your scores\n\nExport and Import buttons are at the bottom of the dashboard. No account needed.\n\n---\n\nDouble-click index.html to launch. Everything stays on your device."
+};
+
+QUIZ_DATA['Stack vs Heap'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Where do local variables live?",
+      "options": [
+        "Heap",
+        "Stack",
+        "Global memory",
+        "Cache"
+      ],
+      "correctIndex": 1,
+      "explanation": "Stack: one CPU instruction (sub rsp, N). Heap: malloc search. Stack is ~100x faster."
+    },
+    {
+      "type": "text_input",
+      "question": "What CPU register tracks the top of the stack?",
+      "correctAnswer": "RSP",
+      "acceptableAnswers": [
+        "rsp",
+        "stack pointer",
+        "RSP"
+      ],
+      "explanation": "RSP (Stack Pointer) on x86-64. sub rsp, N allocates; add rsp, N deallocates."
+    }
+  ]
+};
+
+QUIZ_DATA['Object Memory Layout'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Why does the compiler add padding between struct members?",
+      "options": [
+        "Aesthetic",
+        "Alignment \u2014 CPUs can only read from aligned addresses",
+        "It's random",
+        "For debugging"
+      ],
+      "correctIndex": 1,
+      "explanation": "A 4-byte int at address 0x1003 requires two memory reads or faults. Padding ensures alignment."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the size of an empty C++ class?",
+      "correctAnswer": "1 byte",
+      "acceptableAnswers": [
+        "1",
+        "one byte",
+        "1 byte"
+      ],
+      "explanation": "Every object needs a unique address. 1 byte is the smallest addressable unit."
+    }
+  ]
+};
+
+QUIZ_DATA['std vector & Container Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What happens to iterators after vector reallocation?",
+      "options": [
+        "They auto-update",
+        "They're invalidated \u2014 point to freed memory",
+        "They stay valid",
+        "Only end() changes"
+      ],
+      "correctIndex": 1,
+      "explanation": "Reallocation moves elements to new memory. All iterators/pointers/references become invalid."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the growth factor of std::vector on MSVC?",
+      "correctAnswer": "1.5x",
+      "acceptableAnswers": [
+        "1.5",
+        "1.5x",
+        "1.5 times"
+      ],
+      "explanation": "MSVC uses 1.5x growth. GCC/libstdc++ uses 2x. Amortized O(1) push_back."
+    }
+  ]
+};
+
+QUIZ_DATA['RAII, Lifetimes & The Rule of Five'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does RAII guarantee?",
+      "options": [
+        "Speed",
+        "Resource release when object leaves scope \u2014 even during exceptions",
+        "Memory savings",
+        "Thread safety"
+      ],
+      "correctIndex": 1,
+      "explanation": "Destructor runs during scope exit and stack unwinding. No manual cleanup needed."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the Rule of Five?",
+      "correctAnswer": "If you define any of destructor, copy/move constructor, copy/move assignment \u2014 define all five",
+      "acceptableAnswers": [
+        "define all five",
+        "all five special members"
+      ],
+      "explanation": "The compiler won't generate correct defaults for resource-managing classes if you define one."
+    }
+  ]
+};
+
+QUIZ_DATA['Smart Pointers & Ownership'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::unique_ptr guarantee?",
+      "options": [
+        "Shared ownership",
+        "Exclusive ownership \u2014 non-copyable, only movable",
+        "No ownership",
+        "Thread safety"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cannot be copied \u2014 only moved. When destroyed, the owned object is deleted."
+    },
+    {
+      "type": "text_input",
+      "question": "What problem does std::weak_ptr solve?",
+      "correctAnswer": "Circular references \u2014 breaks shared_ptr reference cycles",
+      "acceptableAnswers": [
+        "circular references",
+        "reference cycles",
+        "cycles"
+      ],
+      "explanation": "A owns B via shared_ptr, B owns A via shared_ptr = both leaked. Change one to weak_ptr = broken."
+    }
+  ]
+};
+
+QUIZ_DATA['Move Semantics & Perfect Forwarding'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::move actually do?",
+      "options": [
+        "Moves the object",
+        "Casts to rvalue reference \u2014 enables move instead of copy",
+        "Deletes the object",
+        "Copies"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::move is a cast (static_cast<T&&>). The actual moving happens in the move constructor."
+    }
+  ]
+};
+
+QUIZ_DATA['References'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the key difference between a reference and a pointer?",
+      "options": [
+        "Pointers are faster",
+        "A reference cannot be null and cannot be reassigned",
+        "References use more memory",
+        "No difference"
+      ],
+      "correctIndex": 1,
+      "explanation": "A reference is an alias \u2014 must be initialized, can't be null, can't be changed to refer elsewhere."
+    }
+  ]
+};
+
+QUIZ_DATA['const Correctness'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does const int* p mean?",
+      "options": [
+        "p is a const pointer",
+        "p points to const int \u2014 can't modify through p",
+        "Both const",
+        "Neither const"
+      ],
+      "correctIndex": 1,
+      "explanation": "Read right-to-left: pointer to int that is const."
+    }
+  ]
+};
+
+QUIZ_DATA['static in C++'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a static local variable do?",
+      "options": [
+        "Destroyed on return",
+        "Persists across calls \u2014 initialized once",
+        "Allocated on heap",
+        "Only for classes"
+      ],
+      "correctIndex": 1,
+      "explanation": "static int count = 0; retains value across all calls. Thread-safe init since C++11."
+    }
+  ]
+};
+
+QUIZ_DATA['Enums & enum class'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of enum class?",
+      "options": [
+        "Faster",
+        "Scoped values \u2014 Color::Red, no implicit int conversion",
+        "Less memory",
+        "More values"
+      ],
+      "correctIndex": 1,
+      "explanation": "Prevents name collisions. No accidental int conversion."
+    }
+  ]
+};
+
+QUIZ_DATA['Preprocessor & Macros'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "Why are function-like macros dangerous?",
+      "correctAnswer": "Double evaluation \u2014 MAX(x++, y) increments x twice. No type checking.",
+      "acceptableAnswers": [
+        "double evaluation",
+        "no type checking"
+      ],
+      "explanation": "#define MAX(a,b) ((a)>(b)?(a):(b)). MAX(x++, 10) \u2192 x incremented TWICE."
+    }
+  ]
+};
+
+QUIZ_DATA['Type Deduction — auto, decltype'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "What does decltype do that auto doesn't?",
+      "correctAnswer": "Gives the declared type without evaluating the expression, preserves references and const",
+      "acceptableAnswers": [
+        "preserves references",
+        "declared type",
+        "preserves const"
+      ],
+      "explanation": "auto strips references and top-level const. decltype preserves them."
+    }
+  ]
+};
+
+QUIZ_DATA['Structured Bindings'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does structured binding (C++17) do?",
+      "options": [
+        "Binds variables",
+        "Unpacks tuple/pair/struct into named variables",
+        "Creates struct",
+        "Binds lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto [x, y, z] = point; declares and binds x, y, z to members."
+    }
+  ]
+};
+
+QUIZ_DATA['Operator Overloading'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Which operators CANNOT be overloaded?",
+      "options": [
+        "+ and -",
+        ":: (scope), . (member), .* (ptr-to-member), ?: (ternary)",
+        "== and !=",
+        "* and &"
+      ],
+      "correctIndex": 1,
+      "explanation": "These four are the only non-overloadable operators in C++."
+    }
+  ]
+};
+
+QUIZ_DATA['Inheritance & Virtual Functions'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does virtual enable?",
+      "options": [
+        "Inlining",
+        "Dynamic dispatch \u2014 correct derived function called via vtable",
+        "Static dispatch",
+        "Compile-time check"
+      ],
+      "correctIndex": 1,
+      "explanation": "Base* ptr = new Derived; ptr->foo() \u2014 if virtual, Derived::foo() called via vtable lookup."
+    },
+    {
+      "type": "text_input",
+      "question": "What is a pure virtual function (= 0)?",
+      "correctAnswer": "Makes the class abstract \u2014 cannot instantiate, derived classes must override",
+      "acceptableAnswers": [
+        "abstract",
+        "cannot instantiate",
+        "must override"
+      ],
+      "explanation": "virtual void draw() = 0; defines an interface."
+    }
+  ]
+};
+
+QUIZ_DATA['Lambdas & Function Objects'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a lambda compile to?",
+      "options": [
+        "Function pointer",
+        "Anonymous class with operator() \u2014 zero overhead",
+        "Separate file",
+        "Template"
+      ],
+      "correctIndex": 1,
+      "explanation": "Compiler generates an anonymous functor class. Identical code to hand-written version."
+    }
+  ]
+};
+
+QUIZ_DATA['C++ Casting & RTTI'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "When does dynamic_cast return nullptr?",
+      "options": [
+        "Always",
+        "When the object is not of the target type",
+        "When it succeeds",
+        "Never"
+      ],
+      "correctIndex": 1,
+      "explanation": "Safe downcast. Requires virtual functions (RTTI). Check the result!"
+    }
+  ]
+};
+
+QUIZ_DATA['Templates & Concepts'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "What do C++20 concepts solve?",
+      "correctAnswer": "Clear error messages for template constraint violations",
+      "acceptableAnswers": [
+        "clear errors",
+        "constrain templates",
+        "compile-time checks"
+      ],
+      "explanation": "template<typename T> requires std::integral<T> \u2014 compile-time check with readable errors."
+    }
+  ]
+};
+
+QUIZ_DATA['String Types & string_view'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does SSO mean for std::string?",
+      "options": [
+        "Slow String Operations",
+        "Small String Optimization \u2014 short strings stored inline, no heap",
+        "System String Output",
+        "Static String Object"
+      ],
+      "correctIndex": 1,
+      "explanation": "Strings under ~15 chars live inside the string object. No allocation. Zero-cost for short strings."
+    }
+  ]
+};
+
+QUIZ_DATA['Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "Why make single-argument constructors explicit?",
+      "correctAnswer": "Prevents surprising implicit conversions",
+      "acceptableAnswers": [
+        "prevent implicit",
+        "avoid bugs",
+        "explicit is safer"
+      ],
+      "explanation": "Without explicit, foo(42) silently constructs MyClass from int. explicit makes it intentional."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision Detection Math'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is an AABB?",
+      "options": [
+        "A sphere",
+        "Axis-Aligned Bounding Box \u2014 edges parallel to world axes",
+        "A rotating box",
+        "A circle"
+      ],
+      "correctIndex": 1,
+      "explanation": "Defined by min/max points. Fast to test \u2014 just compare coordinate ranges. O(1) per axis."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Interpolation & Kinematics'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "What does FMath::Lerp(A, B, Alpha) return?",
+      "correctAnswer": "A + (B-A) * Alpha",
+      "acceptableAnswers": [
+        "A + (B-A) * Alpha",
+        "linear interpolation"
+      ],
+      "explanation": "Alpha=0 \u2192 A. Alpha=1 \u2192 B. Linear interpolation between."
+    }
+  ]
+};
+
+QUIZ_DATA['Geometric Algebra'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of Geometric Algebra?",
+      "options": [
+        "Speed",
+        "Unified algebra \u2014 rotations, reflections, projections in one system",
+        "Less memory",
+        "Simplicity"
+      ],
+      "correctIndex": 1,
+      "explanation": "Rotors replace quaternions. Same algebra for any dimension."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision & Intersection Math'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "What does FMath::LineBoxIntersection test?",
+      "correctAnswer": "Whether a line segment intersects an axis-aligned box",
+      "acceptableAnswers": [
+        "line box intersection",
+        "ray against box",
+        "line segment box"
+      ],
+      "explanation": "Returns hit time and point. Used for weapon traces, visibility, UI raycasting."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Ranges & Random'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is FRichCurve used for?",
+      "options": [
+        "Random numbers",
+        "Keyframe-based animation curves with interpolation",
+        "Debugging",
+        "Math proofs"
+      ],
+      "correctIndex": 1,
+      "explanation": "Stores keyframes (time-value pairs). Used by UTimeline, UCurveFloat. Supports linear, constant, cubic."
+    }
+  ]
+};
+
+QUIZ_DATA['FMath — Interpolation & Utility'] = {
+  "questions": [
+    {
+      "type": "text_input",
+      "question": "How does FInterpTo differ from Lerp?",
+      "correctAnswer": "FInterpTo uses DeltaTime \u2014 framerate-independent smooth following",
+      "acceptableAnswers": [
+        "delta time",
+        "framerate independent",
+        "smooth following"
+      ],
+      "explanation": "Lerp uses fixed alpha. FInterpTo moves at interpSpeed per second regardless of framerate."
+    }
+  ]
+};
+
+QUIZ_DATA['FTransform & FMatrix'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What three components make an FTransform?",
+      "options": [
+        "x, y, z",
+        "Translation, Rotation, Scale3D",
+        "Forward, Right, Up",
+        "Pitch, Yaw, Roll"
+      ],
+      "correctIndex": 1,
+      "explanation": "FTransform = FVector (translation) + FQuat (rotation) + FVector (scale3D). Decomposed 4x4 matrix."
+    }
+  ]
+};
+
+QUIZ_DATA['FVector, FRotator, FQuat — The Core Types'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How many floats does FVector store?",
+      "options": [
+        "2",
+        "3 \u2014 X, Y, Z",
+        "4",
+        "1"
+      ],
+      "correctIndex": 1,
+      "explanation": "3 floats: X, Y, Z. Used for positions, directions, velocities, scales, colors."
+    }
+  ]
 };
