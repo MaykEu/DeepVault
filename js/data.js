@@ -19,7 +19,7 @@ const FOLDER_GROUPS = {
     'Types & Data': ['Operator Overloading', 'String Types & string_view', 'Templates & Concepts'],
   },
   'game-math': {
-    '': ['Trigonometry & Vectors', 'Matrices & Coordinate Systems', 'Quaternions & 3D Rotations'],
+    '': ['Quaternions & 3D Rotations', 'Matrices & Coordinate Systems', 'Trigonometry & Vectors'],
     'Advanced': ['Collision Detection Math', 'Curves, Interpolation & Kinematics', 'Geometric Algebra'],
     'UE Math': ['Collision & Intersection Math', 'Curves, Ranges & Random', 'FMath — Interpolation & Utility', 'FTransform & FMatrix', 'FVector, FRotator, FQuat — The Core Types'],
   },
