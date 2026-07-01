@@ -208,26 +208,33 @@
 
 /* Folder groups */
 .folder-group {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.4rem;
 }
 .folder-group-header {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.55rem 0.6rem; cursor: pointer;
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.65rem 0.75rem; cursor: pointer;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  transition: background 0.1s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   user-select: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 .folder-group-header:hover {
-  background: var(--bg-tertiary);
+  border-color: var(--accent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02), 0 0 8px rgba(88,166,255,0.06);
 }
 .folder-group-caret {
-  font-size: 0.65rem; color: var(--text-muted); width: 12px; text-align: center;
+  font-size: 0.6rem; color: var(--text-muted); width: 10px; text-align: center;
+  transition: transform 0.15s;
 }
-.folder-group-icon { font-size: 0.9rem; opacity: 0.6; }
-.folder-group-name { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
-.folder-group-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+.folder-group-icon { font-size: 0.9rem; opacity: 0.5; }
+.folder-group-name { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+.folder-group-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; font-weight: 400; }
 .folder-group-body {
-  padding-left: 0.5rem;
+  padding: 0.4rem 0 0.2rem 0.8rem;
   border-left: 1px solid var(--border);
-  margin-left: 0.35rem;
+  margin-left: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
 }

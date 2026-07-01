@@ -83,7 +83,8 @@ const TopicHub = {
       for (var sg in subGroups) {
         var visibleNotes = subGroups[sg].filter(function(x) { return activeSet[x]; });
         if (visibleNotes.length === 0) continue;
-        var isCollapsed = this.collapsed[folder.id + '|' + sg] || false;
+        var isCollapsed = this.collapsed[folder.id + '|' + sg];
+      if (isCollapsed === undefined) isCollapsed = true;  // collapsed by default
         html += '<div class="folder-group">' +
           '<div class="folder-group-header" onclick="TopicHub.toggleGroup(\'' + folder.id + '\',\'' + sg + '\')">' +
             '<span class="folder-group-caret">' + (isCollapsed ? '\u25B6' : '\u25BC') + '</span>' +
