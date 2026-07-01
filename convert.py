@@ -46,19 +46,12 @@ def main():
     for m in re.finditer(r"QUIZ_DATA\['([^']+)'\]\s*=\s*(\{[\s\S]*?\n\});", old):
         old_quizzes[m.group(1)] = m.group(2)
     
-    # Extract DeepVault Guide from old data
+    # Read DeepVault Guide from static file (never from previous build — avoids corruption)
     old_guide = ''
-    idx = old.find("'DeepVault Guide':")
-    if idx >= 0:
-        start = old.find('"', idx) + 1
-        i = start
-        while i < len(old):
-            if old[i] == '\\': i += 2; continue
-            if old[i] == '"':
-                end = i
-                break
-            i += 1
-        old_guide = old[start:end]
+    guide_file = r'D:\User\Desktop\DeepVault\guide-content.txt'
+    if os.path.exists(guide_file):
+        with open(guide_file, 'r', encoding='utf-8') as f:
+            old_guide = f.read()
 
     # Scan all folders recursively
     notes_content = {}
