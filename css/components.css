@@ -205,3 +205,29 @@
   margin-top: 0.3rem;
   border-bottom: 1px solid var(--border);
 }
+
+/* Folder groups */
+.folder-group {
+  margin-bottom: 0.25rem;
+}
+.folder-group-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.55rem 0.6rem; cursor: pointer;
+  border-radius: var(--radius);
+  transition: background 0.1s;
+  user-select: none;
+}
+.folder-group-header:hover {
+  background: var(--bg-tertiary);
+}
+.folder-group-caret {
+  font-size: 0.65rem; color: var(--text-muted); width: 12px; text-align: center;
+}
+.folder-group-icon { font-size: 0.9rem; opacity: 0.6; }
+.folder-group-name { font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+.folder-group-count { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+.folder-group-body {
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--border);
+  margin-left: 0.35rem;
+}
