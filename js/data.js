@@ -30,15 +30,15 @@ const NOTES = {
 
 const QUIZ_NOTES = {
   'computer-systems': ['Bits, Bytes & Number Systems', 'Negative Numbers & Endianness', 'Assembly Language', 'CPU Architecture', 'Memory Hierarchy', 'RAM & Virtual Memory', 'Storage', 'Function Calls & Stack Frames', 'Compiler Pipeline', 'Linking & Executables', 'Syscalls & Kernel', 'Threads & Processes', 'Concurrency & Synchronization', 'GPU Architecture Overview'],
-  'cpp-fundamentals': [],
-  'game-math': [],
+  'cpp-fundamentals': ['Stack vs Heap', 'Object Memory Layout', 'std vector & Container Internals', 'RAII, Lifetimes & The Rule of Five', 'Smart Pointers & Ownership', 'Move Semantics & Perfect Forwarding', 'References', 'const Correctness', 'static in C++', 'Enums & enum class', 'Preprocessor & Macros', 'Type Deduction — auto, decltype', 'Structured Bindings', 'Operator Overloading', 'Inheritance & Virtual Functions', 'Lambdas & Function Objects', 'C++ Casting & RTTI', 'Templates & Concepts', 'C++ vs UE C++ — Key Differences', 'String Types & string_view', 'Explicit & Implicit Conversion'],
+  'game-math': ['Trigonometry & Vectors', 'Matrices & Coordinate Systems', 'Quaternions & 3D Rotations', 'Curves, Interpolation & Kinematics', 'Collision Detection Math', 'Geometric Algebra', 'FVector, FRotator, FQuat — The Core Types', 'FTransform & FMatrix', 'FMath — Interpolation & Utility', 'Collision & Intersection Math', 'Curves, Ranges & Random'],
   'ue-core': [
     'UHT, Macros & Reflection', 'Pointer Ecosystem', 'FName vs FString vs FText',
     'Casting in Unreal Engine', 'UE Inheritance & UObject System', 'Move Semantics in UE',
     'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Templates & T-Containers'
   ],
   'ue-networking': ['Network Roles', 'RPCs in Unreal Engine', 'RepNotifies & OnRep', 'PushModel & Dirty Marking', 'Iris Replication System Overview', 'Iris Filtering & Prioritization', 'GAS Networking & Prediction'],
-  'big-o': [],
+  'big-o': ['The Big O Complexity Spectrum', 'Amortized Analysis & Real Profiling Data', 'Applied Examples - Raw C++ vs Unreal Engine'],
 };
 
 const QUIZ_DATA = {};
@@ -2806,6 +2806,1273 @@ QUIZ_DATA['GAS Networking & Prediction'] = {
       ],
       "correctIndex": 1,
       "explanation": "GAS networking builds on the core GAS concepts: GameplayAbility (an action a character can perform), ASC (the component that holds abilities and effects), GameplayEffect (modifies attributes), and GameplayTag (hierarchical tags for conditional logic)."
+    }
+  ]
+};
+
+QUIZ_DATA['Stack vs Heap'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the stack physically?",
+      "options": [
+        "A dedicated hardware chip",
+        "A region of regular RAM with a pointer (RSP) tracking the top",
+        "A separate memory bank",
+        "Cache memory"
+      ],
+      "correctIndex": 1,
+      "explanation": "The stack is NOT special hardware \u2014 it's regular RAM. The CPU uses the RSP register to track where the stack top is. push/pop adjust RSP and read/write RAM."
+    },
+    {
+      "type": "text_input",
+      "question": "Which is faster: stack allocation or heap allocation? Why?",
+      "correctAnswer": "Stack \u2014 it's a single CPU instruction (sub rsp, N). Heap requires a malloc/free call which searches free lists.",
+      "acceptableAnswers": [
+        "stack",
+        "stack is faster",
+        "stack allocation",
+        "stack because it's a single instruction"
+      ],
+      "explanation": "Stack allocation: sub rsp, N (1 CPU cycle). Heap allocation: malloc searches free lists, potentially calls mmap for more memory, and must update bookkeeping structures. Stack is ~100-1000x faster."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens to stack variables when a function returns?",
+      "options": [
+        "They stay in memory forever",
+        "The stack pointer moves back \u2014 the memory is 'freed' by simply adjusting RSP",
+        "They are automatically garbage collected",
+        "They move to the heap"
+      ],
+      "correctIndex": 1,
+      "explanation": "When a function returns, RSP is restored (add rsp, N or leave). The local variables' memory is now ABOVE the stack pointer \u2014 'freed.' No deallocation work happens; the pointer just moves."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the main risk with heap allocation?",
+      "options": [
+        "It's too fast",
+        "Memory leaks \u2014 forgetting to free memory that's no longer needed",
+        "Stack overflow",
+        "Cache misses"
+      ],
+      "correctIndex": 1,
+      "explanation": "Heap memory stays allocated until explicitly freed (or garbage collected in managed languages). Forgetting to free leads to memory leaks \u2014 eventually exhausting available RAM."
+    },
+    {
+      "type": "text_input",
+      "question": "Why can't you return a pointer to a local stack variable?",
+      "correctAnswer": "The memory is reclaimed when the function returns \u2014 the pointer becomes dangling",
+      "acceptableAnswers": [
+        "dangling pointer",
+        "memory is freed",
+        "reclaimed",
+        "invalid after return"
+      ],
+      "explanation": "int* p = &x; return p; \u2014 x is on the stack. After the function returns, that stack space may be overwritten by the next function call. The pointer points to garbage. This is a classic C/C++ bug."
+    }
+  ]
+};
+
+QUIZ_DATA['Object Memory Layout'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What determines the size of a struct in memory?",
+      "options": [
+        "Only the sum of member sizes",
+        "Member sizes + alignment padding between members",
+        "The number of members",
+        "The compiler's mood"
+      ],
+      "correctIndex": 1,
+      "explanation": "The compiler inserts padding bytes between members to satisfy alignment requirements. int must be 4-byte aligned, double must be 8-byte aligned. Padding wastes memory but is required for correct hardware access."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does the compiler add padding between struct members?",
+      "correctAnswer": "To satisfy alignment requirements \u2014 CPUs can only read multi-byte values from addresses that are multiples of the value's size",
+      "acceptableAnswers": [
+        "alignment",
+        "alignment requirements",
+        "CPU alignment",
+        "hardware alignment"
+      ],
+      "explanation": "CPUs require aligned access. Reading a 4-byte int from address 0x1003 requires two memory accesses (or faults on some architectures). Padding ensures each member sits at its natural alignment boundary."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the size of an empty class in C++?",
+      "options": [
+        "0 bytes",
+        "1 byte",
+        "4 bytes",
+        "8 bytes"
+      ],
+      "correctIndex": 1,
+      "explanation": "C++ guarantees every object has a unique address. An empty class is 1 byte \u2014 the smallest addressable unit. Two empty objects must have different addresses, so the compiler gives them 1 byte each."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does the virtual keyword add to an object's memory layout?",
+      "options": [
+        "Extra padding",
+        "A vtable pointer (8 bytes on 64-bit) \u2014 pointing to the virtual function table",
+        "The object becomes larger but no pointer is added",
+        "Nothing"
+      ],
+      "correctIndex": 1,
+      "explanation": "Every polymorphic class (with virtual functions) gets a hidden vptr (virtual table pointer) as its first member \u2014 8 bytes on x64. The vptr points to the vtable, which holds function pointers for all virtual methods."
+    }
+  ]
+};
+
+QUIZ_DATA['std vector & Container Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How does std::vector grow when it runs out of capacity?",
+      "options": [
+        "It grows by 1 element",
+        "It allocates a new, larger array (usually 1.5x or 2x) and moves/copies all existing elements",
+        "It uses a linked list internally",
+        "It never grows"
+      ],
+      "correctIndex": 1,
+      "explanation": "When push_back exceeds capacity, vector allocates a new buffer (commonly 1.5x in MSVC, 2x in GCC), moves/copies existing elements, and deallocates the old buffer. Amortized O(1) push_back."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the difference between vector::size() and vector::capacity()?",
+      "correctAnswer": "size() is how many elements are currently stored; capacity() is how many can be stored before reallocation",
+      "acceptableAnswers": [
+        "size is current count capacity is total space",
+        "size elements vs capacity allocated",
+        "current vs total space"
+      ],
+      "explanation": "size() = number of valid elements (0 to capacity). capacity() = number of allocated slots (size to N). reserve() increases capacity. shrink_to_fit() reduces capacity to match size."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens to iterators after a vector reallocation?",
+      "options": [
+        "They remain valid",
+        "They are invalidated \u2014 they point to the old freed buffer",
+        "They automatically update",
+        "Only end() is invalidated"
+      ],
+      "correctIndex": 1,
+      "explanation": "Reallocation moves elements to a new memory buffer. All iterators, references, and pointers to elements become invalid because they point to the OLD (now freed) buffer."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does std::vector use dynamic allocation instead of storing elements on the stack?",
+      "correctAnswer": "The size isn't known at compile time \u2014 the vector can grow and shrink at runtime",
+      "acceptableAnswers": [
+        "size unknown",
+        "dynamic size",
+        "runtime size",
+        "not known at compile time"
+      ],
+      "explanation": "Stack allocation requires compile-time-known size. Vectors can grow arbitrarily large \u2014 they need heap memory which persists across function calls and can be resized."
+    }
+  ]
+};
+
+QUIZ_DATA['RAII, Lifetimes & The Rule of Five'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does RAII stand for?",
+      "options": [
+        "Runtime Allocation Is Immediate",
+        "Resource Acquisition Is Initialization \u2014 resources are acquired in the constructor and released in the destructor",
+        "Random Access Iterator Implementation",
+        "Reusable Abstract Interface Implementation"
+      ],
+      "correctIndex": 1,
+      "explanation": "RAII ties resource lifetime to object lifetime. Constructor acquires the resource (file handle, memory, lock). Destructor releases it. No manual cleanup needed \u2014 the object's scope determines when resources are freed."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the Rule of Five in C++11 and later?",
+      "correctAnswer": "If you define any of: destructor, copy constructor, copy assignment, move constructor, or move assignment \u2014 you should define all five",
+      "acceptableAnswers": [
+        "define all five",
+        "all five special members",
+        "destructor copy move assignment"
+      ],
+      "explanation": "The Rule of Five says if your class manages a resource (like heap memory), you need to define: destructor, copy constructor, copy assignment, move constructor, and move assignment. The compiler won't generate correct defaults for resource-managing classes."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does the destructor guarantee?",
+      "options": [
+        "The object stays in memory",
+        "The destructor is automatically called when the object goes out of scope \u2014 even during stack unwinding from exceptions",
+        "The object is copied",
+        "The object moves to the heap"
+      ],
+      "correctIndex": 1,
+      "explanation": "The destructor is guaranteed to run when the object leaves scope \u2014 including during exception stack unwinding. This makes RAII exception-safe: resources are always cleaned up."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the Rule of Zero?",
+      "correctAnswer": "Prefer to let the compiler generate all special member functions by using RAII types that manage resources for you",
+      "acceptableAnswers": [
+        "let compiler generate",
+        "use RAII types",
+        "don't define special members",
+        "delegate to members"
+      ],
+      "explanation": "The Rule of Zero: don't write any special member functions. Instead, use types that manage their own resources (std::vector, std::unique_ptr, std::string). The compiler-generated defaults will be correct."
+    }
+  ]
+};
+
+QUIZ_DATA['Smart Pointers & Ownership'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::unique_ptr guarantee?",
+      "options": [
+        "Multiple owners",
+        "Single ownership \u2014 only one unique_ptr can point to the object at a time",
+        "Shared ownership",
+        "No ownership"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::unique_ptr<T> has exclusive ownership. It can't be copied \u2014 only moved. When the unique_ptr is destroyed, the owned object is deleted. This is the default choice for owning heap allocations."
+    },
+    {
+      "type": "text_input",
+      "question": "When should you use std::shared_ptr instead of std::unique_ptr?",
+      "correctAnswer": "When multiple objects need to share ownership of the same resource \u2014 the last one to release it frees the memory",
+      "acceptableAnswers": [
+        "shared ownership",
+        "multiple owners",
+        "reference counting",
+        "when multiple need access"
+      ],
+      "explanation": "std::shared_ptr uses reference counting. Multiple shared_ptrs can point to the same object. When the last shared_ptr is destroyed (or reassigned), the object is deleted. Use sparingly \u2014 reference counting has overhead."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does std::weak_ptr prevent?",
+      "options": [
+        "Memory leaks",
+        "Circular references \u2014 weak_ptr doesn't keep the object alive, breaking reference cycles",
+        "Null pointers",
+        "Buffer overflows"
+      ],
+      "correctIndex": 1,
+      "explanation": "weak_ptr breaks shared_ptr reference cycles. A owns B via shared_ptr, B owns A via shared_ptr = both never deleted. Change one to weak_ptr \u2014 the cycle is broken."
+    },
+    {
+      "type": "text_input",
+      "question": "What does std::make_unique do that new doesn't?",
+      "correctAnswer": "It allocates and constructs in one call \u2014 exception-safe and no raw new/delete",
+      "acceptableAnswers": [
+        "one call",
+        "exception safe",
+        "no raw new",
+        "allocates and constructs"
+      ],
+      "explanation": "std::make_unique<T>(args) allocates memory and constructs T in one operation. If an exception occurs between new and unique_ptr construction, make_unique guarantees no leak. Prefer make_unique over raw new."
+    }
+  ]
+};
+
+QUIZ_DATA['Move Semantics & Perfect Forwarding', 'References', 'const Correctness', 'static in C++', 'Enums & enum class', 'Preprocessor & Macros', 'Type Deduction — auto, decltype', 'Structured Bindings', 'Operator Overloading', 'Inheritance & Virtual Functions', 'Lambdas & Function Objects', 'C++ Casting & RTTI', 'Templates & Concepts', 'C++ vs UE C++ — Key Differences', 'String Types & string_view', 'Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does std::move actually do?",
+      "options": [
+        "Moves the object",
+        "Casts the object to an rvalue reference \u2014 enabling move instead of copy",
+        "Deletes the object",
+        "Transfers ownership"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::move doesn't move anything! It's a cast \u2014 it converts an lvalue to an rvalue reference, which allows the compiler to choose the move constructor/assignment instead of the copy version. The actual moving happens in the move constructor."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the key performance benefit of move semantics?",
+      "correctAnswer": "Transfers ownership of resources (like heap pointers) instead of deep-copying them",
+      "acceptableAnswers": [
+        "no deep copy",
+        "transfers resources",
+        "steals resources",
+        "avoids copying"
+      ],
+      "explanation": "Move constructor 'steals' the source object's internal pointers and sets the source's pointers to null. No deep copy of heap data. O(1) instead of O(n). The source object is left in a valid-but-unspecified state."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens if you std::move from an object and then use it?",
+      "options": [
+        "The program crashes",
+        "The object is in a valid-but-unspecified state \u2014 it can be destroyed or assigned to, but shouldn't be read",
+        "The object is perfectly fine",
+        "The move is reversed"
+      ],
+      "correctIndex": 1,
+      "explanation": "A moved-from object must still be destructible and assignable. But its state is unspecified \u2014 reading from it is undefined behavior. The standard requires moved-from objects to be in a 'valid but unspecified' state."
+    }
+  ]
+};
+
+QUIZ_DATA['References'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the key difference between a reference and a pointer?",
+      "options": [
+        "Pointers are faster",
+        "A reference cannot be null and cannot be reassigned \u2014 it's an alias, not a separate object",
+        "References use more memory",
+        "There is no difference"
+      ],
+      "correctIndex": 1,
+      "explanation": "A reference is an alias \u2014 another name for an existing object. It must be initialized, can't be null, and can't be changed to refer to a different object. A pointer is a separate variable that holds an address and can be null or reassigned."
+    },
+    {
+      "type": "text_input",
+      "question": "Why are references preferred over pointers for function parameters?",
+      "correctAnswer": "They guarantee a valid object \u2014 no null check needed",
+      "acceptableAnswers": [
+        "no null check",
+        "guaranteed valid",
+        "no null",
+        "valid object"
+      ],
+      "explanation": "A reference parameter must refer to a valid object. No need for `if (ptr != nullptr)` checks. Clearer intent: 'this function needs this object.'"
+    },
+    {
+      "type": "multiple_choice",
+      "question": "Can a reference be null in standard C++?",
+      "options": [
+        "Yes, you can create a null reference",
+        "No \u2014 a null reference is undefined behavior. Dereferencing a null pointer to create a reference crashes immediately",
+        "Sometimes, if you use nullptr",
+        "Only in debug mode"
+      ],
+      "correctIndex": 1,
+      "explanation": "Creating a reference from a dereferenced null pointer (int& r = *nullptr) is undefined behavior. The program may crash immediately or silently corrupt data. References are assumed to always be valid."
+    }
+  ]
+};
+
+QUIZ_DATA['const Correctness'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does const int* p mean?",
+      "options": [
+        "p is a constant pointer to an int",
+        "p is a pointer to a constant int \u2014 you can't modify the int through p",
+        "Both p and the int are constant",
+        "Neither is constant"
+      ],
+      "correctIndex": 1,
+      "explanation": "Read right-to-left: const int* = pointer to int that is const. You can change p (make it point elsewhere), but you cannot modify *p (the pointed-to value)."
+    },
+    {
+      "type": "text_input",
+      "question": "What does a const member function guarantee?",
+      "correctAnswer": "The function will not modify the observable state of the object",
+      "acceptableAnswers": [
+        "won't modify",
+        "no modification",
+        "doesn't change state",
+        "read-only"
+      ],
+      "explanation": "void foo() const promises not to modify member variables (except mutable ones). const objects can only call const member functions. This is enforced by the compiler."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the mutable keyword for?",
+      "options": [
+        "Makes a variable unchangeable",
+        "Allows a member variable to be modified even in const member functions",
+        "Deletes a variable",
+        "Makes a variable global"
+      ],
+      "correctIndex": 1,
+      "explanation": "mutable marks a member variable that CAN be changed by const member functions. Use for caching, reference counting, mutexes \u2014 internal state that doesn't affect the object's observable behavior."
+    }
+  ]
+};
+
+QUIZ_DATA['static in C++'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a static local variable do?",
+      "options": [
+        "It's destroyed when the function returns",
+        "It persists across function calls \u2014 initialized only once, keeps its value between invocations",
+        "It's allocated on the heap",
+        "It can only be accessed inside an if statement"
+      ],
+      "correctIndex": 1,
+      "explanation": "static int count = 0; inside a function: count is initialized once (first call), and retains its value across all subsequent calls. Thread-safe initialization since C++11."
+    },
+    {
+      "type": "text_input",
+      "question": "What does static mean for a global function?",
+      "correctAnswer": "Internal linkage \u2014 the function is only visible within this .cpp file",
+      "acceptableAnswers": [
+        "internal linkage",
+        "only in this file",
+        "file scope",
+        "not visible outside"
+      ],
+      "explanation": "static void helper() in global scope: the function is only callable from this translation unit. Other .cpp files can have their own static helper() \u2014 no naming conflict."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the static initialization order fiasco?",
+      "options": [
+        "Static variables are always initialized correctly",
+        "Two static variables in different .cpp files depend on each other \u2014 one may be used before it's initialized",
+        "Static variables never initialize",
+        "Static variables are initialized twice"
+      ],
+      "correctIndex": 1,
+      "explanation": "Global statics in different translation units have undefined initialization order. If A's constructor uses B and B hasn't been constructed yet \u2014 undefined behavior. Use constinit (C++20) or the Singleton pattern to avoid."
+    }
+  ]
+};
+
+QUIZ_DATA['Enums & enum class'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the main advantage of enum class over plain enum?",
+      "options": [
+        "It's faster",
+        "Values are scoped \u2014 you write Color::Red instead of just Red. No implicit conversion to int",
+        "It uses less memory",
+        "It supports more values"
+      ],
+      "correctIndex": 1,
+      "explanation": "enum class (C++11) provides scoped enumerators \u2014 no name collisions between different enums. No implicit conversion to int (safer). Can specify underlying type: enum class Flags : uint8_t."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you convert an enum class value to its underlying integer?",
+      "correctAnswer": "static_cast<int>(value) or static_cast<std::underlying_type_t<Enum>>(value)",
+      "acceptableAnswers": [
+        "static_cast",
+        "static_cast<int>",
+        "underlying_type_t",
+        "cast"
+      ],
+      "explanation": "enum class doesn't implicitly convert to int. Use static_cast<int>(myEnum) to get the numeric value. For generic code: static_cast<std::underlying_type_t<MyEnum>>(value)."
+    }
+  ]
+};
+
+QUIZ_DATA['Preprocessor & Macros', 'Type Deduction — auto, decltype', 'Structured Bindings', 'Operator Overloading', 'Inheritance & Virtual Functions', 'Lambdas & Function Objects', 'C++ Casting & RTTI', 'Templates & Concepts', 'C++ vs UE C++ — Key Differences', 'String Types & string_view', 'Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does #include do?",
+      "options": [
+        "Runs the included file",
+        "Copies the ENTIRE content of the included file into this file \u2014 text substitution",
+        "Creates a reference to the file",
+        "Compiles the included file separately"
+      ],
+      "correctIndex": 1,
+      "explanation": "#include <iostream> is text substitution. The preprocessor copies the entire header (25,000-35,000 lines for iostream) into your file. The compiler then sees one massive translation unit."
+    },
+    {
+      "type": "text_input",
+      "question": "Why are include guards (#ifndef/#define/#endif or #pragma once) necessary?",
+      "correctAnswer": "To prevent multiple inclusions of the same header, which would cause duplicate definitions",
+      "acceptableAnswers": [
+        "prevent multiple inclusions",
+        "avoid duplicates",
+        "no double include",
+        "include once"
+      ],
+      "explanation": "Without guards, if A.h includes B.h and C.h also includes B.h, B.h gets included twice \u2014 duplicate class definitions, compile errors. Guards make the second inclusion a no-op."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the main danger of function-like macros?",
+      "options": [
+        "They're too slow",
+        "Double evaluation \u2014 MAX(x++, y) increments x twice. And no type checking",
+        "They can't use semicolons",
+        "They don't work in headers"
+      ],
+      "correctIndex": 1,
+      "explanation": "#define MAX(a,b) ((a)>(b)?(a):(b)) \u2014 MAX(x++, 10) expands to ((x++)>(10)?(x++):(10)). x is incremented TWICE. Prefer inline functions or constexpr functions over macros."
+    }
+  ]
+};
+
+QUIZ_DATA['Type Deduction — auto, decltype'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does auto deduce?",
+      "options": [
+        "The largest possible type",
+        "The type of the initializer \u2014 auto x = 5 deduces int",
+        "void",
+        "A template type"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto deduces the type from the initializer expression. auto x = 5 \u2192 int. auto y = 3.14 \u2192 double. auto strips references and top-level const by default \u2014 use auto& or const auto& to preserve them."
+    },
+    {
+      "type": "text_input",
+      "question": "What does decltype do?",
+      "correctAnswer": "Gives the declared type of an expression without evaluating it",
+      "acceptableAnswers": [
+        "declared type",
+        "type of expression",
+        "declared type of expression"
+      ],
+      "explanation": "decltype(x) returns the declared type of x. Unlike auto, decltype preserves references and const. decltype(expr) does NOT evaluate expr \u2014 it only inspects the type."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does auto&& deduce in a range-based for loop?",
+      "options": [
+        "A copy",
+        "A forwarding reference \u2014 binds to anything (lvalue, rvalue, const, non-const)",
+        "A constant reference",
+        "A pointer"
+      ],
+      "correctIndex": 1,
+      "explanation": "for (auto&& item : container) \u2014 auto&& is a forwarding reference. It binds to lvalues as an lvalue reference and rvalues as an rvalue reference. 'Just works' for any container element type."
+    }
+  ]
+};
+
+QUIZ_DATA['Structured Bindings'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does structured binding (C++17) do?",
+      "options": [
+        "Binds variables to structure members",
+        "Unpacks a tuple, pair, or struct into individually named variables in one declaration",
+        "Creates a new structure",
+        "Binds a lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": "auto [x, y, z] = point3d; declares x, y, z and binds them to the members of point3d. Works with tuples, pairs, arrays, and structs with public members."
+    },
+    {
+      "type": "text_input",
+      "question": "What header provides std::tie, and how is it different from structured bindings?",
+      "correctAnswer": "<tuple>. std::tie assigns to existing variables; structured bindings declare new ones.",
+      "acceptableAnswers": [
+        "<tuple>",
+        "tuple",
+        "tie assigns to existing"
+      ],
+      "explanation": "std::tie(x, y) = func() assigns to already-declared x and y. auto [x, y] = func() declares new x and y. Structured bindings are cleaner for new variables; tie is for reusing existing ones."
+    }
+  ]
+};
+
+QUIZ_DATA['Operator Overloading'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Which operators CANNOT be overloaded in C++?",
+      "options": [
+        "+ and -",
+        ":: (scope resolution), . (member access), .* (pointer-to-member), ?: (ternary)",
+        "== and !=",
+        "* and &"
+      ],
+      "correctIndex": 1,
+      "explanation": "Four operators cannot be overloaded: :: (scope resolution), . (member access), .* (pointer-to-member), and ?: (ternary conditional). Everything else \u2014 including new, delete, ->, (), [] \u2014 can be overloaded."
+    },
+    {
+      "type": "text_input",
+      "question": "Why should operator overloading preserve the expected semantics?",
+      "correctAnswer": "Users expect + to add, == to compare equality. Violating this makes code unreadable and bug-prone.",
+      "acceptableAnswers": [
+        "expected semantics",
+        "don't surprise users",
+        "natural meaning",
+        "intuitive"
+      ],
+      "explanation": "If your Vector::operator+() subtracts, no one will trust your code. Overload operators to match their built-in meaning: + adds, == compares, [] indexes, << inserts. Don't make + launch a network request."
+    }
+  ]
+};
+
+QUIZ_DATA['Inheritance & Virtual Functions'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the virtual keyword on a function do?",
+      "options": [
+        "Makes the function faster",
+        "Enables dynamic dispatch \u2014 the correct derived class version is called based on the object's actual type, not the pointer type",
+        "Makes the function static",
+        "Prevents inheritance"
+      ],
+      "correctIndex": 1,
+      "explanation": "virtual enables runtime polymorphism. Base* ptr = new Derived; ptr->foo(); \u2014 if foo is virtual, Derived::foo() is called (vtable lookup). If not virtual, Base::foo() is called (compile-time binding)."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the purpose of a pure virtual function (= 0)?",
+      "correctAnswer": "Makes the class abstract \u2014 it cannot be instantiated. Derived classes MUST override this function.",
+      "acceptableAnswers": [
+        "abstract",
+        "cannot instantiate",
+        "must override",
+        "interface"
+      ],
+      "explanation": "virtual void draw() = 0; makes draw pure virtual. The class becomes abstract \u2014 no objects can be created. Derived classes must provide an implementation to become concrete. This is how C++ defines interfaces."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the vtable cost?",
+      "options": [
+        "No cost",
+        "One pointer per object (8 bytes) + one indirection per virtual call (~1-2 cycles)",
+        "Doubles object size",
+        "There is no vtable"
+      ],
+      "correctIndex": 1,
+      "explanation": "Each polymorphic object gets a hidden vptr (8 bytes on x64). Each virtual call does: load vptr \u2192 load function pointer from vtable \u2192 call. ~1-2 extra cycles. The real cost is preventing inlining \u2014 the compiler can't inline through a vtable."
+    }
+  ]
+};
+
+QUIZ_DATA['Lambdas & Function Objects', 'C++ Casting & RTTI', 'Templates & Concepts', 'C++ vs UE C++ — Key Differences', 'String Types & string_view', 'Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the [] in a lambda capture?",
+      "options": [
+        "The lambda body",
+        "Nothing \u2014 empty capture list means no external variables are captured",
+        "All local variables by value",
+        "All local variables by reference"
+      ],
+      "correctIndex": 1,
+      "explanation": "[] = capture nothing. [=] = capture everything by value. [&] = capture everything by reference. [x, &y] = capture x by value, y by reference. The capture list defines what the lambda can access from its enclosing scope."
+    },
+    {
+      "type": "text_input",
+      "question": "What is a lambda expression at the compiler level?",
+      "correctAnswer": "Syntactic sugar for a function object (functor) \u2014 the compiler generates an anonymous class with operator()",
+      "acceptableAnswers": [
+        "function object",
+        "functor",
+        "anonymous class",
+        "compiler-generated class"
+      ],
+      "explanation": "auto f = [](int x) { return x + 1; }; generates an anonymous class with an inline operator()(int) const. Lambdas are zero-overhead \u2014 they compile to the same code as a hand-written functor."
+    }
+  ]
+};
+
+QUIZ_DATA['C++ Casting & RTTI'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does static_cast do?",
+      "options": [
+        "Checks types at runtime",
+        "Compile-time cast \u2014 converts between related types with no runtime overhead",
+        "Dynamic dispatch",
+        "Moves objects"
+      ],
+      "correctIndex": 1,
+      "explanation": "static_cast converts at compile time \u2014 no runtime checks. Use for: upcasting in inheritance, numeric conversions (int\u2192float), void*\u2192T*. No RTTI needed. Fast but unsafe for downcasting."
+    },
+    {
+      "type": "text_input",
+      "question": "When does dynamic_cast return nullptr?",
+      "correctAnswer": "When the cast fails \u2014 the object is not actually of the target type",
+      "acceptableAnswers": [
+        "when cast fails",
+        "not the target type",
+        "wrong type",
+        "type mismatch"
+      ],
+      "explanation": "dynamic_cast<Derived*>(base) returns nullptr if base doesn't actually point to a Derived object. This is the safe downcast \u2014 check the result. Requires RTTI (virtual functions)."
+    }
+  ]
+};
+
+QUIZ_DATA['Templates & Concepts'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "When is a function template instantiated?",
+      "options": [
+        "When it's defined",
+        "When it's first called with specific types \u2014 the compiler generates a concrete function for those types",
+        "At program startup",
+        "Never \u2014 templates are abstract"
+      ],
+      "correctIndex": 1,
+      "explanation": "Templates are blueprints. The compiler generates a concrete function/class only when the template is used with specific types. Each unique type combination produces a separate instantiation."
+    },
+    {
+      "type": "text_input",
+      "question": "What problem do C++20 concepts solve?",
+      "correctAnswer": "They constrain template parameters with compile-time predicates \u2014 giving clear error messages instead of pages of template vomit",
+      "acceptableAnswers": [
+        "constrain templates",
+        "clear error messages",
+        "compile-time predicates",
+        "type constraints"
+      ],
+      "explanation": "template<typename T> requires std::integral<T> \u2014 the concept std::integral checks that T is an integer type at compile time. Using a non-integral type produces a clear error: 'T does not satisfy integral.'"
+    }
+  ]
+};
+
+QUIZ_DATA['C++ vs UE C++ — Key Differences'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Why does UE disable C++ exceptions?",
+      "options": [
+        "Exceptions are too slow for game code \u2014 the table-based unwinding mechanism adds overhead even when not thrown",
+        "They don't work on consoles",
+        "They cause memory leaks",
+        "Epic doesn't like them"
+      ],
+      "correctIndex": 0,
+      "explanation": "C++ exceptions use table-based stack unwinding that requires RTTI metadata and adds branches to every function. UE disables them (/GR- flag) for performance. Instead, UE uses return codes, check()/ensure() macros, and IsValid() checks."
+    },
+    {
+      "type": "text_input",
+      "question": "What replaces dynamic_cast in Unreal Engine?",
+      "correctAnswer": "Cast<T>() \u2014 UE's reflection-based cast that's faster and doesn't require C++ RTTI",
+      "acceptableAnswers": [
+        "Cast",
+        "Cast<T>",
+        "Cast<T>()"
+      ],
+      "explanation": "Cast<T>(Object) uses UE's reflection system for type checking \u2014 faster than dynamic_cast which requires RTTI. CastChecked<T>() crashes with a diagnostic if the cast fails. Cast<T>() returns nullptr on failure."
+    }
+  ]
+};
+
+QUIZ_DATA['String Types & string_view'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is std::string_view?",
+      "options": [
+        "A copy of a string",
+        "A non-owning view into a string \u2014 holds a pointer and length, no allocation",
+        "A mutable string",
+        "A string builder"
+      ],
+      "correctIndex": 1,
+      "explanation": "std::string_view (C++17) is a read-only reference to a character sequence. It doesn't own the data \u2014 just a pointer + length. Perfect for function parameters: no copy, no allocation, works with const char*, std::string, and string literals."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the danger of std::string_view?",
+      "correctAnswer": "It's non-owning \u2014 the underlying data must outlive the string_view, or it becomes a dangling reference",
+      "acceptableAnswers": [
+        "dangling",
+        "must outlive",
+        "non-owning",
+        "lifetime"
+      ],
+      "explanation": "string_view sv = GetTemporaryString(); \u2014 the temporary string is destroyed, but sv still points to its memory. Reading sv is undefined behavior. Always ensure the source string lives longer than the view."
+    }
+  ]
+};
+
+QUIZ_DATA['Explicit & Implicit Conversion'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the explicit keyword prevent?",
+      "options": [
+        "Copy construction",
+        "Implicit conversions \u2014 the constructor can only be called explicitly, not via assignment-like syntax",
+        "Move construction",
+        "Inheritance"
+      ],
+      "correctIndex": 1,
+      "explanation": "explicit MyClass(int x) prevents: MyClass obj = 5; (implicit conversion). You must write: MyClass obj(5); or MyClass obj = MyClass(5);. Prevents accidental conversions."
+    },
+    {
+      "type": "text_input",
+      "question": "Why should most single-argument constructors be explicit?",
+      "correctAnswer": "To prevent surprising implicit conversions that can cause bugs",
+      "acceptableAnswers": [
+        "prevent implicit",
+        "prevent surprises",
+        "avoid bugs",
+        "explicit is safer"
+      ],
+      "explanation": "void foo(MyClass m); foo(42); \u2014 without explicit, 42 implicitly constructs a MyClass. This is surprising and hides bugs. explicit makes the conversion intentional and visible."
+    }
+  ]
+};
+
+QUIZ_DATA['Trigonometry & Vectors'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is a dot product and what does it tell you?",
+      "options": [
+        "A * B = vector result",
+        "A\u00b7B = |A||B|cos(\u03b8) \u2014 a scalar that tells you how aligned two vectors are",
+        "A\u00b7B = the angle between vectors",
+        "A\u00b7B = a perpendicular vector"
+      ],
+      "correctIndex": 1,
+      "explanation": "Dot product = |A||B|cos(\u03b8). If result > 0: vectors point in similar direction. If 0: perpendicular. If < 0: opposite directions. Used everywhere: lighting (N\u00b7L), projection, falloff."
+    },
+    {
+      "type": "text_input",
+      "question": "What does the cross product produce?",
+      "correctAnswer": "A vector perpendicular to both input vectors, with magnitude |A||B|sin(\u03b8)",
+      "acceptableAnswers": [
+        "perpendicular vector",
+        "a vector",
+        "perpendicular",
+        "normal"
+      ],
+      "explanation": "Cross product A\u00d7B gives a vector perpendicular to both A and B. Magnitude = |A||B|sin(\u03b8) = area of parallelogram. Used for: normal calculation, torque, right/left determination."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is normalization?",
+      "options": [
+        "Making a vector longer",
+        "Dividing a vector by its length \u2014 resulting in a unit vector of length 1",
+        "Adding two vectors",
+        "Converting to degrees"
+      ],
+      "correctIndex": 1,
+      "explanation": "Normalized vector = v / |v|. Result has length 1 but same direction. Used when you only care about direction: surface normals, light direction, aiming. Unreal: v.GetSafeNormal()."
+    }
+  ]
+};
+
+QUIZ_DATA['Matrices & Coordinate Systems'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a 4x4 transformation matrix store?",
+      "options": [
+        "Only rotation",
+        "Translation, rotation, and scale in one matrix",
+        "Only scale",
+        "Only translation"
+      ],
+      "correctIndex": 1,
+      "explanation": "A 4x4 homogeneous matrix encodes: the 3x3 rotation/scale in the top-left, the translation in the last column, and perspective in the bottom row. Multiply any point by the matrix to transform it."
+    },
+    {
+      "type": "text_input",
+      "question": "Why are matrices multiplied in reverse order?",
+      "correctAnswer": "Matrix multiplication is not commutative \u2014 M_translation * M_rotation applies rotation first, then translation",
+      "acceptableAnswers": [
+        "not commutative",
+        "order matters",
+        "last matrix applies first",
+        "right to left"
+      ],
+      "explanation": "v' = T * R * v. The rightmost matrix (R) is applied to v first, then T. This reversed order is because matrix multiplication is associative but not commutative."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the difference between row-major and column-major matrix storage?",
+      "options": [
+        "They produce different results",
+        "Row-major stores rows contiguously; column-major stores columns contiguously. They're mathematically equivalent but memory layout differs",
+        "One is faster",
+        "One is for 2D only"
+      ],
+      "correctIndex": 1,
+      "explanation": "Row-major: elements of a row are adjacent in memory. Column-major: elements of a column are adjacent. OpenGL uses column-major; DirectX uses row-major. Unreal uses row-major (matching DirectX)."
+    }
+  ]
+};
+
+QUIZ_DATA['Quaternions & 3D Rotations'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What problem do quaternions solve that Euler angles don't?",
+      "options": [
+        "They're faster",
+        "Gimbal lock \u2014 Euler angles lose a degree of freedom at certain orientations",
+        "They use less memory",
+        "They're easier to visualize"
+      ],
+      "correctIndex": 1,
+      "explanation": "Gimbal lock occurs when two rotation axes align \u2014 you lose one degree of freedom. Quaternions (4D complex numbers) represent rotation without gimbals \u2014 no lock possible. Used for all 3D rotation in game engines."
+    },
+    {
+      "type": "text_input",
+      "question": "How many numbers does a quaternion store?",
+      "correctAnswer": "4 \u2014 (x, y, z, w) where xyz is the axis * sin(\u03b8/2) and w is cos(\u03b8/2)",
+      "acceptableAnswers": [
+        "4",
+        "four",
+        "x y z w"
+      ],
+      "explanation": "A quaternion is 4 floats: q = (x, y, z, w). The axis of rotation determines the xyz direction; w encodes the rotation amount. FQuat in Unreal stores exactly these 4 values."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Interpolation & Kinematics'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::Lerp do?",
+      "options": [
+        "Linearly interpolates between A and B \u2014 result = A + (B-A) * Alpha",
+        "Loops a value",
+        "Lerps backwards",
+        "Creates a curve"
+      ],
+      "correctIndex": 0,
+      "explanation": "Lerp(A, B, Alpha) returns A when Alpha=0, B when Alpha=1, and values between for 0<Alpha<1. Linear: constant rate. Used for smooth transitions, blending animations, moving objects."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the difference between linear interpolation and easing?",
+      "correctAnswer": "Linear has constant speed; easing uses non-linear functions for acceleration/deceleration effects",
+      "acceptableAnswers": [
+        "constant vs non-linear",
+        "speed changes",
+        "acceleration",
+        "easing curves"
+      ],
+      "explanation": "Linear: constant velocity. Ease-in: starts slow, speeds up (quadratic). Ease-out: starts fast, slows down. Ease-in-out: slow-fast-slow. These mimic natural motion (friction, gravity, anticipation)."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision Detection Math'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is an AABB?",
+      "options": [
+        "A type of sphere",
+        "Axis-Aligned Bounding Box \u2014 a box whose edges are parallel to the world axes",
+        "A rotating bounding box",
+        "A circle"
+      ],
+      "correctIndex": 1,
+      "explanation": "AABB = Axis-Aligned Bounding Box. Defined by min and max points. Fast to test: just compare coordinate ranges. Used as the first-pass cheap check before more expensive collision tests."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the separating axis theorem (SAT)?",
+      "correctAnswer": "If you can find an axis where the projections of two convex shapes don't overlap, they don't collide",
+      "acceptableAnswers": [
+        "separating axis",
+        "no overlap on any axis",
+        "find axis where no overlap"
+      ],
+      "explanation": "SAT: project both shapes onto candidate axes (face normals, edge cross products). If any axis shows no overlap, the shapes are separated \u2014 no collision. If ALL axes overlap, collision exists."
+    }
+  ]
+};
+
+QUIZ_DATA['Geometric Algebra'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What advantage does Geometric Algebra offer over quaternions + vectors?",
+      "options": [
+        "It's faster",
+        "A unified system \u2014 same algebra handles rotations, reflections, translations, and projections",
+        "It uses less memory",
+        "It's older"
+      ],
+      "correctIndex": 1,
+      "explanation": "Geometric Algebra unifies vectors, quaternions, complex numbers, and projections into one algebraic system. Rotors (GA's rotation primitive) naturally handle any dimension. Used in modern physics and advanced game math."
+    }
+  ]
+};
+
+QUIZ_DATA['FVector, FRotator, FQuat — The Core Types'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How many components does FVector store?",
+      "options": [
+        "2 (x, y)",
+        "3 (X, Y, Z) \u2014 each is a double or float",
+        "4 (x, y, z, w)",
+        "1"
+      ],
+      "correctIndex": 1,
+      "explanation": "FVector stores 3 floats: X, Y, Z. It's the workhorse of UE math \u2014 positions, directions, velocities, scales, colors. FVector::ZeroVector, FVector::UpVector, etc. are predefined constants."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you convert FRotator to FQuat?",
+      "correctAnswer": "FQuat(FRotator). FQuat has a constructor that takes FRotator.",
+      "acceptableAnswers": [
+        "FQuat(FRotator)",
+        "FQuat constructor",
+        "FQuat::FQuat"
+      ],
+      "explanation": "FQuat MyQuat = FQuat(MyRotator); converts Euler angles to a quaternion. The conversion handles the trig (sin/cos of pitch/yaw/roll). Quaternion is the internal rotation representation."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does FRotator::GetNormalized() do?",
+      "options": [
+        "Divides by length",
+        "Wraps pitch/yaw/roll to [-180, 180] range",
+        "Converts to FQuat",
+        "Returns a unit vector"
+      ],
+      "correctIndex": 1,
+      "explanation": "FRotator::GetNormalized() clamps each component to [-180, 180]. A rotator of (0, 370, 0) becomes (0, 10, 0). Essential for network replication and UI display \u2014 prevents values from growing unbounded."
+    }
+  ]
+};
+
+QUIZ_DATA['FTransform & FMatrix'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What three components make up an FTransform?",
+      "options": [
+        "Position, rotation, and scale",
+        "Translation, projection, and view",
+        "X, Y, and Z axes",
+        "Forward, right, and up vectors"
+      ],
+      "correctIndex": 0,
+      "explanation": "FTransform = Translation (FVector) + Rotation (FQuat) + Scale3D (FVector). This decomposes a 4x4 matrix into its logical parts. FTransform is preferred over raw matrices for ease of manipulation."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you transform a point from local to world space?",
+      "correctAnswer": "FTransform::TransformPosition(LocalPoint)",
+      "acceptableAnswers": [
+        "TransformPosition",
+        "TransformPosition()",
+        "TransformPoint"
+      ],
+      "explanation": "FTransform::TransformPosition(LocalPos) applies the transform's translation, rotation, and scale. For directions (not positions), use TransformVector() which skips the translation component."
+    }
+  ]
+};
+
+QUIZ_DATA['FMath — Interpolation & Utility'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::Clamp do?",
+      "options": [
+        "Returns a random value",
+        "Constrain a value between Min and Max",
+        "Makes the value larger",
+        "Converts to radians"
+      ],
+      "correctIndex": 1,
+      "explanation": "FMath::Clamp(Value, Min, Max) returns Value if it's between Min and Max, Min if Value < Min, Max if Value > Max. Used to keep health between 0-100, speeds within limits, etc."
+    },
+    {
+      "type": "text_input",
+      "question": "What does FMath::FInterpTo do that FMath::Lerp doesn't?",
+      "correctAnswer": "FInterpTo moves toward the target at a rate based on DeltaTime \u2014 framerate-independent smooth following",
+      "acceptableAnswers": [
+        "framerate independent",
+        "delta time",
+        "smooth following",
+        "interpolate over time"
+      ],
+      "explanation": "FInterpTo(Current, Target, DeltaTime, InterpSpeed) moves Current toward Target at InterpSpeed per second. Unlike Lerp (which takes a fixed alpha), FInterpTo uses real time \u2014 consistent speed regardless of framerate."
+    }
+  ]
+};
+
+QUIZ_DATA['Collision & Intersection Math'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does FMath::LineBoxIntersection do?",
+      "options": [
+        "Draws a box",
+        "Tests if a line segment intersects an axis-aligned box \u2014 returns hit time and point",
+        "Projects a line onto a plane",
+        "Creates a box"
+      ],
+      "correctIndex": 1,
+      "explanation": "LineBoxIntersection tests a ray/line against an AABB. Returns true if the line segment intersects the box. Used for: weapon trace validation, visibility checks, UI raycasting."
+    }
+  ]
+};
+
+QUIZ_DATA['Curves, Ranges & Random'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is FRichCurve used for?",
+      "options": [
+        "Random number generation",
+        "Keyframe-based animation curves \u2014 define how values change over time with editable keys",
+        "Mathematical proofs",
+        "UI layout"
+      ],
+      "correctIndex": 1,
+      "explanation": "FRichCurve stores keyframes (time-value pairs) with interpolation between them. Used by: UTimeline, UCurveFloat, animation blending. Supports linear, constant, and cubic interpolation between keys."
+    },
+    {
+      "type": "text_input",
+      "question": "What does FMath::RandRange do?",
+      "correctAnswer": "Returns a random integer between Min and Max (inclusive)",
+      "acceptableAnswers": [
+        "random integer",
+        "random int",
+        "random number between"
+      ],
+      "explanation": "FMath::RandRange(0, 100) returns a random integer in [0, 100]. For floating point: FMath::FRandRange(0.0f, 1.0f). Seeded by FRandomStream for deterministic randomness (important for replay systems)."
+    }
+  ]
+};
+
+QUIZ_DATA['The Big O Complexity Spectrum'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does O(1) mean?",
+      "options": [
+        "The operation is always fast",
+        "Constant time \u2014 the operation takes the same number of steps regardless of input size",
+        "The operation is linear",
+        "The operation uses 1 byte"
+      ],
+      "correctIndex": 1,
+      "explanation": "O(1) = constant time. Array indexing, hash table lookup, stack push \u2014 same cost whether n=10 or n=1,000,000. The most desirable complexity."
+    },
+    {
+      "type": "text_input",
+      "question": "What complexity does binary search have?",
+      "correctAnswer": "O(log n)",
+      "acceptableAnswers": [
+        "O(log n)",
+        "log n",
+        "logarithmic"
+      ],
+      "explanation": "Binary search halves the search space each iteration. Finding a value in 1,000,000 sorted items takes ~20 comparisons (log2(1,000,000) \u2248 20). Much faster than O(n) linear scan."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does O(n\u00b2) typically indicate in code?",
+      "options": [
+        "A recursive function",
+        "Nested loops \u2014 for each element, iterate over all elements again",
+        "A single loop",
+        "A constant-time operation"
+      ],
+      "correctIndex": 1,
+      "explanation": "for (i) { for (j) { ... } } = O(n\u00b2). 1,000 items \u2192 1,000,000 operations. Common in naive collision detection (check every pair), matrix multiplication, and bubble sort."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does TArray::RemoveAt(0) have O(n) complexity?",
+      "correctAnswer": "All elements after index 0 must shift left by one position",
+      "acceptableAnswers": [
+        "elements shift",
+        "shift left",
+        "elements move"
+      ],
+      "explanation": "Removing the first element means every other element must move one slot left. 1,000 elements \u2192 999 shifts = O(n). TArray::RemoveAtSwap() is O(1) by swapping with the last element instead."
+    }
+  ]
+};
+
+QUIZ_DATA['Amortized Analysis & Real Profiling Data'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does amortized O(1) mean for TArray::Add?",
+      "options": [
+        "Every Add is O(1)",
+        "Most Adds are O(1), but occasionally an O(n) reallocation occurs \u2014 the average over many operations is constant",
+        "Add is always O(n)",
+        "Add is O(log n)"
+      ],
+      "correctIndex": 1,
+      "explanation": "TArray::Add is amortized O(1): usually just writes to the next slot. But when the buffer is full, a reallocation copies all elements \u2014 one O(n) operation. Spread across all Adds, the average is constant."
+    },
+    {
+      "type": "text_input",
+      "question": "When would TArray::Add cause a frame spike at 60 FPS?",
+      "correctAnswer": "When a reallocation occurs \u2014 copying thousands of elements in one frame",
+      "acceptableAnswers": [
+        "reallocation",
+        "resizing",
+        "buffer full",
+        "capacity exceeded"
+      ],
+      "explanation": "A reallocation at 10,000 elements copies all 10,000. At 60 FPS (16.7ms budget), this can spike frame time. Reserve() prevents reallocations by pre-allocating enough capacity."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What tool does Unreal provide for profiling reallocation spikes?",
+      "options": [
+        "The editor",
+        "Unreal Insights \u2014 shows frame timing, memory allocation, and reallocation events",
+        "Task Manager",
+        "A stopwatch"
+      ],
+      "correctIndex": 1,
+      "explanation": "Unreal Insights captures per-frame memory events, including TArray reallocations. Use it to find code that frequently reallocates \u2014 then add Reserve() or switch to a fixed-size TArray."
+    }
+  ]
+};
+
+QUIZ_DATA['Applied Examples - Raw C++ vs Unreal Engine'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Why is linear search sometimes faster than hash lookup for very small N?",
+      "options": [
+        "Hash functions are always slower",
+        "Cache locality \u2014 scanning 5 contiguous items can be faster than computing a hash, accessing scattered memory",
+        "Linear search is always faster",
+        "Hash tables use more memory"
+      ],
+      "correctIndex": 1,
+      "explanation": "For N < ~10-20, linear scan wins. The hash function overhead + cache miss on the bucket outweighs scanning a few cache-hot elements. Know your data size \u2014 don't blindly use TMap for everything."
+    },
+    {
+      "type": "text_input",
+      "question": "How do spatial partitioning structures reduce collision detection from O(n\u00b2) to O(n)?",
+      "correctAnswer": "They divide space into cells or trees \u2014 each object only checks against nearby objects, not all objects",
+      "acceptableAnswers": [
+        "divide space",
+        "only check nearby",
+        "cells or trees",
+        "spatial partitioning"
+      ],
+      "explanation": "Octrees, BVH, and spatial hashing bucket objects by location. Instead of checking every pair (O(n\u00b2)), each object only tests against its spatial neighbors (O(n) average). Essential for physics and culling."
     }
   ]
 };
