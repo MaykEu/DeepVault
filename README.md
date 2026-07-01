@@ -75,7 +75,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 - **Pure HTML/CSS/JS** — no frameworks, no npm, no build step
 - **localStorage** — all data stays on your device
 - **GitHub Pages** — free hosting, instant deploy
-- **MIT License** — do whatever you want
+- **Code**: MIT — use the HTML/CSS/JS freely
+- **Content**: All Rights Reserved — notes and quizzes may not be republished (see [CONTENT_LICENSE.md](CONTENT_LICENSE.md))
 
 ---
 
