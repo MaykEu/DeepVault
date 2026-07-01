@@ -1,0 +1,147 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.logo:hover {
+  text-decoration: none;
+}
+
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.breadcrumb span {
+  margin: 0 0.3rem;
+}
+.breadcrumb a {
+  color: var(--text-secondary);
+}
+.breadcrumb a:hover {
+  color: var(--accent);
+}
+.breadcrumb .current {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+#app-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Dashboard grid */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* Topic hub list */
+.topic-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Quiz layout */
+.quiz-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.quiz-question {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 1.2rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Summary */
+.summary-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  max-width: 450px;
+  margin: 2rem auto;
+}
+
+.score-ring {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.5rem;
+}
+
+/* History */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.history-entry {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 600px) {
+  #app-main {
+    padding: 1rem;
+  }
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+}
