@@ -19,18 +19,15 @@
 
 
 [data-theme="dark"] {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #222240;
-  --bg-tertiary: #2a2a4a;
-  --border: #3a3a5c;
-  --text-primary: #d4d4e8;
-  --text-secondary: #9999b3;
-  --text-muted: #555577;
-  --accent: #6e8efb;
-  --accent-hover: #8ba8ff;
-  --success: #3fb950;
-  --danger: #f85149;
-  --warning: #d2991d;
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d2d;
+  --border: #3e3e3e;
+  --text-primary: #cccccc;
+  --text-secondary: #999999;
+  --text-muted: #5a5a5a;
+  --accent: #569cd6;
+  --accent-hover: #6aace8;
   --shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
