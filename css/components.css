@@ -2,31 +2,25 @@
 .folder-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 1.5rem;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s, border-left-color 0.15s;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 .folder-card:hover {
   border-color: var(--accent);
+  border-left-color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent);
 }
-.folder-card .folder-icon {
-  font-size: 1.8rem;
-}
-.folder-card .folder-name {
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-.folder-card .folder-meta {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
+.folder-card .folder-icon { font-size: 1.8rem; }
+.folder-card .folder-name { font-size: 1.05rem; font-weight: 600; }
+.folder-card .folder-meta { font-size: 0.8rem; color: var(--text-secondary); }
 .folder-card .folder-progress {
-  height: 3px;
+  height: 4px;
   background: var(--bg-tertiary);
   border-radius: 2px;
   margin-top: auto;
@@ -35,7 +29,7 @@
 .folder-card .folder-progress-fill {
   height: 100%;
   border-radius: 2px;
-  background: var(--success);
+  box-shadow: 0 0 6px rgba(63,185,80,0.3);
 }
 
 /* Note card */
@@ -228,7 +222,176 @@
   font-size: 0.9rem;
 }
 
-/* Coming soon badge */
+/* Learn view */
+.learn-note {
+  margin: 0 auto;
+}
+.learn-title {
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.learn-body {
+  line-height: 1.75;
+  color: var(--text-primary);
+  max-width: 900px;
+}
+.learn-body h1, .learn-body h2, .learn-body h3, .learn-body h4 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+.learn-body h2 {
+  font-size: 1.25rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+.learn-body h3 { font-size: 1.1rem; }
+.learn-body p {
+  margin-bottom: 1rem;
+}
+.learn-body code {
+  background: var(--bg-tertiary);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+.learn-body pre {
+  background: var(--bg-tertiary);
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+}
+.learn-body pre code {
+  background: none;
+  padding: 0;
+}
+.learn-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  table-layout: auto;
+}
+.learn-body th, .learn-body td {
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.learn-body th {
+  background: var(--bg-tertiary);
+  font-weight: 600;
+}
+.learn-body blockquote.callout {
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background: var(--bg-secondary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.learn-body blockquote.callout strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.learn-body blockquote.callout-tip { border-left-color: var(--success); }
+.learn-body blockquote.callout-tip strong { color: var(--success); }
+.learn-body blockquote.callout-warning { border-left-color: var(--warning); }
+.learn-body blockquote.callout-warning strong { color: var(--warning); }
+.learn-body blockquote.callout-danger { border-left-color: var(--danger); }
+.learn-body blockquote.callout-danger strong { color: var(--danger); }
+.learn-body hr {
+  margin: 2rem 0;
+}
+.learn-body ul, .learn-body ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.learn-body li {
+  margin-bottom: 0.4rem;
+}
+.learn-body li:last-child {
+  margin-bottom: 0;
+}
+.learn-body strong {
+  color: #fff;
+}
+
+/* Syntax highlighting */
+.syn-kw { color: #ff7b72; }
+.syn-type { color: #79c0ff; }
+.syn-func { color: #d2a8ff; }
+.syn-num { color: #a5d6ff; }
+.syn-string { color: #a5d6ff; }
+.syn-comment { color: #8b949e; font-style: italic; }
+.syn-pp { color: #f0883e; }
+
+/* Sidebar TOC — fixed to right edge of viewport */
+.learn-toc {
+  position: fixed;
+  right: max(0px, calc((100vw - 1000px) / 2 - 170px));
+  top: 76px;
+  width: 150px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: transparent;
+  border-left: 1px solid var(--border);
+  padding: 0 0 0 0.75rem;
+  font-size: 0.75rem;
+  z-index: 50;
+}
+.learn-toc h4 {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+.toc-link {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 0.12rem 0;
+  display: block;
+  transition: color 0.1s;
+}
+.toc-link:hover {
+  color: var(--text-primary);
+}
+.toc-link.toc-active {
+  color: var(--accent);
+  font-weight: 500;
+}
+.toc-l2 { font-weight: 500; color: var(--text-primary); }
+.toc-l3 { font-size: 0.68rem; }
+
+.learn-layout {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.learn-note {
+  padding-right: 0;
+}
+
+.wiki-link-missing {
+  color: var(--text-muted);
+}
+.wiki-link-missing small {
+  font-size: 0.7em;
+  color: var(--text-muted);
+}
+
+@media (max-width: 800px) {
+  .learn-toc {
+    display: none;
+  }
+}
 .badge-coming {
   font-size: 0.75rem;
   background: var(--bg-tertiary);

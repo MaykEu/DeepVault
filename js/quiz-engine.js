@@ -130,7 +130,8 @@ const QuizEngine = {
       if (!el || !el.value.trim()) return;
       const answer = el.value.trim();
       s.answers[s.currentIndex] = answer;
-      const correct = answer.toLowerCase() === q.correctAnswer.toLowerCase();
+      const correct = answer.toLowerCase() === q.correctAnswer.toLowerCase()
+                       || (q.acceptableAnswers && q.acceptableAnswers.some(a => a.toLowerCase() === answer.toLowerCase()));
       s.answers[s.currentIndex + '_correct'] = correct;
       s.answers[s.currentIndex + '_given'] = answer;
     }
