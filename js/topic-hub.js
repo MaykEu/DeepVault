@@ -13,7 +13,7 @@ const TopicHub = {
         '<span class="folder-header-icon">' + folder.icon + '</span>' +
         '<div class="folder-header-meta">' +
           '<h2 class="folder-header-title">' + folder.name + '</h2>' +
-          '<span class="folder-header-stats">' + notes.length + ' modules \u00b7 ' + stats.completedNotes + ' with attempts' + '</span>' +
+          '<span class="folder-header-stats">' + notes.length + ' modules \u00b7 ' + stats.completedNotes + ' with attempts</span>' +
         '</div>' +
       '</div>' +
       '<div class="folder-header-progress">' +
@@ -22,28 +22,7 @@ const TopicHub = {
       '<span class="folder-header-pct">' + pct + '% complete</span>' +
     '</div>';
 
-    // Group notes by section headers (detect subfolder patterns or logical groups)
-    var groups = [];
-    var sectionNames = {
-      'Core Language': 'Core Language',
-      'Memory & Ownership': 'Memory & Ownership',
-      'Types & Data': 'Types & Data',
-      'OOP & Polymorphism': 'OOP & Polymorphism',
-      'Advanced': 'Advanced Math',
-      'UE Math': 'Unreal Engine Math',
-      'Cross-Cutting': 'Cross-Cutting',
-    };
-
-    // Try to detect groups from note prefix patterns
-    for (var name in sectionNames) {
-      // Not applicable, skip grouping for now — all notes in one flat list
-    }
-
-    // Build note cards
     html += '<div class="topic-hub">';
-
-    // Track if we need to show a section header
-    var lastPrefix = '';
 
     for (var i = 0; i < notes.length; i++) {
       var note = notes[i];
@@ -52,7 +31,6 @@ const TopicHub = {
       var hasQuiz = quizNotes.indexOf(note) !== -1;
       var hasLearn = NOTES_CONTENT && NOTES_CONTENT[note];
 
-      // Determine status
       var status = 'NOT STARTED';
       var statusClass = 'status-new';
       if (best !== null) {
@@ -60,7 +38,6 @@ const TopicHub = {
         statusClass = best >= 80 ? 'status-done' : 'status-progress';
       }
 
-      // Status dot
       var dotColor = best === null ? 'var(--text-muted)' : (best >= 80 ? 'var(--success)' : 'var(--warning)');
 
       var statsHtml = best !== null
@@ -73,12 +50,19 @@ const TopicHub = {
           '<div class="note-name">' + note + '</div>' +
           (statsHtml ? '<div class="note-stats">' + statsHtml + '</div>' : '') +
           '<span class="note-status-badge ' + statusClass + '">' + status + '</span>' +
-        '</div>' +
-        (hasLearn ? '<button class="btn btn-learn btn-sm" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/learn\')">\u{1F4D6} Learn</button>' : '') +
-        (hasQuiz
-          ? '<button class="btn btn-quiz btn-sm" style="margin-left:4px;" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/quiz\')">\u{1F3C6} Quiz</button>'
-          : !hasLearn ? '<span class="badge-coming">Coming soon</span>' : '') +
-      '</div>';
+        '</div>';
+
+      if (hasLearn) {
+        html += '<a class="btn btn-learn btn-sm" href="javascript:void(0)" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/learn\')">\u{1F4D6} Learn</a>';
+      }
+      if (hasQuiz) {
+        html += '<a class="btn btn-quiz btn-sm" style="margin-left:4px;" href="javascript:void(0)" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/quiz\')">\u{1F3C6} Quiz</a>';
+      }
+      if (!hasLearn && !hasQuiz) {
+        html += '<span class="badge-coming">Coming soon</span>';
+      }
+
+      html += '</div>';
     }
 
     html += '</div>';

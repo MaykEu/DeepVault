@@ -50,7 +50,7 @@ const Dashboard = {
 
     // Import/Export at bottom
     html += '<div class="toolbar" style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">' +
-      '<span style="font-size:0.75rem;color:var(--text-muted);">Progress saved to this device. Move between devices: </span>' +
+      '<span style="font-size:0.75rem;color:var(--text-muted);margin-right:auto;">Progress saved to this browser. Move between devices: </span>' +
       '<button class="btn btn-outline btn-sm" onclick="Storage.exportData()">\u{1F4E5} Export</button>' +
       '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="document.getElementById(\'import-file\').click()">\u{1F4E4} Import</button>' +
       '<input type="file" id="import-file" accept=".json" style="display:none" onchange="Storage.importData(this.files[0])">' +
