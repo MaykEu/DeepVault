@@ -9,7 +9,7 @@
 
 ## What Is This?
 
-DeepVault is an interactive learning platform built to master the stack beneath Unreal Engine — from silicon transistors to C++ templates to multiplayer replication. It comes pre-loaded with 68 notes and 67 quizzes covering:
+DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with 68 notes and 67 quizzes covering:
 
 - **Computer Systems** — 14 notes from bits through CPU architecture to GPU
 - **C++ Fundamentals** — 22 notes across Core Language, Memory, OOP, and Types
