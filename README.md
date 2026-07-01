@@ -91,4 +91,25 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 ---
 
-Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.
+Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.### Add a Brand New Category
+
+1. **Create a folder** in your Obsidian vault (e.g., `Shaders/`)
+2. **Add `.md` notes** to the folder
+3. **Add one entry** to `FOLDER_MAP` in `convert.py`:
+   ```python
+   ('shaders', 'Shader Programming', 'Shaders', '🎨', '#ff6b6b'),
+   ```
+   That's it — `convert.py` uses this to generate the dashboard entry, subfolder groups, note lists, and quiz lists automatically.
+4. **Run `python convert.py`** — your category appears on the dashboard
+5. **Add quizzes** for your notes in `QUIZ_DATA` inside `js/data.js`:
+   ```javascript
+   QUIZ_DATA['My Note'] = {
+     questions: [
+       { type: "multiple_choice", question: "...", options: ["A","B"], correctIndex: 0, explanation: "..." }
+     ]
+   };
+   ```
+6. Run `python convert.py` again — it preserves your quizzes during rebuild
+
+
+
