@@ -2,9 +2,9 @@ const FOLDERS = [
   { id: 'computer-systems', name: 'Computer Systems', icon: '🖥️', color: '#58a6ff' },
   { id: 'cpp-fundamentals', name: 'C++ Fundamentals', icon: '⚙️', color: '#f0883e' },
   { id: 'game-math', name: 'Game Math', icon: '🎮', color: '#3fb950' },
-  { id: 'ue-core', name: 'UE Core', icon: '🔧', color: '#bc8cff' },
-  { id: 'ue-networking', name: 'UE Networking', icon: '🌐', color: '#f85149' },
-  { id: 'big-o', name: 'Big O Notation', icon: '📊', color: '#d2991d' },
+  { id: 'ue-core', name: 'Unreal Engine Core', icon: '🔧', color: '#bc8cff' },
+  { id: 'ue-networking', name: 'Unreal Engine Networking', icon: '🌐', color: '#f85149' },
+  { id: 'big-o', name: 'Algorithms & Complexity', icon: '📊', color: '#d2991d' },
 ];
 
 const NOTES = {
