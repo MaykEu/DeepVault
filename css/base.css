@@ -80,12 +80,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
 
-/* Theme toggle button */
-.theme-toggle {
+/* Theme select dropdown */
+.theme-select {
   background: var(--bg-tertiary); color: var(--text-secondary);
-  border: 1px solid var(--border); font-size: 0.82rem; padding: 0.3em 0.55em;
+  border: 1px solid var(--border); font-size: 0.82rem; padding: 0.3em 0.5em;
+  border-radius: var(--radius); cursor: pointer; font-family: var(--font-sans);
 }
-.theme-toggle:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+.theme-select:focus { outline: none; border-color: var(--accent); }
 
 /* Search */
 .search-wrap { position: relative; margin-left: auto; margin-right: 0.5rem; }

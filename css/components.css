@@ -332,6 +332,14 @@
 .syn-comment { color: #8b949e; font-style: italic; }
 .syn-pp { color: #f0883e; }
 
+[data-theme="light"] .syn-kw { color: #cf222e; }
+[data-theme="light"] .syn-type { color: #0550ae; }
+[data-theme="light"] .syn-func { color: #8250df; }
+[data-theme="light"] .syn-num { color: #0550ae; }
+[data-theme="light"] .syn-string { color: #0a3069; }
+[data-theme="light"] .syn-comment { color: #6e7781; }
+[data-theme="light"] .syn-pp { color: #9a6700; }
+
 /* Sidebar TOC — fixed to right edge of viewport */
 .learn-toc {
   position: fixed;

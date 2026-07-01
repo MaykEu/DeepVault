@@ -6,14 +6,10 @@ var Theme = {
   set: function(name) {
     document.documentElement.setAttribute('data-theme', name);
     localStorage.setItem('deepvault_theme', name);
+    var sel = document.getElementById('theme-select');
+    if (sel) sel.value = name;
   },
-  cycle: function() {
-    var current = document.documentElement.getAttribute('data-theme') || 'dark';
-    var next = current === 'dark' ? 'light' : (current === 'light' ? 'amoled' : 'dark');
-    this.set(next);
-  },
-  label: function() {
-    var current = document.documentElement.getAttribute('data-theme') || 'dark';
-    return current === 'dark' ? '\u263E Dark' : (current === 'light' ? '\u2600\uFE0F Light' : '\u25CF AMOLED');
+  label: function(name) {
+    return name === 'dark' ? '\u263E Dark' : (name === 'light' ? '\u2600\uFE0F Light' : '\u25CF AMOLED');
   },
 };
