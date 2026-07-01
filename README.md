@@ -3,7 +3,7 @@
 > An interactive quiz & learning platform embedded in a single `index.html`. Zero dependencies. Zero server. Double-click to launch.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
-[![Live Demo](https://img.shields.io/badge/demo-live-blue.svg)](https://maykeu.github.io/DeepVault/)
+[![Live Demo](https://img.shields.io/badge/site-live-blue.svg)](https://maykeu.github.io/DeepVault/)
 
 ---
 
@@ -24,7 +24,7 @@ Everything stays on your device — no accounts, no servers, no tracking. Just d
 
 1. **Clone** this repository — `git clone https://github.com/MaykEu/DeepVault.git`
 2. **Double-click** `index.html` — you're studying
-3. Or use the [live demo](https://maykeu.github.io/DeepVault/) — no download needed
+3. Or visit the [live site](https://maykeu.github.io/DeepVault/) — no download needed
 ## What It Does
 
 | Feature | Description |
