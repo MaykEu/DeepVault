@@ -81,7 +81,7 @@ const QUIZ_NOTES = {
     'Lambdas & Function Objects',
     'Operator Overloading',
     'String Types & string_view',
-    'Templates & Concepts'
+    'Templates & Concepts', 'std array & C Arrays'
   ],
   'game-math': [
     'Matrices & Coordinate Systems',

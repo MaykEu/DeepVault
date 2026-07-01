@@ -12,7 +12,7 @@ const TopicHub = {
     var studyList = []; var guideList = [];
     for (var i = 0; i < notes.length; i++) {
       var n = notes[i];
-      if (NOTES_CONTENT && NOTES_CONTENT[n]) studyList.push(n);
+      if (quizNotes.indexOf(n) !== -1) studyList.push(n);
       else guideList.push(n);
     }
 
