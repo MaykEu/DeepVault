@@ -32,8 +32,12 @@ const QUIZ_NOTES = {
   'computer-systems': ['Bits, Bytes & Number Systems', 'Negative Numbers & Endianness', 'Assembly Language', 'CPU Architecture', 'Memory Hierarchy', 'RAM & Virtual Memory', 'Storage', 'Function Calls & Stack Frames', 'Compiler Pipeline', 'Linking & Executables', 'Syscalls & Kernel', 'Threads & Processes', 'Concurrency & Synchronization', 'GPU Architecture Overview'],
   'cpp-fundamentals': [],
   'game-math': [],
-  'ue-core': [],
-  'ue-networking': [],
+  'ue-core': [
+    'UHT, Macros & Reflection', 'Pointer Ecosystem', 'FName vs FString vs FText',
+    'Casting in Unreal Engine', 'UE Inheritance & UObject System', 'Move Semantics in UE',
+    'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Templates & T-Containers'
+  ],
+  'ue-networking': ['Network Roles', 'RPCs in Unreal Engine', 'RepNotifies & OnRep', 'PushModel & Dirty Marking', 'Iris Replication System Overview', 'Iris Filtering & Prioritization', 'GAS Networking & Prediction'],
   'big-o': [],
 };
 
@@ -1765,4 +1769,1043 @@ const REFERENCE = {
   'Glossary': "# Glossary\n\nQuick definitions for every acronym and term used across the Computer Systems notes.\n\n## A\u2013C\n\n| Term | Definition |\n|---|---|\n| **ALU** | Arithmetic Logic Unit \u2014 the circuit inside the CPU that performs addition, subtraction, bitwise operations, and comparisons |\n| **ASLR** | Address Space Layout Randomization \u2014 randomizes where code, stack, and heap are placed in memory to make buffer overflow attacks harder |\n| **ASM / Assembly** | Human-readable representation of machine code; one assembly instruction = one CPU instruction |\n| **Branch Predictor** | A circuit that guesses whether a conditional jump will be taken, keeping the pipeline full |\n\n## D\u2013F\n\n| Term | Definition |\n|---|---|\n| **DRAM** | Dynamic Random Access Memory \u2014 the technology behind RAM sticks; stores each bit as charge in a capacitor that must be refreshed ~64 ms |\n| **ELF** | Executable and Linkable Format \u2014 the file format for executables on Linux |\n| **Futex** | Fast Userspace muTEX \u2014 a Linux kernel primitive for efficient locking; fast path stays in userspace with atomics, slow path calls the kernel to sleep/wake threads |\n| **FTL** | Flash Translation Layer \u2014 the SSD controller firmware that maps logical block addresses to physical NAND pages, handles wear leveling and garbage collection |\n\n## G\u2013J\n\n| Term | Definition |\n|---|---|\n| **GOT** | Global Offset Table \u2014 a table in dynamically-linked executables that holds the actual addresses of external functions; populated by the dynamic linker at load time |\n| **IPC** | Instructions Per Clock \u2014 how many instructions the CPU completes per clock cycle; modern CPUs achieve 2-4 IPC through superscalar execution |\n| **IR** | Intermediate Representation \u2014 a compiler-internal format between source code and machine code; LLVM IR and GCC GIMPLE are examples |\n\n## K\u2013M\n\n| Term | Definition |\n|---|---|\n| **KPTI** | Kernel Page Table Isolation \u2014 a mitigation for the Meltdown vulnerability; the kernel's memory is unmapped from userspace page tables, so every syscall must switch page tables (adding 100-500+ cycles) |\n| **LAPIC** | Local Advanced Programmable Interrupt Controller \u2014 the per-core interrupt controller that handles timer interrupts for the scheduler |\n| **LSB / MSB** | Least/Most Significant Byte \u2014 the byte at the lowest/highest positional weight in a multi-byte number |\n| **MESI** | Modified, Exclusive, Shared, Invalid \u2014 the four states of the cache coherence protocol that keeps all CPU cores' caches consistent |\n| **MMU** | Memory Management Unit \u2014 the hardware that translates virtual addresses to physical addresses using the page table and TLB |\n| **\u03bcop** | Micro-operation \u2014 the CPU decodes complex x86 instructions into simpler internal \u03bcops that the execution units actually process |\n\n## N\u2013P\n\n| Term | Definition |\n|---|---|\n| **NAND Flash** | The storage technology behind SSDs; stores bits by trapping charge in floating-gate transistors; organized as pages (write unit) within blocks (erase unit) |\n| **NUMA** | Non-Uniform Memory Access \u2014 multi-socket systems where each CPU has faster access to its own local RAM than to another socket's RAM |\n| **NX / DEP** | No-eXecute / Data Execution Prevention \u2014 marks memory pages as non-executable so attackers can't run code injected into data buffers |\n| **PE** | Portable Executable \u2014 the file format for executables on Windows (EXE and DLL) |\n| **PLT** | Procedure Linkage Table \u2014 a table of stubs for dynamically-linked functions; on first call, the stub invokes the dynamic linker to resolve the address |\n| **PTE** | Page Table Entry \u2014 one entry in the page table; stores the physical frame number, permissions (read/write/execute), and flags (present, dirty, accessed) |\n\n## Q\u2013S\n\n| Term | Definition |\n|---|---|\n| **ROB** | Reorder Buffer \u2014 a CPU structure that tracks in-flight instructions and retires them in program order; Zen 4: 320 entries, Raptor Lake: 512 entries |\n| **SMT** | Simultaneous Multi-Threading \u2014 Intel's marketing term is Hyper-Threading; a single physical core exposes two logical cores by duplicating architectural state (registers) while sharing execution units |\n| **SSE / AVX** | Streaming SIMD Extensions / Advanced Vector Extensions \u2014 x86 instruction set extensions for vector operations (SIMD = Single Instruction, Multiple Data) |\n| **SSO** | Small String Optimization \u2014 `std::string` stores short strings inside the object itself (no heap allocation); typically 15-23 characters depending on standard library |\n\n## T\u2013Z\n\n| Term | Definition |\n|---|---|\n| **TLB** | Translation Lookaside Buffer \u2014 a small, fast cache inside the MMU that stores recent virtual\u2192physical address translations; a TLB miss requires walking the page table (4 memory accesses for 4-level paging) |\n| **TCO** | Tail Call Optimization \u2014 when a function's last action is calling another function, the compiler reuses the current stack frame instead of creating a new one; prevents stack overflow in recursive functions |\n| **UHT** | Unreal Header Tool \u2014 UE's custom pre-compilation tool that parses UCLASS/UPROPERTY/UFUNCTION macros and generates reflection code |\n| **VMA** | Virtual Memory Area \u2014 the kernel's internal data structure (`vm_area_struct` on Linux) that describes one contiguous region of a process's virtual address space |\n| **vDSO** | Virtual Dynamic Shared Object \u2014 a small shared library the kernel maps into every process; contains frequently-called syscall implementations that run entirely in userspace (e.g., `gettimeofday`) |\n\n## See Also\n\n- [[From Transistor to Running Program]] \u2014 The big-picture overview\n- [[Learning Path]] \u2014 Recommended reading order\n- [[DeepVault Guide]] \u2014 Full vault navigation\n",
   'Learning Path': "# Computer Systems \u2014 Learning Path\n\n## \ud83d\ude80 Start Here \u2014 Read This First\n\n**Read [[From Transistor to Running Program]] before anything else.** It is the 1-page map of the entire stack. Then follow the reading order below.\n\n> [!info] Need help with acronyms? Check the [[Glossary]].\n\n## Recommended Reading Order\n\n### Phase 1 \u2014 The Hardware Foundation\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 1 | [[Bits, Bytes & Number Systems]] | What a bit physically IS. Positional notation. Binary-to-hex with the left-padding trap. |\n| 2 | [[Negative Numbers & Endianness]] | Two's complement as an odometer. Signed/unsigned lens. Endianness. IEEE 754. |\n\n### Phase 2 \u2014 How the CPU Works\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 3 | [[Assembly Language]] | x86-64 registers, addressing modes, core instructions, Intel vs AT&T, reading disassembly in a debugger. |\n| 4 | [[CPU Architecture]] | Clock, registers, fetch-decode-execute, pipelining, branch prediction, OoO, SIMD, thermal throttling. |\n| 5 | [[Memory Hierarchy]] | Why RAM is slow. Cache lines (64 bytes). L1/L2/L3. MESI. False sharing. AoS vs SoA. Prefetching. |\n\n### Phase 3 \u2014 Memory & Storage\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 6 | [[RAM & Virtual Memory]] | DRAM cells. Virtual memory. Page tables and TLB. Page faults. mmap. Swap. Boot process. |\n| 7 | [[Storage]] | HDD mechanics. NAND flash physics. NVMe vs SATA. Filesystems. Page cache. DMA. PCIe bus. |\n\n### Phase 4 \u2014 The Software-Hardware Boundary\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 8 | [[Function Calls & Stack Frames]] | RSP/RBP. Stack frame layout. Calling conventions. Buffer overflow. Recursion. |\n| 9 | [[Compiler Pipeline]] | Preprocessor \u2192 compiler \u2192 assembler. Optimization levels. Concrete trace of `int x = 5`. |\n| 10 | [[Linking & Executables]] | Symbols. Static vs dynamic linking. PLT/GOT. DLL loading. PE vs ELF. |\n| 11 | [[Syscalls & Kernel]] | Protection rings. Syscall instruction trace. Futex. vDSO. Interrupts. I/O ports. |\n\n### Phase 5 \u2014 Concurrency\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 12 | [[Threads & Processes]] | Process vs thread. Scheduler. Context switching. SMT. Thread pools. Real-time scheduling. |\n| 13 | [[Concurrency & Synchronization]] | Data races. Mutex/futex. CMPXCHG. Memory ordering. Spinlocks. Condition variables. |\n\n### Phase 6 \u2014 Beyond the CPU\n\n| # | Note | What You'll Learn |\n|---|---|---|\n| 14 | [[GPU Architecture Overview]] | SIMT execution. Thousands of cores vs CPU's ~16. VRAM vs system RAM. PCIe bandwidth. Compute shaders. |\n\n## Reference\n\n| Note | Purpose |\n|---|---|\n| [[Glossary]] | Quick definitions for every acronym (MMU, TLB, PTE, futex, PLT, GOT, etc.) |\n\n## How to Use This Folder\n\n1. Start with [[From Transistor to Running Program]] for the big picture\n2. Read in order \u2014 each note lists its prerequisites at the top\n3. Sections marked \"Deep Dive\" can be skipped on first read\n4. Complete the exercises at the end of each note before moving on\n5. Cross-reference with the [[DeepVault Guide]] for C++ and Unreal Engine connections\n",
   'DeepVault Guide': "# DeepVault Guide\n\nWelcome to DeepVault \u2014 an interactive learning fortress for mastering C++, Unreal Engine, and the computer systems beneath them.\n\n## How This Works\n\nEvery folder on the dashboard contains **Learn** notes and **Quiz** exercises:\n\n| Mode | What It Does |\n|---|---|\n| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. Password-protected. |\n| **Quiz** | 5-10 randomized questions per note \u2014 multiple choice and text input. Instant feedback. Scores saved locally on your device. |\n\n### Tracking Your Progress\n\nProgress is based on **quiz scores only** \u2014 reading a note does not count. Here's how it works:\n\n| Status | What It Means |\n|---|---|\n| **NOT STARTED** | You haven't taken the quiz yet |\n| **IN PROGRESS** | At least 1 attempt, but best score is below 80% |\n| **COMPLETED** | You scored 80% or higher on at least one attempt |\n\nThe folder header shows your overall completion percentage (completedNotes / totalNotes). Quiz scores and attempt history are saved locally via localStorage \u2014 they never leave your device.\n\n**Wiki links** like [[CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page. Links to notes not yet available show \"(coming soon)\".\n\n**Recent notes** appear on the dashboard below your folders \u2014 quick jump back to what you were studying.\n\n---\n\n## Master Study Order\n\nThis vault is designed to be read in order. Each note builds on the ones before it.\n\n### Layer 1 \u2014 Computer Systems (start here)\n\nWithout understanding the hardware, C++ is just magic words. Start with the physical reality.\n\n1. [[Bits, Bytes & Number Systems]] \u2014 What a bit physically IS\n2. [[Negative Numbers & Endianness]] \u2014 Two's complement, signed vs unsigned\n3. [[Assembly Language]] \u2014 The bridge between C++ and hardware\n4. [[CPU Architecture]] \u2014 Fetch-decode-execute, pipelining, branch prediction\n5. [[Memory Hierarchy]] \u2014 Cache lines, L1/L2/L3, why RAM is slow\n6. [[RAM & Virtual Memory]] \u2014 Page tables, TLB, mmap, swap\n7. [[Storage]] \u2014 HDD vs SSD, filesystems, page cache\n8. [[Function Calls & Stack Frames]] \u2014 How call and ret actually work\n9. [[Compiler Pipeline]] \u2014 Preprocessor to assembler to linker\n10. [[Linking & Executables]] \u2014 Static vs dynamic linking, DLLs\n11. [[Syscalls & Kernel]] \u2014 Protection rings, syscall instruction, futex\n12. [[Threads & Processes]] \u2014 Scheduler, context switching, thread pools\n13. [[Concurrency & Synchronization]] \u2014 Mutexes, atomics, memory ordering\n14. [[GPU Architecture Overview]] \u2014 SIMT, VRAM, compute shaders\n\nUse the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.\n\n### Layer 2 \u2014 C++ Fundamentals\n\nOnce you understand the hardware, learn the language that runs on it.\n\n1. **Memory & Ownership** \u2014 [[Stack vs Heap]], [[Object Memory Layout]], [[std vector & Container Internals]], [[RAII, Lifetimes & The Rule of Five]]\n2. **Smart Pointers** \u2014 [[Smart Pointers & Ownership]], [[Move Semantics & Perfect Forwarding]], [[References]], [[const Correctness]], [[static in C++]]\n3. **Core Language** \u2014 [[Enums & enum class]], [[Preprocessor & Macros]], [[Type Deduction \u2014 auto, decltype]], [[Structured Bindings]]\n4. **Types & Data** \u2014 [[Operator Overloading]]\n5. **OOP & Polymorphism** \u2014 [[Inheritance & Virtual Functions]], [[Lambdas & Function Objects]]\n6. **Cross-Cutting** \u2014 [[C++ Casting & RTTI]], [[Templates & Concepts]], [[C++ vs UE C++ \u2014 Key Differences]], [[String Types & string_view]], [[Explicit & Implicit Conversion]]\n\n### Layer 3 \u2014 Game Math\n\nThe mathematics that make 3D worlds possible. Start with [[From Trigonometry to 3D Transformations]] for the big picture, then dive into:\n\n1. [[Trigonometry & Vectors]] \u2014 The foundation of all 3D\n2. [[Matrices & Coordinate Systems]] \u2014 Transforming objects in space\n3. [[Quaternions & 3D Rotations]] \u2014 Why gimbals lock and quaternions don't\n4. [[Curves, Interpolation & Kinematics]] \u2014 Smooth motion and animation\n5. [[Collision Detection Math]] \u2014 How engines detect when things touch\n6. [[Geometric Algebra]] \u2014 The unified framework behind it all\n\nThen bridge to UE: [[FVector, FRotator, FQuat \u2014 The Core Types]], [[FTransform & FMatrix]], [[FMath \u2014 Interpolation & Utility]], [[Collision & Intersection Math]], [[Curves, Ranges & Random]].\n\n### Layer 4 \u2014 Unreal Engine Core\n\nHow UE turns C++ into a game engine. Start with [[From UCLASS to Running Object \u2014 The UE Core Pipeline]] for the map, then:\n\n1. [[UHT, Macros & Reflection]] \u2014 How the header tool works\n2. [[Pointer Ecosystem]] \u2014 TObjectPtr vs TSharedPtr vs TUniquePtr\n3. [[FName vs FString vs FText]] \u2014 UE's string types\n4. [[Casting in Unreal Engine]] \u2014 Cast<T> vs dynamic_cast\n5. [[UE Inheritance & UObject System]] \u2014 The class hierarchy\n6. [[TArray Internals]], [[TMap Internals]], [[TSet Internals]] \u2014 UE's containers\n7. [[UE Enums & Flags]] \u2014 UENUM and bitflags\n8. [[UE Templates & T-Containers]]\n9. [[Move Semantics in UE]]\n\n### Layer 5 \u2014 UE Networking\n\nMultiplayer from the hardware up. Start with [[From Input to Replication \u2014 The Networking Pipeline]], then:\n\n1. [[Network Roles]] \u2014 Authority, autonomy, simulated proxies\n2. [[RPCs in Unreal Engine]] \u2014 Client/Server/Multicast\n3. [[RepNotifies & OnRep]] \u2014 Replicating state\n4. [[PushModel & Dirty Marking]] \u2014 Optimizing replication\n5. [[Iris Replication System Overview]] \u2014 UE5's replication architecture\n6. [[Iris Filtering & Prioritization]] \u2014 Who sees what\n7. [[GAS Networking & Prediction]] \u2014 Ability System multiplayer\n\n### Layer 6 \u2014 Big O & Algorithms\n\n[[The Big O Complexity Spectrum]], [[Amortized Analysis & Real Profiling Data]], [[Applied Examples - Raw C++ vs Unreal Engine]].\n\n---\n\n## Reference\n\n- [[Glossary]] \u2014 Every acronym defined (MMU, TLB, PTE, MESI, PLT, GOT...)\n- [[Learning Path]] \u2014 The full Computer Systems reading order with phase descriptions\n- Use the right-side table of contents to jump between sections in any note\n- Check the dashboard for recently viewed notes and quiz scores\n\n---\n\nDeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. Double-click index.html to launch. Everything stays on your device.",
+};
+
+QUIZ_DATA['UHT, Macros & Reflection'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does UHT stand for and what does it do?",
+      "options": [
+        "Unreal Header Tool \u2014 parses UCLASS/UFUNCTION/UPROPERTY macros and generates reflection code",
+        "Unreal Hot Translator \u2014 recompiles code at runtime",
+        "Universal Header Template \u2014 a C++ template library",
+        "Unreal Hash Tool \u2014 generates checksums for assets"
+      ],
+      "correctIndex": 0,
+      "explanation": "UHT (Unreal Header Tool) runs before the C++ compiler. It scans headers for UE macros, generates .generated.h and .gen.cpp files with reflection data \u2014 class hierarchies, property metadata, function binding tables."
+    },
+    {
+      "type": "text_input",
+      "question": "What macro must EVERY UObject-derived class include? (Hint: inside the class body)",
+      "correctAnswer": "GENERATED_BODY()",
+      "acceptableAnswers": [
+        "GENERATED_BODY()",
+        "GENERATED_BODY",
+        "GENERATED_UCLASS_BODY"
+      ],
+      "explanation": "GENERATED_BODY() expands into all the boilerplate needed for UObject: static class info, reflection data, network replication helpers. Without it, UHT-generated code can't wire into your class."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "Which specifier makes a UPROPERTY visible in the Blueprint editor?",
+      "options": [
+        "BlueprintReadOnly",
+        "VisibleAnywhere",
+        "EditAnywhere",
+        "BlueprintVisible"
+      ],
+      "correctIndex": 2,
+      "explanation": "EditAnywhere = visible AND editable in Blueprint details panel. BlueprintReadOnly = visible but not editable. VisibleAnywhere = visible in both editor and Blueprint. BlueprintReadWrite = readable/writable in Blueprint graphs."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does UFUNCTION(BlueprintCallable) do?",
+      "options": [
+        "Makes the function callable from Blueprint graphs",
+        "Makes the function only callable from C++",
+        "Adds the function to the garbage collector",
+        "Generates assembly code for the function"
+      ],
+      "correctIndex": 0,
+      "explanation": "BlueprintCallable exposes a C++ function to Blueprint graphs. The UHT generates thunk code that marshals Blueprint parameters into C++ types and calls your function."
+    },
+    {
+      "type": "text_input",
+      "question": "Where does UCLASS(Abstract) appear and what does it do?",
+      "correctAnswer": "In the UCLASS macro above the class declaration \u2014 prevents the class from being instantiated directly",
+      "acceptableAnswers": [
+        "above the class",
+        "UCLASS macro",
+        "class declaration",
+        "prevents instantiation",
+        "abstract"
+      ],
+      "explanation": "UCLASS(Abstract) marks a class that can't be spawned directly \u2014 only derived classes can be instantiated. Useful for base classes that define shared behavior but aren't concrete."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the IMPLEMENT_CLASS macro for?",
+      "options": [
+        "Defining class member functions",
+        "Registering a UClass with the reflection system at startup",
+        "Implementing an interface",
+        "Creating Blueprint nodes"
+      ],
+      "correctIndex": 1,
+      "explanation": "IMPLEMENT_CLASS(ClassName) generates the static class registration code. Without it, your UClass won't be registered in the reflection system and FindObject/StaticClass() won't find it."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does UPROPERTY(Replicated) do?",
+      "options": [
+        "Saves the property to disk",
+        "Makes the property replicate over the network from server to clients",
+        "Adds the property to garbage collection",
+        "Makes the property editable in Blueprint"
+      ],
+      "correctIndex": 1,
+      "explanation": "Replicated marks a property for automatic network replication. The server's value syncs to all clients. Must be paired with GetLifetimeReplicatedProps() in the .cpp file."
+    }
+  ]
+};
+
+QUIZ_DATA['Pointer Ecosystem'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the difference between TObjectPtr and a raw UObject*?",
+      "options": [
+        "There is no difference",
+        "TObjectPtr is a wrapper that handles null checks and editor-time validation",
+        "TObjectPtr is faster than raw pointers",
+        "TObjectPtr replaces shared pointers"
+      ],
+      "correctIndex": 1,
+      "explanation": "TObjectPtr<T> is UE5's replacement for raw UObject pointers. It provides editor-time access tracking (for cook determinism), lazy loading support, and automatic nulling when objects are garbage collected."
+    },
+    {
+      "type": "text_input",
+      "question": "When would you use TSharedPtr instead of TObjectPtr?",
+      "correctAnswer": "For non-UObject classes that need reference-counted shared ownership",
+      "acceptableAnswers": [
+        "non-UObject",
+        "non-uobject",
+        "shared ownership",
+        "reference counted",
+        "when not a UObject"
+      ],
+      "explanation": "TSharedPtr is UE's general-purpose shared pointer (similar to std::shared_ptr). Use it for non-UObject classes that need reference counting. UObjects already have garbage collection \u2014 they don't need shared pointers."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does TWeakObjectPtr protect against?",
+      "options": [
+        "Memory leaks",
+        "Dangling pointers \u2014 it returns null if the UObject has been garbage collected",
+        "Null pointer exceptions",
+        "Buffer overflows"
+      ],
+      "correctIndex": 1,
+      "explanation": "TWeakObjectPtr stores a weak reference to a UObject. If the object is garbage collected, the weak pointer returns null instead of a dangling pointer. Essential for observer patterns where you don't want to keep an object alive."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is special about TUniquePtr in Unreal?",
+      "options": [
+        "It's shared across multiple owners",
+        "It's identical to TSharedPtr",
+        "It can't be used with UObjects",
+        "It's a non-copyable, single-ownership pointer \u2014 identical semantics to std::unique_ptr"
+      ],
+      "correctIndex": 3,
+      "explanation": "TUniquePtr<T> is UE's unique pointer \u2014 single ownership, non-copyable, move-only. Same semantics as std::unique_ptr. Used for owning non-UObject heap allocations."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the key rule about TSharedPtr and UObjects?",
+      "correctAnswer": "Never use TSharedPtr with UObjects \u2014 UObjects are managed by the garbage collector",
+      "acceptableAnswers": [
+        "never use TSharedPtr with UObjects",
+        "don't use shared pointers with UObjects",
+        "UObjects use GC not shared pointers",
+        "garbage collector manages UObjects"
+      ],
+      "explanation": "UObjects are managed by UE's garbage collector. Using TSharedPtr on a UObject creates a second, conflicting ownership system. The GC may destroy the object while a TSharedPtr still holds it \u2014 dangling pointer."
+    }
+  ]
+};
+
+QUIZ_DATA['FName vs FString vs FText'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is FName and when do you use it?",
+      "options": [
+        "A variable-length string for user input",
+        "An interned string \u2014 stored in a global hash table, compared by index. Use for identifiers, asset names, gameplay tags",
+        "A localized string for UI",
+        "A string for file paths"
+      ],
+      "correctIndex": 1,
+      "explanation": "FName is an interned string stored in a global table. Each unique FName exists once \u2014 comparisons are O(1) integer compares. Used for things that appear many times: asset names, gameplay tags, socket names. Creating a new FName adds to the table permanently."
+    },
+    {
+      "type": "text_input",
+      "question": "Why is FName comparison faster than FString comparison?",
+      "correctAnswer": "FName comparison is an integer comparison of the internal index, not a string comparison",
+      "acceptableAnswers": [
+        "integer comparison",
+        "index comparison",
+        "compares by index",
+        "O(1) comparison",
+        "compares ints not strings"
+      ],
+      "explanation": "Each FName stores an index into the global name table. Comparing two FNames compares their indices (integers) \u2014 O(1) regardless of string length. FString comparison is O(n) character-by-character."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "When should you use FText instead of FString?",
+      "options": [
+        "For all strings \u2014 FText is always better",
+        "For strings shown to the user \u2014 FText supports localization, pluralization, and culture-specific formatting",
+        "For internal identifiers",
+        "For file paths"
+      ],
+      "correctIndex": 1,
+      "explanation": "FText is for user-facing text. It supports localization (different languages), pluralization rules, and culture-specific formatting (dates, numbers). Never use FText for internal identifiers or API keys \u2014 use FName or FString."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the main memory concern with FName?",
+      "options": [
+        "FName is larger than other strings",
+        "Once created, an FName entry NEVER leaves the global table \u2014 memory grows unbounded if you create unique names in a loop",
+        "FName causes memory fragmentation",
+        "FName uses heap allocation every comparison"
+      ],
+      "correctIndex": 1,
+      "explanation": "The FName table is append-only. Every unique FName created stays in memory forever. Creating FNames from dynamic data (like player names with timestamps: Player_12345_20260701) will leak memory. Use FString for dynamic identifiers."
+    },
+    {
+      "type": "text_input",
+      "question": "What does FText::FromString() do and why is it a red flag?",
+      "correctAnswer": "It creates non-localizable text \u2014 bypassing the localization system",
+      "acceptableAnswers": [
+        "non-localizable",
+        "bypasses localization",
+        "not localized",
+        "skips localization"
+      ],
+      "explanation": "FText::FromString() creates FText without localization support. It's a code smell \u2014 user-facing strings should go through LOCTABLE or NSLOCTEXT for proper localization. Use only for debug/development text."
+    }
+  ]
+};
+
+QUIZ_DATA['Casting in Unreal Engine'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the performance difference between Cast<T> and dynamic_cast<T>?",
+      "options": [
+        "They are identical",
+        "Cast<T> uses UE's reflection system and is ~10-50 cycles; dynamic_cast<T> uses C++ RTTI and is ~50-200+ cycles",
+        "Cast<T> is slower",
+        "dynamic_cast doesn't work in UE"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cast<T>() uses UE's UObject type system \u2014 a hash-table lookup on the class hierarchy. dynamic_cast<T>() walks the C++ vtable chain. Cast<T> is ~2-10x faster, especially for deep hierarchies."
+    },
+    {
+      "type": "text_input",
+      "question": "When should you use CastChecked<T> instead of Cast<T>?",
+      "correctAnswer": "When the cast must succeed \u2014 CastChecked crashes immediately with a diagnostic if it fails, instead of returning null",
+      "acceptableAnswers": [
+        "when the cast must succeed",
+        "when you're sure it works",
+        "for debugging",
+        "when failure is a bug"
+      ],
+      "explanation": "CastChecked<T>() is for development/debugging \u2014 it asserts immediately if the cast fails, with a clear error message showing the expected and actual types. In Shipping builds, it becomes a raw static_cast with zero overhead."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does Cast<T>() return if the object is not of type T?",
+      "options": [
+        "A default-constructed T",
+        "nullptr",
+        "Throws an exception",
+        "Returns the object unchanged"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cast<T>() returns nullptr if the object isn't type T or derived from T. Always check the result before using it. This is the safe, non-crashing variant."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "Why can't you use dynamic_cast with UObjects?",
+      "options": [
+        "UE disabled RTTI by default for performance",
+        "UObjects don't have vtables",
+        "dynamic_cast doesn't support multiple inheritance",
+        "The UHT generates incompatible type info"
+      ],
+      "correctIndex": 0,
+      "explanation": "UE compiles with RTTI disabled (/GR-) by default \u2014 C++ runtime type information is turned off for performance. dynamic_cast requires RTTI. UE provides its own casting system (Cast<T>, CastChecked<T>, IsA()) that works without RTTI."
+    },
+    {
+      "type": "text_input",
+      "question": "What does Actor->IsA<APawn>() do and what's its performance characteristic?",
+      "correctAnswer": "Checks if the object is exactly APawn or a subclass \u2014 O(1) hash lookup, no pointer chasing",
+      "acceptableAnswers": [
+        "checks if it's APawn or subclass",
+        "O(1) hash lookup",
+        "type check",
+        "class check"
+      ],
+      "explanation": "IsA<T>() checks the class hierarchy via a hash table \u2014 O(1). Faster than Cast<T> because it only needs the type info, not an actual cast operation. Use IsA<T>() when you only need to test the type, not access members."
+    }
+  ]
+};
+
+QUIZ_DATA['UE Inheritance & UObject System'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the CDO (Class Default Object)?",
+      "options": [
+        "A copy of the class for debugging",
+        "A template object created at class registration \u2014 used as the default state for all new instances",
+        "The first instance of every class",
+        "A cached version of the class"
+      ],
+      "correctIndex": 1,
+      "explanation": "The CDO is a single template instance created when a UClass is registered. When you spawn a new Actor, its default property values come from the CDO. Blueprint defaults are stored as modifications on top of the C++ CDO."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the garbage collection root rule for UObjects?",
+      "correctAnswer": "A UObject is kept alive if it is reachable from a root object (like UWorld, GameInstance, or a UPROPERTY reference)",
+      "acceptableAnswers": [
+        "reachable from a root",
+        "referenced by UPROPERTY",
+        "root set",
+        "reachable from UWorld"
+      ],
+      "explanation": "UE's GC uses a mark-and-sweep algorithm. It starts from root objects (UWorld, GameInstance, anything with AddToRoot()) and marks everything reachable. Unmarked UObjects are collected. UPROPERTY() references count as reachable \u2014 raw pointers do NOT."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does the UPROPERTY() specifier do for garbage collection?",
+      "options": [
+        "It has no effect on GC",
+        "It tells the GC that this pointer keeps the referenced object alive",
+        "It marks the property for deletion",
+        "It prevents the object from being garbage collected"
+      ],
+      "correctIndex": 1,
+      "explanation": "UPROPERTY() tells UE's reflection system about the member variable. For object pointers, this means the GC knows this reference keeps the target alive. Without UPROPERTY(), a raw UObject pointer won't prevent garbage collection \u2014 dangling pointer risk."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the UObject lifecycle order?",
+      "options": [
+        "Construct \u2192 Spawn \u2192 Destroy",
+        "NewObject \u2192 PostInitProperties \u2192 BeginPlay \u2192 BeginDestroy \u2192 FinishDestroy",
+        "Allocate \u2192 Initialize \u2192 Activate \u2192 Deactivate \u2192 Free",
+        "Create \u2192 Edit \u2192 Save \u2192 Load"
+      ],
+      "correctIndex": 1,
+      "explanation": "1) NewObject allocates memory and calls constructor. 2) PostInitProperties sets up defaults. 3) BeginPlay (for Actors). 4) ConditionallyBeginDestroy marks for GC. 5) BeginDestroy called before GC destroys. 6) FinishDestroy is the last call before memory is freed."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the purpose of the Outer parameter in NewObject<T>()?",
+      "correctAnswer": "It establishes the ownership hierarchy for garbage collection \u2014 the Outer keeps the new object alive",
+      "acceptableAnswers": [
+        "ownership",
+        "garbage collection parent",
+        "GC parent",
+        "outer keeps it alive",
+        "hierarchy"
+      ],
+      "explanation": "The Outer is the owning UObject. The created object is only garbage collected after its Outer is collected. This creates a natural ownership tree: GameInstance owns Worlds, Worlds own Levels, Levels own Actors."
+    }
+  ]
+};
+
+QUIZ_DATA['Move Semantics in UE'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the UE equivalent of std::move?",
+      "options": [
+        "UE::Move",
+        "MoveTemp",
+        "UE_MOVE",
+        "UnrealMove"
+      ],
+      "correctIndex": 1,
+      "explanation": "MoveTemp<T>(obj) is UE's equivalent of std::move<T>(obj). It casts to an rvalue reference, enabling move construction/assignment. Named 'MoveTemp' because UE originally avoided conflicts with C++ standard library naming."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does UE use MoveTemp instead of std::move?",
+      "correctAnswer": "Historical naming convention \u2014 UE predates widespread std::move adoption and has its own template library conventions",
+      "acceptableAnswers": [
+        "historical",
+        "naming convention",
+        "predates std",
+        "legacy"
+      ],
+      "explanation": "MoveTemp was created before move semantics were standardized. UE maintains its own naming conventions (T-prefix for types, MoveTemp following the pattern). It's functionally identical to std::move."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "When does TArray use move semantics internally?",
+      "options": [
+        "Never \u2014 TArray always copies",
+        "During a reallocation \u2014 elements are moved to the new buffer if they have a noexcept move constructor",
+        "Only when sorting",
+        "Only when calling RemoveAt"
+      ],
+      "correctIndex": 1,
+      "explanation": "When TArray grows/reallocates, it checks if the element type has a noexcept move constructor. If yes, elements are moved (fast, just copying pointers). If no, elements are copied. Always mark UE container element types as noexcept-movable."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does UE_INTRINSIC_CAST do in move constructors?",
+      "options": [
+        "Performs a C-style cast",
+        "Directly copies the bits \u2014 bypasses the copy constructor entirely for trivially-copyable types",
+        "Casts between UObject types",
+        "Converts between FString and FName"
+      ],
+      "correctIndex": 1,
+      "explanation": "UE_INTRINSIC_CAST is used for memcpy-style moves. For types like FVector (which is just 3 floats), moving is identical to copying the bits. No destructor to call on the source. The compiler can optimize this to a no-op."
+    }
+  ]
+};
+
+QUIZ_DATA['TArray Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the default growth factor when TArray reallocates?",
+      "options": [
+        "1.5x (grows by 50%)",
+        "2x (doubles)",
+        "4x (quadruples)",
+        "Linear (adds one slot)"
+      ],
+      "correctIndex": 0,
+      "explanation": "TArray grows by 1.5x on reallocation (not 2x like std::vector). This balances memory waste vs reallocation frequency. The Slack tracking is exposed: GetSlack() returns the number of unused allocated slots."
+    },
+    {
+      "type": "text_input",
+      "question": "What does TArray::Emplace() do that Add() doesn't?",
+      "correctAnswer": "Constructs the element in-place using forwarded arguments \u2014 no temporary object, no copy/move",
+      "acceptableAnswers": [
+        "constructs in place",
+        "no copy",
+        "no temporary",
+        "in-place construction",
+        "direct construction"
+      ],
+      "explanation": "Emplace() forwards constructor arguments directly into the array's memory. Add() takes an existing object and copies/moves it. Emplace avoids the intermediate temporary entirely."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does TArray::RemoveAtSwap() do and why is it faster?",
+      "options": [
+        "Calls RemoveAt then Swap",
+        "Replaces the removed element with the LAST element \u2014 O(1) instead of O(n)",
+        "Removes all matching elements",
+        "Swaps two elements"
+      ],
+      "correctIndex": 1,
+      "explanation": "RemoveAtSwap() replaces the element at the given index with the last element, then shrinks the array by 1. O(1) operation but DESTROYS element order. Use only when order doesn't matter (like a dirty list)."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is TArrayView and when would you use it?",
+      "options": [
+        "A copy of a TArray",
+        "A non-owning view into a contiguous range of elements \u2014 like std::span. Use for passing arrays to functions without copying",
+        "A thread-safe wrapper",
+        "A sorted view of a TArray"
+      ],
+      "correctIndex": 1,
+      "explanation": "TArrayView<T> is UE's equivalent of std::span. It holds a pointer + count. Does NOT own memory. Pass TArrayView to functions instead of const TArray<T>& to accept C-arrays, TArrays, and initializer lists uniformly."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the key performance advantage of TArray over TLinkedList for iteration?",
+      "correctAnswer": "Cache locality \u2014 TArray elements are contiguous in memory, making iteration cache-friendly",
+      "acceptableAnswers": [
+        "cache locality",
+        "contiguous memory",
+        "cache friendly",
+        "sequential access"
+      ],
+      "explanation": "TArray stores elements contiguously. Iterating loads entire cache lines (64 bytes = 16 ints). TLinkedList scatters nodes across the heap \u2014 every step is a cache miss. For iteration-heavy workloads, TArray is 10-100x faster."
+    }
+  ]
+};
+
+QUIZ_DATA['TMap Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What two data structures make up TMap internally?",
+      "options": [
+        "A linked list and a hash table",
+        "TSparseArray (for values) and THashTable (for hashing)",
+        "A binary tree and a queue",
+        "A TArray and a TSet"
+      ],
+      "correctIndex": 1,
+      "explanation": "TMap uses a TSparseArray to store key-value pairs (with free-list management) and a THashTable for O(1) lookup. This two-structure design allows stable iterators and efficient removal."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the big-O complexity of TMap::Find()?",
+      "correctAnswer": "O(1) average, O(n) worst case with hash collisions",
+      "acceptableAnswers": [
+        "O(1)",
+        "O(1) average",
+        "constant time",
+        "amortized constant"
+      ],
+      "explanation": "TMap::Find() hashes the key and probes the hash table \u2014 O(1) average. Worst case O(n) when many keys collide in the same bucket. Use Reserve() to preallocate and reduce collisions."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does TMap::FindOrAdd() do?",
+      "options": [
+        "Finds an element and adds one if not found \u2014 returns a pointer to both",
+        "Finds and removes an element",
+        "Finds and replaces an element",
+        "Only finds, never adds"
+      ],
+      "correctIndex": 0,
+      "explanation": "FindOrAdd() searches for a key. If found, returns a pointer to the existing value. If not found, adds a default-constructed value and returns a pointer to the new one. Provides safe in-place modification."
+    },
+    {
+      "type": "text_input",
+      "question": "Why does TMap::Reserve() help performance?",
+      "correctAnswer": "It pre-allocates hash buckets, reducing rehashing and collisions",
+      "acceptableAnswers": [
+        "pre-allocates",
+        "prevents rehashing",
+        "reduces collisions",
+        "reserves space"
+      ],
+      "explanation": "Reserve(N) pre-allocates enough hash buckets for N elements. Without it, the map grows incrementally \u2014 each rehash invalidates all hash buckets and recalculates hash positions. Reserve eliminates repeated rehashing."
+    }
+  ]
+};
+
+QUIZ_DATA['TSet Internals'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "How is TSet related to TMap internally?",
+      "options": [
+        "They are completely different",
+        "TSet is essentially TMap with no values \u2014 it's a TMap where the key IS the value",
+        "TSet wraps TArray",
+        "TSet is a linked list"
+      ],
+      "correctIndex": 1,
+      "explanation": "TSet uses the same TSparseArray + THashTable architecture as TMap, but without the value component. Each element serves as both the key and the value. This means TSet operations have the same complexity as TMap \u2014 O(1) average."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the memory advantage of TSet over TMap<Key, bool>?",
+      "correctAnswer": "TSet doesn't store the bool values \u2014 it only stores the keys, saving ~1 byte per entry",
+      "acceptableAnswers": [
+        "saves memory",
+        "no value storage",
+        "smaller",
+        "no bool"
+      ],
+      "explanation": "TSet<K> vs TMap<K, bool>: TMap stores both the key AND the bool value (padded to alignment). TSet stores only the key. For large sets, this can be a significant memory savings."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What operation does TSet support that TArray doesn't?",
+      "options": [
+        "Random access",
+        "Sorting",
+        "O(1) Contains() check",
+        "Reverse iteration"
+      ],
+      "correctIndex": 2,
+      "explanation": "TSet::Contains() is O(1) average \u2014 hash lookup. TArray::Contains() is O(n) \u2014 linear scan. Use TSet when you need fast membership testing. TArray is better for iteration and sorted access."
+    }
+  ]
+};
+
+QUIZ_DATA['UE Enums & Flags'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does the UENUM macro do?",
+      "options": [
+        "Creates a C++ enum",
+        "Exposes an enum to the reflection system \u2014 making it usable in Blueprint, serialization, and networking",
+        "Converts an enum to a string",
+        "Adds enum values together"
+      ],
+      "correctIndex": 1,
+      "explanation": "UENUM() tells UHT to generate reflection data for the enum. This enables Blueprint exposure, serialization, networking replication, and conversion to/from strings via UEnum."
+    },
+    {
+      "type": "text_input",
+      "question": "How do you define a bitmask enum in UE? Use what specifier?",
+      "correctAnswer": "ENUM_CLASS_FLAGS",
+      "acceptableAnswers": [
+        "ENUM_CLASS_FLAGS",
+        "EnumClassFlags",
+        "ENUM_CLASS_FLAGS()"
+      ],
+      "explanation": "ENUM_CLASS_FLAGS(ECollisionChannel) tells UE that this enum is used as bitflags. This enables bitwise OR/AND operations, automatic string conversion for combined flags, and proper Blueprint handling."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What does EClassCastFlags do?",
+      "options": [
+        "Controls editor visibility",
+        "Pre-computes the class hierarchy for fast Cast<T> operations",
+        "Defines network replication rules",
+        "Manages garbage collection flags"
+      ],
+      "correctIndex": 1,
+      "explanation": "EClassCastFlags pre-computes the inheritance chain at class registration time. Cast<T>() checks these flags instead of walking the class hierarchy \u2014 making UE casts O(1) hash table lookups rather than O(n) hierarchy walks."
+    }
+  ]
+};
+
+QUIZ_DATA['UE Templates & T-Containers'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is TSubclassOf<T> and why use it instead of UClass*?",
+      "options": [
+        "A faster version of UClass",
+        "A type-safe wrapper around UClass that restricts which classes can be assigned",
+        "A template for spawning objects",
+        "A debugging tool"
+      ],
+      "correctIndex": 1,
+      "explanation": "TSubclassOf<AActor> only accepts UClasses that are AActor or derived from AActor. UClass* accepts any UClass. TSubclassOf provides compile-time type safety for class references."
+    },
+    {
+      "type": "text_input",
+      "question": "What does TIsIInterface<T> check at compile time?",
+      "correctAnswer": "Whether type T implements a specific UE interface \u2014 used with static_assert or template constraints",
+      "acceptableAnswers": [
+        "whether T implements an interface",
+        "interface check",
+        "compile-time interface check",
+        "implements interface"
+      ],
+      "explanation": "TIsIInterface<IMyInterface>::Value is true at compile time if the type implements IMyInterface. Used for SFINAE, static_assert, and conditional template specializations."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the difference between TQueue and TArray for FIFO operations?",
+      "options": [
+        "TQueue is slower",
+        "TQueue has O(1) Dequeue (pop front), TArray::RemoveAt(0) is O(n) because all elements must shift",
+        "TQueue uses more memory",
+        "There is no difference"
+      ],
+      "correctIndex": 1,
+      "explanation": "TArray::RemoveAt(0) shifts every element left by one \u2014 O(n). TQueue wraps an internal ring buffer \u2014 Dequeue is O(1). Use TQueue for queue/fifo patterns, TArray for random access."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the purpose of the T-prefix naming convention in UE?",
+      "options": [
+        "It's just a style choice",
+        "It distinguishes UE types from standard library types \u2014 TArray vs std::vector, TMap vs std::map",
+        "It makes compilation faster",
+        "It's required by UHT"
+      ],
+      "correctIndex": 1,
+      "explanation": "The T-prefix (TArray, TMap, TSharedPtr) clearly distinguishes UE types from C++ standard library types. This avoids naming collisions and makes code intent clear \u2014 you know immediately if you're looking at a UE container."
+    }
+  ]
+};
+
+QUIZ_DATA['Network Roles'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What are the three network roles an Actor can have?",
+      "options": [
+        "ROLE_Server, ROLE_Client, ROLE_Peer",
+        "ROLE_Authority, ROLE_AutonomousProxy, ROLE_SimulatedProxy",
+        "ROLE_Owner, ROLE_Remote, ROLE_Local",
+        "ROLE_Master, ROLE_Slave, ROLE_Observer"
+      ],
+      "correctIndex": 1,
+      "explanation": "Authority = the server (or the client that spawned the actor locally). AutonomousProxy = the client that controls this actor (local player's pawn). SimulatedProxy = other clients that see this actor (other players)."
+    },
+    {
+      "type": "text_input",
+      "question": "On which machine does ROLE_Authority execute for a server-spawned Actor?",
+      "correctAnswer": "The server",
+      "acceptableAnswers": [
+        "server",
+        "the server",
+        "on the server",
+        "dedicated server"
+      ],
+      "explanation": "For server-spawned Actors, ROLE_Authority exists only on the server. The server has authoritative control over the Actor's state. Clients receive replicated versions with ROLE_SimulatedProxy or ROLE_AutonomousProxy."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the key difference between AutonomousProxy and SimulatedProxy?",
+      "options": [
+        "AutonomousProxy runs on the server",
+        "AutonomousProxy receives local player input and predicts, SimulatedProxy only interpolates received state",
+        "They are identical",
+        "AutonomousProxy is for AI actors"
+      ],
+      "correctIndex": 1,
+      "explanation": "AutonomousProxy = the client's own controlled pawn. It receives input, runs prediction, and sends RPCs to the server. SimulatedProxy = other clients' view of this actor. It only interpolates (smooths) between received state updates."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What role does the server have for a client-owned Actor?",
+      "options": [
+        "ROLE_Authority",
+        "ROLE_AutonomousProxy",
+        "ROLE_SimulatedProxy",
+        "ROLE_None"
+      ],
+      "correctIndex": 2,
+      "explanation": "For a client-owned Actor (like a pawn owned by a specific client), the server has ROLE_SimulatedProxy \u2014 it receives the Actor's state from the owning client but does not control it. The owning client has ROLE_AutonomousProxy."
+    },
+    {
+      "type": "text_input",
+      "question": "What macro do you use to check if the current machine is the server?",
+      "correctAnswer": "HasAuthority()",
+      "acceptableAnswers": [
+        "HasAuthority",
+        "HasAuthority()",
+        "GetLocalRole() == ROLE_Authority"
+      ],
+      "explanation": "AActor::HasAuthority() returns true if GetLocalRole() == ROLE_Authority. Put server-only logic (damage application, spawning, state changes) inside `if (HasAuthority())` blocks."
+    }
+  ]
+};
+
+QUIZ_DATA['RPCs in Unreal Engine'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What are the three RPC reliability types?",
+      "options": [
+        "Server, Client, Multicast",
+        "Reliable, Unreliable, and Multicast variants of both",
+        "Fast, Normal, Slow",
+        "UDP, TCP, HTTP"
+      ],
+      "correctIndex": 1,
+      "explanation": "RPCs come in three flavors: Server (client\u2192server), Client (server\u2192owning client), NetMulticast (server\u2192all clients). Each can be Reliable (guaranteed delivery, ordered) or Unreliable (fire-and-forget, may be dropped)."
+    },
+    {
+      "type": "text_input",
+      "question": "What does UFUNCTION(Server, Reliable) mean?",
+      "correctAnswer": "The function is called on the client but executes on the server, with guaranteed delivery",
+      "acceptableAnswers": [
+        "executes on server",
+        "client calls server",
+        "sent to server",
+        "runs on server"
+      ],
+      "explanation": "Server RPC: client calls the function, the call is serialized and sent to the server, the server executes it. Client never executes the function body. Reliable = guaranteed delivery and ordering."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the purpose of the _Validate function in RPCs?",
+      "options": [
+        "It's optional debugging code",
+        "It runs on the server BEFORE the RPC implementation \u2014 used for input validation and cheat detection",
+        "It validates network connectivity",
+        "It checks for null pointers"
+      ],
+      "correctIndex": 1,
+      "explanation": "UFUNCTION(Server, WithValidation) generates a _Validate function that runs on the server before the _Implementation. Return false to reject the RPC (client tried to cheat). The implementation only runs if validation passes."
+    },
+    {
+      "type": "text_input",
+      "question": "When should you use an Unreliable RPC instead of Reliable?",
+      "correctAnswer": "For frequent, time-sensitive updates where losing one is acceptable \u2014 like cosmetic effects, footstep sounds, or rapid position updates",
+      "acceptableAnswers": [
+        "frequent updates",
+        "time-sensitive",
+        "cosmetic",
+        "every frame",
+        "position updates"
+      ],
+      "explanation": "Unreliable RPCs skip the ACK/retransmit overhead. Use for fire-and-forget events where occasional loss doesn't matter. Reliable RPCs are for critical events (damage, spawning, state changes)."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens if you call a Server RPC on a client that doesn't own the Actor?",
+      "options": [
+        "It silently fails",
+        "The RPC is dropped \u2014 only the owning client can call Server RPCs",
+        "It executes on the server anyway",
+        "The engine crashes"
+      ],
+      "correctIndex": 1,
+      "explanation": "Server RPCs are only processed from the owning client's connection. If a non-owning client calls a Server RPC, it's silently dropped. This prevents unauthorized control of other players' Actors."
+    }
+  ]
+};
+
+QUIZ_DATA['RepNotifies & OnRep'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What triggers a RepNotify function?",
+      "options": [
+        "Every frame",
+        "When a replicated property's value changes on the client",
+        "When the server crashes",
+        "On actor spawn"
+      ],
+      "correctIndex": 1,
+      "explanation": "UPROPERTY(ReplicatedUsing=OnRep_Health) calls OnRep_Health() on the client whenever the server pushes a new value for Health. The function receives no parameters \u2014 it reads the property directly."
+    },
+    {
+      "type": "text_input",
+      "question": "How many times does OnRep fire when a property changes from 100 to 100?",
+      "correctAnswer": "Zero \u2014 OnRep only fires when the value actually changes",
+      "acceptableAnswers": [
+        "0",
+        "zero",
+        "none",
+        "it doesn't fire"
+      ],
+      "explanation": "OnRep only triggers when the replicated value is different from the previously received value. If the server sends the same value, no callback fires. This saves bandwidth and CPU."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "Where does an OnRep function execute?",
+      "options": [
+        "On the server",
+        "On every client that receives the replication update",
+        "Only on the owning client",
+        "On both server and client"
+      ],
+      "correctIndex": 1,
+      "explanation": "OnRep fires on EVERY client that receives the replicated update, not just the owning client. This means OnRep for Health updates on all spectator clients too \u2014 useful for UI updates, animation triggers, and VFX."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the main use case for RepNotify vs RPC?",
+      "correctAnswer": "RepNotify is for reacting to state CHANGES; RPC is for triggering ACTIONS",
+      "acceptableAnswers": [
+        "state changes vs actions",
+        "RepNotify reacts to state",
+        "RPC triggers actions"
+      ],
+      "explanation": "RepNotify: 'Health changed from 80 to 60 \u2192 play hurt animation.' RPC: 'Client pressed fire button \u2192 server spawns projectile.' RepNotify is data-driven, RPC is event-driven."
+    }
+  ]
+};
+
+QUIZ_DATA['PushModel & Dirty Marking'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What problem does PushModel solve?",
+      "options": [
+        "Slow network connections",
+        "The default property comparison system compares EVERY replicated property every frame \u2014 PushModel lets you mark only the changed ones",
+        "Memory leaks",
+        "Server crashes"
+      ],
+      "correctIndex": 1,
+      "explanation": "Without PushModel, UE compares every replicated property every frame to detect changes. With PushModel, you call MARK_PROPERTY_DIRTY_FROM_NAME() on only the properties that actually changed. Reduces CPU on the server significantly."
+    },
+    {
+      "type": "text_input",
+      "question": "What macro marks a property as dirty in PushModel?",
+      "correctAnswer": "MARK_PROPERTY_DIRTY_FROM_NAME",
+      "acceptableAnswers": [
+        "MARK_PROPERTY_DIRTY_FROM_NAME",
+        "MARK_PROPERTY_DIRTY",
+        "PushModel"
+      ],
+      "explanation": "MARK_PROPERTY_DIRTY_FROM_NAME(ClassName, PropertyName, PropertyOwner) tells the replication system that this specific property has changed and needs to be sent to clients. Only dirty properties are compared and replicated."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "How does PushModel affect the cache line rule for replicated properties?",
+      "options": [
+        "It doesn't affect cache lines",
+        "Group frequently-changed properties onto the SAME cache line \u2014 PushModel only checks dirty-marked properties, reducing false sharing",
+        "Spread properties across cache lines",
+        "Cache lines are irrelevant"
+      ],
+      "correctIndex": 1,
+      "explanation": "PushModel benefits from cache line grouping: if you mark one property dirty, the entire 64-byte cache line is loaded. Grouping frequently-changed properties on the same line minimizes cache misses during replication comparison."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the tradeoff of PushModel?",
+      "correctAnswer": "You must manually mark properties dirty \u2014 forgetting to mark a changed property means it won't replicate",
+      "acceptableAnswers": [
+        "manual marking",
+        "you must mark",
+        "forgetting to mark",
+        "manual bookkeeping"
+      ],
+      "explanation": "PushModel shifts the burden from the engine to the programmer. If you forget to call MARK_PROPERTY_DIRTY_FROM_NAME() after changing a replicated property, clients will NEVER see the update. It's faster but requires discipline."
+    }
+  ]
+};
+
+QUIZ_DATA['Iris Replication System Overview'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is Iris in UE5?",
+      "options": [
+        "A post-processing effect",
+        "UE5's new replication system \u2014 a complete rewrite of the networking layer for better performance and scalability",
+        "A UI framework",
+        "A physics system"
+      ],
+      "correctIndex": 1,
+      "explanation": "Iris is UE5's next-generation replication system. It replaces the legacy replication path with a modular, data-oriented design optimized for large-scale multiplayer (100+ players). It's opt-in for UE5.4+."
+    },
+    {
+      "type": "text_input",
+      "question": "What is the UReplicationBridge?",
+      "correctAnswer": "The bridge between UE game objects and Iris replication handles \u2014 it translates UObjects into Iris-managed replicated entities",
+      "acceptableAnswers": [
+        "bridge between game objects and Iris",
+        "translates UObjects",
+        "connects UObjects to Iris"
+      ],
+      "explanation": "UReplicationBridge maps UObjects to Iris network handles. When an Actor registers for replication, the bridge creates an Iris handle and manages the mapping. It also handles dormancy and lifetime."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the key architectural difference between Iris and the legacy replication system?",
+      "options": [
+        "Iris uses more memory",
+        "Iris is data-oriented \u2014 filters, prioritization, and serialization are separate pluggable modules",
+        "Iris only works with Blueprint",
+        "Iris uses TCP instead of UDP"
+      ],
+      "correctIndex": 1,
+      "explanation": "The legacy system bundles filtering, prioritization, and dirty-checking into the Actor. Iris separates these concerns: NetObjectFilter (should this replicate?), NetObjectPrioritizer (how urgent?), and state serialization are independent modules."
+    }
+  ]
+};
+
+QUIZ_DATA['Iris Filtering & Prioritization'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What does a NetObjectFilter determine?",
+      "options": [
+        "The packet size",
+        "Whether an object should replicate to a specific connection at all",
+        "The object's priority",
+        "The network bandwidth"
+      ],
+      "correctIndex": 1,
+      "explanation": "A NetObjectFilter decides which connections should receive replication data for a given object. Spatial filters (grid/octree) only replicate to nearby players. Always-relevant objects skip filtering. Custom filters enable team-based visibility."
+    },
+    {
+      "type": "text_input",
+      "question": "What does a NetObjectPrioritizer determine?",
+      "correctAnswer": "How urgently a connection needs an update \u2014 higher priority objects are replicated more frequently",
+      "acceptableAnswers": [
+        "how urgent",
+        "replication frequency",
+        "update priority",
+        "bandwidth allocation"
+      ],
+      "explanation": "The prioritizer scores objects per connection. High-priority objects (nearby players, active threats) get more frequent updates. Low-priority objects (distant, inactive) get less bandwidth. This replaces the legacy NetPriority float."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What spatial structure does the grid filter use for filtering?",
+      "options": [
+        "A binary tree",
+        "A 2D/3D grid \u2014 divides the world into cells, only replicates to connections in the same or adjacent cells",
+        "A linked list",
+        "A hash table"
+      ],
+      "correctIndex": 1,
+      "explanation": "The spatial grid filter divides the world into uniform cells. Objects are placed in cells based on position. A connection only receives objects from its cell and neighboring cells. O(1) per-object filtering."
+    },
+    {
+      "type": "text_input",
+      "question": "When would you write a custom UNetObjectFilter instead of using the built-in grid filter?",
+      "correctAnswer": "When you need non-spatial filtering \u2014 like team-based visibility, line-of-sight checks, or gameplay-specific replication rules",
+      "acceptableAnswers": [
+        "team-based",
+        "non-spatial",
+        "custom visibility",
+        "gameplay rules",
+        "specific filtering"
+      ],
+      "explanation": "The grid filter only considers position. Custom filters can check team membership, stealth states, line of sight, or any gameplay logic. Write a custom filter by subclassing UNetObjectFilter."
+    }
+  ]
+};
+
+QUIZ_DATA['GAS Networking & Prediction'] = {
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "What is the purpose of prediction in GAS?",
+      "options": [
+        "Predicting server crashes",
+        "Running ability activation locally on the client immediately, then reconciling with the server \u2014 hides network latency",
+        "Predicting frame rate",
+        "Predicting memory usage"
+      ],
+      "correctIndex": 1,
+      "explanation": "GAS prediction executes abilities immediately on the client without waiting for server confirmation. When the server's response arrives, the client reconciles (undoes + redoes) if the server disagreed. This makes abilities feel instant despite ping."
+    },
+    {
+      "type": "text_input",
+      "question": "What is a PredictionKey and what does it track?",
+      "correctAnswer": "A unique identifier that ties a client's predicted activation to the server's authoritative response",
+      "acceptableAnswers": [
+        "unique identifier",
+        "ties client and server",
+        "tracks prediction",
+        "links client and server"
+      ],
+      "explanation": "When a client predicts an ability, it assigns a PredictionKey. The server's response carries the same key. The client uses this key to match the server's result with its prediction and reconcile if they differ."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What happens when the server rejects a client's predicted ability activation?",
+      "options": [
+        "The client crashes",
+        "The client undoes (rolls back) all effects of the predicted activation",
+        "The server retries the ability",
+        "Nothing \u2014 the ability still works"
+      ],
+      "correctIndex": 1,
+      "explanation": "Reconciliation: the client rolls back all predicted state changes (cooldowns, costs, applied effects), then applies the server's authoritative result. This is transparent to the player if prediction is usually correct."
+    },
+    {
+      "type": "multiple_choice",
+      "question": "What is the key prerequisite knowledge for understanding GAS networking?",
+      "options": [
+        "Knowledge of rendering pipelines",
+        "Understanding of GameplayAbility, AbilitySystemComponent, GameplayEffect, and GameplayTag",
+        "Knowledge of physics simulation",
+        "Understanding of audio systems"
+      ],
+      "correctIndex": 1,
+      "explanation": "GAS networking builds on the core GAS concepts: GameplayAbility (an action a character can perform), ASC (the component that holds abilities and effects), GameplayEffect (modifies attributes), and GameplayTag (hierarchical tags for conditional logic)."
+    }
+  ]
 };
