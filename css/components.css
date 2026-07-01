@@ -162,6 +162,7 @@
   position: fixed; right: max(0px, calc((100vw - 1000px) / 2 - 170px));
   top: 76px; width: 150px; max-height: calc(100vh - 120px);
   overflow-y: auto; font-size: 0.8rem; z-index: 50;
+  background: var(--bg-primary); padding: 0.5rem 0.75rem; border-radius: var(--radius);
 }
 .toc-link { color: var(--text-muted); padding: 0.15em 0; display: block; transition: color 0.1s; }
 .toc-link:hover { color: var(--text-secondary); text-decoration: none; }

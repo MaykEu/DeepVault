@@ -75,7 +75,9 @@ const TopicHub = {
           '</div>';
 
         if (hasLearn) {
-          html += '<a class="btn btn-learn btn-sm" href="javascript:void(0)" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/learn\')">\u{1F4D6} Learn</a>';
+          var isRead = localStorage.getItem('dv_read_' + folder.id + '_' + note);
+          var readIcon = isRead ? '\u2705 ' : '';
+          html += '<a class="btn btn-learn btn-sm" href="javascript:void(0)" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/learn\')">' + readIcon + '\u{1F4D6} Learn</a>';
         }
         if (hasQuiz) {
           html += '<a class="btn btn-quiz btn-sm" style="margin-left:4px;" href="javascript:void(0)" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '/note/' + encodeURIComponent(note) + '/quiz\')">\u{1F3C6} Quiz</a>';
