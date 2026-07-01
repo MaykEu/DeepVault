@@ -1,6 +1,13 @@
 const Dashboard = {
   render(container) {
-    var html = '<div class="dashboard">';
+    var html = '<div class="toolbar">' +
+      '<button class="btn btn-outline btn-sm" onclick="Storage.exportData()" title="Download progress as JSON">\u{1F4E5} Export</button>' +
+      '<span style="color:var(--text-muted);font-size:0.7rem;margin:0 0.25rem;">|</span>' +
+      '<button class="btn btn-outline btn-sm" onclick="document.getElementById(\'import-file\').click()" title="Load progress from a file">\u{1F4E4} Import</button>' +
+      '<input type="file" id="import-file" accept=".json" style="display:none" onchange="Storage.importData(this.files[0])">' +
+    '</div>';
+
+    html += '<div class="dashboard">';
     for (var i = 0; i < FOLDERS.length; i++) {
       var folder = FOLDERS[i];
       var stats = Storage.getFolderStats(folder.id);
@@ -14,7 +21,6 @@ const Dashboard = {
     }
     html += '</div>';
 
-    // Recently Viewed
     var recent = Storage.getRecent();
     if (recent.length > 0) {
       html += '<div style="display:flex;align-items:center;gap:0.5rem;margin-top:2rem;margin-bottom:0.75rem;">' +
@@ -24,10 +30,8 @@ const Dashboard = {
       html += '<div class="history-list">';
       for (var r = 0; r < recent.length; r++) {
         var item = recent[r];
-        var folder = FOLDERS.find(function(f) { return f.id === item.folder; });
-        var folderName = folder ? folder.name : item.folder;
         html += '<div class="history-entry">' +
-          '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + folder.icon + ' ' + item.note + '</span>' +
+          '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + item.note + '</span>' +
           '<button class="btn btn-outline btn-sm" style="font-size:0.65rem;padding:0.15em 0.4em;margin-right:0.3rem;" onclick="event.stopPropagation();Storage.removeRecent(' + r + ');Dashboard.render(document.getElementById(\'app-main\'))">\u2715</button>' +
           '<button class="btn btn-primary btn-sm" style="font-size:0.7rem;padding:0.2em 0.6em;" onclick="event.stopPropagation();router.navigate(\'#/folder/' + encodeURIComponent(item.folder) + '/note/' + encodeURIComponent(item.note) + '/learn\')">Open</button>' +
         '</div>';
@@ -35,7 +39,6 @@ const Dashboard = {
       html += '</div>';
     }
 
-    // Reference
     html += '<h3 style="margin-top:2rem;margin-bottom:0.75rem;color:var(--text-secondary);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;">\u{1F4DA} Reference</h3>';
     html += '<div class="dashboard">';
     var refs = [

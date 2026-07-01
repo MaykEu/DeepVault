@@ -111,4 +111,48 @@ var Storage = {
     this.save(data);
   },
 
+  exportData() {
+    var blob = new Blob([JSON.stringify(this.getAll(), null, 2)], {type: 'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'deepvault_progress_' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  importData(file) {
+    var self = this;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var imported = JSON.parse(e.target.result);
+        if (!imported.attempts || !Array.isArray(imported.attempts)) {
+          alert('Invalid progress file.');
+          return;
+        }
+        var current = self.getAll();
+        // Merge: add imported attempts that don't already exist
+        var existingIds = {};
+        for (var i = 0; i < current.attempts.length; i++) {
+          existingIds[current.attempts[i].id] = true;
+        }
+        var added = 0;
+        for (var j = 0; j < imported.attempts.length; j++) {
+          if (!existingIds[imported.attempts[j].id]) {
+            current.attempts.push(imported.attempts[j]);
+            existingIds[imported.attempts[j].id] = true;
+            added++;
+          }
+        }
+        self.save(current);
+        alert('Imported ' + added + ' new attempts. Refreshing...');
+        router.navigate('#/');
+      } catch(err) {
+        alert('Failed to parse file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  },
+
 };
