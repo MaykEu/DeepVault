@@ -8,11 +8,15 @@ const TopicHub = {
     var quizNotes = QUIZ_NOTES[folder.id] || [];
     var pct = stats.totalNotes > 0 ? Math.round((stats.completedNotes / stats.totalNotes) * 100) : 0;
 
-    // Split notes
+    // Split notes — Study: all notes with Learn content. Guides: overviews/pipelines
     var quizList = []; var refList = [];
     for (var i = 0; i < notes.length; i++) {
-      if (quizNotes.indexOf(notes[i]) !== -1) quizList.push(notes[i]);
-      else refList.push(notes[i]);
+      var n = notes[i];
+      if (NOTES_CONTENT && NOTES_CONTENT[n]) {
+        quizList.push(n);  // Has Learn content → Study tab
+      } else {
+        refList.push(n);   // No Learn content → Guides tab
+      }
     }
 
     var tab = this.activeTab[folder.id] || 'quizzes';
