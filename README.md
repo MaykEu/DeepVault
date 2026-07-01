@@ -131,4 +131,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 ---
 
+## Development
+
+DeepVault was built with AI assistance (Hermes Agent + Nous Research). The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from 40+ commits of development. If you're using AI to contribute, load SKILL.md first — it prevents the exact bugs we already solved.
+
 Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.
