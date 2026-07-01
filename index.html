@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +18,16 @@
   </svg>
   <span class="logo-text">Deep<span class="logo-accent">Vault</span></span>
 </a>
+  <div class="search-wrap">
+    <input type="text" id="search-input" class="search-input" placeholder="Search notes..." autocomplete="off"
+      oninput="renderSearchResults(searchNotes(this.value))"
+      onfocus="if(this.value.length>=2)renderSearchResults(searchNotes(this.value))">
+    <div id="search-results" class="search-results"></div>
+  </div>
   <nav class="header-nav">
     <a href="javascript:void(0)" class="header-link" onclick="router.navigate('#/reference/DeepVault%20Guide')">&#x1F9ED; Guide</a>
     <a href="javascript:void(0)" class="header-link" onclick="router.navigate('#/reference/Glossary')">&#x1F4D5; Glossary</a>
+    <button class="theme-toggle" onclick="Theme.cycle();this.textContent=Theme.label()">&#x263E; Dark</button>
   </nav>
 </header>
 
@@ -30,6 +37,8 @@
 
 <script src="js/data.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/search.js"></script>
 <script src="js/router.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/topic-hub.js"></script>
@@ -38,5 +47,6 @@
 <script src="js/learn.js"></script>
 <script src="js/history.js"></script>
 <script src="js/app.js"></script>
+<script>Theme.init();</script>
 </body>
 </html>

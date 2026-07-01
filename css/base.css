@@ -1,4 +1,5 @@
-:root {
+/* Dark theme (default) */
+:root, [data-theme="dark"] {
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
   --bg-tertiary: #21262d;
@@ -17,11 +18,41 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Light theme */
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #eaeef2;
+  --border: #d0d7de;
+  --text-primary: #1f2328;
+  --text-secondary: #656d76;
+  --text-muted: #8c959f;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --success: #1a7f37;
+  --danger: #cf222e;
+  --warning: #9a6700;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+
+/* AMOLED theme */
+[data-theme="amoled"] {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #141414;
+  --border: #1f1f1f;
+  --text-primary: #e6e6e6;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --accent: #4da6ff;
+  --accent-hover: #80bfff;
+  --success: #2ea043;
+  --danger: #da3633;
+  --warning: #bb8009;
+  --shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   background: var(--bg-primary);
@@ -31,46 +62,58 @@ body {
   min-height: 100vh;
 }
 
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-}
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); text-decoration: underline; }
 
-code, pre {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-}
+code, pre { font-family: var(--font-mono); font-size: 0.9em; }
 
 button {
-  cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  border: none;
-  border-radius: var(--radius);
-  padding: 0.6em 1.2em;
+  cursor: pointer; font-family: var(--font-sans); font-size: 0.95rem;
+  border: none; border-radius: var(--radius); padding: 0.6em 1.2em;
   transition: background 0.15s, transform 0.1s;
 }
-button:active {
-  transform: scale(0.97);
-}
+button:active { transform: scale(0.97); }
 
-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 1.5rem 0;
-}
+hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
-::-webkit-scrollbar {
-  width: 8px;
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
+
+/* Theme toggle button */
+.theme-toggle {
+  background: var(--bg-tertiary); color: var(--text-secondary);
+  border: 1px solid var(--border); font-size: 0.82rem; padding: 0.3em 0.55em;
 }
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+.theme-toggle:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+
+/* Search */
+.search-wrap { position: relative; margin-left: auto; margin-right: 0.5rem; }
+.search-input {
+  background: var(--bg-tertiary); color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.35em 0.7em; font-size: 0.85rem; width: 200px;
+  transition: border-color 0.15s, width 0.2s;
 }
-::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: 4px;
+.search-input:focus { outline: none; border-color: var(--accent); width: 280px; }
+.search-input::placeholder { color: var(--text-muted); }
+.search-results {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius); max-height: 360px; overflow-y: auto;
+  z-index: 200; display: none; box-shadow: var(--shadow);
 }
+.search-results.active { display: block; }
+.search-result-item {
+  display: block; padding: 0.5rem 0.75rem; color: var(--text-primary);
+  border-bottom: 1px solid var(--border); font-size: 0.85rem; cursor: pointer;
+}
+.search-result-item:hover { background: var(--bg-tertiary); text-decoration: none; color: var(--text-primary); }
+.search-result-note { font-size: 0.7rem; color: var(--text-muted); }
+.search-result-empty { padding: 0.75rem; color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+.search-highlight { background: rgba(88,166,255,0.25); border-radius: 2px; padding: 0 2px; }
+
+/* Footnotes / Backlinks */
+.footnotes { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.footnotes h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem; }
+.footnote-item { font-size: 0.85rem; margin-bottom: 0.4rem; }
