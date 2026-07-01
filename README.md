@@ -3,7 +3,7 @@
 > An interactive quiz & learning platform embedded in a single `index.html`. Zero dependencies. Zero server. Double-click to launch.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
-[![Live Demo](https://img.shields.io/badge/site-live-blue.svg)](https://maykeu.github.io/DeepVault/)
+[![Live Site](https://img.shields.io/badge/live-site-blue.svg)](https://maykeu.github.io/DeepVault/)
 
 ---
 
@@ -18,19 +18,20 @@ DeepVault is an interactive learning platform for mastering computers, programmi
 - **UE Networking** — 7 notes: RPCs, replication, Iris, GAS prediction
 - **Algorithms & Complexity** — 3 notes: Big O, amortized analysis, applied examples
 
-Everything stays on your device — no accounts, no servers, no tracking. Just double-click.
+Everything stays on your device — no accounts, no servers, no tracking.
 
 ## Quick Start
 
 1. **Clone** this repository — `git clone https://github.com/MaykEu/DeepVault.git`
 2. **Double-click** `index.html` — you're studying
 3. Or visit the [live site](https://maykeu.github.io/DeepVault/) — no download needed
+
 ## What It Does
 
 | Feature | Description |
 |---|---|
 | 📚 **Learn** | Full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
-| 🎯 **Quiz** | 67 quizzes with 300+ questions — multiple choice and text input with instant feedback |
+| 🎯 **Quiz** | 67 quizzes with 230+ questions — multiple choice and text input with instant feedback |
 | 📊 **Progress** | Track quiz scores per note and folder. Export/import to move between devices |
 | 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
 | 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |
@@ -53,11 +54,53 @@ See [SKILL.md](SKILL.md) for the complete architecture, data flow, rendering rul
 
 ## Adding Your Own Content
 
-1. **Create an Obsidian vault** with folders matching the categories
-2. **Add `.md` notes** to each folder
-3. **Run `python convert.py`** — it reads your vault, strips YAML frontmatter, and rebuilds `data.js`
-4. **Create quizzes** in `QUIZ_DATA` following the format in SKILL.md
-5. **Open `index.html`** — your notes and quizzes are live
+You can extend DeepVault with your own notes, categories, and quizzes. The pre-loaded content stays — you're adding to it, not replacing it.
+
+### Add Notes to Existing Categories
+
+1. Write `.md` files in your Obsidian vault folder (e.g., `C++ Fundamentals/My Note.md`)
+2. Run `python convert.py` — it detects new files and rebuilds `data.js`
+3. Add quiz questions for your notes in `js/data.js` (see format below)
+4. Open `index.html` — your notes appear alongside the existing ones
+
+### Add a Brand New Category
+
+1. Create a folder in your Obsidian vault (e.g., `Shaders/`) and add `.md` notes
+2. Add one entry to `FOLDER_MAP` in `convert.py`:
+   ```python
+   ('shaders', 'Shader Programming', 'Shaders', '🎨', '#ff6b6b'),
+   ```
+   Format: `(id, display_name, vault_folder, icon, color)`
+3. Run `python convert.py` — your category appears on the dashboard
+4. Add quiz questions for your notes in `QUIZ_DATA` inside `js/data.js`
+5. Run `python convert.py` again — it preserves your quizzes during rebuild
+
+### Quiz Format
+
+```javascript
+QUIZ_DATA['My Note'] = {
+  questions: [
+    {
+      type: "multiple_choice",
+      question: "What is X?",
+      options: ["Option A", "Option B", "Option C"],
+      correctIndex: 1,
+      explanation: "Because..."
+    },
+    {
+      type: "text_input",
+      question: "Explain Y",
+      correctAnswer: "The correct answer",
+      acceptableAnswers: ["alt phrasing 1", "alt phrasing 2"],
+      explanation: "Because..."
+    }
+  ]
+};
+```
+
+- 2–4 options for multiple choice — don't force exactly 4
+- Every question must have an explanation
+- See [SKILL.md](SKILL.md) for the complete format reference
 
 ## Folder Structure (Vault)
 
@@ -81,35 +124,11 @@ Game Development/          ←  Your Obsidian vault root
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or features. AI contributors: read [SKILL.md](SKILL.md) first — it has 10 critical rules and every pitfall we encountered.
 
-## Tech
+## License
 
-- **Pure HTML/CSS/JS** — no frameworks, no npm, no build step
-- **localStorage** — all data stays on your device
-- **GitHub Pages** — free hosting, instant deploy
-- **Code**: MIT — use the HTML/CSS/JS freely
-- **Content**: All Rights Reserved — notes and quizzes may not be republished (see [CONTENT_LICENSE.md](CONTENT_LICENSE.md))
+- **Code** (HTML/CSS/JS/`convert.py`): MIT — use, modify, learn from freely
+- **Content** (notes, quizzes, guides): All Rights Reserved — may not be republished (see [CONTENT_LICENSE.md](CONTENT_LICENSE.md))
 
 ---
 
-Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.### Add a Brand New Category
-
-1. **Create a folder** in your Obsidian vault (e.g., `Shaders/`)
-2. **Add `.md` notes** to the folder
-3. **Add one entry** to `FOLDER_MAP` in `convert.py`:
-   ```python
-   ('shaders', 'Shader Programming', 'Shaders', '🎨', '#ff6b6b'),
-   ```
-   That's it — `convert.py` uses this to generate the dashboard entry, subfolder groups, note lists, and quiz lists automatically.
-4. **Run `python convert.py`** — your category appears on the dashboard
-5. **Add quizzes** for your notes in `QUIZ_DATA` inside `js/data.js`:
-   ```javascript
-   QUIZ_DATA['My Note'] = {
-     questions: [
-       { type: "multiple_choice", question: "...", options: ["A","B"], correctIndex: 0, explanation: "..." }
-     ]
-   };
-   ```
-6. Run `python convert.py` again — it preserves your quizzes during rebuild
-
-
-
+Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.
