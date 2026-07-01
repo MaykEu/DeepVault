@@ -36,8 +36,8 @@ const TopicHub = {
 
     // Tabs
     html += '<div class="tabs">' +
-      '<button class="tab-btn' + (tab === 'quizzes' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'quizzes\')">\u{1F3C6} Quizzes <span class="tab-count">' + quizList.length + '</span></button>' +
-      '<button class="tab-btn' + (tab === 'reference' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'reference\')">\u{1F4D6} Reference <span class="tab-count">' + refList.length + '</span></button>' +
+      '<button class="tab-btn' + (tab === 'quizzes' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'quizzes\')">\u{1F4DA} Study <span class="tab-count">' + quizList.length + '</span></button>' +
+      '<button class="tab-btn' + (tab === 'reference' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'reference\')">\u{1F9ED} Guides <span class="tab-count">' + refList.length + '</span></button>' +
     '</div>';
 
     // List
