@@ -61,7 +61,6 @@ const QUIZ_NOTES = {
     'Threads & Processes'
   ],
   'cpp-fundamentals': [
-    'C++ vs UE C++ — Key Differences',
     'Enums & enum class',
     'Explicit & Implicit Conversion',
     'Move Semantics & Perfect Forwarding',
@@ -2476,33 +2475,7 @@ QUIZ_DATA['GAS Networking & Prediction'] = {
     }
   ]
 };
-QUIZ_DATA['C++ vs UE C++ — Key Differences'] = {
-  "questions": [
-    {
-      "type": "multiple_choice",
-      "question": "Why does UE disable C++ exceptions?",
-      "options": [
-        "They don't work on consoles",
-        "Table-based unwinding adds overhead even when not thrown",
-        "Epic doesn't like them",
-        "Memory leaks"
-      ],
-      "correctIndex": 1,
-      "explanation": "Exception handling metadata adds branches to every function. UE uses check/ensure macros instead."
-    },
-    {
-      "type": "text_input",
-      "question": "What replaces dynamic_cast in Unreal?",
-      "correctAnswer": "Cast<T>()",
-      "acceptableAnswers": [
-        "Cast",
-        "Cast<T>",
-        "Cast<T>()"
-      ],
-      "explanation": "UE's reflection-based cast. Faster and doesn't require C++ RTTI."
-    }
-  ]
-};
+
 QUIZ_DATA['Trigonometry & Vectors'] = {
   "questions": [
     {
