@@ -82,6 +82,20 @@ def main():
                 group.setdefault(rel, []).append(name)
         
         groups[fid] = group
+        
+        # POST-PROCESSING: Rebuild root group from scratch.
+        # Only notes NOT in any subfolder belong in root.
+        all_sub_notes = set()
+        for section, note_list in group.items():
+            if section:
+                for n in note_list:
+                    all_sub_notes.add(n)
+        root_only = [n for n in group.get('', []) if n not in all_sub_notes]
+        if root_only:
+            group[''] = root_only
+        elif '' in group:
+            del group['']
+        
         # Flat list: root first, then alphabetically
         flat = group.get('', [])
         for s in sorted(k for k in group if k):
@@ -160,6 +174,30 @@ def main():
     
     output = '\n'.join(lines)
     
+    # FINAL FIX: Deduplicate root groups in output
+    import re as re2
+    def fix_root(match):
+        full = match.group(0)
+        # Find the root entry (empty string key) and subfolder entries
+        root_m = re2.search(r"'':\s*\[(.*?)\]", full, re2.DOTALL)
+        if not root_m: return full
+        root_notes_raw = root_m.group(1)
+        root_notes = set(re2.findall(r"'([^']+)'", root_notes_raw))
+        # Collect all subfolder notes
+        sub_notes = set()
+        for sm in re2.finditer(r"'([^']+)':\s*\[(.*?)\]", full, re2.DOTALL):
+            key = sm.group(1)
+            if not key: continue  # skip root
+            notes = re2.findall(r"'([^']+)'", sm.group(2))
+            for n in notes:
+                sub_notes.add(n)
+        # Remove subfolder notes from root
+        clean_root = [n for n in root_notes if n not in sub_notes]
+        new_root_str = ', '.join(f"'{n}'" for n in clean_root)
+        return full.replace(root_m.group(0), f"'': [{new_root_str}]")
+    
+    output = re2.sub(r"'(?:cpp-fundamentals|game-math)':\s*\{[^}]+\}", fix_root, output, flags=re2.DOTALL)
+
     # Validate
     tmp = 'D:/temp_dv_validate.js'
     with open(tmp, 'w', encoding='utf-8') as f:
