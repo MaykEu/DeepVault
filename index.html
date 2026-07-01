@@ -27,7 +27,8 @@
   <nav class="header-nav">
     <a href="javascript:void(0)" class="header-link" onclick="router.navigate('#/reference/DeepVault%20Guide')">&#x1F9ED; Guide</a>
     <a href="javascript:void(0)" class="header-link" onclick="router.navigate('#/reference/Glossary')">&#x1F4D5; Glossary</a>
-    <button class="theme-btn" onclick="Theme.cycle();this.innerHTML=Theme.icon()" title="Switch theme">&#x1F319;</button>
+    <button class="theme-btn" onclick="Theme.toggle()" title="Change theme">&#x1F319;</button>
+    <div id="theme-dropdown" class="theme-dropdown"></div>
   </nav>
 </header>
 

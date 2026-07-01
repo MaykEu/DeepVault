@@ -26,7 +26,7 @@
 .logo-text { font-size: 1.05rem; }
 .logo-accent { color: var(--accent); font-weight: 800; }
 
-.header-nav { display: flex; gap: 0.25rem; margin-left: auto; }
+.header-nav { display: flex; gap: 0.25rem; margin-left: auto; position: relative; }
 .header-link {
   font-size: 0.82rem;
   color: var(--text-secondary);
