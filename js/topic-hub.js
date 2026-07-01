@@ -7,7 +7,7 @@ const TopicHub = {
 
     var html = '<a href="#" class="back-link" onclick="router.navigate(\'#/\')">\u2190 Dashboard</a>';
 
-    // Folder header panel
+    // Folder header
     html += '<div class="folder-header">' +
       '<div class="folder-header-top">' +
         '<span class="folder-header-icon">' + folder.icon + '</span>' +
@@ -22,6 +22,7 @@ const TopicHub = {
       '<span class="folder-header-pct">' + pct + '% complete</span>' +
     '</div>';
 
+    // Note cards
     html += '<div class="topic-hub">';
 
     for (var i = 0; i < notes.length; i++) {
@@ -31,25 +32,15 @@ const TopicHub = {
       var hasQuiz = quizNotes.indexOf(note) !== -1;
       var hasLearn = NOTES_CONTENT && NOTES_CONTENT[note];
 
-      var status = 'NOT STARTED';
-      var statusClass = 'status-new';
-      if (best !== null) {
-        status = best >= 80 ? 'COMPLETED' : 'IN PROGRESS';
-        statusClass = best >= 80 ? 'status-done' : 'status-progress';
-      }
-
-      var dotColor = best === null ? 'var(--text-muted)' : (best >= 80 ? 'var(--success)' : 'var(--warning)');
-
       var statsHtml = best !== null
         ? 'Best: <strong style="color:' + (best >= 80 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
-        : '';
+        : 'No attempts yet';
 
       html += '<div class="note-card">' +
-        '<span class="note-status-dot" style="background:' + dotColor + '"></span>' +
+        '<div class="note-icon">\u{1F4C4}</div>' +
         '<div class="note-info">' +
           '<div class="note-name">' + note + '</div>' +
-          (statsHtml ? '<div class="note-stats">' + statsHtml + '</div>' : '') +
-          '<span class="note-status-badge ' + statusClass + '">' + status + '</span>' +
+          '<div class="note-stats">' + statsHtml + '</div>' +
         '</div>';
 
       if (hasLearn) {
