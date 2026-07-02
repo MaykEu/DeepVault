@@ -16,7 +16,7 @@ Obsidian vault (.md files) → python convert.py → js/data.js → index.html
 
 ## 🤖 Use AI
 
-**The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from 77 commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
+**The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from dozens of commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
 
 This entire project was built with AI. You should contribute with it too.
 

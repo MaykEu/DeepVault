@@ -9,14 +9,14 @@
 
 ## What Is This?
 
-DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with 74 notes and 73 quizzes covering:
+DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with a growing collection of notes and quizzes covering:
 
-- **Computer Systems** — 20 notes from bits through CPU architecture to GPU
-- **C++ Fundamentals** — 22 notes across Core Language, Memory, OOP, and Types
-- **Game Math** — 11 notes: trigonometry, matrices, quaternions, collision, UE math
-- **Unreal Engine Core** — 11 notes: UHT, reflection, containers, casting, inheritance
-- **UE Networking** — 7 notes: RPCs, replication, Iris, GAS prediction
-- **Algorithms & Complexity** — 3 notes: Big O, amortized analysis, applied examples
+- **Computer Systems** — from bits and assembly through CPU architecture to GPU
+- **C++ Fundamentals** — across Core Language, Memory, OOP, and Types
+- **Game Math** — trigonometry, matrices, quaternions, collision, UE math
+- **Unreal Engine Core** — UHT, reflection, containers, casting, inheritance
+- **UE Networking** — RPCs, replication, Iris, GAS prediction
+- **Algorithms & Complexity** — Big O, amortized analysis, applied examples
 
 Everything stays on your device — no accounts, no servers, no tracking.
 
@@ -31,11 +31,11 @@ Everything stays on your device — no accounts, no servers, no tracking.
 | Feature | Description |
 |---|---|
 | 📚 **Learn** | Full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
-| 🎯 **Quiz** | 73 quizzes with 280+ questions — multiple choice and text input with instant feedback |
+| 🎯 **Quiz** | hundreds of quiz questions — multiple choice and text input with instant feedback |
 | 📊 **Progress** | Track quiz scores per note and folder. Export/import to move between devices |
 | 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
 | 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |
-| 🔍 **Search** | Search all 74 notes by title, heading, or content |
+| 🔍 **Search** | Search all notes by title, heading, or content |
 | 📱 **Mobile** | Responsive design works on phones |
 | 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
 
@@ -106,8 +106,8 @@ QUIZ_DATA['My Note'] = {
 
 ```
 Game Development/          ←  Your Obsidian vault root
-├── Computer Systems/      ←  20 notes (complete)
-│   ├── Hardware/           ← 10 notes
+├── Computer Systems/
+│   ├── Hardware/              ← 3 subfolders: Hardware, System Software, Concurrency
 ├── C++ Fundamentals/
 │   ├── Core Language/     ←  Subfolders → collapsible groups
 │   ├── Memory & Ownership/
@@ -134,7 +134,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 ## Made with AI
 
-DeepVault was built entirely with AI assistance (Hermes Agent by Nous Research + DeepSeek). Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from 77 commits of development.
+DeepVault was built entirely with AI assistance (Hermes Agent by Nous Research + DeepSeek). Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from dozens of commits of development.
 
 **Content is actively updated.** New notes, quizzes, and categories are added regularly from the author's Obsidian vault. Star the repo to stay updated.
 
