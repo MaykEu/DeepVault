@@ -106,7 +106,8 @@ QUIZ_DATA['My Note'] = {
 
 ```
 Game Development/          ←  Your Obsidian vault root
-├── Computer Systems/      ←  14 notes (complete)
+├── Computer Systems/      ←  20 notes (complete)
+│   ├── Hardware/           ← 10 notes
 ├── C++ Fundamentals/
 │   ├── Core Language/     ←  Subfolders → collapsible groups
 │   ├── Memory & Ownership/
@@ -133,7 +134,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 ## Made with AI
 
-DeepVault was built entirely with AI assistance (Hermes Agent by Nous Research + DeepSeek). Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from 58 commits of development.
+DeepVault was built entirely with AI assistance (Hermes Agent by Nous Research + DeepSeek). Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from 77 commits of development.
 
 **Content is actively updated.** New notes, quizzes, and categories are added regularly from the author's Obsidian vault. Star the repo to stay updated.
 

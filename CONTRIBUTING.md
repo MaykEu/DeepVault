@@ -16,13 +16,13 @@ Obsidian vault (.md files) → python convert.py → js/data.js → index.html
 
 ## 🤖 Use AI
 
-**The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from 58 commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
+**The easiest way to contribute is with an AI.** Load [SKILL.md](SKILL.md) into any AI (ChatGPT, Claude, Gemini, or local models) — it has 10 critical rules, every pitfall from 77 commits, and the exact build procedure. Without SKILL.md, your AI will make the same mistakes we already solved. With it, you can add quizzes, notes, and features in minutes.
 
 This entire project was built with AI. You should contribute with it too.
 
 ---
 
-## Ways to Contribute## Ways to Contribute
+## Ways to Contribute
 
 ### 1. Add Quiz Questions
 Find a note that needs quizzes, read the note content, and add questions to `QUIZ_DATA` in `js/data.js`.
