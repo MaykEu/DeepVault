@@ -43,14 +43,20 @@ Without understanding the hardware, C++ is just magic words. Start with the phys
 4. [[CPU Architecture]] — Fetch-decode-execute, pipelining, branch prediction
 5. [[Memory Hierarchy]] — Cache lines, L1/L2/L3, why RAM is slow
 6. [[RAM & Virtual Memory]] — Page tables, TLB, mmap, swap
-7. [[Storage]] — HDD vs SSD, filesystems, page cache
-8. [[Function Calls & Stack Frames]] — How call and ret actually work
-9. [[Compiler Pipeline]] — Preprocessor to assembler to linker
-10. [[Linking & Executables]] — Static vs dynamic linking, DLLs
-11. [[Syscalls & Kernel]] — Protection rings, syscall instruction, futex
-12. [[Threads & Processes]] — Scheduler, context switching, thread pools
-13. [[Concurrency & Synchronization]] — Mutexes, atomics, memory ordering
-14. [[GPU Architecture Overview]] — SIMT, VRAM, compute shaders
+7. [[Virtual Memory — The Full Picture]] — Segmentation, page replacement, Linux reclamation
+8. [[Memory Allocation — From malloc to Buddy System]] — malloc internals, buddy system, slab, custom allocators
+9. [[Storage]] — HDD vs SSD, filesystems, page cache
+10. [[RAID]] — Striping, mirroring, parity, ZFS, the write hole
+11. [[Function Calls & Stack Frames]] — How call and ret actually work
+12. [[Compiler Pipeline]] — Preprocessor to assembler to linker
+13. [[Linking & Executables]] — Static vs dynamic linking, DLLs
+14. [[Syscalls & Kernel]] — Protection rings, syscall instruction, futex
+15. [[Scheduling — MLFQ & Proportional Share]] — MLFQ, lottery/stride scheduling, CFS, EEVDF
+16. [[Threads & Processes]] — Scheduler, context switching, thread pools
+17. [[Concurrency & Synchronization]] — Mutexes, atomics, memory ordering, lock-free and lock-based structures
+18. [[Condition Variables & Semaphores]] — Waiting rooms, producer-consumer, barriers, POSIX semaphores
+19. [[Deadlock — The Four Conditions]] — Coffman conditions, prevention, priority inversion
+20. [[GPU Architecture Overview]] — SIMT, VRAM, compute shaders
 
 Use the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.
 
