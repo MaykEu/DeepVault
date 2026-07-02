@@ -289,9 +289,14 @@
   border-top: 1px solid var(--border); text-align: right;
 }
 .topic-footer a {
-  font-size: 0.8rem; color: var(--accent); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.45em 0.85em;
+  background: var(--bg-secondary); color: var(--text-secondary);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  text-decoration: none; font-size: 0.8rem;
+  transition: border-color 0.15s, color 0.15s;
 }
-.topic-footer a:hover { text-decoration: underline; }
+.topic-footer a:hover { border-color: var(--accent); color: var(--text-primary); text-decoration: none; }
 
 /* Remove old header-positioned lp-link */
 .lp-link { display: none; }
