@@ -33,7 +33,7 @@ The folder header shows your overall completion percentage (completedNotes / tot
 
 This vault is designed to be read in order. Each note builds on the ones before it.
 
-### Layer 1 — Computer Systems (start here)
+### Layer 1 — Computer Systems — 20 notes (start here)
 
 Without understanding the hardware, C++ is just magic words. Start with the physical reality.
 

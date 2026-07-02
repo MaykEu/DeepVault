@@ -9,9 +9,9 @@
 
 ## What Is This?
 
-DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with 68 notes and 67 quizzes covering:
+DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with 74 notes and 73 quizzes covering:
 
-- **Computer Systems** — 14 notes from bits through CPU architecture to GPU
+- **Computer Systems** — 20 notes from bits through CPU architecture to GPU
 - **C++ Fundamentals** — 22 notes across Core Language, Memory, OOP, and Types
 - **Game Math** — 11 notes: trigonometry, matrices, quaternions, collision, UE math
 - **Unreal Engine Core** — 11 notes: UHT, reflection, containers, casting, inheritance
@@ -31,11 +31,11 @@ Everything stays on your device — no accounts, no servers, no tracking.
 | Feature | Description |
 |---|---|
 | 📚 **Learn** | Full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
-| 🎯 **Quiz** | 67 quizzes with 230+ questions — multiple choice and text input with instant feedback |
+| 🎯 **Quiz** | 73 quizzes with 280+ questions — multiple choice and text input with instant feedback |
 | 📊 **Progress** | Track quiz scores per note and folder. Export/import to move between devices |
 | 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
 | 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |
-| 🔍 **Search** | Search all 68 notes by title, heading, or content |
+| 🔍 **Search** | Search all 74 notes by title, heading, or content |
 | 📱 **Mobile** | Responsive design works on phones |
 | 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
 
