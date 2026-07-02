@@ -37,8 +37,7 @@ const TopicHub = {
         '<div class="folder-header-progress-fill" style="width:' + pct + '%"></div>' +
       '</div>' +
       '<span class="folder-header-pct">' + pct + '% complete</span>' +
-    '</div>' +
-    '<a href="javascript:void(0)" class="lp-link" onclick="router.navigate(\'#/reference/Learning%20Path\')">🧭 View Learning Path →</a>';
+    '</div>';
 
     // Tabs
     html += '<div class="tabs">' +
@@ -106,6 +105,11 @@ const TopicHub = {
       }
       html += '</div>';
     }
+
+    // Learning Path link at bottom
+    html += '<div class="topic-footer">' +
+      '<a href="javascript:void(0)" onclick="router.navigate(\'#/reference/Learning%20Path%20—%20' + encodeURIComponent(folder.name) + '\')">🧭 ' + folder.name + ' Learning Path →</a>' +
+    '</div>';
 
     container.innerHTML = html;
   },

@@ -283,3 +283,15 @@
   margin-top: 0.5rem; text-decoration: none;
 }
 .lp-link:hover { text-decoration: underline; }
+
+.topic-footer {
+  margin-top: 1.2rem; padding-top: 0.8rem;
+  border-top: 1px solid var(--border); text-align: right;
+}
+.topic-footer a {
+  font-size: 0.8rem; color: var(--accent); text-decoration: none;
+}
+.topic-footer a:hover { text-decoration: underline; }
+
+/* Remove old header-positioned lp-link */
+.lp-link { display: none; }
