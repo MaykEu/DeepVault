@@ -134,7 +134,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 ## Made with AI
 
-DeepVault was built entirely with AI assistance (Hermes Agent by Nous Research + DeepSeek). Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from dozens of commits of development.
+DeepVault was built entirely with AI assistance. Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from dozens of commits of development.
 
 **Content is actively updated.** New notes, quizzes, and categories are added regularly from the author's Obsidian vault. Star the repo to stay updated.
 
