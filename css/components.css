@@ -277,3 +277,9 @@
   .folder-group-header { padding: 0.5rem 0.6rem; }
   .folder-group-body { padding-left: 0.3rem; margin-left: 0.2rem; }
 }
+
+.lp-link {
+  display: inline-block; font-size: 0.78rem; color: var(--accent);
+  margin-top: 0.5rem; text-decoration: none;
+}
+.lp-link:hover { text-decoration: underline; }
