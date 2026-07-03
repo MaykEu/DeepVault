@@ -108,7 +108,8 @@
 .history-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
 /* Learn view */
-.learn-note { margin: 0 auto; }
+.learn-note { margin: 0 auto; max-width: 100%; overflow-x: hidden; word-wrap: break-word; }
+.learn-body pre, .learn-body table { max-width: 100%; overflow-x: auto; display: block; }
 .learn-title { font-size: 1.6rem; font-weight: 600; margin-bottom: 2rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
 .learn-body h1 { font-size: 1.6rem; margin: 1.5rem 0 0.75rem; }
 .learn-body h2 { font-size: 1.3rem; margin: 1.4rem 0 0.6rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
