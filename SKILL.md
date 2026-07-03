@@ -159,6 +159,24 @@ Character-by-character tokenizer. NEVER chain `.replace()` calls on already-high
 - `\uFE0F` for variation selectors
 - Never `\U0001f5a5` (Python-only syntax)
 
+### 11. Learning Path Cards — Nested Quotes
+The LP index in `REFERENCE['Learning Path']` is raw HTML stored inside a JSON-encoded JS string. Getting the quote nesting right is fragile:
+
+```html
+<!-- CORRECT: double-quoted HTML attribute, single-quoted JS string inside -->
+<a onclick="router.navigate('#/reference/...')" class="lp-card">
+
+<!-- WRONG: single-at-top, single-at-bottom — # terminates attribute -->
+<a onclick='router.navigate('#/reference/...')' class="lp-card">
+
+<!-- WRONG: &quot; is treated as literal text inside JS, not decoded -->
+<a onclick=&quot;router.navigate(&amp;quot;#/reference/...&amp;quot;)&quot; class="lp-card">
+```
+
+When building from Python, use `json.dumps()` to encode, then `"`. In the raw HTML inside
+the JSON string, the pattern is: `onclick=\"router.navigate('#/reference/...')\"`.
+This is the exact same pattern used by dashboard folder cards in `dashboard.js`.
+
 ## UI Conventions
 
 ### Theme System
