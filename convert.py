@@ -9,7 +9,7 @@ Usage: python convert.py
 
 import json, os, re, subprocess, sys
 
-VAULT = r"C:\Users\sofia\iCloudDrive\iCloud~md~obsidian\Game Development"
+VAULT = r"C:\Users\sofia\Documents\Obsidian\Game Development"
 OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"
 
 FOLDER_MAP = [
