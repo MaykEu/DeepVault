@@ -6,11 +6,11 @@
         "question": "What is FName?",
         "options": [
           "A regular string",
-          "Interned, immutable string \u2014 stored in global table, O(1) comparison via index",
+          "Interned, immutable string — stored in global table, O(1) comparison via index",
           "A wide string",
           "Deprecated"
         ],
-        "correctAnswer": "Interned, immutable string \u2014 stored in global table, O(1) comparison via index",
+        "correctAnswer": "Interned, immutable string — stored in global table, O(1) comparison via index",
         "explanation": "FName: hash table index. Comparing two FNames = comparing integers. Used for asset paths, identifiers. Case-insensitive."
       },
       {
@@ -19,11 +19,11 @@
         "question": "What is FText?",
         "options": [
           "Same as FString",
-          "Localizable display text \u2014 supports translation, pluralization. Used for UI. Not for gameplay logic.",
+          "Localizable display text — supports translation, pluralization. Used for UI. Not for gameplay logic.",
           "A hash",
           "A path"
         ],
-        "correctAnswer": "Localizable display text \u2014 supports translation, pluralization. Used for UI. Not for gameplay logic."
+        "correctAnswer": "Localizable display text — supports translation, pluralization. Used for UI. Not for gameplay logic."
       },
       {
         "e": "TCHAR abstracts platform encoding. TEXT(\"hello\") = L\"hello\" on Windows, \"hello\" elsewhere. FString is TArray<TCHAR>.",
@@ -31,23 +31,23 @@
         "question": "What is TCHAR?",
         "options": [
           "A string class",
-          "UE's character type \u2014 wchar_t on Windows (UTF-16), char on others. TEXT() macro ensures correct encoding.",
+          "UE's character type — wchar_t on Windows (UTF-16), char on others. TEXT() macro ensures correct encoding.",
           "A string type",
           "A macro"
         ],
-        "correctAnswer": "UE's character type \u2014 wchar_t on Windows (UTF-16), char on others. TEXT() macro ensures correct encoding."
+        "correctAnswer": "UE's character type — wchar_t on Windows (UTF-16), char on others. TEXT() macro ensures correct encoding."
       },
       {
         "e": "FName = (index, number). Index into global TNameEntryArray. == operator compares indices. String comparison is never done at runtime.",
-        "explanation": "The FName pool is a fixed-size hash table created at engine startup. All FNames exist forever \u2014 you cannot remove them. Creating FNames from runtime-generated strings (player names, chat messages) would eventually overflow the pool. Use FString for dynamic text.",
+        "explanation": "The FName pool is a fixed-size hash table created at engine startup. All FNames exist forever — you cannot remove them. Creating FNames from runtime-generated strings (player names, chat messages) would eventually overflow the pool. Use FString for dynamic text.",
         "question": "Why is FName comparison O(1)?",
         "options": [
           "It compares strings",
-          "FName stores an index into a global name table \u2014 comparing two FNames is comparing two integers (table indices)",
+          "FName stores an index into a global name table — comparing two FNames is comparing two integers (table indices)",
           "It uses hash",
           "It's sorted"
         ],
-        "correctAnswer": "FName stores an index into a global name table \u2014 comparing two FNames is comparing two integers (table indices)"
+        "correctAnswer": "FName stores an index into a global name table — comparing two FNames is comparing two integers (table indices)"
       },
       {
         "e": "FNames live forever in the global pool. Don't create FNames from dynamic strings (player names, chat messages). Use FString for runtime-generated text.",
@@ -70,11 +70,11 @@
         "question": "Why does UE use MoveTemp instead of std::move?",
         "options": [
           "Same thing",
-          "UE wrapper \u2014 same semantics but consistent naming convention. MoveTemp(x) \u2261 std::move(x).",
+          "UE wrapper — same semantics but consistent naming convention. MoveTemp(x) ≡ std::move(x).",
           "Different behavior",
           "Deprecated"
         ],
-        "correctAnswer": "UE wrapper \u2014 same semantics but consistent naming convention. MoveTemp(x) \u2261 std::move(x).",
+        "correctAnswer": "UE wrapper — same semantics but consistent naming convention. MoveTemp(x) ≡ std::move(x).",
         "explanation": "UE naming convention: MoveTemp for rvalue cast. MoveTempIfPossible for conditional move. All wrap standard move semantics."
       },
       {
@@ -83,11 +83,11 @@
         "question": "What does MoveTemp do?",
         "options": [
           "Copies",
-          "UE's std::move \u2014 casts to rvalue reference. MoveTemp(x) \u2261 static_cast<T&&>(x). Enables move semantics.",
+          "UE's std::move — casts to rvalue reference. MoveTemp(x) ≡ static_cast<T&&>(x). Enables move semantics.",
           "Deletes",
           "Allocates"
         ],
-        "correctAnswer": "UE's std::move \u2014 casts to rvalue reference. MoveTemp(x) \u2261 static_cast<T&&>(x). Enables move semantics."
+        "correctAnswer": "UE's std::move — casts to rvalue reference. MoveTemp(x) ≡ static_cast<T&&>(x). Enables move semantics."
       },
       {
         "e": "MoveTempIfPossible checks TIsMoveConstructible<T>. Falls back to copy for non-movable types. Used in TArray growth path.",
@@ -103,27 +103,27 @@
       },
       {
         "e": "No exceptions = no exception-safety concern. TArray doesn't need move_if_noexcept. Always moves elements on reallocation.",
-        "explanation": "FORCEINLINE expands to __forceinline (MSVC) or __attribute__((always_inline)) (Clang/GCC). MoveTemp is a tiny template that MUST be zero-cost \u2014 forcing inlining guarantees there's no function call overhead for what should just be a cast.",
+        "explanation": "FORCEINLINE expands to __forceinline (MSVC) or __attribute__((always_inline)) (Clang/GCC). MoveTemp is a tiny template that MUST be zero-cost — forcing inlining guarantees there's no function call overhead for what should just be a cast.",
         "question": "Why is TArray always able to move on reallocation?",
         "options": [
           "It copies",
-          "UE disables exceptions globally \u2014 every type is effectively noexcept-move. TArray always moves, never falls back to copy.",
+          "UE disables exceptions globally — every type is effectively noexcept-move. TArray always moves, never falls back to copy.",
           "It doesn't move",
           "Only for POD"
         ],
-        "correctAnswer": "UE disables exceptions globally \u2014 every type is effectively noexcept-move. TArray always moves, never falls back to copy."
+        "correctAnswer": "UE disables exceptions globally — every type is effectively noexcept-move. TArray always moves, never falls back to copy."
       },
       {
         "e": "MoveTemp is a template that MUST be inlined. FORCEINLINE = __forceinline on MSVC, always_inline on Clang. Zero function call overhead.",
-        "explanation": "MoveTemp(x) \u2261 static_cast<typename TRemoveReference<T>::Type&&>(x). It's a cast \u2014 it doesn't move anything. It enables the move constructor or move assignment operator to be selected by overload resolution. Same mechanism as std::move.",
+        "explanation": "MoveTemp(x) ≡ static_cast<typename TRemoveReference<T>::Type&&>(x). It's a cast — it doesn't move anything. It enables the move constructor or move assignment operator to be selected by overload resolution. Same mechanism as std::move.",
         "question": "What is FORCEINLINE and why is it used on MoveTemp?",
         "options": [
           "Debug only",
-          "Forces inlining even in debug builds \u2014 MoveTemp must be zero-cost. Essential for performance-critical paths.",
+          "Forces inlining even in debug builds — MoveTemp must be zero-cost. Essential for performance-critical paths.",
           "Style",
           "Deprecated"
         ],
-        "correctAnswer": "Forces inlining even in debug builds \u2014 MoveTemp must be zero-cost. Essential for performance-critical paths."
+        "correctAnswer": "Forces inlining even in debug builds — MoveTemp must be zero-cost. Essential for performance-critical paths."
       }
     ]
   },
@@ -134,24 +134,24 @@
         "question": "What is TObjectPtr?",
         "options": [
           "A raw pointer",
-          "GC-tracked smart pointer for UObjects \u2014 transparent replacement for raw T* with lazy loading and editor integration",
+          "GC-tracked smart pointer for UObjects — transparent replacement for raw T* with lazy loading and editor integration",
           "A shared pointer",
           "Deprecated"
         ],
-        "correctAnswer": "GC-tracked smart pointer for UObjects \u2014 transparent replacement for raw T* with lazy loading and editor integration",
+        "correctAnswer": "GC-tracked smart pointer for UObjects — transparent replacement for raw T* with lazy loading and editor integration",
         "explanation": "TObjectPtr<T> replaces raw T* in UE5. Implicit conversion to T*. GC tracking. Lazy object resolution. Editor cook integration."
       },
       {
         "e": "TSharedPtr: non-UObject ref-counting. TSharedRef: non-nullable variant. TWeakPtr: non-owning observer. For UObjects use TObjectPtr.",
-        "explanation": "TSharedPtr is reference-counted (like std::shared_ptr) for non-UObject types (FVector, custom structs). UObjects use UE's garbage collector \u2014 adding shared_ptr refcounting would conflict with GC. Use TSharedPtr for plain C++ objects.",
+        "explanation": "TSharedPtr is reference-counted (like std::shared_ptr) for non-UObject types (FVector, custom structs). UObjects use UE's garbage collector — adding shared_ptr refcounting would conflict with GC. Use TSharedPtr for plain C++ objects.",
         "question": "What is TSharedPtr?",
         "options": [
           "Same as TObjectPtr",
-          "Reference-counted smart pointer for NON-UObject types \u2014 similar to std::shared_ptr",
+          "Reference-counted smart pointer for NON-UObject types — similar to std::shared_ptr",
           "For UObjects",
           "Deprecated"
         ],
-        "correctAnswer": "Reference-counted smart pointer for NON-UObject types \u2014 similar to std::shared_ptr"
+        "correctAnswer": "Reference-counted smart pointer for NON-UObject types — similar to std::shared_ptr"
       },
       {
         "e": "TUniquePtr<T> = exclusive heap ownership. Cannot be copied. Move transfers ownership. Automatically deletes on destruction.",
@@ -159,35 +159,35 @@
         "question": "What is TUniquePtr?",
         "options": [
           "Same as TSharedPtr",
-          "Exclusive ownership \u2014 UE's std::unique_ptr. Non-copyable, movable. For non-UObject types.",
+          "Exclusive ownership — UE's std::unique_ptr. Non-copyable, movable. For non-UObject types.",
           "For UObjects",
           "Deprecated"
         ],
-        "correctAnswer": "Exclusive ownership \u2014 UE's std::unique_ptr. Non-copyable, movable. For non-UObject types."
+        "correctAnswer": "Exclusive ownership — UE's std::unique_ptr. Non-copyable, movable. For non-UObject types."
       },
       {
         "e": "TWeakObjectPtr = observer. Doesn't keep UObject alive. Used for optional references, back-pointers that shouldn't prevent GC.",
-        "explanation": "TWeakObjectPtr observes a UObject without preventing GC. Must call IsValid() before dereferencing \u2014 the object may have been garbage collected. Used for optional references, back-pointers, and cached lookups that shouldn't extend lifetime.",
+        "explanation": "TWeakObjectPtr observes a UObject without preventing GC. Must call IsValid() before dereferencing — the object may have been garbage collected. Used for optional references, back-pointers, and cached lookups that shouldn't extend lifetime.",
         "question": "What is TWeakObjectPtr?",
         "options": [
           "Same as TObjectPtr",
-          "Non-owning reference to UObject \u2014 doesn't prevent GC. Must check IsValid() before use.",
+          "Non-owning reference to UObject — doesn't prevent GC. Must check IsValid() before use.",
           "Strong reference",
           "Deprecated"
         ],
-        "correctAnswer": "Non-owning reference to UObject \u2014 doesn't prevent GC. Must check IsValid() before use."
+        "correctAnswer": "Non-owning reference to UObject — doesn't prevent GC. Must check IsValid() before use."
       },
       {
         "e": "UObject lifetime is managed by UE's garbage collector. Adding shared_ptr refcounting would create two competing ownership systems.",
-        "explanation": "UObjects have their own mark-and-sweep garbage collector. std::shared_ptr tracks reference counts independently \u2014 the two systems would compete and potentially double-delete or leak. UE provides TObjectPtr for GC-tracked ownership instead.",
+        "explanation": "UObjects have their own mark-and-sweep garbage collector. std::shared_ptr tracks reference counts independently — the two systems would compete and potentially double-delete or leak. UE provides TObjectPtr for GC-tracked ownership instead.",
         "question": "Why can't you use std::shared_ptr for UObjects?",
         "options": [
           "It's slower",
-          "UObjects have their own GC \u2014 std::shared_ptr's reference counting would conflict. UE GC manages UObject lifetime.",
+          "UObjects have their own GC — std::shared_ptr's reference counting would conflict. UE GC manages UObject lifetime.",
           "It doesn't compile",
           "Memory usage"
         ],
-        "correctAnswer": "UObjects have their own GC \u2014 std::shared_ptr's reference counting would conflict. UE GC manages UObject lifetime."
+        "correctAnswer": "UObjects have their own GC — std::shared_ptr's reference counting would conflict. UE GC manages UObject lifetime."
       }
     ]
   },
@@ -198,24 +198,24 @@
         "question": "What is TArray's growth strategy?",
         "options": [
           "Fixed size",
-          "Similar to std::vector \u2014 exponential growth (UE adds slack on reallocation). TArray::Add() reallocates when full.",
+          "Similar to std::vector — exponential growth (UE adds slack on reallocation). TArray::Add() reallocates when full.",
           "Never grows",
           "Cubic growth"
         ],
-        "correctAnswer": "Similar to std::vector \u2014 exponential growth (UE adds slack on reallocation). TArray::Add() reallocates when full.",
+        "correctAnswer": "Similar to std::vector — exponential growth (UE adds slack on reallocation). TArray::Add() reallocates when full.",
         "explanation": "TArray = dynamic array. Similar to vector. Grow by adding slack (default 4 elements at small sizes). Reserve() prevents reallocation."
       },
       {
         "e": "Emplace like emplace_back. Avoids temporary creation. TArray::Emplace(Args...) forwards to element constructor at new end position.",
-        "explanation": "Reserve(N) pre-allocates capacity to at least N elements. Subsequent Add() calls don't reallocate until size exceeds N. Use when you know the final size upfront \u2014 avoids all reallocation overhead during population.",
+        "explanation": "Reserve(N) pre-allocates capacity to at least N elements. Subsequent Add() calls don't reallocate until size exceeds N. Use when you know the final size upfront — avoids all reallocation overhead during population.",
         "question": "What does TArray::Emplace do vs Add?",
         "options": [
           "Same",
-          "Emplace constructs in-place at end \u2014 forwards args to constructor. Add copies/moves existing object. Emplace avoids temporary.",
+          "Emplace constructs in-place at end — forwards args to constructor. Add copies/moves existing object. Emplace avoids temporary.",
           "Add is faster",
           "Emplace is deprecated"
         ],
-        "correctAnswer": "Emplace constructs in-place at end \u2014 forwards args to constructor. Add copies/moves existing object. Emplace avoids temporary."
+        "correctAnswer": "Emplace constructs in-place at end — forwards args to constructor. Add copies/moves existing object. Emplace avoids temporary."
       },
       {
         "e": "Reserve(N) = allocate N slots upfront. Push N elements without reallocation. Same as std::vector::reserve.",
@@ -223,15 +223,15 @@
         "question": "What does TArray::Reserve do?",
         "options": [
           "Shrinks array",
-          "Pre-allocates capacity to at least N \u2014 prevents reallocation during subsequent Adds",
+          "Pre-allocates capacity to at least N — prevents reallocation during subsequent Adds",
           "Sorts",
           "Clears"
         ],
-        "correctAnswer": "Pre-allocates capacity to at least N \u2014 prevents reallocation during subsequent Adds"
+        "correctAnswer": "Pre-allocates capacity to at least N — prevents reallocation during subsequent Adds"
       },
       {
         "e": "UE adds Slack (default=4) each growth. Also grows by old_capacity. Larger arrays grow faster. Amortized O(1) Add like std::vector.",
-        "explanation": "TArray::SetNum(N) resizes to exactly N elements. If N > current size: default-constructs new elements (or uses specified value). If N < current size: destroys excess elements. Does NOT change capacity \u2014 only changes the logical size.",
+        "explanation": "TArray::SetNum(N) resizes to exactly N elements. If N > current size: default-constructs new elements (or uses specified value). If N < current size: destroys excess elements. Does NOT change capacity — only changes the logical size.",
         "question": "What is TArray's growth strategy when full?",
         "options": [
           "Fixed size",
@@ -243,15 +243,15 @@
       },
       {
         "e": "SetNum(N) = resize to N. If N > size: default-construct new elements. If N < size: destroy excess elements. Does NOT change capacity.",
-        "explanation": "Emplace forwards constructor arguments directly to the new element's constructor at the end of the array \u2014 no temporary object, no copy, no move. Same as std::vector::emplace_back. Use Emplace(args...) when constructing complex objects in-place.",
+        "explanation": "Emplace forwards constructor arguments directly to the new element's constructor at the end of the array — no temporary object, no copy, no move. Same as std::vector::emplace_back. Use Emplace(args...) when constructing complex objects in-place.",
         "question": "What does TArray::SetNum do?",
         "options": [
           "Same as Add",
-          "Resizes array to N elements \u2014 initializes new elements (default or specified value), destroys excess",
+          "Resizes array to N elements — initializes new elements (default or specified value), destroys excess",
           "Reserves",
           "Sorts"
         ],
-        "correctAnswer": "Resizes array to N elements \u2014 initializes new elements (default or specified value), destroys excess"
+        "correctAnswer": "Resizes array to N elements — initializes new elements (default or specified value), destroys excess"
       }
     ]
   },
@@ -262,15 +262,15 @@
         "question": "What data structure does TMap use?",
         "options": [
           "Red-black tree",
-          "Hash table with separate chaining \u2014 O(1) average, similar to std::unordered_map",
+          "Hash table with separate chaining — O(1) average, similar to std::unordered_map",
           "Sorted array",
           "B-tree"
         ],
-        "correctAnswer": "Hash table with separate chaining \u2014 O(1) average, similar to std::unordered_map",
+        "correctAnswer": "Hash table with separate chaining — O(1) average, similar to std::unordered_map",
         "explanation": "TMap = unordered hash map. Uses sparse array with chaining. Key must have GetTypeHash(). No ordering guarantees. O(1) average lookup."
       },
       {
-        "e": "FVector* val = Map.Find(key); if(val) use(*val); Standard UE pattern \u2014 pointer-based lookup, no exceptions.",
+        "e": "FVector* val = Map.Find(key); if(val) use(*val); Standard UE pattern — pointer-based lookup, no exceptions.",
         "explanation": "TMap uses GetTypeHash(const T&) to compute the hash bucket. Built-in types (int, float, FString, FName) have predefined GetTypeHash. Custom structs must provide a specialization: friend uint32 GetTypeHash(const FMyStruct& S).",
         "question": "What does TMap::Find do?",
         "options": [
@@ -287,15 +287,15 @@
         "question": "What hash function does TMap require?",
         "options": [
           "std::hash",
-          "GetTypeHash() \u2014 must be defined for key type. UE provides for built-in types. Custom types need specialization.",
+          "GetTypeHash() — must be defined for key type. UE provides for built-in types. Custom types need specialization.",
           "Always works",
           "CRC32"
         ],
-        "correctAnswer": "GetTypeHash() \u2014 must be defined for key type. UE provides for built-in types. Custom types need specialization."
+        "correctAnswer": "GetTypeHash() — must be defined for key type. UE provides for built-in types. Custom types need specialization."
       },
       {
         "e": "FindOrAdd: returns existing value or creates new entry. Useful for counters, caches. TMap[Key] = TMap::FindOrAdd(Key) + 1 style patterns.",
-        "explanation": "TMap enforces unique keys \u2014 inserting a duplicate key overwrites the existing value. TMultiMap allows multiple entries with the same key \u2014 Find() returns the first match; use TMultiMap::MultiFind() to get all values for a key.",
+        "explanation": "TMap enforces unique keys — inserting a duplicate key overwrites the existing value. TMultiMap allows multiple entries with the same key — Find() returns the first match; use TMultiMap::MultiFind() to get all values for a key.",
         "question": "What does TMap::FindOrAdd do?",
         "options": [
           "Always adds",
@@ -306,8 +306,8 @@
         "correctAnswer": "Returns reference to value for key, creating default-constructed value if key doesn't exist"
       },
       {
-        "e": "TMap: unique keys. TMultiMap: multiple entries with same key. TMultiMap::Find returns first match. Use for key\u2192many relationships.",
-        "explanation": "TMap::Find(Key) returns a pointer to the value if found, nullptr if not. No exceptions. Pattern: if (FVector* Val = Map.Find(Key)) { Use(*Val); }. This is the preferred lookup pattern in UE \u2014 explicit null check, no exception overhead.",
+        "e": "TMap: unique keys. TMultiMap: multiple entries with same key. TMultiMap::Find returns first match. Use for key→many relationships.",
+        "explanation": "TMap::Find(Key) returns a pointer to the value if found, nullptr if not. No exceptions. Pattern: if (FVector* Val = Map.Find(Key)) { Use(*Val); }. This is the preferred lookup pattern in UE — explicit null check, no exception overhead.",
         "question": "How is TMap different from TMultiMap?",
         "options": [
           "Same",
@@ -326,12 +326,12 @@
         "question": "What does UHT (Unreal Header Tool) do?",
         "options": [
           "Compiles code",
-          "Parses UCLASS/USTRUCT/UFUNCTION macros and generates reflection data \u2014 .generated.h files with StaticClass(), serialization, GC info",
+          "Parses UCLASS/USTRUCT/UFUNCTION macros and generates reflection data — .generated.h files with StaticClass(), serialization, GC info",
           "Nothing",
           "Optimizes"
         ],
-        "correctAnswer": "Parses UCLASS/USTRUCT/UFUNCTION macros and generates reflection data \u2014 .generated.h files with StaticClass(), serialization, GC info",
-        "explanation": "UHT pre-processes headers before the compiler. UCLASS\u2192StaticClass(), class flags. UPROPERTY\u2192serialization, replication. UFUNCTION\u2192network RPC, Blueprint."
+        "correctAnswer": "Parses UCLASS/USTRUCT/UFUNCTION macros and generates reflection data — .generated.h files with StaticClass(), serialization, GC info",
+        "explanation": "UHT pre-processes headers before the compiler. UCLASS→StaticClass(), class flags. UPROPERTY→serialization, replication. UFUNCTION→network RPC, Blueprint."
       },
       {
         "e": "UPROPERTY = reflection + GC. Without it: no GC tracking (dangling!), no serialization (can't save/load), no Blueprint/network access.",
@@ -339,11 +339,11 @@
         "question": "What does UPROPERTY() do?",
         "options": [
           "Nothing",
-          "Marks member for GC tracking, serialization, replication, Blueprint access \u2014 UHT generates reflection code for marked properties",
+          "Marks member for GC tracking, serialization, replication, Blueprint access — UHT generates reflection code for marked properties",
           "Only a comment",
           "Deprecated"
         ],
-        "correctAnswer": "Marks member for GC tracking, serialization, replication, Blueprint access \u2014 UHT generates reflection code for marked properties"
+        "correctAnswer": "Marks member for GC tracking, serialization, replication, Blueprint access — UHT generates reflection code for marked properties"
       },
       {
         "e": "UFUNCTION enables BlueprintCallable, Server/Client/NetMulticast RPCs, Exec (console). UHT generates thunks that marshal parameters.",
@@ -351,15 +351,15 @@
         "question": "What does UFUNCTION() do?",
         "options": [
           "Nothing",
-          "Marks function for Blueprint call, network RPC, or exec command \u2014 UHT generates thunk code for cross-boundary calls",
+          "Marks function for Blueprint call, network RPC, or exec command — UHT generates thunk code for cross-boundary calls",
           "Only a comment",
           "Deprecated"
         ],
-        "correctAnswer": "Marks function for Blueprint call, network RPC, or exec command \u2014 UHT generates thunk code for cross-boundary calls"
+        "correctAnswer": "Marks function for Blueprint call, network RPC, or exec command — UHT generates thunk code for cross-boundary calls"
       },
       {
         "e": "BlueprintCallable = void/impure function (white exec pins). BlueprintPure = const function (green, no pins). Use Pure for getters, math.",
-        "explanation": "BlueprintCallable functions have execution pins (white) and can modify state \u2014 they run when called. BlueprintPure functions have no exec pins (green) and cannot modify state \u2014 they're evaluated on demand like a getter. Use Pure for const accessors and math.",
+        "explanation": "BlueprintCallable functions have execution pins (white) and can modify state — they run when called. BlueprintPure functions have no exec pins (green) and cannot modify state — they're evaluated on demand like a getter. Use Pure for const accessors and math.",
         "question": "What is the difference between BlueprintCallable and BlueprintPure?",
         "options": [
           "Same",
@@ -375,7 +375,7 @@
           "Server Client NetMulticast",
           "Server, Client, NetMulticast, Reliable, Unreliable"
         ],
-        "explanation": "Server: client\u2192server. Client: server\u2192owning client. NetMulticast: server\u2192all. Reliable: guaranteed delivery. WithValidation: adds _Validate check.",
+        "explanation": "Server: client→server. Client: server→owning client. NetMulticast: server→all. Reliable: guaranteed delivery. WithValidation: adds _Validate check.",
         "question": "What are the UFUNCTION specifiers for networking?"
       }
     ]
@@ -387,11 +387,11 @@
         "question": "What is UObject?",
         "options": [
           "A regular class",
-          "Base class for all UE objects \u2014 provides GC, serialization, reflection, networking. Everything inherits from UObject.",
+          "Base class for all UE objects — provides GC, serialization, reflection, networking. Everything inherits from UObject.",
           "A component",
           "A macro"
         ],
-        "correctAnswer": "Base class for all UE objects \u2014 provides GC, serialization, reflection, networking. Everything inherits from UObject.",
+        "correctAnswer": "Base class for all UE objects — provides GC, serialization, reflection, networking. Everything inherits from UObject.",
         "explanation": "UObject = UE's base. AActor, UActorComponent, UAsset all derive from UObject. GC tracking via GUObjectArray. UPROPERTY for GC references."
       },
       {
@@ -408,19 +408,19 @@
       },
       {
         "e": "CDO = prototype object. Created once per class at engine init. NewObject<T>() copies CDO's properties. Editor defaults = CDO properties.",
-        "explanation": "NewObject<T>(): allocates memory \u2192 copies CDO properties \u2192 calls constructor \u2192 registers with GC \u2192 calls PostInitProperties(). Never use raw 'new' for UObjects \u2014 NewObject handles GC registration, property initialization, and object flags.",
+        "explanation": "NewObject<T>(): allocates memory → copies CDO properties → calls constructor → registers with GC → calls PostInitProperties(). Never use raw 'new' for UObjects — NewObject handles GC registration, property initialization, and object flags.",
         "question": "What is the Class Default Object (CDO)?",
         "options": [
           "A template",
-          "The default instance of a UClass \u2014 created at class registration. Used as template: new objects copy CDO's property values.",
+          "The default instance of a UClass — created at class registration. Used as template: new objects copy CDO's property values.",
           "The first instance",
           "A garbage collector"
         ],
-        "correctAnswer": "The default instance of a UClass \u2014 created at class registration. Used as template: new objects copy CDO's property values."
+        "correctAnswer": "The default instance of a UClass — created at class registration. Used as template: new objects copy CDO's property values."
       },
       {
         "e": "NewObject = UE's object factory. Never use 'new' for UObjects. NewObject handles GC registration, CDO copy, property initialization.",
-        "explanation": "UE GC uses mark-and-sweep: start from root objects (UGameInstance, UWorld), traverse UPROPERTY references marking reachable objects. Unmarked objects are unreachable \u2192 deleted. Raw C++ pointers DON'T count as references \u2014 must be UPROPERTY() to prevent GC.",
+        "explanation": "UE GC uses mark-and-sweep: start from root objects (UGameInstance, UWorld), traverse UPROPERTY references marking reachable objects. Unmarked objects are unreachable → deleted. Raw C++ pointers DON'T count as references — must be UPROPERTY() to prevent GC.",
         "question": "What is the UObject creation path?",
         "options": [
           "malloc",
@@ -431,7 +431,7 @@
         "correctAnswer": "NewObject<T>(): allocates memory, copies CDO properties, calls constructor, registers with GC, calls PostInitProperties"
       },
       {
-        "e": "UE GC: mark phase (traverse UPROPERTY graph from roots) \u2192 sweep phase (delete unmarked). Raw pointers DON'T prevent GC \u2014 must be UPROPERTY.",
+        "e": "UE GC: mark phase (traverse UPROPERTY graph from roots) → sweep phase (delete unmarked). Raw pointers DON'T prevent GC — must be UPROPERTY.",
         "explanation": "UCLASS() is parsed by UHT before compilation. It generates: UClass* StaticClass() function, EClassCastFlags enum, CDO instance, reflection property chain (for serialization/property access), and Blueprint type information.",
         "question": "How does UE garbage collection know an object is reachable?",
         "options": [

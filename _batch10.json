@@ -6,45 +6,45 @@
         "question": "Why are 4x4 matrices used for 3D transforms?",
         "options": [
           "Style",
-          "Homogeneous coordinates enable translation as a linear operation \u2014 without the 4th row/column, translation requires separate vector addition",
+          "Homogeneous coordinates enable translation as a linear operation — without the 4th row/column, translation requires separate vector addition",
           "Faster than 3x3",
           "Required by GPUs"
         ],
-        "correctAnswer": "Homogeneous coordinates enable translation as a linear operation \u2014 without the 4th row/column, translation requires separate vector addition",
-        "explanation": "4x4 matrix: (x,y,z,1) \u00d7 M. The 4th column encodes translation. 3x3 can't represent translation in a single matrix multiply."
+        "correctAnswer": "Homogeneous coordinates enable translation as a linear operation — without the 4th row/column, translation requires separate vector addition",
+        "explanation": "4x4 matrix: (x,y,z,1) × M. The 4th column encodes translation. 3x3 can't represent translation in a single matrix multiply."
       },
       {
         "question": "What is the order of the MVP transformation?",
         "options": [
-          "P\u00d7V\u00d7M",
-          "Model \u2192 World, World \u2192 View, View \u2192 Projection (M first, then V, then P)",
-          "V\u00d7P\u00d7M",
+          "P×V×M",
+          "Model → World, World → View, View → Projection (M first, then V, then P)",
+          "V×P×M",
           "Any order"
         ],
-        "correctAnswer": "Model \u2192 World, World \u2192 View, View \u2192 Projection (M first, then V, then P)",
-        "explanation": "MVP = Projection \u00d7 View \u00d7 Model. Applied right-to-left to vertex: P\u00b7V\u00b7M\u00b7v. Model: local\u2192world. View: world\u2192camera. Projection: camera\u2192clip."
+        "correctAnswer": "Model → World, World → View, View → Projection (M first, then V, then P)",
+        "explanation": "MVP = Projection × View × Model. Applied right-to-left to vertex: P·V·M·v. Model: local→world. View: world→camera. Projection: camera→clip."
       },
       {
         "question": "Why is matrix multiplication not commutative?",
         "options": [
           "It is commutative",
-          "Order matters \u2014 rotate then translate \u2260 translate then rotate. AB \u2260 BA for matrices.",
+          "Order matters — rotate then translate ≠ translate then rotate. AB ≠ BA for matrices.",
           "It's a bug",
           "Only for some matrices"
         ],
-        "correctAnswer": "Order matters \u2014 rotate then translate \u2260 translate then rotate. AB \u2260 BA for matrices.",
+        "correctAnswer": "Order matters — rotate then translate ≠ translate then rotate. AB ≠ BA for matrices.",
         "explanation": "Matrix multiplication is composition of transformations. Rotating then translating moves in the rotated direction. Translating then rotating moves first, then rotates around origin."
       },
       {
         "question": "What does the inverse of a rotation matrix equal?",
         "options": [
           "The same matrix",
-          "Its transpose \u2014 rotation matrices are orthogonal: R\u207b\u00b9 = R^T",
+          "Its transpose — rotation matrices are orthogonal: R⁻¹ = R^T",
           "Zero matrix",
           "Identity"
         ],
-        "correctAnswer": "Its transpose \u2014 rotation matrices are orthogonal: R\u207b\u00b9 = R^T",
-        "explanation": "Rotation matrices are orthonormal: columns are unit vectors, mutually perpendicular. R^T \u00d7 R = I. Computing transpose is cheaper than full inverse."
+        "correctAnswer": "Its transpose — rotation matrices are orthogonal: R⁻¹ = R^T",
+        "explanation": "Rotation matrices are orthonormal: columns are unit vectors, mutually perpendicular. R^T × R = I. Computing transpose is cheaper than full inverse."
       },
       {
         "e": "A matrix's columns ARE its basis vectors. Applying a matrix to a vector expresses it in that matrix's coordinate system.",
@@ -52,11 +52,11 @@
         "question": "What is a basis vector?",
         "options": [
           "A special vector",
-          "The axes defining a coordinate system \u2014 (1,0,0), (0,1,0), (0,0,1) in standard basis. Changing basis = changing coordinate system.",
+          "The axes defining a coordinate system — (1,0,0), (0,1,0), (0,0,1) in standard basis. Changing basis = changing coordinate system.",
           "A unit vector",
           "A normal vector"
         ],
-        "correctAnswer": "The axes defining a coordinate system \u2014 (1,0,0), (0,1,0), (0,0,1) in standard basis. Changing basis = changing coordinate system."
+        "correctAnswer": "The axes defining a coordinate system — (1,0,0), (0,1,0), (0,0,1) in standard basis. Changing basis = changing coordinate system."
       }
     ]
   },
@@ -67,44 +67,44 @@
         "question": "What problem do quaternions solve that Euler angles don't?",
         "options": [
           "Speed",
-          "Gimbal lock \u2014 when two rotation axes align, you lose a degree of freedom. Quaternions avoid this entirely.",
+          "Gimbal lock — when two rotation axes align, you lose a degree of freedom. Quaternions avoid this entirely.",
           "Memory usage",
           "Accuracy"
         ],
-        "correctAnswer": "Gimbal lock \u2014 when two rotation axes align, you lose a degree of freedom. Quaternions avoid this entirely.",
-        "explanation": "Gimbal lock: pitch=90\u00b0 \u2192 yaw and roll become the same rotation. Quaternions use 4D hypersphere \u2014 no singularities."
+        "correctAnswer": "Gimbal lock — when two rotation axes align, you lose a degree of freedom. Quaternions avoid this entirely.",
+        "explanation": "Gimbal lock: pitch=90° → yaw and roll become the same rotation. Quaternions use 4D hypersphere — no singularities."
       },
       {
         "question": "How many components does a quaternion have?",
         "options": [
           "3",
-          "4 (w, x, y, z) \u2014 scalar part w + vector part (x,y,z). Unit quaternion constraint: w\u00b2+x\u00b2+y\u00b2+z\u00b2=1",
+          "4 (w, x, y, z) — scalar part w + vector part (x,y,z). Unit quaternion constraint: w²+x²+y²+z²=1",
           "6",
           "9"
         ],
-        "correctAnswer": "4 (w, x, y, z) \u2014 scalar part w + vector part (x,y,z). Unit quaternion constraint: w\u00b2+x\u00b2+y\u00b2+z\u00b2=1",
-        "explanation": "Quaternion = cos(\u03b8/2) + sin(\u03b8/2)(x\u00b7i + y\u00b7j + z\u00b7k). 4 numbers, 1 constraint = 3 DOF for rotation. Same as rotation matrix but compact."
+        "correctAnswer": "4 (w, x, y, z) — scalar part w + vector part (x,y,z). Unit quaternion constraint: w²+x²+y²+z²=1",
+        "explanation": "Quaternion = cos(θ/2) + sin(θ/2)(x·i + y·j + z·k). 4 numbers, 1 constraint = 3 DOF for rotation. Same as rotation matrix but compact."
       },
       {
         "question": "What is SLERP?",
         "options": [
           "Linear interpolation",
-          "Spherical Linear intERPolation \u2014 interpolates along the great circle on the 4D hypersphere, constant angular velocity",
+          "Spherical Linear intERPolation — interpolates along the great circle on the 4D hypersphere, constant angular velocity",
           "A type of quaternion",
           "A rotation axis"
         ],
-        "correctAnswer": "Spherical Linear intERPolation \u2014 interpolates along the great circle on the 4D hypersphere, constant angular velocity",
-        "explanation": "slerp(q0,q1,t) = (sin((1-t)\u03a9)/sin(\u03a9))\u00b7q0 + (sin(t\u03a9)/sin(\u03a9))\u00b7q1. Stays on unit hypersphere. Constant speed rotation."
+        "correctAnswer": "Spherical Linear intERPolation — interpolates along the great circle on the 4D hypersphere, constant angular velocity",
+        "explanation": "slerp(q0,q1,t) = (sin((1-t)Ω)/sin(Ω))·q0 + (sin(tΩ)/sin(Ω))·q1. Stays on unit hypersphere. Constant speed rotation."
       },
       {
         "question": "Why not just lerp quaternions?",
         "options": [
           "It's fine",
-          "lerp goes through interior of hypersphere \u2014 produces non-unit quaternions. Normalizing after (nlerp) fixes magnitude but not speed.",
+          "lerp goes through interior of hypersphere — produces non-unit quaternions. Normalizing after (nlerp) fixes magnitude but not speed.",
           "It's slower",
           "Quaternions can't be lerped"
         ],
-        "correctAnswer": "lerp goes through interior of hypersphere \u2014 produces non-unit quaternions. Normalizing after (nlerp) fixes magnitude but not speed.",
+        "correctAnswer": "lerp goes through interior of hypersphere — produces non-unit quaternions. Normalizing after (nlerp) fixes magnitude but not speed.",
         "explanation": "Lerp cuts chord through sphere. Nlerp normalizes but speeds up in middle. Slerp stays on surface at constant angular velocity."
       },
       {
@@ -116,7 +116,7 @@
           "Quaternions replace matrices"
         ],
         "correctAnswer": "A unit quaternion q can be converted to a 3x3 rotation matrix. The conversion formula involves q's components in a specific pattern.",
-        "explanation": "Quaternion\u2192matrix: standard formula. Quaternion rotation: v' = q\u00b7v\u00b7q\u207b\u00b9 (sandwich product). Two quat multiplies vs 9 multiplies + 6 adds for matrix\u00d7vector."
+        "explanation": "Quaternion→matrix: standard formula. Quaternion rotation: v' = q·v·q⁻¹ (sandwich product). Two quat multiplies vs 9 multiplies + 6 adds for matrix×vector."
       }
     ]
   },
@@ -124,75 +124,75 @@
     "note": "Trigonometry & Vectors",
     "questions": [
       {
-        "question": "What does the dot product a\u00b7b compute geometrically?",
+        "question": "What does the dot product a·b compute geometrically?",
         "options": [
           "Area",
-          "|a||b|cos(\u03b8) \u2014 the projection of a onto b, times b's length. Measures how parallel they are.",
+          "|a||b|cos(θ) — the projection of a onto b, times b's length. Measures how parallel they are.",
           "A perpendicular vector",
           "Distance"
         ],
-        "correctAnswer": "|a||b|cos(\u03b8) \u2014 the projection of a onto b, times b's length. Measures how parallel they are.",
-        "explanation": "a\u00b7b > 0 = acute angle. a\u00b7b = 0 = perpendicular. a\u00b7b < 0 = obtuse. Used everywhere: lighting (N\u00b7L), projection, angle measurement."
+        "correctAnswer": "|a||b|cos(θ) — the projection of a onto b, times b's length. Measures how parallel they are.",
+        "explanation": "a·b > 0 = acute angle. a·b = 0 = perpendicular. a·b < 0 = obtuse. Used everywhere: lighting (N·L), projection, angle measurement."
       },
       {
-        "question": "What does the cross product a\u00d7b compute?",
+        "question": "What does the cross product a×b compute?",
         "options": [
           "Parallel component",
-          "A vector perpendicular to both a and b, magnitude = |a||b|sin(\u03b8) (area of parallelogram). Direction: right-hand rule.",
+          "A vector perpendicular to both a and b, magnitude = |a||b|sin(θ) (area of parallelogram). Direction: right-hand rule.",
           "The angle",
           "Distance"
         ],
-        "correctAnswer": "A vector perpendicular to both a and b, magnitude = |a||b|sin(\u03b8) (area of parallelogram). Direction: right-hand rule.",
+        "correctAnswer": "A vector perpendicular to both a and b, magnitude = |a||b|sin(θ) (area of parallelogram). Direction: right-hand rule.",
         "explanation": "Cross product: normal vector computation, torque, angular momentum. Only defined in 3D (and 7D). Wedge product generalizes to any dimension."
       },
       {
         "question": "What is the relationship between sin, cos and the unit circle?",
         "options": [
           "No relation",
-          "(cos \u03b8, sin \u03b8) is a point on the unit circle at angle \u03b8 from the x-axis",
+          "(cos θ, sin θ) is a point on the unit circle at angle θ from the x-axis",
           "They are reciprocals",
           "They are derivatives"
         ],
-        "correctAnswer": "(cos \u03b8, sin \u03b8) is a point on the unit circle at angle \u03b8 from the x-axis",
-        "explanation": "Unit circle: radius=1. cos = x-coordinate, sin = y-coordinate. cos\u00b2 + sin\u00b2 = 1 (Pythagorean identity). Foundation of all trigonometry."
+        "correctAnswer": "(cos θ, sin θ) is a point on the unit circle at angle θ from the x-axis",
+        "explanation": "Unit circle: radius=1. cos = x-coordinate, sin = y-coordinate. cos² + sin² = 1 (Pythagorean identity). Foundation of all trigonometry."
       },
       {
         "question": "What are radians and why are they used?",
         "options": [
           "Arbitrary unit",
-          "Natural angle measure: 1 radian = arc length equals radius. 2\u03c0 rad = 360\u00b0. Makes calculus clean (derivative of sin is cos).",
+          "Natural angle measure: 1 radian = arc length equals radius. 2π rad = 360°. Makes calculus clean (derivative of sin is cos).",
           "Degrees are better",
           "Historical only"
         ],
-        "correctAnswer": "Natural angle measure: 1 radian = arc length equals radius. 2\u03c0 rad = 360\u00b0. Makes calculus clean (derivative of sin is cos).",
-        "explanation": "In radians: d/dx sin(x) = cos(x). In degrees: d/dx sin(x\u00b0) = (\u03c0/180)cos(x\u00b0). Radians make the math elegant. Game engines use both."
+        "correctAnswer": "Natural angle measure: 1 radian = arc length equals radius. 2π rad = 360°. Makes calculus clean (derivative of sin is cos).",
+        "explanation": "In radians: d/dx sin(x) = cos(x). In degrees: d/dx sin(x°) = (π/180)cos(x°). Radians make the math elegant. Game engines use both."
       },
       {
-        "e": "v\u0302 = v/|v|. Used for direction vectors, surface normals, lighting. Normalizing zero vector = undefined (avoid).",
-        "explanation": "v\u0302 = v/|v| produces a unit vector (magnitude=1) pointing in the same direction. Used for direction vectors, surface normals, light directions, and any case where only orientation matters, not magnitude. Normalizing the zero vector is undefined (avoid).",
+        "e": "v̂ = v/|v|. Used for direction vectors, surface normals, lighting. Normalizing zero vector = undefined (avoid).",
+        "explanation": "v̂ = v/|v| produces a unit vector (magnitude=1) pointing in the same direction. Used for direction vectors, surface normals, light directions, and any case where only orientation matters, not magnitude. Normalizing the zero vector is undefined (avoid).",
         "question": "What is vector normalization?",
         "options": [
           "Making it zero",
-          "Dividing a vector by its magnitude to produce a unit vector (length=1) \u2014 preserves direction",
+          "Dividing a vector by its magnitude to produce a unit vector (length=1) — preserves direction",
           "Adding components",
           "Cross product"
         ],
-        "correctAnswer": "Dividing a vector by its magnitude to produce a unit vector (length=1) \u2014 preserves direction"
+        "correctAnswer": "Dividing a vector by its magnitude to produce a unit vector (length=1) — preserves direction"
       }
     ]
   },
   {
-    "note": "00 \u2014 Curves Overview",
+    "note": "00 — Curves Overview",
     "questions": [
       {
         "question": "What is interpolation?",
         "options": [
           "Extrapolation",
-          "Finding intermediate values between two known data points \u2014 filling in the gaps between keyframes",
+          "Finding intermediate values between two known data points — filling in the gaps between keyframes",
           "A type of curve",
           "A rotation method"
         ],
-        "correctAnswer": "Finding intermediate values between two known data points \u2014 filling in the gaps between keyframes",
+        "correctAnswer": "Finding intermediate values between two known data points — filling in the gaps between keyframes",
         "explanation": "Interpolation reconstructs continuous motion from discrete samples. Every frame of animation is interpolated between keyframes."
       },
       {
@@ -204,92 +204,92 @@
           "Lerp is deprecated"
         ],
         "correctAnswer": "Lerp = linear (constant speed). Easing = reshapes t before lerp to create acceleration/deceleration (more natural motion).",
-        "explanation": "Lerp: A + (B-A)\u00b7t (straight line). Easing: apply function f(t) first \u2192 Lerp(A, B, f(t)). t\u00b2=ease-in, 1-(1-t)\u00b2=ease-out."
+        "explanation": "Lerp: A + (B-A)·t (straight line). Easing: apply function f(t) first → Lerp(A, B, f(t)). t²=ease-in, 1-(1-t)²=ease-out."
       },
       {
         "question": "What is Inverse Kinematics (IK)?",
         "options": [
           "Forward animation",
-          "Given end effector position, solve for joint angles \u2014 'put the hand HERE, figure out elbow and shoulder'",
+          "Given end effector position, solve for joint angles — 'put the hand HERE, figure out elbow and shoulder'",
           "A curve type",
           "A rotation"
         ],
-        "correctAnswer": "Given end effector position, solve for joint angles \u2014 'put the hand HERE, figure out elbow and shoulder'",
+        "correctAnswer": "Given end effector position, solve for joint angles — 'put the hand HERE, figure out elbow and shoulder'",
         "explanation": "IK: target-driven. FK: joint-driven. CCD and FABRIK are two IK algorithms. Used for foot placement, hand reaching, look-at."
       },
       {
         "e": "Spline = multiple curve pieces with continuity constraints at joints. C0=connected, C1=smooth tangent, C2=smooth curvature.",
-        "explanation": "A spline is multiple polynomial curve segments joined at knots with continuity constraints. C\u2070 = connected, C\u00b9 = smooth tangent, C\u00b2 = smooth curvature. B-splines achieve C\u00b2.",
+        "explanation": "A spline is multiple polynomial curve segments joined at knots with continuity constraints. C⁰ = connected, C¹ = smooth tangent, C² = smooth curvature. B-splines achieve C².",
         "question": "What is a spline?",
         "options": [
           "A single curve",
-          "A piecewise curve made of multiple polynomial segments joined smoothly \u2014 like a flexible ruler bent through control points",
+          "A piecewise curve made of multiple polynomial segments joined smoothly — like a flexible ruler bent through control points",
           "A type of lerp",
           "A rotation"
         ],
-        "correctAnswer": "A piecewise curve made of multiple polynomial segments joined smoothly \u2014 like a flexible ruler bent through control points"
+        "correctAnswer": "A piecewise curve made of multiple polynomial segments joined smoothly — like a flexible ruler bent through control points"
       },
       {
-        "e": "Most curves: constant \u0394t \u2260 constant distance. Arc-length: precompute cumulative length table, invert to get t(s). Constant speed motion.",
-        "explanation": "Arc-length parameterization precomputes a table of t\u2192cumulative arc length via numerical integration of |B'(t)|. At runtime, invert via binary search to find t(s) for constant-speed traversal.",
+        "e": "Most curves: constant Δt ≠ constant distance. Arc-length: precompute cumulative length table, invert to get t(s). Constant speed motion.",
+        "explanation": "Arc-length parameterization precomputes a table of t→cumulative arc length via numerical integration of |B'(t)|. At runtime, invert via binary search to find t(s) for constant-speed traversal.",
         "question": "What is arc-length parameterization?",
         "options": [
           "Faster evaluation",
-          "Re-parameterizing a curve so equal steps in t produce equal distance traveled \u2014 fixes speed non-uniformity",
+          "Re-parameterizing a curve so equal steps in t produce equal distance traveled — fixes speed non-uniformity",
           "A curve type",
           "A rotation method"
         ],
-        "correctAnswer": "Re-parameterizing a curve so equal steps in t produce equal distance traveled \u2014 fixes speed non-uniformity"
+        "correctAnswer": "Re-parameterizing a curve so equal steps in t produce equal distance traveled — fixes speed non-uniformity"
       }
     ]
   },
   {
-    "note": "01 \u2014 Interpolation, Bezier & Splines",
+    "note": "01 — Interpolation, Bezier & Splines",
     "questions": [
       {
         "question": "What defines a cubic Bezier curve?",
         "options": [
           "2 points",
-          "4 control points \u2014 endpoints (P0,P3) the curve passes through, handles (P1,P2) that pull the curve",
+          "4 control points — endpoints (P0,P3) the curve passes through, handles (P1,P2) that pull the curve",
           "A single equation",
           "Random points"
         ],
-        "correctAnswer": "4 control points \u2014 endpoints (P0,P3) the curve passes through, handles (P1,P2) that pull the curve",
-        "explanation": "Cubic Bezier: B(t) = (1-t)\u00b3P0 + 3(1-t)\u00b2tP1 + 3(1-t)t\u00b2P2 + t\u00b3P3. Tangent at t=0: 3(P1-P0). Tangent at t=1: 3(P3-P2)."
+        "correctAnswer": "4 control points — endpoints (P0,P3) the curve passes through, handles (P1,P2) that pull the curve",
+        "explanation": "Cubic Bezier: B(t) = (1-t)³P0 + 3(1-t)²tP1 + 3(1-t)t²P2 + t³P3. Tangent at t=0: 3(P1-P0). Tangent at t=1: 3(P3-P2)."
       },
       {
         "question": "What is the advantage of Catmull-Rom over Bezier?",
         "options": [
           "More control points",
-          "Catmull-Rom passes THROUGH all control points (interpolating). Bezier points are 'magnets' \u2014 curve doesn't pass through handles.",
+          "Catmull-Rom passes THROUGH all control points (interpolating). Bezier points are 'magnets' — curve doesn't pass through handles.",
           "Faster computation",
           "Fewer points"
         ],
-        "correctAnswer": "Catmull-Rom passes THROUGH all control points (interpolating). Bezier points are 'magnets' \u2014 curve doesn't pass through handles.",
+        "correctAnswer": "Catmull-Rom passes THROUGH all control points (interpolating). Bezier points are 'magnets' — curve doesn't pass through handles.",
         "explanation": "Catmull-Rom = interpolating spline. Each segment uses 4 points, passes through middle two. Tangent at P_i = (P_i+1 - P_i-1)/2."
       },
       {
         "question": "What is de Casteljau's algorithm?",
         "options": [
           "A sorting algorithm",
-          "Recursive linear interpolation to evaluate Bezier curves \u2014 numerically stable, avoids computing Bernstein polynomials",
+          "Recursive linear interpolation to evaluate Bezier curves — numerically stable, avoids computing Bernstein polynomials",
           "A rotation method",
           "A curve type"
         ],
-        "correctAnswer": "Recursive linear interpolation to evaluate Bezier curves \u2014 numerically stable, avoids computing Bernstein polynomials",
-        "explanation": "de Casteljau: repeatedly lerp between adjacent control points until one remains. O(n\u00b2) but numerically stable. Geometric intuition: fold paper."
+        "correctAnswer": "Recursive linear interpolation to evaluate Bezier curves — numerically stable, avoids computing Bernstein polynomials",
+        "explanation": "de Casteljau: repeatedly lerp between adjacent control points until one remains. O(n²) but numerically stable. Geometric intuition: fold paper."
       },
       {
         "e": "B-splines: don't necessarily pass through control points. Local control = editing one CV changes only local region. NURBS adds weights.",
-        "explanation": "B-splines use overlapping basis functions defined over a knot vector. Moving one control point only affects nearby curve segments (local control), and the curve is C\u00b2 continuous at knots \u2014 smoother than Catmull-Rom (C\u00b9).",
+        "explanation": "B-splines use overlapping basis functions defined over a knot vector. Moving one control point only affects nearby curve segments (local control), and the curve is C² continuous at knots — smoother than Catmull-Rom (C¹).",
         "question": "What is a B-spline?",
         "options": [
           "A Bezier variant",
-          "Basis spline \u2014 generalization with local control (moving one point affects only nearby segments) and C\u00b2 continuity",
+          "Basis spline — generalization with local control (moving one point affects only nearby segments) and C² continuity",
           "A type of lerp",
           "A rotation"
         ],
-        "correctAnswer": "Basis spline \u2014 generalization with local control (moving one point affects only nearby segments) and C\u00b2 continuity"
+        "correctAnswer": "Basis spline — generalization with local control (moving one point affects only nearby segments) and C² continuity"
       },
       {
         "e": "Speed = |dB/dt|. This is not constant. Arc-length reparameterization fixes this by driving t as a function of desired distance.",
@@ -297,27 +297,27 @@
         "question": "Why is uniform t-stepping not constant speed along a Bezier?",
         "options": [
           "It is constant",
-          "|B'(t)| varies with t \u2014 the derivative magnitude changes, so equal \u0394t covers different distances",
+          "|B'(t)| varies with t — the derivative magnitude changes, so equal Δt covers different distances",
           "Bug in formula",
           "Only for cubics"
         ],
-        "correctAnswer": "|B'(t)| varies with t \u2014 the derivative magnitude changes, so equal \u0394t covers different distances"
+        "correctAnswer": "|B'(t)| varies with t — the derivative magnitude changes, so equal Δt covers different distances"
       }
     ]
   },
   {
-    "note": "02 \u2014 Slerp & Kinematics",
+    "note": "02 — Slerp & Kinematics",
     "questions": [
       {
         "question": "Why does Slerp use sin functions in its formula?",
         "options": [
           "Style",
-          "It's computing the geodesic on S\u00b3 \u2014 the weights come from spherical trigonometry: sin((1-t)\u03a9)/sin(\u03a9)",
+          "It's computing the geodesic on S³ — the weights come from spherical trigonometry: sin((1-t)Ω)/sin(Ω)",
           "Optimization",
           "Historical reasons"
         ],
-        "correctAnswer": "It's computing the geodesic on S\u00b3 \u2014 the weights come from spherical trigonometry: sin((1-t)\u03a9)/sin(\u03a9)",
-        "explanation": "slerp = great circle arc on quaternion hypersphere. Weights ensure constant angular velocity. When \u03a9\u21920, sin(\u03a9)\u21920 \u2014 fall back to nlerp."
+        "correctAnswer": "It's computing the geodesic on S³ — the weights come from spherical trigonometry: sin((1-t)Ω)/sin(Ω)",
+        "explanation": "slerp = great circle arc on quaternion hypersphere. Weights ensure constant angular velocity. When Ω→0, sin(Ω)→0 — fall back to nlerp."
       },
       {
         "question": "What is CCD (Cyclic Coordinate Descent) in IK?",
@@ -328,34 +328,34 @@
           "A curve type"
         ],
         "correctAnswer": "Iterative IK: rotate each joint from end-effector toward root to point at target. Simple but can produce unnatural poses.",
-        "explanation": "CCD: for each joint (distal\u2192proximal), rotate to minimize angle between ToEnd and ToTarget. Linear convergence. Can over-rotate proximal joints."
+        "explanation": "CCD: for each joint (distal→proximal), rotate to minimize angle between ToEnd and ToTarget. Linear convergence. Can over-rotate proximal joints."
       },
       {
         "question": "What is FABRIK and how does it differ from CCD?",
         "options": [
           "Same as CCD",
-          "Forward And Backward Reaching IK \u2014 enforces distance constraints without computing angles. Forward pass: reach to target. Backward: anchor base.",
+          "Forward And Backward Reaching IK — enforces distance constraints without computing angles. Forward pass: reach to target. Backward: anchor base.",
           "A curve type",
           "A rendering technique"
         ],
-        "correctAnswer": "Forward And Backward Reaching IK \u2014 enforces distance constraints without computing angles. Forward pass: reach to target. Backward: anchor base.",
+        "correctAnswer": "Forward And Backward Reaching IK — enforces distance constraints without computing angles. Forward pass: reach to target. Backward: anchor base.",
         "explanation": "FABRIK: no trig functions. Position-based. Forward: pull tip to target, adjust joints. Backward: anchor base, readjust. More natural poses than CCD."
       },
       {
         "e": "Quaternions double-cover SO(3). q and -q = same rotation. Slerp without check might take the LONG way around the hypersphere.",
-        "explanation": "q and -q represent the same rotation (quaternions double-cover SO(3)). Before slerp, compute dot product: if negative, negate one quaternion. This ensures the shorter arc is taken \u2014 without this, slerp might go the long way around the hypersphere.",
+        "explanation": "q and -q represent the same rotation (quaternions double-cover SO(3)). Before slerp, compute dot product: if negative, negate one quaternion. This ensures the shorter arc is taken — without this, slerp might go the long way around the hypersphere.",
         "question": "What is the double-cover problem with quaternions?",
         "options": [
           "Memory issue",
-          "q and -q represent the same rotation. Before slerp, check dot product \u2014 if negative, negate one to take shorter arc.",
+          "q and -q represent the same rotation. Before slerp, check dot product — if negative, negate one to take shorter arc.",
           "Speed issue",
           "Type error"
         ],
-        "correctAnswer": "q and -q represent the same rotation. Before slerp, check dot product \u2014 if negative, negate one to take shorter arc."
+        "correctAnswer": "q and -q represent the same rotation. Before slerp, check dot product — if negative, negate one to take shorter arc."
       },
       {
-        "e": "FK: angles\u2192position (deterministic). IK: position\u2192angles (underdetermined, needs solver). FK is trivial; IK is the hard problem.",
-        "explanation": "FK computes end effector position from joint angles \u2014 deterministic, one solution. IK computes joint angles from end effector position \u2014 underdetermined (multiple solutions), requires iterative solver like CCD or FABRIK. FK is forward; IK is inverse.",
+        "e": "FK: angles→position (deterministic). IK: position→angles (underdetermined, needs solver). FK is trivial; IK is the hard problem.",
+        "explanation": "FK computes end effector position from joint angles — deterministic, one solution. IK computes joint angles from end effector position — underdetermined (multiple solutions), requires iterative solver like CCD or FABRIK. FK is forward; IK is inverse.",
         "question": "What is Forward Kinematics (FK)?",
         "options": [
           "Same as IK",

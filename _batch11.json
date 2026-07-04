@@ -1,49 +1,49 @@
 [
   {
-    "note": "01 \u2014 Skeletal Animation",
+    "note": "01 — Skeletal Animation",
     "questions": [
       {
         "question": "What is Linear Blend Skinning (LBS)?",
         "options": [
           "A rendering technique",
-          "Weighted blend of bone transforms per vertex: v' = \u03a3 w_i\u00b7M_i\u00b7IB_i\u00b7v. Standard GPU skinning.",
+          "Weighted blend of bone transforms per vertex: v' = Σ w_i·M_i·IB_i·v. Standard GPU skinning.",
           "A rotation method",
           "An IK solver"
         ],
-        "correctAnswer": "Weighted blend of bone transforms per vertex: v' = \u03a3 w_i\u00b7M_i\u00b7IB_i\u00b7v. Standard GPU skinning.",
+        "correctAnswer": "Weighted blend of bone transforms per vertex: v' = Σ w_i·M_i·IB_i·v. Standard GPU skinning.",
         "explanation": "Each vertex influenced by 1-4 bones. Bone weights sum to 1. GPU blends 4 matrices per vertex. Fast but causes candy-wrapper effect."
       },
       {
         "question": "What is the candy-wrapper effect in LBS?",
         "options": [
           "Performance issue",
-          "When a joint twists, linear blend of rotation matrices produces non-rigid transforms \u2014 mesh collapses inward at joint",
+          "When a joint twists, linear blend of rotation matrices produces non-rigid transforms — mesh collapses inward at joint",
           "A visual artifact",
           "Memory issue"
         ],
-        "correctAnswer": "When a joint twists, linear blend of rotation matrices produces non-rigid transforms \u2014 mesh collapses inward at joint",
+        "correctAnswer": "When a joint twists, linear blend of rotation matrices produces non-rigid transforms — mesh collapses inward at joint",
         "explanation": "Cause: SO(3) not closed under addition. Blending two rotation matrices does NOT produce a rotation matrix. Determinant < 1 = volume collapse."
       },
       {
         "question": "How do dual quaternions fix the candy-wrapper effect?",
         "options": [
           "More bones",
-          "Dual quaternion blend + normalization always produces rigid transform \u2014 rotation+translation, determinant=1, no volume loss",
+          "Dual quaternion blend + normalization always produces rigid transform — rotation+translation, determinant=1, no volume loss",
           "Better weights",
           "More vertices"
         ],
-        "correctAnswer": "Dual quaternion blend + normalization always produces rigid transform \u2014 rotation+translation, determinant=1, no volume loss",
-        "explanation": "DQS: convert bone transforms to dual quaternions, blend, normalize. Result always rigid. ~2\u00d7 cost of LBS. UE supports both."
+        "correctAnswer": "Dual quaternion blend + normalization always produces rigid transform — rotation+translation, determinant=1, no volume loss",
+        "explanation": "DQS: convert bone transforms to dual quaternions, blend, normalize. Result always rigid. ~2× cost of LBS. UE supports both."
       },
       {
         "question": "What is the bind pose?",
         "options": [
           "The current animation pose",
-          "The skeleton pose the mesh was modeled in \u2014 the reference configuration for skinning",
+          "The skeleton pose the mesh was modeled in — the reference configuration for skinning",
           "The T-pose only",
           "Any pose"
         ],
-        "correctAnswer": "The skeleton pose the mesh was modeled in \u2014 the reference configuration for skinning",
+        "correctAnswer": "The skeleton pose the mesh was modeled in — the reference configuration for skinning",
         "explanation": "Bind pose = rest pose. Inverse bind matrices (IB_i) map vertices to bone-local space IN the bind pose. Computed once at import."
       },
       {
@@ -60,40 +60,40 @@
     ]
   },
   {
-    "note": "01 \u2014 Frequency Domain & FFT",
+    "note": "01 — Frequency Domain & FFT",
     "questions": [
       {
         "question": "What does the Fourier Transform convert?",
         "options": [
           "Voltage to current",
-          "Time-domain signal to frequency-domain \u2014 reveals which frequencies (pitches) are present",
+          "Time-domain signal to frequency-domain — reveals which frequencies (pitches) are present",
           "Analog to digital",
           "Sound to image"
         ],
-        "correctAnswer": "Time-domain signal to frequency-domain \u2014 reveals which frequencies (pitches) are present",
-        "explanation": "DFT: X[k] = \u03a3x[n]\u00b7e^(-i\u00b72\u03c0\u00b7k\u00b7n/N). Maps N time samples to N frequency bins. Magnitude = amplitude, angle = phase."
+        "correctAnswer": "Time-domain signal to frequency-domain — reveals which frequencies (pitches) are present",
+        "explanation": "DFT: X[k] = Σx[n]·e^(-i·2π·k·n/N). Maps N time samples to N frequency bins. Magnitude = amplitude, angle = phase."
       },
       {
-        "question": "Why is the FFT O(N log N) instead of O(N\u00b2)?",
+        "question": "Why is the FFT O(N log N) instead of O(N²)?",
         "options": [
           "Uses approximation",
-          "Cooley-Tukey: decomposes DFT of size N into two DFTs of size N/2 recursively \u2014 divide and conquer",
+          "Cooley-Tukey: decomposes DFT of size N into two DFTs of size N/2 recursively — divide and conquer",
           "Uses GPU",
           "Uses lookup tables"
         ],
-        "correctAnswer": "Cooley-Tukey: decomposes DFT of size N into two DFTs of size N/2 recursively \u2014 divide and conquer",
-        "explanation": "X[k] = E[k] + W_N^k\u00b7O[k]; X[k+N/2] = E[k] - W_N^k\u00b7O[k]. Butterfly operations. log\u2082(N) stages. N=1024: DFT=1M ops, FFT=10K ops."
+        "correctAnswer": "Cooley-Tukey: decomposes DFT of size N into two DFTs of size N/2 recursively — divide and conquer",
+        "explanation": "X[k] = E[k] + W_N^k·O[k]; X[k+N/2] = E[k] - W_N^k·O[k]. Butterfly operations. log₂(N) stages. N=1024: DFT=1M ops, FFT=10K ops."
       },
       {
         "question": "How does the convolution theorem enable fast reverb?",
         "options": [
           "It doesn't",
-          "Time convolution = frequency multiplication. FFT both signals, multiply, IFFT result. O(N log N) vs O(N\u00b2) direct.",
+          "Time convolution = frequency multiplication. FFT both signals, multiply, IFFT result. O(N log N) vs O(N²) direct.",
           "It uses GPU",
           "It compresses audio"
         ],
-        "correctAnswer": "Time convolution = frequency multiplication. FFT both signals, multiply, IFFT result. O(N log N) vs O(N\u00b2) direct.",
-        "explanation": "Dry audio \u2217 impulse response \u2192 FFT(audio)\u00b7FFT(IR) \u2192 IFFT. 10,000\u00d7 faster for real-time convolution reverb."
+        "correctAnswer": "Time convolution = frequency multiplication. FFT both signals, multiply, IFFT result. O(N log N) vs O(N²) direct.",
+        "explanation": "Dry audio ∗ impulse response → FFT(audio)·FFT(IR) → IFFT. 10,000× faster for real-time convolution reverb."
       },
       {
         "question": "What is a spectrogram?",
@@ -108,31 +108,31 @@
       },
       {
         "e": "Window functions prevent spectral leakage from the discontinuity at frame boundaries. Hann, Hamming, Blackman are common choices.",
-        "explanation": "The Hann window tapers the signal to zero at frame boundaries (raised cosine shape). Without it, the abrupt cut at frame edges creates spectral leakage \u2014 energy from one frequency bin bleeding into neighboring bins.",
+        "explanation": "The Hann window tapers the signal to zero at frame boundaries (raised cosine shape). Without it, the abrupt cut at frame edges creates spectral leakage — energy from one frequency bin bleeding into neighboring bins.",
         "question": "What window function is commonly used before FFT and why?",
         "options": [
           "Rectangular (none)",
-          "Hann window \u2014 tapers signal to zero at edges, reducing spectral leakage from abrupt frame boundaries",
+          "Hann window — tapers signal to zero at edges, reducing spectral leakage from abrupt frame boundaries",
           "Kaiser",
           "Gaussian"
         ],
-        "correctAnswer": "Hann window \u2014 tapers signal to zero at edges, reducing spectral leakage from abrupt frame boundaries"
+        "correctAnswer": "Hann window — tapers signal to zero at edges, reducing spectral leakage from abrupt frame boundaries"
       }
     ]
   },
   {
-    "note": "02 \u2014 Spatial Audio",
+    "note": "02 — Spatial Audio",
     "questions": [
       {
         "question": "How does sound intensity fall off with distance?",
         "options": [
           "Linearly",
-          "Inverse-square law: I = P/(4\u03c0r\u00b2). Every distance doubling = -6 dB.",
+          "Inverse-square law: I = P/(4πr²). Every distance doubling = -6 dB.",
           "Not at all",
           "Exponentially"
         ],
-        "correctAnswer": "Inverse-square law: I = P/(4\u03c0r\u00b2). Every distance doubling = -6 dB.",
-        "explanation": "SPL(r) = SPL(1m) - 20\u00b7log\u2081\u2080(r). At 1m=80dB, 2m=74dB, 4m=68dB. Games clamp with min/max distance and configurable falloff."
+        "correctAnswer": "Inverse-square law: I = P/(4πr²). Every distance doubling = -6 dB.",
+        "explanation": "SPL(r) = SPL(1m) - 20·log₁₀(r). At 1m=80dB, 2m=74dB, 4m=68dB. Games clamp with min/max distance and configurable falloff."
       },
       {
         "question": "What cues does the brain use to localize sound?",
@@ -141,56 +141,56 @@
           "ITD ILD spectral notches",
           "time difference, level difference, pinna filtering"
         ],
-        "explanation": "ITD: ~0.25ms max. ILD: head shadow attenuates far ear (high freqs). Spectral notches: pinna shape \u2192 frequency dips that encode elevation."
+        "explanation": "ITD: ~0.25ms max. ILD: head shadow attenuates far ear (high freqs). Spectral notches: pinna shape → frequency dips that encode elevation."
       },
       {
         "question": "What is an HRTF?",
         "options": [
           "A filter type",
-          "Head-Related Transfer Function \u2014 pair of filters per direction capturing how sound reaches eardrums. Convolution applies spatialization.",
+          "Head-Related Transfer Function — pair of filters per direction capturing how sound reaches eardrums. Convolution applies spatialization.",
           "A file format",
           "A speaker setup"
         ],
-        "correctAnswer": "Head-Related Transfer Function \u2014 pair of filters per direction capturing how sound reaches eardrums. Convolution applies spatialization.",
-        "explanation": "HRTF(\u03b8,\u03c6) = FIR filter (128-512 taps) per ear. Measured in anechoic chamber. Applied via convolution (FFT-based). Enables 3D audio on headphones."
+        "correctAnswer": "Head-Related Transfer Function — pair of filters per direction capturing how sound reaches eardrums. Convolution applies spatialization.",
+        "explanation": "HRTF(θ,φ) = FIR filter (128-512 taps) per ear. Measured in anechoic chamber. Applied via convolution (FFT-based). Enables 3D audio on headphones."
       },
       {
         "question": "What causes the Doppler effect for sound?",
         "options": [
           "Volume change",
-          "Relative motion: f_heard = f_source\u00b7c/(c+v_relative). Approaching = higher pitch. Receding = lower.",
+          "Relative motion: f_heard = f_source·c/(c+v_relative). Approaching = higher pitch. Receding = lower.",
           "Distance",
           "Temperature"
         ],
-        "correctAnswer": "Relative motion: f_heard = f_source\u00b7c/(c+v_relative). Approaching = higher pitch. Receding = lower.",
-        "explanation": "c = ~343 m/s. Car at 30 m/s approaching: f_heard = f_source\u00b71.096 (~1.6 semitones higher). UE applies per-sound-source."
+        "correctAnswer": "Relative motion: f_heard = f_source·c/(c+v_relative). Approaching = higher pitch. Receding = lower.",
+        "explanation": "c = ~343 m/s. Car at 30 m/s approaching: f_heard = f_source·1.096 (~1.6 semitones higher). UE applies per-sound-source."
       },
       {
         "e": "Two speakers at center = +3dB if linear. Constant-power: -3dB each at center = combined 0dB. Total power constant across pan positions.",
-        "explanation": "Constant-power pan law: L = cos(\u03b8+90\u00b0), R = sin(\u03b8+90\u00b0). At center (\u03b8=0): L=R=\u221a2/2 \u2248 0.707 = -3dB each, but combined acoustic output = 0dB. Prevents the center phantom image from being louder than hard-panned sounds.",
+        "explanation": "Constant-power pan law: L = cos(θ+90°), R = sin(θ+90°). At center (θ=0): L=R=√2/2 ≈ 0.707 = -3dB each, but combined acoustic output = 0dB. Prevents the center phantom image from being louder than hard-panned sounds.",
         "question": "What is constant-power pan law?",
         "options": [
           "Equal volume",
-          "L=cos(\u03b8+90\u00b0), R=sin(\u03b8+90\u00b0). Prevents center from being +3dB louder than sides.",
+          "L=cos(θ+90°), R=sin(θ+90°). Prevents center from being +3dB louder than sides.",
           "Equal power",
           "Equal amplitude"
         ],
-        "correctAnswer": "L=cos(\u03b8+90\u00b0), R=sin(\u03b8+90\u00b0). Prevents center from being +3dB louder than sides."
+        "correctAnswer": "L=cos(θ+90°), R=sin(θ+90°). Prevents center from being +3dB louder than sides."
       }
     ]
   },
   {
-    "note": "03 \u2014 Network Interpolation",
+    "note": "03 — Network Interpolation",
     "questions": [
       {
         "question": "Why is interpolation needed for networked multiplayer?",
         "options": [
           "To save bandwidth",
-          "Server updates arrive at 10-20Hz (50-100ms apart). Client renders at 60Hz \u2014 must interpolate between received positions.",
+          "Server updates arrive at 10-20Hz (50-100ms apart). Client renders at 60Hz — must interpolate between received positions.",
           "To compress data",
           "For security"
         ],
-        "correctAnswer": "Server updates arrive at 10-20Hz (50-100ms apart). Client renders at 60Hz \u2014 must interpolate between received positions.",
+        "correctAnswer": "Server updates arrive at 10-20Hz (50-100ms apart). Client renders at 60Hz — must interpolate between received positions.",
         "explanation": "Without interpolation: characters teleport between received positions. With: smooth motion, ~50ms render-behind latency (acceptable for other players)."
       },
       {
@@ -202,41 +202,41 @@
           "A type of interpolation"
         ],
         "correctAnswer": "Client simulates own input locally for instant response, then reconciles with server's authoritative state",
-        "explanation": "Own character: can't wait 50ms RTT. Predict locally \u2192 send input \u2192 server corrects \u2192 rewind and replay. UE's CharacterMovementComponent does this."
+        "explanation": "Own character: can't wait 50ms RTT. Predict locally → send input → server corrects → rewind and replay. UE's CharacterMovementComponent does this."
       },
       {
         "question": "What is dead reckoning?",
         "options": [
           "A navigation method",
-          "Extrapolating motion when packets stop arriving \u2014 assume constant velocity/acceleration",
+          "Extrapolating motion when packets stop arriving — assume constant velocity/acceleration",
           "A type of interpolation",
           "Server authority"
         ],
-        "correctAnswer": "Extrapolating motion when packets stop arriving \u2014 assume constant velocity/acceleration",
-        "explanation": "Dead reckoning: last position + velocity\u00b7dt (+ \u00bd\u00b7acceleration\u00b7dt\u00b2). After timeout (1-2s), freeze or disconnect. Used for packet loss."
+        "correctAnswer": "Extrapolating motion when packets stop arriving — assume constant velocity/acceleration",
+        "explanation": "Dead reckoning: last position + velocity·dt (+ ½·acceleration·dt²). After timeout (1-2s), freeze or disconnect. Used for packet loss."
       },
       {
         "question": "What is a jitter buffer?",
         "options": [
           "A network buffer",
-          "Queue that delays packet playback to smooth network jitter \u2014 trades added latency for smooth motion",
+          "Queue that delays packet playback to smooth network jitter — trades added latency for smooth motion",
           "A type of interpolation",
           "A server component"
         ],
-        "correctAnswer": "Queue that delays packet playback to smooth network jitter \u2014 trades added latency for smooth motion",
+        "correctAnswer": "Queue that delays packet playback to smooth network jitter — trades added latency for smooth motion",
         "explanation": "Packets arrive with variable delay. Buffer holds and releases at steady rate. Larger buffer = smoother + more latency. Adaptive buffers resize."
       },
       {
         "e": "Hermite: position + velocity at each endpoint. Produces smooth curves. Linear: constant velocity between updates, jerky direction changes.",
-        "explanation": "Hermite interpolation uses position AND velocity at both endpoints. This produces C\u00b9-continuous curves \u2014 no sudden direction changes when a new server update arrives. Linear interpolation produces constant velocity between updates, causing visible jerks at each new packet.",
+        "explanation": "Hermite interpolation uses position AND velocity at both endpoints. This produces C¹-continuous curves — no sudden direction changes when a new server update arrives. Linear interpolation produces constant velocity between updates, causing visible jerks at each new packet.",
         "question": "What is Hermite interpolation advantage over linear for networking?",
         "options": [
           "Faster",
-          "Uses endpoint velocities for C\u00b9 continuity \u2014 no sudden direction changes at received updates",
+          "Uses endpoint velocities for C¹ continuity — no sudden direction changes at received updates",
           "Simpler",
           "More bandwidth"
         ],
-        "correctAnswer": "Uses endpoint velocities for C\u00b9 continuity \u2014 no sudden direction changes at received updates"
+        "correctAnswer": "Uses endpoint velocities for C¹ continuity — no sudden direction changes at received updates"
       }
     ]
   }
