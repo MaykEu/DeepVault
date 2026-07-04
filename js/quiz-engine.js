@@ -1,3 +1,5 @@
+function startFreshQuiz(fid, nn) { sessionStorage.setItem('dv_fresh_start','1'); router.navigate('#/folder/' + encodeURIComponent(fid) + '/note/' + encodeURIComponent(nn) + '/quiz'); }
+
 const QuizEngine = {
   state: null,
 
