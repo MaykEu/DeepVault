@@ -184,6 +184,13 @@ const QuizEngine = {
       Storage.addAttempt(s.folderId, s.noteName, correctCount, s.questions.length, answerLog, s.elapsed);
       if (Storage.getGistToken()) Storage.syncToGist();
     }
+    // Store result so history back-button can return to summary
+    sessionStorage.setItem('dv_last_result', JSON.stringify({
+      folderId: s.folderId, noteName: s.noteName,
+      correctCount: correctCount, total: s.questions.length,
+      pct: Math.round((correctCount / s.questions.length) * 100),
+      elapsed: s.elapsed, noteName: s.noteName, isReview: s.isReview
+    }));
     Summary.render(document.getElementById('app-main'), s);
   },
 
