@@ -3,7 +3,7 @@ const HistoryView = {
     const attempts = Storage.getAttempts(folderId, noteName);
     const folder = FOLDERS.find(f => f.id === folderId);
 
-    var html = '<a href="javascript:void(0)" class="back-link" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '/note/' + encodeURIComponent(noteName) + '/learn\')">\u2190 Back</a>';
+    var html = '<a href="javascript:void(0)" class="back-link" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '/note/' + encodeURIComponent(noteName) + '/quiz\')">\u2190 Back</a>';
     html += '<h2 class="page-title">\u{1F4CA} Score History</h2>';
     html += '<p style="color:var(--text-secondary);margin-bottom:1.5rem;">' + noteName + '</p>';
 
