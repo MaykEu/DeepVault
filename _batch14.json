@@ -1,6 +1,6 @@
 [
   {
-    "note": "03 — Separating Axis Theorem",
+    "note": "03 \u2014 Separating Axis Theorem",
     "questions": [
       {
         "question": "What is the Separating Axis Theorem (SAT)?",
@@ -11,126 +11,132 @@
           "A ray test"
         ],
         "correctAnswer": "Two convex polyhedra don't overlap iff there exists an axis where their projections don't overlap. Test candidate axes.",
-        "explanation": "SAT: project both shapes onto axis. If projections don't overlap → separating axis found → NO collision. If ALL candidate axes overlap → collision."
+        "explanation": "SAT: project both shapes onto axis. If projections don't overlap \u2192 separating axis found \u2192 NO collision. If ALL candidate axes overlap \u2192 collision."
       },
       {
         "question": "Which axes must be tested for OBB-OBB SAT?",
-        "correctAnswer": "15 axes: 3 face normals of A + 3 face normals of B + 9 cross products of edges (3×3)",
+        "correctAnswer": "15 axes: 3 face normals of A + 3 face normals of B + 9 cross products of edges (3\u00d73)",
         "acceptableAnswers": [
           "15 axes",
           "3+3+9",
           "face normals plus edge cross products"
         ],
-        "explanation": "Box A: 3 face normals. Box B: 3 face normals. Cross products: 3 edges of A × 3 edges of B = 9 axes. Total: 15. Test all 15."
+        "explanation": "Box A: 3 face normals. Box B: 3 face normals. Cross products: 3 edges of A \u00d7 3 edges of B = 9 axes. Total: 15. Test all 15."
       },
       {
-        "q": "What shape pairs can SAT handle?",
-        "o": [
+        "e": "SAT is exact for convex polyhedra. Number of axes tested depends on shape complexity. OBB-OBB = 15 axes. Triangle-triangle = 11 axes.",
+        "explanation": "OBB-OBB tests 15 axes: 3 face normals of A + 3 face normals of B + 9 cross products (each edge of A \u00d7 each edge of B). The cross product axes catch cases where neither face normal separates \u2014 two boxes nearly touching at corners.",
+        "question": "What shape pairs can SAT handle?",
+        "options": [
           "Only AABBs",
-          "Any convex polyhedra — works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes.",
+          "Any convex polyhedra \u2014 works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes.",
           "Only spheres",
           "Infinite shapes"
         ],
-        "a": "Any convex polyhedra — works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes.",
-        "e": "SAT is exact for convex polyhedra. Number of axes tested depends on shape complexity. OBB-OBB = 15 axes. Triangle-triangle = 11 axes."
+        "correctAnswer": "Any convex polyhedra \u2014 works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes."
       },
       {
-        "q": "What is the difference between SAT and GJK?",
-        "o": [
+        "e": "SAT: fixed axis set, O(num_faces\u00b2) for OBB. GJK: iterative, ~3-6 iterations for convex shapes. GJK is more general.",
+        "explanation": "SAT is exact for convex polyhedra \u2014 you enumerate a finite set of candidate axes, and if ANY separates, there is no collision. For general convex shapes, SAT works but the axis set depends on the shape complexity.",
+        "question": "What is the difference between SAT and GJK?",
+        "options": [
           "Same thing",
           "SAT tests static set of axes (good for boxes). GJK iteratively finds separating axis (works for ANY convex shape, no pre-computed axes).",
           "GJK is faster",
           "SAT is newer"
         ],
-        "a": "SAT tests static set of axes (good for boxes). GJK iteratively finds separating axis (works for ANY convex shape, no pre-computed axes).",
-        "e": "SAT: fixed axis set, O(num_faces²) for OBB. GJK: iterative, ~3-6 iterations for convex shapes. GJK is more general."
+        "correctAnswer": "SAT tests static set of axes (good for boxes). GJK iteratively finds separating axis (works for ANY convex shape, no pre-computed axes)."
       },
       {
-        "q": "Why test cross products of edges for OBB SAT?",
-        "o": [
+        "e": "Edge-edge cross products catch cases where neither face normal separates. Example: two boxes almost touching at corners, no face normal separates.",
+        "explanation": "Project both shapes onto the candidate axis: interval = [min(vertices\u00b7axis), max(vertices\u00b7axis)]. If the two intervals don't overlap, this axis separates the shapes \u2192 NO collision. If ALL candidate axes have overlapping intervals \u2192 collision.",
+        "question": "Why test cross products of edges for OBB SAT?",
+        "options": [
           "Style",
-          "Two boxes can have a separating axis that is perpendicular to an edge from each — the cross product direction. 3×3=9 additional axes.",
+          "Two boxes can have a separating axis that is perpendicular to an edge from each \u2014 the cross product direction. 3\u00d73=9 additional axes.",
           "It's faster",
           "Required by standard"
         ],
-        "a": "Two boxes can have a separating axis that is perpendicular to an edge from each — the cross product direction. 3×3=9 additional axes.",
-        "e": "Edge-edge cross products catch cases where neither face normal separates. Example: two boxes almost touching at corners, no face normal separates."
+        "correctAnswer": "Two boxes can have a separating axis that is perpendicular to an edge from each \u2014 the cross product direction. 3\u00d73=9 additional axes."
       }
     ]
   },
   {
-    "note": "04 — GJK Algorithm",
+    "note": "04 \u2014 GJK Algorithm",
     "questions": [
       {
         "question": "What does GJK compute?",
         "options": [
           "Distance",
-          "Whether two convex shapes overlap — by checking if the origin is inside their Minkowski difference",
+          "Whether two convex shapes overlap \u2014 by checking if the origin is inside their Minkowski difference",
           "Contact points",
           "Normals"
         ],
-        "correctAnswer": "Whether two convex shapes overlap — by checking if the origin is inside their Minkowski difference",
-        "explanation": "GJK: iteratively builds simplex in Minkowski difference space (A - B). If origin is inside simplex → overlap. Support function finds extreme points."
+        "correctAnswer": "Whether two convex shapes overlap \u2014 by checking if the origin is inside their Minkowski difference",
+        "explanation": "GJK: iteratively builds simplex in Minkowski difference space (A - B). If origin is inside simplex \u2192 overlap. Support function finds extreme points."
       },
       {
         "question": "What is the Minkowski difference used in GJK?",
         "options": [
           "A+B",
-          "A - B = {a - b | a∈A, b∈B}. If origin ∈ (A - B), then A and B intersect.",
-          "A×B",
+          "A - B = {a - b | a\u2208A, b\u2208B}. If origin \u2208 (A - B), then A and B intersect.",
+          "A\u00d7B",
           "|A-B|"
         ],
-        "correctAnswer": "A - B = {a - b | a∈A, b∈B}. If origin ∈ (A - B), then A and B intersect.",
-        "explanation": "Minkowski difference transforms intersection test into origin-inclusion test. GJK doesn't need to explicitly compute A - B — uses support function."
+        "correctAnswer": "A - B = {a - b | a\u2208A, b\u2208B}. If origin \u2208 (A - B), then A and B intersect.",
+        "explanation": "Minkowski difference transforms intersection test into origin-inclusion test. GJK doesn't need to explicitly compute A - B \u2014 uses support function."
       },
       {
         "question": "What is the support function in GJK?",
         "options": [
           "A helper",
-          "Returns the point in a shape furthest in a given direction — used to build the simplex iteratively",
+          "Returns the point in a shape furthest in a given direction \u2014 used to build the simplex iteratively",
           "A distance function",
           "A normal"
         ],
-        "correctAnswer": "Returns the point in a shape furthest in a given direction — used to build the simplex iteratively",
-        "explanation": "support(shape, direction) = argmax(p·direction for p in shape). GJK calls this to find next simplex vertex. O(1) for simple shapes, O(n) for meshes."
+        "correctAnswer": "Returns the point in a shape furthest in a given direction \u2014 used to build the simplex iteratively",
+        "explanation": "support(shape, direction) = argmax(p\u00b7direction for p in shape). GJK calls this to find next simplex vertex. O(1) for simple shapes, O(n) for meshes."
       },
       {
-        "q": "What is EPA (Expanding Polytope Algorithm)?",
-        "o": [
+        "e": "GJK detects overlap. EPA computes MTV (Minimum Translation Vector) \u2014 how far and in what direction to push shapes apart. GJK+EPA = full collision response.",
+        "explanation": "EPA (Expanding Polytope Algorithm) runs after GJK detects overlap. It expands the simplex outward until it touches the Minkowski difference boundary, computing the Minimum Translation Vector \u2014 the shortest distance and direction to separate the shapes.",
+        "question": "What is EPA (Expanding Polytope Algorithm)?",
+        "options": [
           "Same as GJK",
-          "Extends GJK — after detecting overlap, EPA expands simplex to find penetration depth and contact normal",
+          "Extends GJK \u2014 after detecting overlap, EPA expands simplex to find penetration depth and contact normal",
           "A rendering technique",
           "A broad phase"
         ],
-        "a": "Extends GJK — after detecting overlap, EPA expands simplex to find penetration depth and contact normal",
-        "e": "GJK detects overlap. EPA computes MTV (Minimum Translation Vector) — how far and in what direction to push shapes apart. GJK+EPA = full collision response."
+        "correctAnswer": "Extends GJK \u2014 after detecting overlap, EPA expands simplex to find penetration depth and contact normal"
       },
       {
-        "q": "What is the Minkowski difference?",
-        "o": [
+        "e": "Minkowski difference shrinks A to a point and expands B by A's shape. If that expanded shape contains the origin, they overlap.",
+        "explanation": "A - B = {a-b | a\u2208A, b\u2208B}. This transforms the intersection test into an origin-inclusion test: if the origin is inside A-B, then A and B share at least one point (intersect). GJK tests origin inclusion without explicitly computing A-B.",
+        "question": "What is the Minkowski difference?",
+        "options": [
           "A+B",
-          "A - B = {a-b | a∈A, b∈B}. If origin ∈ (A-B), A and B intersect. Transforms intersection to origin test.",
-          "A×B",
+          "A - B = {a-b | a\u2208A, b\u2208B}. If origin \u2208 (A-B), A and B intersect. Transforms intersection to origin test.",
+          "A\u00d7B",
           "|A-B|"
         ],
-        "a": "A - B = {a-b | a∈A, b∈B}. If origin ∈ (A-B), A and B intersect. Transforms intersection to origin test.",
-        "e": "Minkowski difference shrinks A to a point and expands B by A's shape. If that expanded shape contains the origin, they overlap."
+        "correctAnswer": "A - B = {a-b | a\u2208A, b\u2208B}. If origin \u2208 (A-B), A and B intersect. Transforms intersection to origin test."
       },
       {
-        "q": "What is the support function in GJK?",
-        "o": [
+        "e": "support(shape, d) = extreme point in direction d. O(1) for sphere/box. O(n) for convex hull. GJK never needs explicit Minkowski difference.",
+        "explanation": "The support function returns the point in a shape furthest in a given direction: argmax(p\u00b7d for p in shape). For a sphere: center + radius\u00b7d\u0302. For a box: corner with signs matching direction. GJK uses support functions to build the simplex iteratively.",
+        "question": "What is the support function in GJK?",
+        "options": [
           "A helper",
-          "Returns point in shape furthest in given direction: argmax(p·d for p in shape). GJK calls this to build simplex.",
+          "Returns point in shape furthest in given direction: argmax(p\u00b7d for p in shape). GJK calls this to build simplex.",
           "Distance",
           "Normal"
         ],
-        "a": "Returns point in shape furthest in given direction: argmax(p·d for p in shape). GJK calls this to build simplex.",
-        "e": "support(shape, d) = extreme point in direction d. O(1) for sphere/box. O(n) for convex hull. GJK never needs explicit Minkowski difference."
+        "correctAnswer": "Returns point in shape furthest in given direction: argmax(p\u00b7d for p in shape). GJK calls this to build simplex."
       }
     ]
   },
   {
-    "note": "01 — Rigid Body Dynamics",
+    "note": "01 \u2014 Rigid Body Dynamics",
     "questions": [
       {
         "question": "What does Newton's Second Law (F=ma) govern in physics engines?",
@@ -147,202 +153,214 @@
         "question": "What is the inertia tensor?",
         "options": [
           "A scalar",
-          "3×3 matrix describing how mass is distributed — determines angular acceleration from torque: τ = I·α",
+          "3\u00d73 matrix describing how mass is distributed \u2014 determines angular acceleration from torque: \u03c4 = I\u00b7\u03b1",
           "A vector",
           "A force"
         ],
-        "correctAnswer": "3×3 matrix describing how mass is distributed — determines angular acceleration from torque: τ = I·α",
+        "correctAnswer": "3\u00d73 matrix describing how mass is distributed \u2014 determines angular acceleration from torque: \u03c4 = I\u00b7\u03b1",
         "explanation": "Rotational analog of mass. Inertia tensor depends on shape and mass distribution. Diagonalized in principal axes. Harder to rotate around axes with larger inertia."
       },
       {
-        "q": "What is angular velocity?",
-        "o": [
+        "e": "\u03c9 is a 3D vector. Direction = axis of rotation (right-hand rule). magnitude = radians per second. L = I\u00b7\u03c9 (angular momentum).",
+        "explanation": "The inertia tensor I is a 3\u00d73 matrix describing mass distribution. The same torque applied around different axes produces different angular acceleration depending on how mass is distributed. \u03c4 = I\u00b7\u03b1 (rotational Newton's Second Law).",
+        "question": "What is angular velocity?",
+        "options": [
           "Same as linear",
-          "ω — rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s).",
+          "\u03c9 \u2014 rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s).",
           "A force",
           "A position"
         ],
-        "a": "ω — rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s).",
-        "e": "ω is a 3D vector. Direction = axis of rotation (right-hand rule). magnitude = radians per second. L = I·ω (angular momentum)."
+        "correctAnswer": "\u03c9 \u2014 rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s)."
       },
       {
-        "q": "What is the inertia tensor?",
-        "o": [
+        "e": "Rotational mass. Sphere: diagonal (all equal). Box: diagonal (different per axis). Non-diagonal for arbitrary shapes. Diagonalized in body frame.",
+        "explanation": "6 DOF: position(3) + orientation(3). Orientation can be Euler angles (3), quaternion (4 with 1 constraint), or rotation matrix (9 with 6 constraints). State vector includes: position, velocity, orientation, angular velocity.",
+        "question": "What is the inertia tensor?",
+        "options": [
           "A scalar",
-          "3×3 matrix describing mass distribution. τ = I·α (torque = inertia tensor × angular acceleration). Depends on shape.",
+          "3\u00d73 matrix describing mass distribution. \u03c4 = I\u00b7\u03b1 (torque = inertia tensor \u00d7 angular acceleration). Depends on shape.",
           "A vector",
           "A force"
         ],
-        "a": "3×3 matrix describing mass distribution. τ = I·α (torque = inertia tensor × angular acceleration). Depends on shape.",
-        "e": "Rotational mass. Sphere: diagonal (all equal). Box: diagonal (different per axis). Non-diagonal for arbitrary shapes. Diagonalized in body frame."
+        "correctAnswer": "3\u00d73 matrix describing mass distribution. \u03c4 = I\u00b7\u03b1 (torque = inertia tensor \u00d7 angular acceleration). Depends on shape."
       },
       {
-        "q": "What are the six degrees of freedom of a rigid body?",
         "correctAnswer": "3 translational (x, y, z) + 3 rotational (pitch, yaw, roll)",
         "acceptableAnswers": [
           "3 translation 3 rotation",
           "3 translational and 3 rotational",
           "x y z pitch yaw roll"
         ],
-        "explanation": "6 DOF = complete description of position and orientation in 3D space. A rigid body's state = position(3) + velocity(3) + orientation(4) + angularVelocity(3)."
+        "explanation": "6 DOF = complete description of position and orientation in 3D space. A rigid body's state = position(3) + velocity(3) + orientation(4) + angularVelocity(3).",
+        "question": "What are the six degrees of freedom of a rigid body?"
       },
       {
-        "q": "What is the center of mass?",
-        "o": [
+        "e": "COM = weighted average of mass distribution. Linear dynamics use COM position and velocity. Rotation is around COM.",
+        "explanation": "Center of mass is the weighted average of mass distribution. Linear dynamics (F=ma) apply at COM. Forces applied away from COM create torque (\u03c4 = r \u00d7 F) and cause rotation. COM simplifies: translate like a point mass, rotate around COM.",
+        "question": "What is the center of mass?",
+        "options": [
           "Geometric center",
           "The point where all mass is concentrated for linear motion. Forces applied off-center create torque (rotation).",
           "Arbitrary point",
           "Body origin"
         ],
-        "a": "The point where all mass is concentrated for linear motion. Forces applied off-center create torque (rotation).",
-        "e": "COM = weighted average of mass distribution. Linear dynamics use COM position and velocity. Rotation is around COM."
+        "correctAnswer": "The point where all mass is concentrated for linear motion. Forces applied off-center create torque (rotation)."
       }
     ]
   },
   {
-    "note": "02 — Numerical Integration",
+    "note": "02 \u2014 Numerical Integration",
     "questions": [
       {
         "question": "What is Euler integration?",
         "options": [
           "Exact solution",
-          "Simplest: pos += vel·dt; vel += acc·dt. O(dt) error per step. Unstable for stiff systems.",
+          "Simplest: pos += vel\u00b7dt; vel += acc\u00b7dt. O(dt) error per step. Unstable for stiff systems.",
           "Analytical",
           "Implicit"
         ],
-        "correctAnswer": "Simplest: pos += vel·dt; vel += acc·dt. O(dt) error per step. Unstable for stiff systems.",
+        "correctAnswer": "Simplest: pos += vel\u00b7dt; vel += acc\u00b7dt. O(dt) error per step. Unstable for stiff systems.",
         "explanation": "Explicit Euler: first-order. Cheap but diverges for oscillatory systems unless dt is very small. Game physics at 60Hz often uses semi-implicit Euler."
       },
       {
         "question": "What is semi-implicit Euler (symplectic)?",
         "options": [
           "Same as explicit",
-          "vel += acc·dt FIRST, then pos += vel·dt. More stable than explicit Euler for same cost. Standard in game physics.",
+          "vel += acc\u00b7dt FIRST, then pos += vel\u00b7dt. More stable than explicit Euler for same cost. Standard in game physics.",
           "Implicit method",
           "Analytical"
         ],
-        "correctAnswer": "vel += acc·dt FIRST, then pos += vel·dt. More stable than explicit Euler for same cost. Standard in game physics.",
+        "correctAnswer": "vel += acc\u00b7dt FIRST, then pos += vel\u00b7dt. More stable than explicit Euler for same cost. Standard in game physics.",
         "explanation": "Symplectic Euler preserves energy better than explicit. Order matters: update velocity first, then use NEW velocity for position. UE physics uses this."
       },
       {
-        "q": "What is Verlet integration?",
-        "o": [
+        "e": "Verlet: no explicit velocity. Velocity = (pos(t+dt)-pos(t-dt))/(2\u00b7dt). Used in molecular dynamics, cloth simulation.",
+        "explanation": "Explicit Euler: v(t+dt) = v(t) + a(t)\u00b7dt using acceleration from START of step. The error accumulates, adding energy to the system \u2014 orbits spiral outward, springs oscillate with growing amplitude. Semi-implicit uses v(t+dt) for position update, improving stability.",
+        "question": "What is Verlet integration?",
+        "options": [
           "Euler variant",
-          "pos(t+dt)=2·pos(t)-pos(t-dt)+acc·dt². Velocity-free, time-reversible, good energy conservation.",
+          "pos(t+dt)=2\u00b7pos(t)-pos(t-dt)+acc\u00b7dt\u00b2. Velocity-free, time-reversible, good energy conservation.",
           "Implicit",
           "Analytical"
         ],
-        "a": "pos(t+dt)=2·pos(t)-pos(t-dt)+acc·dt². Velocity-free, time-reversible, good energy conservation.",
-        "e": "Verlet: no explicit velocity. Velocity = (pos(t+dt)-pos(t-dt))/(2·dt). Used in molecular dynamics, cloth simulation."
+        "correctAnswer": "pos(t+dt)=2\u00b7pos(t)-pos(t-dt)+acc\u00b7dt\u00b2. Velocity-free, time-reversible, good energy conservation."
       },
       {
-        "q": "What is fixed vs variable timestep in physics?",
-        "o": [
+        "e": "Fixed timestep = stability, reproducibility. Variable = frame-synced. UE physics runs at fixed rate (default 60Hz) with accumulator for sub-steps.",
+        "explanation": "RK4 evaluates the derivative at 4 points within a step and takes a weighted average. This gives O(dt\u2075) error per step \u2014 much more accurate than Euler's O(dt\u00b2). Used where accuracy matters more than speed (cinematic physics, scientific simulation).",
+        "question": "What is fixed vs variable timestep in physics?",
+        "options": [
           "Same",
           "Fixed: deterministic, reproducible. Variable: frame-rate matched. UE: fixed physics timestep with sub-stepping for stability.",
           "Variable is better",
           "Only variable"
         ],
-        "a": "Fixed: deterministic, reproducible. Variable: frame-rate matched. UE: fixed physics timestep with sub-stepping for stability.",
-        "e": "Fixed timestep = stability, reproducibility. Variable = frame-synced. UE physics runs at fixed rate (default 60Hz) with accumulator for sub-steps."
+        "correctAnswer": "Fixed: deterministic, reproducible. Variable: frame-rate matched. UE: fixed physics timestep with sub-stepping for stability."
       },
       {
-        "q": "Why does explicit Euler gain energy?",
-        "o": [
+        "e": "Explicit Euler evaluates derivative at START of step. Semi-implicit uses updated velocity for position \u2014 much better energy behavior.",
+        "explanation": "F = -k\u00b7x - c\u00b7v. Spring force proportional to displacement (-k\u00b7x, Hooke's law). Damping force proportional to velocity (-c\u00b7v). Stiff springs (large k) require tiny dt for explicit methods to remain stable.",
+        "question": "Why does explicit Euler gain energy?",
+        "options": [
           "It doesn't",
-          "Each step slightly overshoots the true trajectory — error accumulates, orbits expand, springs explode. Semi-implicit fixes this.",
+          "Each step slightly overshoots the true trajectory \u2014 error accumulates, orbits expand, springs explode. Semi-implicit fixes this.",
           "It loses energy",
           "It's exact"
         ],
-        "a": "Each step slightly overshoots the true trajectory — error accumulates, orbits expand, springs explode. Semi-implicit fixes this.",
-        "e": "Explicit Euler evaluates derivative at START of step. Semi-implicit uses updated velocity for position — much better energy behavior."
+        "correctAnswer": "Each step slightly overshoots the true trajectory \u2014 error accumulates, orbits expand, springs explode. Semi-implicit fixes this."
       },
       {
-        "q": "What is RK4 integration?",
-        "o": [
+        "e": "RK4: 4 evaluations per step. k1=f(t,y), k2=f(t+dt/2,y+k1\u00b7dt/2), k3, k4. Average with weights [1,2,2,1]. Used where accuracy > speed.",
+        "explanation": "Verlet: x(t+dt) = 2x(t) - x(t-dt) + a(t)\u00b7dt\u00b2. No explicit velocity storage. Velocity derived as (x(t+dt)-x(t-dt))/(2dt). Time-reversible and excellent energy conservation \u2014 standard for molecular dynamics and cloth simulation.",
+        "question": "What is RK4 integration?",
+        "options": [
           "Euler variant",
-          "4th-order Runge-Kutta: evaluates derivative at 4 points per step, weighted average. O(dt⁵) error. Expensive but very accurate.",
+          "4th-order Runge-Kutta: evaluates derivative at 4 points per step, weighted average. O(dt\u2075) error. Expensive but very accurate.",
           "Verlet",
           "Implicit"
         ],
-        "a": "4th-order Runge-Kutta: evaluates derivative at 4 points per step, weighted average. O(dt⁵) error. Expensive but very accurate.",
-        "e": "RK4: 4 evaluations per step. k1=f(t,y), k2=f(t+dt/2,y+k1·dt/2), k3, k4. Average with weights [1,2,2,1]. Used where accuracy > speed."
+        "correctAnswer": "4th-order Runge-Kutta: evaluates derivative at 4 points per step, weighted average. O(dt\u2075) error. Expensive but very accurate."
       },
       {
-        "q": "What is the spring-mass-damper system?",
-        "o": [
+        "e": "Hooke's law + damping. k=stiffness, c=damping. Stiff springs (large k) require tiny dt for explicit methods. Implicit methods handle stiff springs better.",
+        "explanation": "Fixed timestep = deterministic, reproducible physics. Variable = frame-rate matched but non-deterministic. UE runs physics at a fixed rate (default 60Hz) using an accumulator \u2014 renders at variable FPS, steps physics at fixed intervals with sub-stepping.",
+        "question": "What is the spring-mass-damper system?",
+        "options": [
           "A rendering method",
-          "F = -k·x - c·v. Spring force proportional to displacement, damping proportional to velocity. Stiff springs need small dt.",
+          "F = -k\u00b7x - c\u00b7v. Spring force proportional to displacement, damping proportional to velocity. Stiff springs need small dt.",
           "A collision method",
           "A type of constraint"
         ],
-        "a": "F = -k·x - c·v. Spring force proportional to displacement, damping proportional to velocity. Stiff springs need small dt.",
-        "e": "Hooke's law + damping. k=stiffness, c=damping. Stiff springs (large k) require tiny dt for explicit methods. Implicit methods handle stiff springs better."
+        "correctAnswer": "F = -k\u00b7x - c\u00b7v. Spring force proportional to displacement, damping proportional to velocity. Stiff springs need small dt."
       }
     ]
   },
   {
-    "note": "03 — Constraints & Contact",
+    "note": "03 \u2014 Constraints & Contact",
     "questions": [
       {
         "question": "What is a constraint in physics simulation?",
         "options": [
           "A bug",
-          "A rule enforcing a relationship between bodies — distance joint, hinge, contact (non-penetration). Solved iteratively.",
+          "A rule enforcing a relationship between bodies \u2014 distance joint, hinge, contact (non-penetration). Solved iteratively.",
           "A force",
           "A type of collision"
         ],
-        "correctAnswer": "A rule enforcing a relationship between bodies — distance joint, hinge, contact (non-penetration). Solved iteratively.",
+        "correctAnswer": "A rule enforcing a relationship between bodies \u2014 distance joint, hinge, contact (non-penetration). Solved iteratively.",
         "explanation": "Constraints: equality (joints) and inequality (contacts). Solved via sequential impulse (projected Gauss-Seidel) in most game engines."
       },
       {
-        "q": "What is sequential impulse solving?",
-        "o": [
+        "e": "Projected Gauss-Seidel. Solve each constraint independently, repeat. Converges over iterations. UE's PhysX/Chaos use 4-8 iterations per frame.",
+        "explanation": "A Lagrange multiplier \u03bb is the force magnitude needed to enforce a constraint. Each constraint equation C(x)=0 produces one scalar \u03bb. The solver finds the \u03bb values that satisfy all constraints simultaneously via the linear system J\u00b7v + b = 0.",
+        "question": "What is sequential impulse solving?",
+        "options": [
           "A rendering technique",
-          "Iteratively resolves constraints one at a time — projects velocities to satisfy constraint, repeats. Standard in game physics.",
+          "Iteratively resolves constraints one at a time \u2014 projects velocities to satisfy constraint, repeats. Standard in game physics.",
           "A collision method",
           "A broad phase"
         ],
-        "a": "Iteratively resolves constraints one at a time — projects velocities to satisfy constraint, repeats. Standard in game physics.",
-        "e": "Projected Gauss-Seidel. Solve each constraint independently, repeat. Converges over iterations. UE's PhysX/Chaos use 4-8 iterations per frame."
+        "correctAnswer": "Iteratively resolves constraints one at a time \u2014 projects velocities to satisfy constraint, repeats. Standard in game physics."
       },
       {
-        "q": "What is a Lagrange multiplier in constraint solving?",
-        "o": [
+        "e": "\u03bb = constraint force. J\u00b7v + b = 0 is the velocity-level constraint. Solver computes \u03bb that satisfies all constraints.",
+        "explanation": "Baumgarte stabilization adds a position correction term: b = (\u03b2/dt)\u00b7C(x) where \u03b2\u22480.1-0.3. This proportional feedback drives position errors toward zero over multiple timesteps. Too high \u03b2 causes jitter; too low allows visible penetration.",
+        "question": "What is a Lagrange multiplier in constraint solving?",
+        "options": [
           "A scalar",
-          "The force magnitude needed to enforce a constraint. Each constraint equation produces one λ. Solver finds all λ simultaneously.",
+          "The force magnitude needed to enforce a constraint. Each constraint equation produces one \u03bb. Solver finds all \u03bb simultaneously.",
           "A vector",
           "A matrix"
         ],
-        "a": "The force magnitude needed to enforce a constraint. Each constraint equation produces one λ. Solver finds all λ simultaneously.",
-        "e": "λ = constraint force. J·v + b = 0 is the velocity-level constraint. Solver computes λ that satisfies all constraints."
+        "correctAnswer": "The force magnitude needed to enforce a constraint. Each constraint equation produces one \u03bb. Solver finds all \u03bb simultaneously."
       },
       {
-        "q": "What is Baumgarte stabilization?",
-        "o": [
+        "e": "Baumgarte: b = (\u03b2/dt)\u00b7C(x). \u03b2 = 0.1-0.3. Corrects position errors gradually. Too high = jitter; too low = visible penetration.",
+        "explanation": "C(x) = |p\u2081-p\u2082| - L = 0. The Jacobian J is the direction vector between the two points. When distance = rest length L, constraint is satisfied. When |p\u2081-p\u2082| > L, constraint is violated and solver applies corrective impulses along the connection direction.",
+        "question": "What is Baumgarte stabilization?",
+        "options": [
           "A rendering technique",
           "Adds position error correction to velocity constraint: bias term proportional to penetration depth. Prevents drift.",
           "A broad phase",
           "A narrow phase"
         ],
-        "a": "Adds position error correction to velocity constraint: bias term proportional to penetration depth. Prevents drift.",
-        "e": "Baumgarte: b = (β/dt)·C(x). β = 0.1-0.3. Corrects position errors gradually. Too high = jitter; too low = visible penetration."
+        "correctAnswer": "Adds position error correction to velocity constraint: bias term proportional to penetration depth. Prevents drift."
       },
       {
-        "q": "What is a distance constraint?",
-        "o": [
+        "e": "C(x) = |p1-p2| - L. Jacobian J = direction vector. Satisfied when distance = rest length. Violation = stretch/compression.",
+        "explanation": "Sequential impulse (Projected Gauss-Seidel) solves constraints one at a time: compute impulse for constraint i, apply velocity update, move to constraint i+1. Repeated iterations converge to the global solution. PhysX uses ~4-10 iterations.",
+        "question": "What is a distance constraint?",
+        "options": [
           "A rendering method",
           "|p1 - p2| = restLength. Maintains fixed distance between two points. Used for ropes, ragdoll joints.",
           "A collision method",
           "A broad phase"
         ],
-        "a": "|p1 - p2| = restLength. Maintains fixed distance between two points. Used for ropes, ragdoll joints.",
-        "e": "C(x) = |p1-p2| - L. Jacobian J = direction vector. Satisfied when distance = rest length. Violation = stretch/compression."
+        "correctAnswer": "|p1 - p2| = restLength. Maintains fixed distance between two points. Used for ropes, ragdoll joints."
       }
     ]
   },
   {
-    "note": "04 — Continuous Collision Detection",
+    "note": "04 \u2014 Continuous Collision Detection",
     "questions": [
       {
         "question": "What is Time of Impact (TOI)?",
@@ -353,51 +371,55 @@
           "Response time"
         ],
         "correctAnswer": "The exact time two moving shapes first touch. CCD computes TOI to prevent tunneling for fast-moving objects.",
-        "explanation": "TOI = t ∈ [0,1] where first contact occurs. Conservative advancement: iterative search for TOI by advancing shapes until distance < epsilon."
+        "explanation": "TOI = t \u2208 [0,1] where first contact occurs. Conservative advancement: iterative search for TOI by advancing shapes until distance < epsilon."
       },
       {
-        "q": "What is conservative advancement for TOI?",
-        "o": [
+        "e": "Conservative advancement: move by distance to closest feature (safe step). Compute new closest distance. Repeat until distance < epsilon. Bullet, PhysX use this.",
+        "explanation": "TOI \u2208 [0,1] is the exact time within the timestep when two moving shapes first contact. CCD sweeps shapes along their trajectories to compute TOI. The result positions objects exactly at the point of contact, preventing tunneling.",
+        "question": "What is conservative advancement for TOI?",
+        "options": [
           "A rendering method",
           "Iterative search: advance shapes by safe distance (guaranteed no collision), check again. Converges to TOI.",
           "A broad phase",
           "A narrow phase"
         ],
-        "a": "Iterative search: advance shapes by safe distance (guaranteed no collision), check again. Converges to TOI.",
-        "e": "Conservative advancement: move by distance to closest feature (safe step). Compute new closest distance. Repeat until distance < epsilon. Bullet, PhysX use this."
+        "correctAnswer": "Iterative search: advance shapes by safe distance (guaranteed no collision), check again. Converges to TOI."
       },
       {
-        "q": "What is time of impact (TOI)?",
-        "o": [
+        "e": "TOI \u2208 [0,1]. Conservative advancement: iteratively shrink time interval until contact. TOI=0.5 means collision at midpoint of timestep.",
+        "explanation": "Conservative advancement iteratively narrows the TOI interval: compute closest distance d between shapes, advance time by d/(relative speed) \u2014 guaranteed no collision in this sub-interval. Repeat until distance < epsilon. Converges to exact TOI.",
+        "question": "What is time of impact (TOI)?",
+        "options": [
           "Collision response time",
           "The exact time within a timestep when two moving shapes first touch. CCD computes TOI to position objects at contact.",
           "Frame time",
           "Response time"
         ],
-        "a": "The exact time within a timestep when two moving shapes first touch. CCD computes TOI to position objects at contact.",
-        "e": "TOI ∈ [0,1]. Conservative advancement: iteratively shrink time interval until contact. TOI=0.5 means collision at midpoint of timestep."
+        "correctAnswer": "The exact time within a timestep when two moving shapes first touch. CCD computes TOI to position objects at contact."
       },
       {
-        "q": "What is conservative advancement?",
-        "o": [
+        "e": "CA: advance shapes by d/(max speed). Recompute distance. Repeat until d < epsilon. Converges to TOI. Used by PhysX, Bullet.",
+        "explanation": "CCD sweeps actual shape geometry precisely (expensive, accurate). Speculative contacts expand contact tolerance by velocity\u00b7dt \u2014 effectively inflating AABBs to catch fast objects. Much cheaper but can produce false positives. UE5 Chaos uses speculative contacts by default.",
+        "question": "What is conservative advancement?",
+        "options": [
           "A political strategy",
-          "Iterative TOI search: compute closest distance d, advance by d/(relative speed) — guaranteed no collision this step, repeat.",
+          "Iterative TOI search: compute closest distance d, advance by d/(relative speed) \u2014 guaranteed no collision this step, repeat.",
           "A broad phase",
           "A rendering method"
         ],
-        "a": "Iterative TOI search: compute closest distance d, advance by d/(relative speed) — guaranteed no collision this step, repeat.",
-        "e": "CA: advance shapes by d/(max speed). Recompute distance. Repeat until d < epsilon. Converges to TOI. Used by PhysX, Bullet."
+        "correctAnswer": "Iterative TOI search: compute closest distance d, advance by d/(relative speed) \u2014 guaranteed no collision this step, repeat."
       },
       {
-        "q": "What is the difference between CCD and speculative contacts?",
-        "o": [
+        "e": "UE5 Chaos: speculative contacts = inflated AABB by velocity*dt. Cheaper than CCD. Good for most fast objects. CCD for critical cases (bullets).",
+        "explanation": "Bullet-through-paper: a bullet at 1000 m/s travels 41m between 24fps frames. Discrete checks at frame boundaries miss the 1cm wall entirely. CCD sweeps the bullet's path as a continuous volume and detects the intermediate collision.",
+        "question": "What is the difference between CCD and speculative contacts?",
+        "options": [
           "Same",
           "CCD: sweeps shapes precisely (expensive). Speculative: expands contact threshold by velocity, catches fast objects via inflated AABB (cheaper).",
           "Speculative is better",
           "CCD is deprecated"
         ],
-        "a": "CCD: sweeps shapes precisely (expensive). Speculative: expands contact threshold by velocity, catches fast objects via inflated AABB (cheaper).",
-        "e": "UE5 Chaos: speculative contacts = inflated AABB by velocity*dt. Cheaper than CCD. Good for most fast objects. CCD for critical cases (bullets)."
+        "correctAnswer": "CCD: sweeps shapes precisely (expensive). Speculative: expands contact threshold by velocity, catches fast objects via inflated AABB (cheaper)."
       }
     ]
   }

@@ -110,11 +110,13 @@ const QuizEngine = {
 
     if (s.submitted) {
       const isCorrect = s.answers[s.currentIndex + '_correct'];
+      const correctAns = isMC(q) ? q.options[q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || '');
       html += `
         <div class="feedback ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
           ${isCorrect ? '✅ Correct!' : '❌ Incorrect'}
         </div>
         ${q.explanation ? `<p class="quiz-explanation">${q.explanation}</p>` : ''}
+        ${!isCorrect && correctAns ? `<p class="quiz-correct-answer"><strong>Correct answer:</strong> ${correctAns}</p>` : ''}
       `;
       if (s.currentIndex < s.questions.length - 1) {
         html += `<button class="btn btn-primary" style="margin-top:1rem;" onclick="QuizEngine.nextQuestion()">Next →</button>`;

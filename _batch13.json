@@ -1,6 +1,6 @@
 [
   {
-    "note": "02 — Steering Behaviors",
+    "note": "02 \u2014 Steering Behaviors",
     "questions": [
       {
         "question": "What are Craig Reynolds' steering behaviors?",
@@ -26,110 +26,116 @@
         "question": "What is the arrive behavior?",
         "options": [
           "Same as seek",
-          "Seek with deceleration — slows down as it approaches target, stops at target instead of overshooting",
+          "Seek with deceleration \u2014 slows down as it approaches target, stops at target instead of overshooting",
           "A flocking rule",
           "A pathfinding method"
         ],
-        "correctAnswer": "Seek with deceleration — slows down as it approaches target, stops at target instead of overshooting",
+        "correctAnswer": "Seek with deceleration \u2014 slows down as it approaches target, stops at target instead of overshooting",
         "explanation": "Arrive: if within slowing radius, scale speed by distance/radius. Seek would overshoot and orbit. Arrive smoothly decelerates to zero."
       },
       {
-        "q": "What is separation steering?",
-        "o": [
+        "e": "For each neighbor within radius: compute repulsion vector away from neighbor. Sum and normalize. Key component of flocking.",
+        "explanation": "Separation steers away from nearby neighbors within a defined radius. Force is inversely proportional to distance \u2014 closer neighbors push harder. Sum repulsion vectors, normalize. Prevents agents from crowding or overlapping.",
+        "question": "What is separation steering?",
+        "options": [
           "Grouping",
-          "Steer away from nearby neighbors — prevents crowding. Force inversely proportional to distance.",
+          "Steer away from nearby neighbors \u2014 prevents crowding. Force inversely proportional to distance.",
           "Following",
           "Wandering"
         ],
-        "a": "Steer away from nearby neighbors — prevents crowding. Force inversely proportional to distance.",
-        "e": "For each neighbor within radius: compute repulsion vector away from neighbor. Sum and normalize. Key component of flocking."
+        "correctAnswer": "Steer away from nearby neighbors \u2014 prevents crowding. Force inversely proportional to distance."
       },
       {
-        "q": "What is wander steering?",
-        "o": [
+        "e": "Wander: circle projected ahead of agent. Random displacement on circle changes each frame. Produces natural-looking random movement.",
+        "explanation": "Wander projects a circle ahead of the agent and picks a random point on that circle each frame. The agent steers toward that point, producing smooth random-looking movement. The circle radius and distance control turning rate and randomness.",
+        "question": "What is wander steering?",
+        "options": [
           "Random teleport",
-          "Produces random, smooth wandering motion — projects a circle ahead, picks random point on circle, steers toward it",
+          "Produces random, smooth wandering motion \u2014 projects a circle ahead, picks random point on circle, steers toward it",
           "Pathfinding",
           "Flocking"
         ],
-        "a": "Produces random, smooth wandering motion — projects a circle ahead, picks random point on circle, steers toward it",
-        "e": "Wander: circle projected ahead of agent. Random displacement on circle changes each frame. Produces natural-looking random movement."
+        "correctAnswer": "Produces random, smooth wandering motion \u2014 projects a circle ahead, picks random point on circle, steers toward it"
       }
     ]
   },
   {
-    "note": "03 — Navmesh Generation",
+    "note": "03 \u2014 Navmesh Generation",
     "questions": [
       {
         "question": "What algorithm generates navigation meshes in UE?",
         "options": [
           "Manual authoring",
-          "Recast — voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
+          "Recast \u2014 voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
           "A*",
           "Random generation"
         ],
-        "correctAnswer": "Recast — voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
-        "explanation": "Recast pipeline: voxelization → filter walkable → generate distance field → contour → polygon mesh → detail mesh. Detour handles runtime pathfinding."
+        "correctAnswer": "Recast \u2014 voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
+        "explanation": "Recast pipeline: voxelization \u2192 filter walkable \u2192 generate distance field \u2192 contour \u2192 polygon mesh \u2192 detail mesh. Detour handles runtime pathfinding."
       },
       {
         "question": "What is 'string pulling' in pathfinding?",
         "options": [
           "A debug tool",
-          "Post-processing step that smooths the A* path on a navmesh — removes unnecessary waypoints by pulling the path tight",
+          "Post-processing step that smooths the A* path on a navmesh \u2014 removes unnecessary waypoints by pulling the path tight",
           "A search algorithm",
           "A type of heuristic"
         ],
-        "correctAnswer": "Post-processing step that smooths the A* path on a navmesh — removes unnecessary waypoints by pulling the path tight",
+        "correctAnswer": "Post-processing step that smooths the A* path on a navmesh \u2014 removes unnecessary waypoints by pulling the path tight",
         "explanation": "A* on navmesh gives polygon corners. String pulling (funnel algorithm) smooths to shortest path within the navmesh corridor."
       },
       {
-        "q": "What does Detour do at runtime?",
-        "o": [
+        "e": "Detour = runtime component. Uses Recast-generated data. Provides pathfinding queries, local avoidance, crowd movement.",
+        "explanation": "Recast step 1 rasterizes input triangles into a voxel heightfield. Each column stores spans of solid cells. A span is walkable if the surface slope < maxSlope (typically 45\u00b0) and the step height to adjacent spans < maxStep (agent can climb).",
+        "question": "What does Detour do at runtime?",
+        "options": [
           "Generates navmesh",
-          "Pathfinding queries on the pre-generated navmesh — A*, string pulling, crowd simulation",
+          "Pathfinding queries on the pre-generated navmesh \u2014 A*, string pulling, crowd simulation",
           "Renders",
           "Physics"
         ],
-        "a": "Pathfinding queries on the pre-generated navmesh — A*, string pulling, crowd simulation",
-        "e": "Detour = runtime component. Uses Recast-generated data. Provides pathfinding queries, local avoidance, crowd movement."
+        "correctAnswer": "Pathfinding queries on the pre-generated navmesh \u2014 A*, string pulling, crowd simulation"
       },
       {
-        "q": "What is the voxelization step in Recast?",
-        "o": [
+        "e": "Recast: triangle mesh \u2192 voxel heightfield. Each column stores walkable spans. Filter by agent height, max slope, max step.",
+        "explanation": "After A* finds a sequence of navmesh polygons, the funnel algorithm tightens the path to the shortest route within that polygon corridor. It's like pulling a string taut through the polygons \u2014 removes unnecessary detours at polygon corners.",
+        "question": "What is the voxelization step in Recast?",
+        "options": [
           "Rendering",
-          "Converts 3D geometry into a heightfield — voxels marked as walkable if slope < max and step height < max",
+          "Converts 3D geometry into a heightfield \u2014 voxels marked as walkable if slope < max and step height < max",
           "Animation",
           "Physics"
         ],
-        "a": "Converts 3D geometry into a heightfield — voxels marked as walkable if slope < max and step height < max",
-        "e": "Recast: triangle mesh → voxel heightfield. Each column stores walkable spans. Filter by agent height, max slope, max step."
+        "correctAnswer": "Converts 3D geometry into a heightfield \u2014 voxels marked as walkable if slope < max and step height < max"
       },
       {
-        "q": "What is the Recast voxelization process?",
-        "o": [
+        "e": "Recast step 1: rasterize input geometry into heightfield. Compact representation: spans per column. Filter by walkability parameters.",
+        "explanation": "Detour is the runtime component that uses Recast-generated navmesh data. It provides pathfinding queries (A* on polygon graph), crowd simulation (local avoidance), and dynamic obstacle handling. Recast = offline generation; Detour = runtime queries.",
+        "question": "What is the Recast voxelization process?",
+        "options": [
           "Rendering",
           "Converts triangle mesh to 3D voxel grid. Each column stores spans of solid cells. Walkable if slope < maxSlope and step height < maxStep.",
           "Pathfinding",
           "Animation"
         ],
-        "a": "Converts triangle mesh to 3D voxel grid. Each column stores spans of solid cells. Walkable if slope < maxSlope and step height < maxStep.",
-        "e": "Recast step 1: rasterize input geometry into heightfield. Compact representation: spans per column. Filter by walkability parameters."
+        "correctAnswer": "Converts triangle mesh to 3D voxel grid. Each column stores spans of solid cells. Walkable if slope < maxSlope and step height < maxStep."
       },
       {
-        "q": "What is the funnel algorithm (string pulling)?",
-        "o": [
+        "e": "A* gives polygon sequence. Funnel algorithm tightens to shortest path staying within the corridor. Produces natural-looking smooth paths.",
+        "explanation": "Recast converts triangle soup to voxel heightfield \u2192 filters walkable surfaces \u2192 partitions into contiguous regions \u2192 extracts region contours \u2192 triangulates into convex polygons \u2192 adds height detail for precise placement. Six-stage pipeline.",
+        "question": "What is the funnel algorithm (string pulling)?",
+        "options": [
           "A* variant",
-          "Post-processes A* path on navmesh to find shortest path within polygon corridor — pulls path tight like a string",
+          "Post-processes A* path on navmesh to find shortest path within polygon corridor \u2014 pulls path tight like a string",
           "A navigation method",
           "A generation method"
         ],
-        "a": "Post-processes A* path on navmesh to find shortest path within polygon corridor — pulls path tight like a string",
-        "e": "A* gives polygon sequence. Funnel algorithm tightens to shortest path staying within the corridor. Produces natural-looking smooth paths."
+        "correctAnswer": "Post-processes A* path on navmesh to find shortest path within polygon corridor \u2014 pulls path tight like a string"
       }
     ]
   },
   {
-    "note": "00 — Collision Detection Overview",
+    "note": "00 \u2014 Collision Detection Overview",
     "questions": [
       {
         "question": "What is the two-phase collision detection architecture?",
@@ -146,69 +152,72 @@
         "question": "What is the tunneling problem?",
         "options": [
           "Memory leak",
-          "Fast-moving object passes through thin wall in one frame — collision missed between discrete checks",
+          "Fast-moving object passes through thin wall in one frame \u2014 collision missed between discrete checks",
           "A type of collision",
           "A rendering issue"
         ],
-        "correctAnswer": "Fast-moving object passes through thin wall in one frame — collision missed between discrete checks",
-        "explanation": "Solution: CCD (Continuous Collision Detection) — sweep shape along path. Or sub-stepping (run physics at higher frequency). UE: bUseCCD."
+        "correctAnswer": "Fast-moving object passes through thin wall in one frame \u2014 collision missed between discrete checks",
+        "explanation": "Solution: CCD (Continuous Collision Detection) \u2014 sweep shape along path. Or sub-stepping (run physics at higher frequency). UE: bUseCCD."
       },
       {
-        "q": "What is the sweep-and-prune broad phase?",
-        "o": [
+        "e": "Sweep-and-prune (sort and sweep): O(n log n) sort, then linear sweep. Good for many moving objects. Used in Bullet Physics.",
+        "explanation": "DBVT = Dynamic Bounding Volume Tree. Nodes are AABBs that can be updated incrementally when objects move \u2014 much cheaper than rebuilding. UE5 Chaos physics uses this internally.",
+        "question": "What is the sweep-and-prune broad phase?",
+        "options": [
           "Random check",
           "Sort AABB min-x values, sweep across. Objects with overlapping x-intervals are candidates. Extend to y, z.",
           "Tree traversal",
           "Hash based"
         ],
-        "a": "Sort AABB min-x values, sweep across. Objects with overlapping x-intervals are candidates. Extend to y, z.",
-        "e": "Sweep-and-prune (sort and sweep): O(n log n) sort, then linear sweep. Good for many moving objects. Used in Bullet Physics."
+        "correctAnswer": "Sort AABB min-x values, sweep across. Objects with overlapping x-intervals are candidates. Extend to y, z."
       },
       {
-        "q": "What is the difference between discrete and continuous collision detection?",
-        "o": [
+        "e": "Discrete = snapshot at t=n and t=n+1. CCD = swept volume between. Bullet traveling 1000m/s moves 41m per frame \u2014 discrete misses walls.",
+        "explanation": "Broad phase: uniform grids (many similar objects), octrees (uneven distribution), DBVT (dynamic worlds), sweep-and-prune (sorted AABB min-x). All reduce O(n\u00b2) all-pairs to ~O(n log n).",
+        "question": "What is the difference between discrete and continuous collision detection?",
+        "options": [
           "Same thing",
           "Discrete: checks positions at frame boundaries (can miss fast objects). CCD: sweeps shape along path, catches tunneling.",
           "CCD is slower only",
           "Discrete is newer"
         ],
-        "a": "Discrete: checks positions at frame boundaries (can miss fast objects). CCD: sweeps shape along path, catches tunneling.",
-        "e": "Discrete = snapshot at t=n and t=n+1. CCD = swept volume between. Bullet traveling 1000m/s moves 41m per frame — discrete misses walls."
+        "correctAnswer": "Discrete: checks positions at frame boundaries (can miss fast objects). CCD: sweeps shape along path, catches tunneling."
       },
       {
-        "q": "What spatial partitioning structures are used for broad phase?",
         "correctAnswer": "Uniform grids, quadtrees/octrees, dynamic AABB trees (DBVT), and sweep-and-prune",
         "acceptableAnswers": [
           "grids, octrees, DBVT, sweep and prune",
           "uniform grid, quadtree, octree, DBVT, sort and sweep"
         ],
-        "explanation": "Broad phase reduces O(n²) to O(n log n). Grid: many similar-sized objects. Octree: uneven distribution. DBVT: dynamic worlds (UE uses this)."
+        "explanation": "Broad phase reduces O(n\u00b2) to O(n log n). Grid: many similar-sized objects. Octree: uneven distribution. DBVT: dynamic worlds (UE uses this).",
+        "question": "What spatial partitioning structures are used for broad phase?"
       },
       {
-        "q": "What is a dynamic AABB tree (DBVT)?",
-        "o": [
+        "e": "DBVT = dynamic bounding volume tree. Leaves are object AABBs. Rotated/translated nodes update cheaply. UE5 Chaos physics uses this.",
+        "explanation": "Discrete CC checks positions at frame start and end \u2014 a bullet traveling 1000m/s moves 41m per 24fps frame and can pass through walls. CCD sweeps the shape's volume along its trajectory.",
+        "question": "What is a dynamic AABB tree (DBVT)?",
+        "options": [
           "A static structure",
-          "Binary tree of AABBs — nodes can move incrementally updated. UE's internal broad phase structure.",
+          "Binary tree of AABBs \u2014 nodes can move incrementally updated. UE's internal broad phase structure.",
           "A grid",
           "A hash table"
         ],
-        "a": "Binary tree of AABBs — nodes can move incrementally updated. UE's internal broad phase structure.",
-        "e": "DBVT = dynamic bounding volume tree. Leaves are object AABBs. Rotated/translated nodes update cheaply. UE5 Chaos physics uses this."
+        "correctAnswer": "Binary tree of AABBs \u2014 nodes can move incrementally updated. UE's internal broad phase structure."
       }
     ]
   },
   {
-    "note": "01 — AABB and Sphere",
+    "note": "01 \u2014 AABB and Sphere",
     "questions": [
       {
         "question": "How do you test if two AABBs overlap?",
         "options": [
           "Check all vertices",
-          "Check if intervals overlap on ALL three axes: (a_min ≤ b_max) AND (a_max ≥ b_min) for x, y, z",
+          "Check if intervals overlap on ALL three axes: (a_min \u2264 b_max) AND (a_max \u2265 b_min) for x, y, z",
           "Check one axis",
           "Check distance"
         ],
-        "correctAnswer": "Check if intervals overlap on ALL three axes: (a_min ≤ b_max) AND (a_max ≥ b_min) for x, y, z",
+        "correctAnswer": "Check if intervals overlap on ALL three axes: (a_min \u2264 b_max) AND (a_max \u2265 b_min) for x, y, z",
         "explanation": "AABB-AABB = 6 comparisons (2 per axis). O(1). Separating axis: if any axis has gap, no overlap. All 3 overlap = collision."
       },
       {
@@ -223,106 +232,112 @@
         "explanation": "Clamp to each axis-aligned interval. Result is the point ON or INSIDE the AABB closest to the query point. Basis of sphere-AABB test."
       },
       {
-        "q": "How do you test sphere-sphere collision?",
-        "o": [
+        "e": "|c1 - c2| < r1 + r2. Square both sides to avoid sqrt: |c1-c2|\u00b2 < (r1+r2)\u00b2. Fastest collision test. Use for broad-phase rough checks.",
+        "explanation": "AABB-AABB intersection tests if intervals overlap on all three axes: a_min \u2264 b_max AND a_max \u2265 b_min for X, Y, Z. Only 6 comparisons total. O(1). This is the fastest general collision test.",
+        "question": "How do you test sphere-sphere collision?",
+        "options": [
           "Complex math",
           "Distance between centers < sum of radii. O(1), one distance calculation.",
           "AABB test",
           "Ray cast"
         ],
-        "a": "Distance between centers < sum of radii. O(1), one distance calculation.",
-        "e": "|c1 - c2| < r1 + r2. Square both sides to avoid sqrt: |c1-c2|² < (r1+r2)². Fastest collision test. Use for broad-phase rough checks."
+        "correctAnswer": "Distance between centers < sum of radii. O(1), one distance calculation."
       },
       {
-        "q": "How do you test sphere-AABB collision?",
         "correctAnswer": "Find closest point on AABB to sphere center (clamp each coordinate), then check distance to that point < sphere radius",
         "acceptableAnswers": [
           "closest point on AABB then distance check",
           "clamp coordinates check distance"
         ],
-        "explanation": "1. Clamp sphere center to AABB min/max → closest point. 2. Distance from closest point to center < radius = collision. O(1)."
+        "explanation": "1. Clamp sphere center to AABB min/max \u2192 closest point. 2. Distance from closest point to center < radius = collision. O(1).",
+        "question": "How do you test sphere-AABB collision?"
       },
       {
-        "q": "What is the advantage of AABBs over OBBs?",
-        "o": [
+        "e": "AABB = cheap, fast, recompute on rotation. OBB = rotates with object, tighter fit, more expensive. Broad phase uses AABBs.",
+        "explanation": "Spheres are rotationally invariant \u2014 the test doesn't change when the sphere rotates. AABBs must be recomputed when an object rotates (the bounding box gets larger). Spheres are simpler but less tight for elongated shapes.",
+        "question": "What is the advantage of AABBs over OBBs?",
+        "options": [
           "More precise",
-          "AABB: axis-aligned — intersection test is 6 comparisons (O(1)). OBB: oriented — SAT needs 15 axes. AABB much faster, less precise.",
+          "AABB: axis-aligned \u2014 intersection test is 6 comparisons (O(1)). OBB: oriented \u2014 SAT needs 15 axes. AABB much faster, less precise.",
           "OBB is faster",
           "Same performance"
         ],
-        "a": "AABB: axis-aligned — intersection test is 6 comparisons (O(1)). OBB: oriented — SAT needs 15 axes. AABB much faster, less precise.",
-        "e": "AABB = cheap, fast, recompute on rotation. OBB = rotates with object, tighter fit, more expensive. Broad phase uses AABBs."
+        "correctAnswer": "AABB: axis-aligned \u2014 intersection test is 6 comparisons (O(1)). OBB: oriented \u2014 SAT needs 15 axes. AABB much faster, less precise."
       },
       {
-        "q": "How does sphere-sphere collision work?",
-        "o": [
+        "e": "|c1-c2|\u00b2 < (r1+r2)\u00b2. No SQRT needed. 3 subtractions + 3 multiplies + 2 additions + 1 compare. ~7 operations total.",
+        "explanation": "AABBs are always axis-aligned \u2014 must be recomputed when objects rotate, and the new AABB may be much larger than the object (a rotated sword gets a huge box). OBBs rotate with the object for a tighter fit but cost more to test.",
+        "question": "How does sphere-sphere collision work?",
+        "options": [
           "Complex math",
           "Distance between centers < sum of radii. Square both sides to avoid sqrt. O(1), fastest collision test.",
           "Matrix multiply",
           "Iterative"
         ],
-        "a": "Distance between centers < sum of radii. Square both sides to avoid sqrt. O(1), fastest collision test.",
-        "e": "|c1-c2|² < (r1+r2)². No SQRT needed. 3 subtractions + 3 multiplies + 2 additions + 1 compare. ~7 operations total."
+        "correctAnswer": "Distance between centers < sum of radii. Square both sides to avoid sqrt. O(1), fastest collision test."
       }
     ]
   },
   {
-    "note": "02 — Ray Casting",
+    "note": "02 \u2014 Ray Casting",
     "questions": [
       {
         "question": "What is the slab method for ray-AABB intersection?",
         "options": [
           "Check each vertex",
-          "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry ≤ t_exit for all 3 axes.",
+          "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry \u2264 t_exit for all 3 axes.",
           "Check distance",
           "Iterative"
         ],
-        "correctAnswer": "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry ≤ t_exit for all 3 axes.",
-        "explanation": "For each axis: t_near = (min - origin) / dir, t_far = (max - origin) / dir. t_enter = max of t_nears. t_exit = min of t_fars. Hit if t_enter ≤ t_exit."
+        "correctAnswer": "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry \u2264 t_exit for all 3 axes.",
+        "explanation": "For each axis: t_near = (min - origin) / dir, t_far = (max - origin) / dir. t_enter = max of t_nears. t_exit = min of t_fars. Hit if t_enter \u2264 t_exit."
       },
       {
         "question": "What is the Moller-Trumbore algorithm?",
         "options": [
           "AABB test",
-          "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
+          "Fast ray-triangle intersection \u2014 solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
           "Sphere test",
           "GJK variant"
         ],
-        "correctAnswer": "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
-        "explanation": "M-T: computes (u,v,t) where u,v are barycentrics and t is ray distance. Hit if u≥0, v≥0, u+v≤1, t>0. Standard method for ray-triangle."
+        "correctAnswer": "Fast ray-triangle intersection \u2014 solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
+        "explanation": "M-T: computes (u,v,t) where u,v are barycentrics and t is ray distance. Hit if u\u22650, v\u22650, u+v\u22641, t>0. Standard method for ray-triangle."
       },
       {
-        "q": "What is the slab method for ray-AABB intersection?",
-        "o": [
+        "e": "For each axis: t_near = (min - origin)/dir, t_far = (max - origin)/dir. Overlap of all 3 intervals = hit. Handle division by zero (parallel rays).",
+        "explanation": "The slab method computes t_near = (min - origin)/dir and t_far = (max - origin)/dir for each axis. t_enter = max of t_nears, t_exit = min of t_fars. Intersection if t_enter \u2264 t_exit and t_exit \u2265 0. Handle parallel rays (dir=0) by checking if origin is between min and max.",
+        "question": "What is the slab method for ray-AABB intersection?",
+        "options": [
           "Check corners",
-          "Compute ray entry/exit times for each axis pair. t_enter = max(t_nears), t_exit = min(t_fars). Hit if t_enter ≤ t_exit.",
+          "Compute ray entry/exit times for each axis pair. t_enter = max(t_nears), t_exit = min(t_fars). Hit if t_enter \u2264 t_exit.",
           "Check distance",
           "Iterative"
         ],
-        "a": "Compute ray entry/exit times for each axis pair. t_enter = max(t_nears), t_exit = min(t_fars). Hit if t_enter ≤ t_exit.",
-        "e": "For each axis: t_near = (min - origin)/dir, t_far = (max - origin)/dir. Overlap of all 3 intervals = hit. Handle division by zero (parallel rays)."
+        "correctAnswer": "Compute ray entry/exit times for each axis pair. t_enter = max(t_nears), t_exit = min(t_fars). Hit if t_enter \u2264 t_exit."
       },
       {
-        "q": "What is the Moller-Trumbore algorithm?",
-        "o": [
+        "e": "M-T: precomputes edge vectors. Solves (u,v,t) where u,v are barycentrics. Hit if u\u22650, v\u22650, u+v\u22641, t>0. Industry standard for ray-triangle.",
+        "explanation": "M\u00f6ller-Trumbore solves ray-triangle via Cramer's rule with precomputed edge vectors E1=P1-P0, E2=P2-P0. Computes barycentric coordinates (u,v) and ray distance t. Intersection if u\u22650, v\u22650, u+v\u22641, t\u22650. Standard in every ray tracer and GPU.",
+        "question": "What is the Moller-Trumbore algorithm?",
+        "options": [
           "AABB test",
-          "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule. O(1). Standard method.",
+          "Fast ray-triangle intersection \u2014 solves barycentric coordinates via Cramer's rule. O(1). Standard method.",
           "Sphere test",
           "GJK variant"
         ],
-        "a": "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule. O(1). Standard method.",
-        "e": "M-T: precomputes edge vectors. Solves (u,v,t) where u,v are barycentrics. Hit if u≥0, v≥0, u+v≤1, t>0. Industry standard for ray-triangle."
+        "correctAnswer": "Fast ray-triangle intersection \u2014 solves barycentric coordinates via Cramer's rule. O(1). Standard method."
       },
       {
-        "q": "What is the parametric ray equation?",
-        "o": [
+        "e": "Parametric form: one parameter t. Each t gives a point. t < 0 is behind the ray (usually ignored). Direction should be normalized.",
+        "explanation": "P(t) = Origin + t\u00b7Direction with t\u22650. At t=0: ray origin. t increases: points further along ray. t<0: behind the ray (usually discarded). Direction should be normalized for meaningful t values (t = distance along ray).",
+        "question": "What is the parametric ray equation?",
+        "options": [
           "P = O + D",
-          "P(t) = Origin + t·Direction, t≥0. t=0 at origin, t increases along ray.",
+          "P(t) = Origin + t\u00b7Direction, t\u22650. t=0 at origin, t increases along ray.",
           "P = D - O",
-          "P = O·D + t"
+          "P = O\u00b7D + t"
         ],
-        "a": "P(t) = Origin + t·Direction, t≥0. t=0 at origin, t increases along ray.",
-        "e": "Parametric form: one parameter t. Each t gives a point. t < 0 is behind the ray (usually ignored). Direction should be normalized."
+        "correctAnswer": "P(t) = Origin + t\u00b7Direction, t\u22650. t=0 at origin, t increases along ray."
       }
     ]
   }

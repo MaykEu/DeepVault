@@ -1,98 +1,5 @@
 [
   {
-    "note": "01 — Enums & enum class",
-    "questions": [
-      {
-        "question": "What is the main purpose of an enum?",
-        "options": [
-          "To save memory",
-          "To replace magic numbers with named, self-documenting constants",
-          "Compile-time computation",
-          "Creating type hierarchies"
-        ],
-        "correctAnswer": "To replace magic numbers with named, self-documenting constants",
-        "explanation": "Note: 'An enum is a set of named integer constants. Instead of passing magic numbers, you pass names with meaning.'"
-      },
-      {
-        "question": "Why can't two plain enums share member names in the same scope?",
-        "options": [
-          "The C++ standard forbids it",
-          "Values leak into the surrounding scope — name collision",
-          "The linker limitation",
-          "Compiler bug"
-        ],
-        "correctAnswer": "Values leak into the surrounding scope — name collision",
-        "explanation": "Note: 'enum Color { Red }; enum TrafficLight { Red }; // ERROR — Red already defined!'"
-      },
-      {
-        "question": "What are two key advantages of `enum class` over plain `enum`?",
-        "correctAnswer": "Strongly typed (no implicit conversion to int) and scoped (must use prefix)",
-        "acceptableAnswers": [
-          "strongly typed and scoped",
-          "no implicit int conversion and scoped",
-          "type safety and scoping",
-          "strong typing and scope"
-        ],
-        "explanation": "Note: 'enum class is strongly typed and scoped. Values don't leak, don't convert to int implicitly.'"
-      },
-      {
-        "question": "How do you convert an `enum class` value to its underlying integer?",
-        "options": [
-          "Just assign — implicit",
-          "static_cast<int>(value) or C++23's std::to_underlying(value)",
-          "Call .value()",
-          "(int)value — C-style cast"
-        ],
-        "correctAnswer": "static_cast<int>(value) or C++23's std::to_underlying(value)",
-        "explanation": "Note: 'int x = static_cast<int>(Color::Red);' and C++23 adds std::to_underlying."
-      },
-      {
-        "question": "What is the default underlying type of an enum?",
-        "options": [
-          "uint8_t",
-          "int",
-          "size_t",
-          "unsigned int"
-        ],
-        "correctAnswer": "int",
-        "explanation": "Note: 'By default, the underlying type is int for both enum styles.'"
-      },
-      {
-        "question": "Why would you use `enum class Perm : uint8_t` instead of the default?",
-        "options": [
-          "Larger values possible",
-          "Save memory — 1 byte instead of 4 in arrays/structs",
-          "Enable bitwise operations",
-          "Template compatibility"
-        ],
-        "correctAnswer": "Save memory — 1 byte instead of 4 in arrays/structs",
-        "explanation": "Note: 'Use uint8_t for small enums. Saves memory when stored in arrays or as struct members.'"
-      },
-      {
-        "question": "What C++20 feature imports all values of an enum class into local scope?",
-        "options": [
-          "import enum",
-          "using enum",
-          "enum import",
-          "scope enum"
-        ],
-        "correctAnswer": "using enum",
-        "explanation": "Note: 'C++20: using enum Axis; imports all Axis values into this scope. Use sparingly.'"
-      },
-      {
-        "question": "What is the common pattern for iterating over sequential enum values?",
-        "options": [
-          "Use std::enum_range",
-          "Add a Count sentinel value as last member, loop 0 to Count-1",
-          "Use reflection",
-          "Enums can't be iterated"
-        ],
-        "correctAnswer": "Add a Count sentinel value as last member, loop 0 to Count-1",
-        "explanation": "Note: 'Add Count as sentinel. For i=0 to Count-1: cast i to enum. Fails for non-sequential values.'"
-      }
-    ]
-  },
-  {
     "note": "02 — References",
     "questions": [
       {
@@ -867,6 +774,99 @@
         ],
         "correctAnswer": "Writing formatted output to any output iterator or pre-allocated buffer — no intermediate string allocation",
         "explanation": "Note: 'format_to writes to arbitrary output iterators. format_to_n writes into a pre-allocated buffer.'"
+      }
+    ]
+  },
+  {
+    "note": "01 — Enums & enum class",
+    "questions": [
+      {
+        "question": "What is the main purpose of an enum?",
+        "options": [
+          "To save memory",
+          "To replace magic numbers with named, self-documenting constants",
+          "Compile-time computation",
+          "Creating type hierarchies"
+        ],
+        "correctAnswer": "To replace magic numbers with named, self-documenting constants",
+        "explanation": "An enum is a set of named integer constants. Instead of passing magic numbers, you pass names with meaning."
+      },
+      {
+        "question": "Why can't two plain enums share member names in the same scope?",
+        "options": [
+          "The C++ standard forbids it",
+          "Values leak into the surrounding scope — name collision",
+          "The linker limitation",
+          "Compiler bug"
+        ],
+        "correctAnswer": "Values leak into the surrounding scope — name collision",
+        "explanation": "Plain enum values leak into the enclosing scope. Two enums with 'Red' would conflict — the compiler can't distinguish them."
+      },
+      {
+        "question": "What are two key advantages of enum class over plain enum?",
+        "correctAnswer": "Strongly typed (no implicit conversion to int) and scoped (must use prefix)",
+        "acceptableAnswers": [
+          "strongly typed and scoped",
+          "no implicit int conversion and scoped",
+          "type safety and scoping",
+          "strong typing and scope"
+        ],
+        "explanation": "enum class is strongly typed and scoped. Values don't leak, don't convert to int implicitly, and don't conflict with other enums."
+      },
+      {
+        "question": "How do you convert an enum class value to its underlying integer?",
+        "options": [
+          "Just assign — implicit",
+          "static_cast<int>(value) or C++23's std::to_underlying(value)",
+          "Call .value()",
+          "(int)value — C-style cast"
+        ],
+        "correctAnswer": "static_cast<int>(value) or C++23's std::to_underlying(value)",
+        "explanation": "int x = static_cast<int>(Color::Red); C++23 adds std::to_underlying for cleaner conversion."
+      },
+      {
+        "question": "What is the default underlying type of an enum?",
+        "options": [
+          "uint8_t",
+          "int",
+          "size_t",
+          "unsigned int"
+        ],
+        "correctAnswer": "int",
+        "explanation": "By default, the underlying type is int for both enum styles. You can specify a smaller type like uint8_t to save memory."
+      },
+      {
+        "question": "Why would you use enum class Perm : uint8_t instead of the default?",
+        "options": [
+          "Larger values possible",
+          "Save memory — 1 byte instead of 4 in arrays/structs",
+          "Enable bitwise operations",
+          "Template compatibility"
+        ],
+        "correctAnswer": "Save memory — 1 byte instead of 4 in arrays/structs",
+        "explanation": "Using uint8_t saves 3 bytes per enum instance. Important when enums are stored in arrays or as struct members in performance-critical code."
+      },
+      {
+        "question": "What C++20 feature imports all values of an enum class into local scope?",
+        "options": [
+          "import enum",
+          "using enum",
+          "enum import",
+          "scope enum"
+        ],
+        "correctAnswer": "using enum",
+        "explanation": "C++20: using enum Axis; imports all Axis values into this scope. Use sparingly — it defeats the scoping purpose of enum class."
+      },
+      {
+        "question": "What is the common pattern for iterating over sequential enum values?",
+        "options": [
+          "Use std::enum_range",
+          "Add a Count sentinel value as last member, loop 0 to Count-1",
+          "Use reflection",
+          "Enums can't be iterated"
+        ],
+        "correctAnswer": "Add a Count sentinel value as last member, loop 0 to Count-1",
+        "explanation": "Add Count as sentinel. For i=0 to Count-1: cast i to enum. Fails for non-sequential values — use a separate array for those."
       }
     ]
   }

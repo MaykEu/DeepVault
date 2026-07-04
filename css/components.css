@@ -47,7 +47,7 @@
 
 /* Option inputs */
 .option-label { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1rem; background: var(--bg-tertiary); border-radius: var(--radius); cursor: pointer; transition: background 0.1s; }
-.option-label:hover { background: var(--bg-secondary); }
+.option-label:hover { background: var(--bg-secondary); border-color: var(--accent); }
 .option-label input[type="radio"] { accent-color: var(--accent); width: 1rem; height: 1rem; }
 .option-label.selected { background: var(--bg-secondary); border: 1px solid var(--accent); }
 .option-correct { border: 1px solid var(--success) !important; }
