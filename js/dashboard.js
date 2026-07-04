@@ -8,7 +8,7 @@ const Dashboard = {
       html += '<div class="folder-card" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
         '<div class="folder-icon">' + folder.icon + '</div>' +
         '<div class="folder-name">' + folder.name + '</div>' +
-        '<div class="folder-meta">' + stats.totalNotes + ' notes \u00b7 ' + stats.completedNotes + ' with attempts</div>' +
+        '<div class="folder-meta">' + stats.totalNotes + ' notes · ' + (QUIZ_NOTES[folder.id] ? QUIZ_NOTES[folder.id].length : 0) + ' quizzes · ' + stats.completedNotes + ' attempts</div>' +
         '<div class="folder-progress"><div class="folder-progress-fill" style="width:' + pct + '%"></div></div>' +
       '</div>';
     }
