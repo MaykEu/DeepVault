@@ -223,6 +223,17 @@
         ],
         "correctAnswer": "Linux/macOS ABI: first 6 integer args in RDI, RSI, RDX, RCX, R8, R9. Return in RAX. Red zone below RSP.",
         "explanation": "System V: 6 register args, red zone (128 bytes below RSP usable without adjustment). Microsoft x64: 4 register args, shadow space."
+      },
+      {
+        "question": "What is the difference between caller-saved and callee-saved registers?",
+        "options": [
+          "No difference",
+          "Caller-saved: callee can clobber freely (RAX, RCX, RDX, R8-R11). Callee-saved: must preserve (RBX, RBP, R12-R15).",
+          "Caller-saved are faster",
+          "Callee-saved are on stack"
+        ],
+        "correctAnswer": "Caller-saved: callee can clobber freely (RAX, RCX, RDX, R8-R11). Callee-saved: must preserve (RBX, RBP, R12-R15).",
+        "explanation": "Caller-saved = 'if you need this value after the call, save it yourself.' Callee-saved = 'I promise not to change this.'"
       }
     ]
   },
@@ -270,6 +281,17 @@
         ],
         "correctAnswer": "Single sub instruction on RSP — no syscall, no malloc, no GC. Deallocation = add. One cycle.",
         "explanation": "sub rsp, 4096 = allocate 4KB in one instruction. add rsp, 4096 = free. Compare: malloc(4096) = potentially syscall + page table updates."
+      },
+      {
+        "question": "What is frame pointer omission (-fomit-frame-pointer)?",
+        "options": [
+          "Debug feature",
+          "RBP freed as general-purpose register (~6% more GPRs). Locals accessed via RSP offsets. DWARF unwind tables needed for debugging.",
+          "Faster calls",
+          "Security feature"
+        ],
+        "correctAnswer": "RBP freed as general-purpose register (~6% more GPRs). Locals accessed via RSP offsets. DWARF unwind tables needed for debugging.",
+        "explanation": "-O2 default. RBP becomes general register. Debugger can't follow RBP chain — needs .eh_frame metadata. Release builds harder to debug."
       }
     ]
   },
@@ -319,6 +341,17 @@
         ],
         "correctAnswer": "SysV: RDI,RSI,RDX,RCX,R8,R9 (6 regs). MS: RCX,RDX,R8,R9 (4 regs). SysV has red zone; MS has shadow space.",
         "explanation": "Key differences: 6 vs 4 arg registers, RDI/RSI callee-saved on Windows (caller-saved on SysV — #1 porting trap), red zone vs shadow space."
+      },
+      {
+        "question": "Why does Windows x64 use only 4 argument registers vs System V's 6?",
+        "options": [
+          "Windows is slower",
+          "Historical continuity with x86 __fastcall (ECX,EDX). Shadow space handles spill. Different design tradeoffs.",
+          "Windows uses more stack",
+          "Bug in the ABI"
+        ],
+        "correctAnswer": "Historical continuity with x86 __fastcall (ECX,EDX). Shadow space handles spill. Different design tradeoffs.",
+        "explanation": "MS extended x86 __fastcall. AMD defined SysV ABI for 64-bit; Linux/macOS adopted it. Microsoft created their own. Historical accident."
       }
     ]
   },
@@ -368,6 +401,17 @@
         ],
         "correctAnswer": "Intel CET Shadow Stack — CPU maintains hardware-protected copy of return addresses; ret compares against it",
         "explanation": "Shadow stack = hardware-enforced. Every call pushes to shadow stack; ret pops and compares. Mismatch → #CP fault. Hard to bypass."
+      },
+      {
+        "question": "What is Tail Call Optimization (TCO)?",
+        "options": [
+          "Inlining",
+          "Converting call to jmp when the call is in tail position — reuses current frame, constant stack depth",
+          "A security feature",
+          "Loop unrolling"
+        ],
+        "correctAnswer": "Converting call to jmp when the call is in tail position — reuses current frame, constant stack depth",
+        "explanation": "Tail call = last operation before return. Compiler: call → jmp. Same frame reused. Infinite recursion becomes safe (constant stack)."
       }
     ]
   }
