@@ -3,8 +3,8 @@ var RECENT_KEY = 'deepvault_recent';
 
 var Storage = {
   getAll: function() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { attempts: [] }; }
-    catch(e) { return { attempts: [] }; }
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { attempts: [], bookmarks: [], recent: [] }; }
+    catch(e) { return { attempts: [], bookmarks: [], recent: [] }; }
   },
 
   save: function(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); },
@@ -68,7 +68,7 @@ var Storage = {
       var recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
       recent = recent.filter(function(r) { return !(r.folder === folderId && r.note === noteName); });
       recent.unshift({ folder: folderId, note: noteName, date: new Date().toISOString() });
-      if (recent.length > 20) recent = recent.slice(0, 20);
+      if (recent.length > 6) recent = recent.slice(0, 6);
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
     } catch(e) {}
   },
@@ -82,7 +82,7 @@ var Storage = {
     if (!data.recent) data.recent = [];
     data.recent = data.recent.filter(function(r) { return !(r.folder === folderId && r.note === noteName); });
     data.recent.unshift({ folder: folderId, note: noteName, date: new Date().toISOString() });
-    if (data.recent.length > 10) data.recent = data.recent.slice(0, 10);
+    if (data.recent.length > 6) data.recent = data.recent.slice(0, 6);
     this.save(data);
   },
 
@@ -182,7 +182,20 @@ var Storage = {
     var token = this.getGistToken();
     if (!token) return 'no_token';
     var gistId = this.getGistId();
-    var content = JSON.stringify(this.getAll());
+    var content = JSON.stringify({
+      attempts: this.getAll().attempts || [],
+      bookmarks: this.getAll().bookmarks || [],
+      recent: this.getRecent(),
+      theme: localStorage.getItem('deepvault_theme') || 'midnight',
+      readStatus: (function(){
+        var result = {};
+        for (var i = 0; i < localStorage.length; i++) {
+          var key = localStorage.key(i);
+          if (key && key.indexOf('dv_read_') === 0) result[key] = localStorage.getItem(key);
+        }
+        return result;
+      })()
+    });
     try {
       if (gistId) {
         var resp = await fetch('https://api.github.com/gists/' + gistId, {
@@ -231,7 +244,15 @@ var Storage = {
         var merged = Object.values(exist);
         var bm = local.bookmarks || [];
         (remote.bookmarks || []).forEach(function(b) { if (!bm.some(function(x){return x[0]===b[0]&&x[1]===b[1]})) bm.push(b); });
-        this.save({ attempts: merged, bookmarks: bm, recent: local.recent || remote.recent || [] });
+        this.save({ attempts: merged, bookmarks: bm, recent: remote.recent || local.recent || [] });
+        // Restore theme
+        if (remote.theme) localStorage.setItem('deepvault_theme', remote.theme);
+        // Restore read status
+        if (remote.readStatus) {
+          for (var rk in remote.readStatus) {
+            localStorage.setItem(rk, remote.readStatus[rk]);
+          }
+        }
         return 'ok';
       }
       return 'no_gist';
