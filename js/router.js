@@ -1,5 +1,5 @@
 const router = {
-  navigate: function(hash) { if (hash.indexOf('/quiz') > 0) { hash = hash.replace(/[?&]t=\d+/,''); hash = hash + '?t=' + Date.now(); } window.location.hash = hash; },
+  navigate: function(hash) { window.location.hash = hash; },
   init: function() {
     var self = this;
     window.addEventListener('hashchange', function() { self.route(); });
