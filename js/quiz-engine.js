@@ -126,7 +126,7 @@ const QuizEngine = {
         : 'text-input';
       html += `
         <input type="text" class="${cls}"
-               id="text-answer" value="${entered.replace(/"/g,'&quot;')}" placeholder="Type your answer..."
+               id="text-answer" value="${(typeof entered==='string'?entered.replace(/"/g,'&quot;'):entered)}" placeholder="Type your answer..."
                ${s.submitted ? 'disabled' : ''}>
       `;
     }
