@@ -1,1 +1,2836 @@
-[]
+[
+  {
+    "note": "02 \u2014 Compiler Pipeline",
+    "questions": [
+      {
+        "question": "What are the four stages of compilation?",
+        "correctAnswer": "Preprocessing, Compilation, Assembly, Linking",
+        "acceptableAnswers": [
+          "preprocessing compilation assembly linking",
+          "Preprocessing, Compilation, Assembly, Linking",
+          "preprocessor compiler assembler linker"
+        ],
+        "explanation": "Preprocessing (#include, #define expansion). Compilation (C++ \u2192 assembly). Assembly (assembly \u2192 object file .o). Linking (combine .o files + libraries \u2192 executable). Each stage can be run separately with compiler flags (-E, -S, -c)."
+      },
+      {
+        "question": "What does the preprocessor do?",
+        "options": [
+          "Checks for syntax errors",
+          "Handles #include, #define, and conditional compilation",
+          "Optimizes the code",
+          "Links object files"
+        ],
+        "correctAnswer": "Handles #include, #define, and conditional compilation",
+        "explanation": "The preprocessor runs BEFORE the compiler. It handles: #include (copy-paste file contents), #define (text replacement), #ifdef/#if (conditional compilation), #pragma (compiler directives). It doesn't understand C++ syntax \u2014 just text manipulation."
+      },
+      {
+        "question": "What is the output of the assembler stage?",
+        "options": [
+          "A text file with assembly code",
+          "An object file with machine code and symbols",
+          "The final executable",
+          "An optimized intermediate representation"
+        ],
+        "correctAnswer": "An object file with machine code and symbols",
+        "explanation": "The assembler converts .s (assembly text) \u2192 .o (object file). The object file contains: machine code (binary instructions), a symbol table (what this file provides and requires), and relocation entries (addresses that need fixing by the linker)."
+      }
+    ]
+  },
+  {
+    "note": "16 \u2014 Hardware Security",
+    "questions": [
+      {
+        "question": "What CPU optimization does Spectre exploit?",
+        "correctAnswer": "Speculative execution",
+        "acceptableAnswers": [
+          "speculative execution",
+          "branch prediction"
+        ],
+        "explanation": "Spectre exploits speculative execution: the CPU executes instructions past a branch BEFORE the branch condition is resolved. The attacker trains the branch predictor, then provides an input that causes speculative access to secret data, which leaks through cache timing."
+      },
+      {
+        "question": "How does Meltdown read kernel memory from user space?",
+        "options": [
+          "By exploiting a buffer overflow",
+          "Speculative execution loads kernel data before permission check completes",
+          "By using a side channel in the TLB",
+          "By corrupting page tables"
+        ],
+        "correctAnswer": "Speculative execution loads kernel data before permission check completes",
+        "explanation": "Meltdown exploits that Intel CPUs check page permissions in parallel with the speculative load. The CPU speculates through the permission check, loads kernel data into a register, and uses it as an index into a cache-resident array. The permission fault then fires, but the cache state has already been modified \u2014 leaking the secret value."
+      },
+      {
+        "question": "What causes the Rowhammer vulnerability?",
+        "options": [
+          "Faulty DRAM manufacturing",
+          "Repeated activation of a DRAM row causing bit flips in adjacent rows",
+          "Operating system bugs",
+          "CPU cache errors"
+        ],
+        "correctAnswer": "Repeated activation of a DRAM row causing bit flips in adjacent rows",
+        "explanation": "Rowhammer: repeatedly activating (hammering) a DRAM row causes capacitive coupling to adjacent rows, flipping bits. ~100,000 activations can flip a bit. Mitigations: ECC memory, increased refresh rate (32ms instead of 64ms), Target Row Refresh (TRR) in DDR4+."
+      }
+    ]
+  },
+  {
+    "note": "15 \u2014 Kernel Modules & Drivers",
+    "questions": [
+      {
+        "question": "Why do drivers need to run in kernel space?",
+        "options": [
+          "For better performance only",
+          "To access hardware registers and handle interrupts directly",
+          "For security reasons",
+          "Because user space is too small"
+        ],
+        "correctAnswer": "To access hardware registers and handle interrupts directly",
+        "explanation": "Drivers must access hardware registers (via MMIO), handle interrupts (register ISRs in the IDT), and perform DMA setup \u2014 all of which require kernel privileges. User-space drivers exist (GPU UMD) but still need a kernel-mode component for hardware access."
+      },
+      {
+        "question": "What is MMIO (Memory-Mapped I/O)?",
+        "correctAnswer": "Accessing device registers by reading/writing to specific memory addresses",
+        "acceptableAnswers": [
+          "accessing device registers via memory addresses",
+          "reading/writing memory addresses mapped to hardware",
+          "Memory-Mapped I/O"
+        ],
+        "explanation": "MMIO maps device registers into the CPU's physical address space. The driver uses ioremap() to create a kernel virtual mapping, then reads/writes to those addresses. The PCIe controller routes these accesses to the device instead of RAM."
+      },
+      {
+        "question": "What is the difference between the top half and bottom half of an interrupt handler?",
+        "options": [
+          "Top half runs in user space, bottom in kernel",
+          "Top half is the ISR (fast, minimal), bottom half does deferred work",
+          "They run on different CPUs",
+          "Top half handles errors, bottom handles data"
+        ],
+        "correctAnswer": "Top half is the ISR (fast, minimal), bottom half does deferred work",
+        "explanation": "Top half (ISR): runs immediately with interrupts disabled, does minimum work (acknowledge interrupt, schedule bottom half). Bottom half: runs later with interrupts enabled, does heavy processing. Split prevents long interrupt-disabled periods."
+      }
+    ]
+  },
+  {
+    "note": "14 \u2014 Virtualization & Containers",
+    "questions": [
+      {
+        "question": "What is the difference between a Type 1 and Type 2 hypervisor?",
+        "options": [
+          "Type 1 is faster, Type 2 is more secure",
+          "Type 1 runs directly on hardware, Type 2 runs on a host OS",
+          "Type 1 is for servers, Type 2 is for desktops",
+          "There is no difference"
+        ],
+        "correctAnswer": "Type 1 runs directly on hardware, Type 2 runs on a host OS",
+        "explanation": "Type 1 (bare metal): hypervisor runs directly on hardware (VMware ESXi, KVM, Hyper-V). Type 2 (hosted): runs as an application on a host OS (VirtualBox, VMware Workstation). Type 1 has lower overhead because there's no host OS layer."
+      },
+      {
+        "question": "What is the approximate cost of a VM exit on modern CPUs?",
+        "options": [
+          "10-20 cycles",
+          "100-200 cycles",
+          "500-1000 cycles",
+          "10000+ cycles"
+        ],
+        "correctAnswer": "500-1000 cycles",
+        "explanation": "VM exit (transition from guest to hypervisor) costs ~500-1000 cycles on modern CPUs with hardware virtualization (VT-x/AMD-V). This is why excessive VM exits kill performance \u2014 each syscall or I/O in the guest forces an exit."
+      },
+      {
+        "question": "What is paravirtualization?",
+        "correctAnswer": "Guest OS is modified to make hypercalls instead of executing privileged instructions",
+        "acceptableAnswers": [
+          "Guest OS modified to use hypercalls",
+          "modified guest makes hypercalls instead of privileged instructions",
+          "guest OS uses hypercalls instead of trapping"
+        ],
+        "explanation": "Paravirtualization: the guest OS is aware it's virtualized and uses hypercalls (explicit calls to the hypervisor) instead of privileged instructions that would cause expensive VM exits. Requires modifying the guest kernel."
+      },
+      {
+        "question": "How do Docker containers differ from VMs?",
+        "options": [
+          "Containers are slower",
+          "Containers share the host kernel, VMs each have their own kernel",
+          "Containers use more memory",
+          "Containers only work on Linux"
+        ],
+        "correctAnswer": "Containers share the host kernel, VMs each have their own kernel",
+        "explanation": "Containers share the host OS kernel via namespaces (isolation) and cgroups (resource limits). VMs each run a full guest OS with their own kernel. Containers start in milliseconds; VMs take seconds. Containers have lower overhead but weaker isolation."
+      },
+      {
+        "question": "What does Extended Page Tables (EPT) do for virtualization?",
+        "options": [
+          "Encrypts VM memory",
+          "Adds a second level of address translation",
+          "Speeds up disk I/O",
+          "Provides network isolation"
+        ],
+        "correctAnswer": "Adds a second level of address translation",
+        "explanation": "EPT (Intel) / NPT (AMD) adds a second layer of page tables: guest virtual \u2192 guest physical \u2192 host physical. The CPU walks both tables in hardware, eliminating the need for shadow page tables and dramatically reducing VM exit overhead for memory operations."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 SMT, Affinity & Thread Pools",
+    "questions": [
+      {
+        "question": "What does SMT (Simultaneous Multi-Threading) do?",
+        "options": [
+          "Runs two processes simultaneously on different cores",
+          "Exposes one physical core as two logical cores by sharing execution units",
+          "Splits a thread into multiple sub-threads",
+          "Disables hyperthreading"
+        ],
+        "correctAnswer": "Exposes one physical core as two logical cores by sharing execution units",
+        "explanation": "SMT (Intel Hyper-Threading) duplicates the architectural state (registers, APIC) per logical core while sharing execution units, caches, and branch predictor. Two threads can execute simultaneously if they use different execution units. Typical throughput gain: 15-30%."
+      },
+      {
+        "question": "What is CPU affinity?",
+        "correctAnswer": "Pinning a thread to specific CPU cores",
+        "acceptableAnswers": [
+          "pinning threads to cores",
+          "binding threads to specific CPUs",
+          "CPU pinning"
+        ],
+        "explanation": "CPU affinity pins a thread to specific cores via sched_setaffinity(). Benefits: cache warmth (thread's working set stays in pinned core's caches), NUMA locality, and isolation (reserving cores for latency-critical threads like audio). Downside: can create imbalance if pinned cores are overloaded."
+      },
+      {
+        "question": "What is work stealing in the context of thread pools?",
+        "options": [
+          "Threads take work from other threads' queues when idle",
+          "The OS moves threads between cores",
+          "A thread copies data from another thread",
+          "Threads compete for shared memory"
+        ],
+        "correctAnswer": "Threads take work from other threads' queues when idle",
+        "explanation": "Work stealing: when a thread's own task queue is empty, it 'steals' tasks from another thread's queue (taking from the opposite end to maintain LIFO order for the owner). Used by UE's TaskGraph, Intel TBB, and C++ thread pools to balance load dynamically."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 The OS Scheduler",
+    "questions": [
+      {
+        "question": "What does preemptive scheduling mean?",
+        "options": [
+          "Threads voluntarily yield the CPU",
+          "The OS can forcibly take the CPU away from a running thread",
+          "Threads are scheduled in order of arrival",
+          "The scheduler predicts future thread behavior"
+        ],
+        "correctAnswer": "The OS can forcibly take the CPU away from a running thread",
+        "explanation": "Preemptive scheduling: the OS uses timer interrupts to forcibly deschedule a running thread after its time quantum expires. This prevents any single thread from monopolizing the CPU. Cooperative scheduling (older) relies on threads voluntarily yielding."
+      },
+      {
+        "question": "What is a time quantum (time slice)?",
+        "correctAnswer": "The maximum time a thread can run before being preempted",
+        "acceptableAnswers": [
+          "maximum uninterrupted CPU time",
+          "time before preemption",
+          "cpu time slice"
+        ],
+        "explanation": "A time quantum is the maximum duration a thread can run continuously before the scheduler preempts it. Typical values: 1-10ms on desktop Linux (depending on HZ and CFS configuration). Too short = excessive context switching overhead. Too long = poor interactivity."
+      },
+      {
+        "question": "What data structure does Linux CFS use to track thread runtime?",
+        "options": [
+          "A linked list",
+          "A red-black tree sorted by vruntime",
+          "A hash table",
+          "A priority queue array"
+        ],
+        "correctAnswer": "A red-black tree sorted by vruntime",
+        "explanation": "CFS uses a red-black tree keyed by vruntime (virtual runtime). The thread with the lowest vruntime (most 'deserving') is always the leftmost node \u2014 O(1) to find. Insertion of newly-woken threads is O(log n)."
+      },
+      {
+        "question": "What does EEVDF improve over CFS?",
+        "options": [
+          "Faster context switches",
+          "Deadline-based scheduling within fair-share framework",
+          "Lower memory usage",
+          "Better GPU scheduling"
+        ],
+        "correctAnswer": "Deadline-based scheduling within fair-share framework",
+        "explanation": "EEVDF (Earliest Eligible Virtual Deadline First, Linux 6.6+) replaces CFS. It adds deadline awareness: among threads eligible to run, it picks the one with the earliest virtual deadline. This fixes CFS's latency issues where threads could be starved for multi-millisecond gaps."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Processes & Threads",
+    "questions": [
+      {
+        "question": "What is the key difference between a process and a thread?",
+        "options": [
+          "Processes are faster",
+          "Threads share the same address space, processes have separate address spaces",
+          "Processes use less memory",
+          "Threads cannot run in parallel"
+        ],
+        "correctAnswer": "Threads share the same address space, processes have separate address spaces",
+        "explanation": "Threads within a process share the same virtual address space (same page tables, same CR3), same file descriptors, same signal handlers. Processes each have their own address space. This is why thread communication is fast (shared memory) and process communication requires IPC."
+      },
+      {
+        "question": "What does fork() return in the child process?",
+        "correctAnswer": "0",
+        "acceptableAnswers": [
+          "zero",
+          "0"
+        ],
+        "explanation": "fork() returns 0 to the child process and the child's PID to the parent. This is how the code distinguishes which process it's running in after the fork."
+      },
+      {
+        "question": "What is the typical cost of a context switch?",
+        "options": [
+          "1-5 cycles",
+          "50-100 cycles",
+          "1-5 microseconds",
+          "1-5 milliseconds"
+        ],
+        "correctAnswer": "1-5 microseconds",
+        "explanation": "A context switch costs ~1-5 \u00b5s on modern CPUs. This includes: saving/restoring registers, switching page tables (CR3 write causes TLB flush on older CPUs), and scheduler overhead. At 4 GHz, 1 \u00b5s = 4000 cycles."
+      },
+      {
+        "question": "What is copy-on-write in the context of fork()?",
+        "options": [
+          "The child gets a copy of all parent memory immediately",
+          "Memory pages are shared until one process writes, then copied",
+          "Files are copied when written",
+          "The parent's memory is encrypted"
+        ],
+        "correctAnswer": "Memory pages are shared until one process writes, then copied",
+        "explanation": "After fork(), parent and child share all memory pages as read-only. When either writes to a page, the MMU triggers a page fault, the kernel copies the page, and marks both copies as writable. This avoids copying memory that may never be modified."
+      }
+    ]
+  },
+  {
+    "note": "00 \u2014 Concurrency Overview",
+    "questions": [
+      {
+        "question": "What hardware mechanism prevents data races at the CPU level?",
+        "options": [
+          "The operating system",
+          "Cache coherence protocol (MESI) + atomic instructions (LOCK prefix)",
+          "The C++ compiler",
+          "Virtual memory"
+        ],
+        "correctAnswer": "Cache coherence protocol (MESI) + atomic instructions (LOCK prefix)",
+        "explanation": "At the hardware level, the MESI protocol keeps caches coherent across cores, and the LOCK prefix makes read-modify-write sequences atomic by locking the cache line. The OS and compiler build on top of these primitives."
+      },
+      {
+        "question": "What is the fast path of a mutex acquisition in Linux?",
+        "options": [
+          "A system call to the kernel",
+          "A single LOCK CMPXCHG on a futex word",
+          "A spinlock loop",
+          "A context switch"
+        ],
+        "correctAnswer": "A single LOCK CMPXCHG on a futex word",
+        "explanation": "The uncontended fast path uses atomic CMPXCHG (~20 cycles) to acquire the mutex without any kernel involvement. Only when the mutex is contended does the thread make a FUTEX_WAIT syscall to sleep."
+      },
+      {
+        "question": "What is false sharing?",
+        "correctAnswer": "Two threads modifying different variables that share the same cache line, causing constant cache invalidations",
+        "acceptableAnswers": [
+          "cache line sharing causing invalidations",
+          "threads on different cores invalidating same cache line",
+          "different variables on same cache line"
+        ],
+        "explanation": "False sharing: two unrelated variables happen to be on the same 64-byte cache line. When core A writes to its variable, MESI invalidates core B's cache line \u2014 even though they're modifying different data. Performance drops dramatically despite no actual data sharing."
+      },
+      {
+        "question": "What does the LOCK prefix do on x86?",
+        "options": [
+          "Encrypts the instruction",
+          "Locks the cache line for the duration of the instruction",
+          "Disables interrupts",
+          "Prevents context switching"
+        ],
+        "correctAnswer": "Locks the cache line for the duration of the instruction",
+        "explanation": "LOCK asserts a lock on the cache line (or bus on older CPUs) for the entire read-modify-write cycle. No other core can access that cache line during the locked instruction. This is how atomic operations are built."
+      }
+    ]
+  },
+  {
+    "note": "08 \u2014 Lock-Free Programming",
+    "questions": [
+      {
+        "question": "What is the ABA problem in lock-free programming?",
+        "options": [
+          "A thread reads A, another changes A\u2192B\u2192A, first thread's CAS succeeds when it shouldn't",
+          "Memory is corrupted during atomic operations",
+          "The lock-free structure deadlocks",
+          "Performance degrades under high contention"
+        ],
+        "correctAnswer": "A thread reads A, another changes A\u2192B\u2192A, first thread's CAS succeeds when it shouldn't",
+        "explanation": "ABA: Thread 1 reads value A from a shared pointer. Thread 2 changes A\u2192B (frees the old node), then allocates a new node that happens to get the same address A. Thread 1's CAS compares the address and sees 'still A' \u2014 succeeds, but the pointer now references freed/reused memory. Fix: tagged pointers (version counter in upper bits)."
+      },
+      {
+        "question": "What does CAS stand for?",
+        "correctAnswer": "Compare-And-Swap",
+        "acceptableAnswers": [
+          "Compare And Swap",
+          "compare and swap",
+          "Compare and Swap"
+        ],
+        "explanation": "CAS atomically checks if a memory location contains an expected value, and if so, replaces it with a new value. Returns true if the swap occurred. The fundamental building block of all lock-free data structures."
+      },
+      {
+        "question": "What is the Treiber stack?",
+        "options": [
+          "A lock-free linked list",
+          "A lock-free stack using CAS on the head pointer",
+          "A concurrent hash table",
+          "A deadlock detection algorithm"
+        ],
+        "correctAnswer": "A lock-free stack using CAS on the head pointer",
+        "explanation": "Treiber stack (1986): the simplest lock-free data structure. Push: allocate node, set node.next = current head, CAS head \u2192 new node. Pop: read head, CAS head \u2192 head.next. If CAS fails, retry. Only the head pointer requires atomic operations."
+      }
+    ]
+  },
+  {
+    "note": "07 \u2014 Synchronization Patterns",
+    "questions": [
+      {
+        "question": "When should you use a spinlock instead of a mutex?",
+        "options": [
+          "Always \u2014 spinlocks are faster",
+          "When the critical section is extremely short (< ~1000 cycles) and contention is low",
+          "When you need to sleep the thread",
+          "When multiple threads need to read simultaneously"
+        ],
+        "correctAnswer": "When the critical section is extremely short (< ~1000 cycles) and contention is low",
+        "explanation": "Spinlock: burns CPU cycles (power) but avoids the ~2000-cycle cost of a syscall + context switch. Win when the lock is held for less time than the context switch would cost. Mutex: sleeps the thread, saving power and freeing the core for other work."
+      },
+      {
+        "question": "What is the advantage of a read-write lock (shared_mutex) over a regular mutex?",
+        "options": [
+          "It's always faster",
+          "Multiple readers can hold the lock simultaneously",
+          "Writers never block",
+          "It prevents deadlocks"
+        ],
+        "correctAnswer": "Multiple readers can hold the lock simultaneously",
+        "explanation": "shared_mutex: readers acquire shared (non-exclusive) lock \u2014 multiple readers can proceed in parallel. Writers acquire exclusive lock \u2014 blocks all readers and other writers. This increases throughput for read-heavy workloads where writes are rare."
+      }
+    ]
+  },
+  {
+    "note": "06 \u2014 Atomics & Memory Ordering",
+    "questions": [
+      {
+        "question": "What does memory_order_relaxed guarantee?",
+        "options": [
+          "All operations appear in program order to all threads",
+          "Only atomicity \u2014 no ordering guarantees",
+          "Operations are sequentially consistent",
+          "Writes are immediately visible to all cores"
+        ],
+        "correctAnswer": "Only atomicity \u2014 no ordering guarantees",
+        "explanation": "memory_order_relaxed guarantees ONLY atomicity \u2014 the read/write is indivisible. It provides NO ordering guarantees relative to other memory operations. Other threads may see relaxed operations in any order. Use for counters where only the final value matters."
+      },
+      {
+        "question": "What is the difference between acquire and release semantics?",
+        "options": [
+          "They are the same",
+          "Acquire prevents reads from being reordered before the load; release prevents writes from being reordered after the store",
+          "Acquire is for writes, release is for reads",
+          "Acquire is slower than release"
+        ],
+        "correctAnswer": "Acquire prevents reads from being reordered before the load; release prevents writes from being reordered after the store",
+        "explanation": "Acquire: all subsequent reads/writes stay AFTER this load. Release: all prior reads/writes stay BEFORE this store. Together they form a synchronizes-with relationship between threads \u2014 the classic mutex pattern."
+      },
+      {
+        "question": "What x86 instruction implements an atomic fetch_add?",
+        "correctAnswer": "LOCK XADD",
+        "acceptableAnswers": [
+          "lock xadd",
+          "XADD with LOCK prefix"
+        ],
+        "explanation": "x86: LOCK XADD (exchange and add). ARM: uses LL/SC \u2014 load-linked (ldaxr) reads the value, add in register, store-conditional (stlxr) writes back. If any other core touched the address between LL and SC, the store fails and the operation retries."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Deadlock, Livelock & Starvation",
+    "questions": [
+      {
+        "question": "What are Coffman's four conditions for deadlock?",
+        "correctAnswer": "Mutual exclusion, Hold and wait, No preemption, Circular wait",
+        "acceptableAnswers": [
+          "mutual exclusion, hold and wait, no preemption, circular wait"
+        ],
+        "explanation": "All four must hold simultaneously for deadlock to occur. Breaking ANY one prevents deadlock: make resources sharable (mutex is inherently exclusive), require all-or-nothing acquisition (break hold-and-wait), allow preemption (unlikely for mutexes), enforce lock ordering (break circular wait)."
+      },
+      {
+        "question": "How does lock ordering prevent deadlock?",
+        "options": [
+          "By making all locks reentrant",
+          "By ensuring all threads acquire locks in the same global order",
+          "By using timeouts on all lock attempts",
+          "By detecting deadlocks and restarting threads"
+        ],
+        "correctAnswer": "By ensuring all threads acquire locks in the same global order",
+        "explanation": "Lock ordering: assign a global order to all locks (e.g., by memory address). Every thread MUST acquire locks in ascending order. This breaks the 'circular wait' condition \u2014 thread A holds lock 3 waiting for lock 7; thread B can't hold lock 7 waiting for lock 3 because it would have acquired 3 first."
+      },
+      {
+        "question": "What is livelock?",
+        "options": [
+          "Threads are permanently blocked waiting for resources",
+          "Threads constantly change state in response to each other without making progress",
+          "A thread has lower priority and never runs",
+          "A thread holds a lock and never releases it"
+        ],
+        "correctAnswer": "Threads constantly change state in response to each other without making progress",
+        "explanation": "Livelock: threads are not blocked but are too busy reacting to each other to make progress. Classic example: two people trying to pass in a corridor \u2014 both step left, both step right, neither passes. Adding random backoff breaks the symmetry."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Data Races & Mutexes",
+    "questions": [
+      {
+        "question": "Per the C++ standard, what 4 conditions define a data race?",
+        "correctAnswer": "Two or more threads access the same memory location concurrently, at least one is a write, accesses are not atomic, no happens-before relationship",
+        "acceptableAnswers": [
+          "concurrent access, at least one write, not atomic, no happens-before"
+        ],
+        "explanation": "Per [intro.races]: 1) two or more threads access the same memory location concurrently, 2) at least one access is a write, 3) the accesses are not atomic, 4) there is no happens-before relationship ordering them. The result is undefined behavior."
+      },
+      {
+        "question": "What value does the futex word take when waiters exist?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ],
+        "correctAnswer": "2",
+        "explanation": "Futex word encoding: 0 = unlocked, 1 = locked (no waiters), 2 = locked (waiters exist). The '2' tells the unlocker to call FUTEX_WAKE to wake sleeping threads, avoiding the thundering herd problem."
+      },
+      {
+        "question": "What is the approximate cycle cost of an uncontended mutex lock?",
+        "options": [
+          "5 cycles",
+          "20 cycles",
+          "100 cycles",
+          "2000 cycles"
+        ],
+        "correctAnswer": "20 cycles",
+        "explanation": "The fast path (uncontended): atomic LOCK CMPXCHG on the futex word, ~20 cycles. No syscall needed. The slow path (contended) costs ~2000+ cycles due to FUTEX_WAIT syscall + context switch."
+      }
+    ]
+  },
+  {
+    "note": "Scheduling \u2014 MLFQ & Proportional Share",
+    "questions": [
+      {
+        "question": "In MLFQ, what happens when a thread uses its full time quantum?",
+        "options": [
+          "It stays at the same priority",
+          "It is promoted to higher priority",
+          "It is demoted to lower priority",
+          "It is terminated"
+        ],
+        "correctAnswer": "It is demoted to lower priority",
+        "explanation": "MLFQ Rule 4: 'Use it and lose it.' If a thread consumes its entire quantum without blocking, it's demoted \u2014 assumed to be CPU-bound and doesn't need responsiveness. Interactive threads that block before quantum expires stay at high priority."
+      }
+    ]
+  },
+  {
+    "note": "Deadlock \u2014 The Four Conditions",
+    "questions": [
+      {
+        "question": "Which Coffman condition does lock ordering break?",
+        "correctAnswer": "Circular wait",
+        "acceptableAnswers": [
+          "circular wait",
+          "Circular wait"
+        ],
+        "explanation": "Lock ordering (acquire locks in ascending global order) breaks circular wait. Thread A can't hold lock B waiting for lock A because it must acquire A first. The cycle is impossible."
+      }
+    ]
+  },
+  {
+    "note": "Condition Variables & Semaphores",
+    "questions": [
+      {
+        "question": "Why must condition variable wait() be called in a while loop checking the predicate?",
+        "options": [
+          "For performance",
+          "To handle spurious wakeups \u2014 the thread may wake without the condition being true",
+          "Because the mutex requires it",
+          "To prevent deadlocks"
+        ],
+        "correctAnswer": "To handle spurious wakeups \u2014 the thread may wake without the condition being true",
+        "explanation": "Spurious wakeups: the thread can wake from wait() even if no thread called notify(). The kernel or hardware may generate spurious wakeups. Always wrap wait() in a while(!predicate) loop checking the condition after waking."
+      },
+      {
+        "question": "What is a counting semaphore?",
+        "options": [
+          "A mutex that allows multiple simultaneous lockers",
+          "A counter that blocks when decremented below zero",
+          "A semaphore that counts context switches",
+          "A debugging tool for lock counting"
+        ],
+        "correctAnswer": "A counter that blocks when decremented below zero",
+        "explanation": "Counting semaphore: holds an integer count. wait() decrements; if count < 0, blocks. signal() increments; if threads are waiting, wakes one. Useful for: resource pools (N identical resources), producer-consumer with bounded buffer."
+      }
+    ]
+  },
+  {
+    "note": "09 \u2014 Practical Concurrency",
+    "questions": [
+      {
+        "question": "What UE type wraps a mutex with RAII semantics?",
+        "options": [
+          "FCriticalSection",
+          "FScopeLock",
+          "FEvent",
+          "FRWLock"
+        ],
+        "correctAnswer": "FScopeLock",
+        "explanation": "FScopeLock wraps FCriticalSection with RAII: acquires in constructor, releases in destructor. Equivalent to std::lock_guard. Automatically unlocks on scope exit (including exceptions/early returns)."
+      },
+      {
+        "question": "What is the approximate counter pattern?",
+        "correctAnswer": "Per-thread local counters that periodically flush to a global atomic total",
+        "acceptableAnswers": [
+          "per-thread counters flushing to global",
+          "local counters with periodic atomic flush"
+        ],
+        "explanation": "Each thread increments its own local counter (no contention). When the local counter reaches a threshold (e.g., 1024), it atomically adds to a global counter. Reads are approximate but bounded error. UE's STAT system uses this pattern for profiling."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 HDD Mechanics",
+    "questions": [
+      {
+        "question": "What are the two components of HDD access latency?",
+        "options": [
+          "Read and write time",
+          "Seek time and rotational latency",
+          "Cache hit and miss time",
+          "Serialization and deserialization"
+        ],
+        "correctAnswer": "Seek time and rotational latency",
+        "explanation": "Seek time: arm movement to the correct track (2-15ms). Rotational latency: waiting for the correct sector to spin under the head (average = 0.5/RPM, ~2-5.5ms at 7200 RPM). Transfer time is additional but negligible compared to these."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Page Faults, mmap & Swap",
+    "questions": [
+      {
+        "question": "What are the three types of page faults?",
+        "correctAnswer": "Minor (page in memory, just update PTE), Major (page on disk, must load), Invalid (segfault \u2014 access not allowed)",
+        "acceptableAnswers": [
+          "minor, major, invalid",
+          "minor major invalid"
+        ],
+        "explanation": "Minor fault: page is in RAM but not mapped (e.g., copy-on-write, shared library already loaded). ~1 \u00b5s. Major fault: page must be read from disk (swap or mmap'd file). ~1-10 ms (dominated by disk latency). Invalid: access violation \u2192 SIGSEGV."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Page Tables & TLB",
+    "questions": [
+      {
+        "question": "What does the TLB cache?",
+        "options": [
+          "Data from RAM",
+          "Virtual-to-physical address translations",
+          "CPU instructions",
+          "Disk sectors"
+        ],
+        "correctAnswer": "Virtual-to-physical address translations",
+        "explanation": "TLB (Translation Lookaside Buffer) caches recent page table entries. A TLB hit provides the physical address in ~0.5-1 cycle. A TLB miss requires walking the page table (up to 4 memory accesses for 4-level paging), adding ~10-100 cycles."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 DRAM Cells & Memory Physics",
+    "questions": [
+      {
+        "question": "What stores each bit in a DRAM cell?",
+        "options": [
+          "A transistor",
+          "A capacitor",
+          "A magnetic element",
+          "A floating gate"
+        ],
+        "correctAnswer": "A capacitor",
+        "explanation": "Each DRAM cell is 1T1C: one transistor + one capacitor. The capacitor stores charge (bit=1) or no charge (bit=0). The capacitor leaks (~64ms), requiring periodic refresh that reads and rewrites every row."
+      },
+      {
+        "question": "Why is DRAM read destructive?",
+        "options": [
+          "The data is encrypted",
+          "Reading drains the capacitor's charge, so it must be rewritten",
+          "The address lines are damaged during read",
+          "DRAM can only be written, not read"
+        ],
+        "correctAnswer": "Reading drains the capacitor's charge, so it must be rewritten",
+        "explanation": "Reading a DRAM cell connects the capacitor to a bitline, draining its charge to measure the voltage. The sense amplifier detects the voltage level, then the value must be written back to restore the charge. Every read is followed by a write-back."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Linking & Executables",
+    "questions": [
+      {
+        "question": "What is the difference between static and dynamic linking?",
+        "options": [
+          "Static is faster, dynamic is more secure",
+          "Static links libraries into the executable at build time; dynamic links at load time or runtime",
+          "Static uses more memory; dynamic uses more disk",
+          "There is no difference"
+        ],
+        "correctAnswer": "Static links libraries into the executable at build time; dynamic links at load time or runtime",
+        "explanation": "Static linking: library code is copied into the executable at build time. Larger binary, no external dependencies. Dynamic linking: executable references shared libraries (.so/.dll); the linker resolves symbols at load time. Smaller binary, shared across processes."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Syscalls & Kernel",
+    "questions": [
+      {
+        "question": "What CPU instruction triggers a system call on x86-64?",
+        "correctAnswer": "SYSCALL",
+        "acceptableAnswers": [
+          "syscall",
+          "SYSCALL",
+          "syscall instruction"
+        ],
+        "explanation": "x86-64 uses SYSCALL (Intel) or SYSCALL (AMD \u2014 identical). It switches the CPU from ring 3 (user mode) to ring 0 (kernel mode), saves RIP to RCX and RFLAGS to R11, and jumps to the address in the LSTAR MSR."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Filesystems & Page Cache",
+    "questions": [
+      {
+        "question": "What is the page cache?",
+        "options": [
+          "A cache for CPU pages",
+          "The kernel's cache of disk blocks in unused RAM",
+          "A cache of virtual memory pages",
+          "A TLB optimization"
+        ],
+        "correctAnswer": "The kernel's cache of disk blocks in unused RAM",
+        "explanation": "The page cache stores recently-read disk blocks in RAM. When a file is read, the kernel first checks the page cache. If found (cache hit), no disk I/O needed. 'Unused' RAM is actually used for page cache \u2014 it's reclaimed when applications need memory. This is why 'free -m' on Linux shows most RAM as 'available' (used for cache)."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 NVMe, SATA & PCIe",
+    "questions": [
+      {
+        "question": "What is the maximum throughput of PCIe 4.0 x4 (typical NVMe configuration)?",
+        "options": [
+          "1 GB/s",
+          "4 GB/s",
+          "8 GB/s",
+          "16 GB/s"
+        ],
+        "correctAnswer": "8 GB/s",
+        "explanation": "PCIe 4.0: 16 GT/s per lane, 128b/130b encoding \u2192 ~2 GB/s per lane. \u00d74 lanes = ~8 GB/s. PCIe 5.0 doubles this to ~16 GB/s (\u00d74 lanes). Compare: SATA III = 0.6 GB/s."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 NAND Flash & SSDs",
+    "questions": [
+      {
+        "question": "Why must SSDs erase entire blocks before writing?",
+        "options": [
+          "For performance",
+          "NAND flash cells can only be programmed from 1\u21920; to write 1, the entire block must be erased",
+          "For security",
+          "To reduce wear"
+        ],
+        "correctAnswer": "NAND flash cells can only be programmed from 1\u21920; to write 1, the entire block must be erased",
+        "explanation": "NAND flash: programming changes bits 1\u21920. To change a 0 back to 1, the entire erase block (hundreds of pages) must be erased (reset all to 1). This is why SSDs need garbage collection \u2014 they can't overwrite in place."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Huge Pages, NUMA & Boot Process",
+    "questions": [
+      {
+        "question": "How large is a 2MB huge page compared to a standard 4KB page?",
+        "correctAnswer": "512 times larger",
+        "acceptableAnswers": [
+          "512x",
+          "512",
+          "512 times"
+        ],
+        "explanation": "2MB / 4KB = 512. A 2MB huge page covers the same address range as 512 standard pages but uses a single TLB entry. This dramatically reduces TLB misses for large-memory workloads (databases, VMs, game engines)."
+      }
+    ]
+  },
+  {
+    "note": "Threads & Processes \u2014 Overview",
+    "questions": [
+      {
+        "question": "What does PCB stand for in OS context?",
+        "correctAnswer": "Process Control Block",
+        "acceptableAnswers": [
+          "Process Control Block",
+          "process control block"
+        ],
+        "explanation": "The PCB (Process Control Block) is the kernel's data structure representing a process. Contains: PID, process state, saved register context (for context switch), memory management info (page tables), open file descriptors, scheduling priority."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Edge Cases & Security",
+    "questions": [
+      {
+        "question": "What is a stack canary?",
+        "options": [
+          "A performance optimization",
+          "A random value placed before the return address to detect buffer overflows",
+          "A debug symbol",
+          "A CPU register"
+        ],
+        "correctAnswer": "A random value placed before the return address to detect buffer overflows",
+        "explanation": "Stack canary: the compiler places a random value between local variables and the saved return address. Before RET, the canary is checked. If overwritten (buffer overflow), the program aborts instead of jumping to attacker-controlled address. Enabled by -fstack-protector."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Calling Conventions",
+    "questions": [
+      {
+        "question": "In the System V AMD64 calling convention, where are the first 6 integer arguments passed?",
+        "correctAnswer": "RDI, RSI, RDX, RCX, R8, R9",
+        "acceptableAnswers": [
+          "rdi rsi rdx rcx r8 r9",
+          "RDI RSI RDX RCX R8 R9"
+        ],
+        "explanation": "System V AMD64 (Linux): first 6 integer args in RDI, RSI, RDX, RCX, R8, R9. Return value in RAX. Additional args on stack. Windows x64 uses different convention: RCX, RDX, R8, R9."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Hardware Mechanics",
+    "questions": [
+      {
+        "question": "What does the x86 CALL instruction do?",
+        "options": [
+          "Jumps to an address",
+          "Pushes return address onto stack, then jumps",
+          "Calls a system function",
+          "Saves all registers"
+        ],
+        "correctAnswer": "Pushes return address onto stack, then jumps",
+        "explanation": "CALL pushes RIP (the address of the next instruction) onto the stack and jumps to the target. RET pops the saved RIP from the stack and jumps there. Together they implement function call/return."
+      },
+      {
+        "question": "Which register is the stack pointer on x86-64?",
+        "correctAnswer": "RSP",
+        "acceptableAnswers": [
+          "rsp",
+          "RSP"
+        ],
+        "explanation": "RSP (Stack Pointer) points to the top of the stack. PUSH decrements RSP and writes; POP reads and increments RSP. RBP (Base Pointer) traditionally marks the frame base, but modern code often omits it (-fomit-frame-pointer)."
+      }
+    ]
+  },
+  {
+    "note": "Quaternions & 3D Rotations",
+    "questions": [
+      {
+        "question": "What problem does using quaternions for rotation avoid?",
+        "correctAnswer": "Gimbal lock",
+        "acceptableAnswers": [
+          "gimbal lock",
+          "Gimbal Lock"
+        ],
+        "explanation": "Euler angles (pitch, yaw, roll) suffer from gimbal lock: when one axis aligns with another, you lose a degree of freedom. Quaternions represent rotation as a 4D unit vector, avoiding this entirely."
+      },
+      {
+        "question": "What is Slerp?",
+        "options": [
+          "Scaling a quaternion",
+          "Spherical Linear Interpolation between two quaternions",
+          "Converting quaternion to matrix",
+          "Adding two quaternions"
+        ],
+        "correctAnswer": "Spherical Linear Interpolation between two quaternions",
+        "explanation": "Slerp interpolates between two quaternions along the shortest path on the 4D hypersphere. Produces constant angular velocity \u2014 each interpolation step rotates by the same angle. Used for smooth camera transitions and animation blending."
+      }
+    ]
+  },
+  {
+    "note": "Matrices & Coordinate Systems",
+    "questions": [
+      {
+        "question": "In a 4\u00d74 homogeneous transformation matrix, where is the translation stored?",
+        "options": [
+          "First row",
+          "Last column (column 4)",
+          "Diagonal",
+          "First column"
+        ],
+        "correctAnswer": "Last column (column 4)",
+        "explanation": "In a 4\u00d74 transformation matrix, column 4 stores the translation (x, y, z, 1). The upper-left 3\u00d73 stores rotation and scale. The bottom row is typically (0, 0, 0, 1)."
+      },
+      {
+        "question": "Why is matrix multiplication not commutative?",
+        "options": [
+          "Matrices have different sizes",
+          "BA is undefined",
+          "Order of transformations matters \u2014 rotate then translate \u2260 translate then rotate",
+          "Matrix multiplication is always commutative"
+        ],
+        "correctAnswer": "Order of transformations matters \u2014 rotate then translate \u2260 translate then rotate",
+        "explanation": "AB \u2260 BA because the order of transformations changes the result. Rotating then translating moves the rotated object. Translating then rotating orbits the object around the origin. Matrix multiplication composes transformations right-to-left."
+      }
+    ]
+  },
+  {
+    "note": "Trigonometry & Vectors",
+    "questions": [
+      {
+        "question": "What is the dot product of two perpendicular vectors?",
+        "correctAnswer": "0",
+        "acceptableAnswers": [
+          "zero",
+          "0"
+        ],
+        "explanation": "Dot product: A\u00b7B = |A||B|cos(\u03b8). When \u03b8 = 90\u00b0, cos(90\u00b0) = 0, so A\u00b7B = 0. The dot product is zero when vectors are perpendicular."
+      },
+      {
+        "question": "What does the cross product of two 3D vectors produce?",
+        "options": [
+          "A scalar",
+          "A vector perpendicular to both inputs",
+          "A matrix",
+          "An angle"
+        ],
+        "correctAnswer": "A vector perpendicular to both inputs",
+        "explanation": "Cross product A\u00d7B produces a vector perpendicular to both A and B, with magnitude |A||B|sin(\u03b8). Direction follows the right-hand rule. Used for: surface normals, torque calculation, determining 'left' vs 'right' of a direction."
+      },
+      {
+        "question": "What is normalization?",
+        "options": [
+          "Making a vector's components all equal",
+          "Scaling a vector to have length 1",
+          "Converting to polar coordinates",
+          "Removing the w component"
+        ],
+        "correctAnswer": "Scaling a vector to have length 1",
+        "explanation": "Normalization: dividing each component by the vector's magnitude. Result is a unit vector pointing in the same direction. Used for: direction vectors, surface normals, lighting calculations."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Continuous Collision Detection",
+    "questions": [
+      {
+        "question": "What problem does CCD solve?",
+        "correctAnswer": "Tunneling \u2014 fast objects passing through thin obstacles between frames",
+        "acceptableAnswers": [
+          "tunneling",
+          "Tunneling",
+          "objects passing through walls"
+        ],
+        "explanation": "Discrete collision detection checks for overlap at discrete frames. A bullet moving 10m/frame can pass completely through a 0.1m wall without ever overlapping at a frame boundary. CCD sweeps the object's motion to find the exact time of impact (TOI)."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Constraints & Contact",
+    "questions": [
+      {
+        "question": "What is the purpose of Baumgarte stabilization in physics simulation?",
+        "options": [
+          "To make simulation faster",
+          "To correct position drift caused by numerical error",
+          "To add damping",
+          "To increase bounciness"
+        ],
+        "correctAnswer": "To correct position drift caused by numerical error",
+        "explanation": "Baumgarte stabilization adds a position correction term to the velocity-level constraint solve. Without it, small numerical errors accumulate and objects slowly sink into each other. The factor \u03b2 (0.1-0.3) controls how much penetration is corrected per frame."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Numerical Integration",
+    "questions": [
+      {
+        "question": "Why does explicit Euler integration gain energy over time?",
+        "options": [
+          "It's a symplectic integrator",
+          "It assumes constant acceleration over the timestep, overshooting the true curve",
+          "It uses too small timesteps",
+          "It ignores velocity"
+        ],
+        "correctAnswer": "It assumes constant acceleration over the timestep, overshooting the true curve",
+        "explanation": "Euler: x(t+dt) = x(t) + v(t)\u00b7dt. Uses current velocity for the entire step, but velocity changes during the step. The straight-line approximation always overshoots a curved path, adding energy. Semi-implicit Euler fixes this by using the NEW velocity for position."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Rigid Body Dynamics",
+    "questions": [
+      {
+        "question": "What does the inertia tensor describe?",
+        "options": [
+          "How heavy an object is",
+          "How mass is distributed around the center of mass \u2014 resistance to rotation",
+          "The object's velocity",
+          "The object's position"
+        ],
+        "correctAnswer": "How mass is distributed around the center of mass \u2014 resistance to rotation",
+        "explanation": "The inertia tensor is a 3\u00d73 matrix describing an object's resistance to angular acceleration around each axis. A long thin box has low inertia around its long axis (easy to spin) and high inertia around its short axis (hard to spin)."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 GJK Algorithm",
+    "questions": [
+      {
+        "question": "What does GJK operate on to test intersection?",
+        "options": [
+          "The objects themselves",
+          "The Minkowski difference (A - B)",
+          "The bounding sphere",
+          "A grid decomposition"
+        ],
+        "correctAnswer": "The Minkowski difference (A - B)",
+        "explanation": "GJK computes the Minkowski difference A\u2296B = {a-b : a\u2208A, b\u2208B}. A and B intersect iff the origin (0,0,0) is inside A\u2296B. GJK iteratively builds a simplex inside A\u2296B, checking if it contains the origin."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Separating Axis Theorem",
+    "questions": [
+      {
+        "question": "How many axes must be tested for SAT between two oriented boxes (OBBs)?",
+        "correctAnswer": "15",
+        "acceptableAnswers": [
+          "fifteen",
+          "15",
+          "15 axes"
+        ],
+        "explanation": "OBB-OBB SAT: 3 face normals of A + 3 face normals of B + 9 edge cross products (3\u00d73) = 15 total axes. If projection intervals don't overlap on ANY axis, the boxes are separated."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Ray Casting",
+    "questions": [
+      {
+        "question": "What is the parametric form of a ray?",
+        "correctAnswer": "P(t) = origin + t \u00d7 direction, where t \u2265 0",
+        "acceptableAnswers": [
+          "P(t) = origin + t * direction",
+          "origin + t*direction",
+          "P = O + tD"
+        ],
+        "explanation": "A ray: P(t) = O + t\u00b7D, t \u2265 0. O = origin point, D = direction vector. t = 0 gives the origin, increasing t moves along the ray. Used for: hit-scan weapons, visibility checks, ray tracing."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 AABB and Sphere",
+    "questions": [
+      {
+        "question": "How do you check if two AABBs overlap?",
+        "options": [
+          "Check if centers are within radius",
+          "Check if their intervals overlap on all 3 axes",
+          "Calculate distance between centers",
+          "Compare volumes"
+        ],
+        "correctAnswer": "Check if their intervals overlap on all 3 axes",
+        "explanation": "AABB overlap test: for each axis (x, y, z), check if [minA, maxA] overlaps [minB, maxB]. If intervals overlap on ALL three axes, the AABBs overlap. O(1) operations \u2014 the fastest collision test."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Monte Carlo & Path Tracing",
+    "questions": [
+      {
+        "question": "How does estimation error scale with the number of Monte Carlo samples?",
+        "options": [
+          "Linearly \u2014 double samples, half error",
+          "As 1/\u221aN \u2014 quadruple samples, half error",
+          "Exponentially",
+          "It doesn't scale"
+        ],
+        "correctAnswer": "As 1/\u221aN \u2014 quadruple samples, half error",
+        "explanation": "Monte Carlo error \u221d 1/\u221aN. To halve the noise, you need 4\u00d7 more samples. To reduce noise to 10%, you need 100\u00d7 more samples. This is why real-time path tracing (1 sample per pixel) is noisy without denoising (DLSS Ray Reconstruction)."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Spherical Harmonics",
+    "questions": [
+      {
+        "question": "How many coefficients are needed for diffuse irradiance with 3-band SH?",
+        "correctAnswer": "9",
+        "acceptableAnswers": [
+          "nine",
+          "9",
+          "9 coefficients"
+        ],
+        "explanation": "3-band SH (l=0,1,2) requires 9 coefficients per color channel (27 total for RGB). This encodes environment lighting compactly \u2014 a 72MB cube map becomes 108 bytes. Used for UE SkyLight and Unity Light Probes."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 BRDF & Lighting Models",
+    "questions": [
+      {
+        "question": "What does the Fresnel effect describe?",
+        "options": [
+          "How light diffuses on rough surfaces",
+          "How reflectivity increases at grazing angles",
+          "How shadows are calculated",
+          "How colors blend"
+        ],
+        "correctAnswer": "How reflectivity increases at grazing angles",
+        "explanation": "Fresnel: surfaces become more reflective at shallow viewing angles. A pool of water: looking straight down (0\u00b0) \u2014 you see through it. Looking across the surface (near 90\u00b0) \u2014 you see strong reflection. Schlick's approximation is the common real-time implementation."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Barycentric Coordinates",
+    "questions": [
+      {
+        "question": "What do barycentric coordinates sum to for any point inside a triangle?",
+        "correctAnswer": "1",
+        "acceptableAnswers": [
+          "one",
+          "1",
+          "1.0"
+        ],
+        "explanation": "Barycentric coordinates (\u03b1, \u03b2, \u03b3) represent any point in a triangle as \u03b1\u00b7V0 + \u03b2\u00b7V1 + \u03b3\u00b7V2 where \u03b1+\u03b2+\u03b3=1. The GPU rasterizer uses these to interpolate vertex attributes (color, UV, normal) across triangle surfaces."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Projection & Clip Space",
+    "questions": [
+      {
+        "question": "What is the purpose of the perspective divide (w-divide)?",
+        "options": [
+          "To improve performance",
+          "To make distant objects appear smaller",
+          "To convert screen coordinates to world",
+          "To add color"
+        ],
+        "correctAnswer": "To make distant objects appear smaller",
+        "explanation": "After the projection matrix, clip-space coordinates have w = -z (eye-space depth). Dividing x,y,z by w produces normalized device coordinates where distant objects (large |z|) become smaller \u2014 perspective projection."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Navmesh Generation",
+    "questions": [
+      {
+        "question": "What is the first step in Recast navmesh generation?",
+        "options": [
+          "Triangulation",
+          "Voxelization of the world geometry",
+          "Path smoothing",
+          "Region partitioning"
+        ],
+        "correctAnswer": "Voxelization of the world geometry",
+        "explanation": "Recast pipeline: 1) Voxelization \u2014 convert world geometry into 3D grid. 2) Filter walkable surfaces (slope, headroom). 3) Watershed region partitioning. 4) Contour extraction. 5) Polygon triangulation. 6) Detail mesh."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Steering Behaviors",
+    "questions": [
+      {
+        "question": "What three rules produce flocking behavior (boids)?",
+        "correctAnswer": "Separation, alignment, cohesion",
+        "acceptableAnswers": [
+          "separation alignment cohesion",
+          "Separation, Alignment, Cohesion"
+        ],
+        "explanation": "Reynolds' 1987 boids model: Separation (steer away from nearby boids), Alignment (match average velocity of neighbors), Cohesion (steer toward center of mass of neighbors). Three simple rules produce complex emergent flocking behavior."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 A Star & Pathfinding",
+    "questions": [
+      {
+        "question": "What makes A* faster than Dijkstra's algorithm?",
+        "options": [
+          "It uses less memory",
+          "A heuristic function guides search toward the goal",
+          "It runs on the GPU",
+          "It only checks diagonal moves"
+        ],
+        "correctAnswer": "A heuristic function guides search toward the goal",
+        "explanation": "A* = Dijkstra + heuristic h(n). Dijkstra explores equally in all directions. A* uses h(n) (estimated distance to goal) to prioritize nodes closer to the goal. If h(n)=0, A* becomes Dijkstra. If h(n) is perfect, A* goes directly to the goal."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 PGA & Applications",
+    "questions": [
+      {
+        "question": "What does PGA (Projective Geometric Algebra) unify?",
+        "options": [
+          "Only rotations",
+          "Points, lines, planes, rotations, translations, and reflections in a single algebra",
+          "Only 3D transformations",
+          "Only 2D geometry"
+        ],
+        "correctAnswer": "Points, lines, planes, rotations, translations, and reflections in a single algebra",
+        "explanation": "PGA (Plane-based GA) represents Euclidean geometry elegantly: points, lines, and planes are all elements of the same algebra. Rotations AND translations are both handled by rotors (the same sandwich product). No separate matrix for translation \u2014 translation is a rotor too."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Multivectors, Products & Rotors",
+    "questions": [
+      {
+        "question": "What is a rotor in geometric algebra?",
+        "options": [
+          "A GPU component",
+          "The GA equivalent of a quaternion \u2014 represents rotation via double-sided product",
+          "A mathematical operator for derivatives",
+          "A type of multivector for scaling"
+        ],
+        "correctAnswer": "The GA equivalent of a quaternion \u2014 represents rotation via double-sided product",
+        "explanation": "A rotor R in GA rotates a vector v via the sandwich product: R v R~ (R with its reverse). This is identical to quaternion rotation but generalizes to any dimension. Rotors are elements of the even subalgebra."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Network Interpolation",
+    "questions": [
+      {
+        "question": "What is dead reckoning in networking?",
+        "options": [
+          "Predicting a ship's position using celestial navigation",
+          "Extrapolating an object's position from its last known state (position + velocity)",
+          "Counting dead players in a multiplayer game",
+          "Re-sending lost packets"
+        ],
+        "correctAnswer": "Extrapolating an object's position from its last known state (position + velocity)",
+        "explanation": "Dead reckoning: when no update arrives for a remote object, the client extrapolates: position += velocity * dt. When an update arrives, the client corrects to the authoritative position (with interpolation to smooth the correction). Used in every networked game."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Spatial Audio",
+    "questions": [
+      {
+        "question": "How does sound intensity change with distance?",
+        "options": [
+          "Linearly \u2014 double distance, half intensity",
+          "Inverse square law \u2014 double distance, quarter intensity",
+          "Exponentially",
+          "Not at all \u2014 sound doesn't attenuate"
+        ],
+        "correctAnswer": "Inverse square law \u2014 double distance, quarter intensity",
+        "explanation": "Sound follows the inverse square law: intensity \u221d 1/r\u00b2. Double the distance = quarter the energy. In games, we often clamp this to a max distance for performance and use attenuation curves for artistic control."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Frequency Domain & FFT",
+    "questions": [
+      {
+        "question": "What is the computational complexity of FFT vs naive DFT?",
+        "options": [
+          "DFT: O(n\u00b2), FFT: O(n log n)",
+          "Both are O(n\u00b2)",
+          "DFT: O(n log n), FFT: O(n\u00b2)",
+          "Both are O(n log n)"
+        ],
+        "correctAnswer": "DFT: O(n\u00b2), FFT: O(n log n)",
+        "explanation": "Naive DFT requires O(n\u00b2) operations \u2014 multiplying every input sample by every frequency. Cooley-Tukey FFT recursively splits into even/odd halves, achieving O(n log n). For n=1024: DFT = 1,048,576 ops, FFT = 10,240 ops \u2014 100\u00d7 faster."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Probability & Randomness",
+    "questions": [
+      {
+        "question": "Why use Fisher-Yates instead of sort() with a random comparator for shuffling?",
+        "options": [
+          "Fisher-Yates is faster",
+          "sort() with random comparator doesn't produce uniform permutations and violates strict weak ordering",
+          "Fisher-Yates uses less memory",
+          "sort() doesn't work with arrays"
+        ],
+        "correctAnswer": "sort() with random comparator doesn't produce uniform permutations and violates strict weak ordering",
+        "explanation": "sort() requires deterministic, transitive comparison. A random comparator violates both \u2014 causing undefined behavior and biased shuffles (some permutations more likely than others). Fisher-Yates is O(n) and produces every permutation with equal probability."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Sampling & Placement",
+    "questions": [
+      {
+        "question": "What is the key property of a Poisson disc distribution?",
+        "options": [
+          "Points are completely random",
+          "No two points are closer than a minimum distance",
+          "Points follow a uniform grid",
+          "Points cluster in groups"
+        ],
+        "correctAnswer": "No two points are closer than a minimum distance",
+        "explanation": "Poisson disc sampling ensures minimum distance between any two points, creating a natural-looking distribution without clumping. Used for: tree placement, foliage scattering, SSR ray origins. Also called blue noise sampling."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Noise Generation",
+    "questions": [
+      {
+        "question": "What is octave noise (fractal noise)?",
+        "options": [
+          "Noise with 8 frequencies",
+          "Summing multiple layers of noise at different frequencies and amplitudes",
+          "Noise limited to 8-bit precision",
+          "Noise generated 8 times and averaged"
+        ],
+        "correctAnswer": "Summing multiple layers of noise at different frequencies and amplitudes",
+        "explanation": "Fractal/octave noise: sum multiple layers of noise, each with doubled frequency and halved amplitude (persistence). Layer 1: coarse terrain shape. Layer 2: medium hills. Layer 3: fine detail. The sum creates natural-looking landscapes."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Slerp & Kinematics",
+    "questions": [
+      {
+        "question": "What does CCD stand for in inverse kinematics?",
+        "correctAnswer": "Cyclic Coordinate Descent",
+        "acceptableAnswers": [
+          "Cyclic Coordinate Descent",
+          "cyclic coordinate descent"
+        ],
+        "explanation": "CCD (Cyclic Coordinate Descent) is an IK algorithm: iteratively rotate each joint from the end effector backward to minimize distance to the target. Simple, robust, works for any number of joints. FABRIK is the other common IK algorithm."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Interpolation, Bezier & Splines",
+    "questions": [
+      {
+        "question": "What is the lerp delta-time trap?",
+        "options": [
+          "Using lerp makes objects move too fast",
+          "Using lerp with a fixed ratio each frame makes movement frame-rate dependent",
+          "Lerp causes objects to teleport",
+          "Lerp doesn't work with quaternions"
+        ],
+        "correctAnswer": "Using lerp with a fixed ratio each frame makes movement frame-rate dependent",
+        "explanation": "lerp(a, b, 0.1) each frame: at 60fps, the object moves 0.1 of the remaining distance 60 times/sec. At 30fps, only 30 times/sec. Different frame rates = different speeds. Fix: use exponential decay based on dt: lerp(a, b, 1 - exp(-speed * dt))."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Skeletal Animation",
+    "questions": [
+      {
+        "question": "What is the 'candy-wrapper' effect in skeletal animation?",
+        "options": [
+          "Bones rotating too fast",
+          "Linear blend skinning causing volume collapse at joints",
+          "Textures stretching",
+          "Animation blending artifacts"
+        ],
+        "correctAnswer": "Linear blend skinning causing volume collapse at joints",
+        "explanation": "LBS (Linear Blend Skinning) averages bone transforms weighted by vertex weights. When two bones rotate in opposite directions (e.g., elbow bend), the weighted average collapses \u2014 like twisting a candy wrapper. Dual quaternion skinning fixes this by using quaternion blending instead of matrix averaging."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 L-Systems & Marching Cubes",
+    "questions": [
+      {
+        "question": "How many possible configurations does the Marching Cubes lookup table have?",
+        "correctAnswer": "256",
+        "acceptableAnswers": [
+          "256",
+          "two hundred fifty six"
+        ],
+        "explanation": "Marching Cubes classifies each of the 8 corners of a voxel as inside or outside (2^8 = 256 cases). The lookup table maps each case to a set of triangles. Vertex positions are interpolated along edges where the density field crosses zero."
+      }
+    ]
+  },
+  {
+    "note": "07 \u2014 Signed Distance Fields",
+    "questions": [
+      {
+        "question": "What does a signed distance field (SDF) return for a point inside a surface?",
+        "options": [
+          "A positive value",
+          "A negative value",
+          "Zero",
+          "Infinity"
+        ],
+        "correctAnswer": "A negative value",
+        "explanation": "SDF: f(p) = signed distance to nearest surface. Inside surface \u2192 negative. On surface \u2192 zero. Outside \u2192 positive. The gradient of the SDF gives the surface normal. Raymarching: step forward by f(p) \u2014 this is the MAXIMUM safe distance you can advance without missing a surface."
+      }
+    ]
+  },
+  {
+    "note": "06 \u2014 Color Spaces & HDR",
+    "questions": [
+      {
+        "question": "Why do rendering calculations happen in linear color space?",
+        "options": [
+          "For historical reasons",
+          "Because lighting is physically linear \u2014 gamma-corrected values produce incorrect results",
+          "For better compression",
+          "Linear space is faster to compute"
+        ],
+        "correctAnswer": "Because lighting is physically linear \u2014 gamma-corrected values produce incorrect results",
+        "explanation": "Lighting is additive: two photons = twice the brightness. Gamma encoding (sRGB ~2.2) is a nonlinear curve for display. Doing lighting in sRGB space produces incorrect results. Textures must be linearized (sRGB\u2192linear), shaded, then re-encoded (linear\u2192sRGB)."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Voxels & Octrees",
+    "questions": [
+      {
+        "question": "What is an octree?",
+        "options": [
+          "A tree with 8 leaf nodes",
+          "A spatial data structure that recursively subdivides 3D space into 8 children",
+          "A sorting algorithm",
+          "A type of voxel shader"
+        ],
+        "correctAnswer": "A spatial data structure that recursively subdivides 3D space into 8 children",
+        "explanation": "An octree subdivides 3D space: each node has 8 child octants (one per corner of the cube). Used for: sparse voxel storage, spatial queries, level-of-detail rendering. Empty/solid regions aren't subdivided, saving ~90% memory vs dense grids."
+      }
+    ]
+  },
+  {
+    "note": "Curves, Ranges & Random",
+    "questions": [
+      {
+        "question": "What is an FInterpCurve?",
+        "options": [
+          "A smoothing filter",
+          "A keyframe-based curve that interpolates between points",
+          "A random number generator",
+          "A type of collision shape"
+        ],
+        "correctAnswer": "A keyframe-based curve that interpolates between points",
+        "explanation": "FInterpCurve<T> stores keyframes (FInterpCurvePoint<T>) with: InVal (time), OutVal (value), ArriveTangent, LeaveTangent, InterpMode. Eval(time) finds bracketing keyframes and interpolates. Supports linear, cubic, and constant interpolation modes."
+      }
+    ]
+  },
+  {
+    "note": "Collision & Intersection Math",
+    "questions": [
+      {
+        "question": "What UE primitive does FBox represent?",
+        "options": [
+          "A sphere",
+          "An Axis-Aligned Bounding Box (AABB)",
+          "A capsule",
+          "A convex hull"
+        ],
+        "correctAnswer": "An Axis-Aligned Bounding Box (AABB)",
+        "explanation": "FBox is an AABB defined by Min and Max points. UE uses FBox for: broad-phase collision detection, spatial hashing, culling. FBox::Intersect(FBox) checks if two boxes overlap."
+      }
+    ]
+  },
+  {
+    "note": "FMath \u2014 Interpolation & Utility",
+    "questions": [
+      {
+        "question": "What does FMath::Lerp do?",
+        "options": [
+          "Clamps a value between min and max",
+          "Linear interpolation between A and B by alpha",
+          "Computes the square root",
+          "Rotates a vector"
+        ],
+        "correctAnswer": "Linear interpolation between A and B by alpha",
+        "explanation": "FMath::Lerp(A, B, Alpha) returns A + (B-A)*Alpha. At Alpha=0 \u2192 A, Alpha=1 \u2192 B. FMath::LerpStable handles edge cases where Alpha is outside [0,1] and ensures consistent behavior."
+      }
+    ]
+  },
+  {
+    "note": "FTransform & FMatrix",
+    "questions": [
+      {
+        "question": "What does FTransform store?",
+        "options": [
+          "Only position",
+          "Position, rotation (FQuat), and scale (FVector)",
+          "Only rotation",
+          "A 4\u00d74 matrix"
+        ],
+        "correctAnswer": "Position, rotation (FQuat), and scale (FVector)",
+        "explanation": "FTransform stores: Translation (FVector), Rotation (FQuat), Scale3D (FVector). This is 3+4+3 = 10 floats (40 bytes). FTransform is preferred over FMatrix for scene objects because quaternions avoid gimbal lock and are smaller."
+      }
+    ]
+  },
+  {
+    "note": "FVector, FRotator, FQuat \u2014 The Core Types",
+    "questions": [
+      {
+        "question": "What is FVector in UE5?",
+        "options": [
+          "A 2D vector",
+          "A double-precision 3D vector (UE::Math::TVector<double>)",
+          "A single-precision float vector",
+          "An integer vector"
+        ],
+        "correctAnswer": "A double-precision 3D vector (UE::Math::TVector<double>)",
+        "explanation": "UE5 uses double-precision vectors by default (FVector = UE::Math::TVector<double>). This was changed from UE4's float-based FVector to support large world coordinates (LWC)."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 CMake & Build Systems",
+    "questions": [
+      {
+        "question": "What is CMake?",
+        "options": [
+          "A compiler",
+          "A build system generator \u2014 it generates native build files (Makefiles, VS solutions) from a platform-independent script",
+          "A linker",
+          "A package manager"
+        ],
+        "correctAnswer": "A build system generator \u2014 it generates native build files (Makefiles, VS solutions) from a platform-independent script",
+        "explanation": "Note: CMake is a meta-build system. It reads CMakeLists.txt and generates platform-specific build files."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Exceptions & Error Handling",
+    "questions": [
+      {
+        "question": "What is stack unwinding?",
+        "options": [
+          "A compiler optimization",
+          "When an exception is thrown, destructors of all local objects are called in reverse order as the stack unwinds to find a catch handler",
+          "Memory cleanup",
+          "Function inlining"
+        ],
+        "correctAnswer": "When an exception is thrown, destructors of all local objects are called in reverse order as the stack unwinds to find a catch handler",
+        "explanation": "Note: stack unwinding is the process of destroying local objects as the runtime searches up the call stack for a matching catch block."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Modules (C++20)",
+    "questions": [
+      {
+        "question": "What is the primary advantage of C++20 modules over #include?",
+        "options": [
+          "Faster runtime",
+          "Dramatically faster compilation \u2014 modules are pre-compiled, not text-pasted",
+          "Smaller binary",
+          "Easier to write"
+        ],
+        "correctAnswer": "Dramatically faster compilation \u2014 modules are pre-compiled, not text-pasted",
+        "explanation": "Note: modules avoid the repeated text parsing of headers. 'import std;' replaces including the entire standard library."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 From Source to Running",
+    "questions": [
+      {
+        "question": "What are the four stages of C++ compilation in order?",
+        "correctAnswer": "Preprocessor, Compiler, Assembler, Linker",
+        "acceptableAnswers": [
+          "preprocessor compiler assembler linker",
+          "Preprocessor \u2192 Compiler \u2192 Assembler \u2192 Linker"
+        ],
+        "explanation": "Note shows pipeline: .cpp \u2192 preprocessor (.i) \u2192 compiler (.s) \u2192 assembler (.o) \u2192 linker (.exe)."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 C++ vs UE",
+    "questions": [
+      {
+        "question": "Why does UE disable C++ exceptions?",
+        "options": [
+          "They're too slow",
+          "Performance predictability, code size, and console platform constraints",
+          "They don't work on Windows",
+          "They're deprecated"
+        ],
+        "correctAnswer": "Performance predictability, code size, and console platform constraints",
+        "explanation": "Note: UE replaces exceptions with check()/ensure()/verify() macros that are more predictable with smaller codegen impact."
+      }
+    ]
+  },
+  {
+    "note": "07 \u2014 C++23 Overview",
+    "questions": [
+      {
+        "question": "What does deducing this (C++23) eliminate?",
+        "options": [
+          "Virtual functions",
+          "The CRTP pattern \u2014 no more static_cast<Derived*>(this)",
+          "Templates",
+          "Move semantics"
+        ],
+        "correctAnswer": "The CRTP pattern \u2014 no more static_cast<Derived*>(this)",
+        "explanation": "Note: 'Deducing this kills the CRTP pattern. void f(this Self&& self) deduces the derived type automatically.'"
+      }
+    ]
+  },
+  {
+    "note": "06 \u2014 std ranges (C++20)",
+    "questions": [
+      {
+        "question": "What is the key advantage of ranges over traditional iterator-pair algorithms?",
+        "options": [
+          "Faster execution",
+          "Composable pipelines with lazy evaluation \u2014 filter, transform, take chain without intermediate allocations",
+          "Smaller binary",
+          "Better error messages"
+        ],
+        "correctAnswer": "Composable pipelines with lazy evaluation \u2014 filter, transform, take chain without intermediate allocations",
+        "explanation": "Note: 'Ranges compose with | (pipe). filter | transform | take \u2014 zero intermediate allocations, lazy evaluation.'"
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Coroutines (C++20)",
+    "questions": [
+      {
+        "question": "What are the three keywords that identify C++20 coroutines?",
+        "correctAnswer": "co_await, co_yield, co_return",
+        "acceptableAnswers": [
+          "co_await co_yield co_return",
+          "co_await, co_yield, co_return"
+        ],
+        "explanation": "Note discusses co_await (suspend and resume), co_yield (produce a value and suspend), and co_return (complete the coroutine)."
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 std variant, optional & any",
+    "questions": [
+      {
+        "question": "What is the key difference between std::variant and a C union?",
+        "options": [
+          "No difference",
+          "variant has a discriminator tracking which alternative is active \u2014 type-safe; C unions don't track active member",
+          "variant is slower",
+          "variant is on the heap"
+        ],
+        "correctAnswer": "variant has a discriminator tracking which alternative is active \u2014 type-safe; C unions don't track active member",
+        "explanation": "Note: 'variant adds a discriminator tracking the active alternative. A C union doesn't track which member is active.'"
+      },
+      {
+        "question": "Does std::optional allocate on the heap?",
+        "options": [
+          "Yes, always",
+          "No \u2014 stores the value inline, sizeof approximately sizeof(T) + alignment padding",
+          "Only for large types",
+          "It depends on the compiler"
+        ],
+        "correctAnswer": "No \u2014 stores the value inline, sizeof approximately sizeof(T) + alignment padding",
+        "explanation": "Note: 'optional is NOT a pointer. No heap allocation. Stores the value inline in its own footprint.'"
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 noexcept & Move Semantics",
+    "questions": [
+      {
+        "question": "Why does marking a move constructor noexcept improve std::vector performance?",
+        "options": [
+          "It doesn't",
+          "vector uses move_if_noexcept: noexcept move = pointer swap; non-noexcept = forced copy on reallocation for exception safety",
+          "noexcept enables SIMD moves",
+          "It reduces binary size only"
+        ],
+        "correctAnswer": "vector uses move_if_noexcept: noexcept move = pointer swap; non-noexcept = forced copy on reallocation for exception safety",
+        "explanation": "Note: 'vector checks noexcept. Yes \u2192 move (pointer swap, ~3 cycles). No \u2192 copy (deep copy, thousands of cycles).'"
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 constexpr, consteval & constinit",
+    "questions": [
+      {
+        "question": "What is the key difference between const and constexpr?",
+        "options": [
+          "No difference",
+          "const is a runtime promise (won't modify); constexpr guarantees compile-time evaluation",
+          "const is faster",
+          "constexpr is deprecated"
+        ],
+        "correctAnswer": "const is a runtime promise (won't modify); constexpr guarantees compile-time evaluation",
+        "explanation": "Note: 'const promises I won't write to this. constexpr guarantees this value is known at compile time.'"
+      },
+      {
+        "question": "What does consteval (C++20) enforce?",
+        "options": [
+          "Compile-time or runtime evaluation",
+          "MUST be evaluated at compile time \u2014 error if called with runtime arguments",
+          "Runtime only",
+          "Lazy evaluation"
+        ],
+        "correctAnswer": "MUST be evaluated at compile time \u2014 error if called with runtime arguments",
+        "explanation": "Note: 'consteval creates an immediate function \u2014 every call MUST produce a compile-time constant.'"
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Move Semantics & Perfect Forwarding",
+    "questions": [
+      {
+        "question": "What does std::move actually do?",
+        "options": [
+          "Moves the object",
+          "Casts its argument to an rvalue reference, enabling move semantics",
+          "Deletes the original object",
+          "Copies the object efficiently"
+        ],
+        "correctAnswer": "Casts its argument to an rvalue reference, enabling move semantics",
+        "explanation": "Note: 'std::move is a cast. It doesn't move anything \u2014 it casts to T&&, enabling the move constructor to be selected.'"
+      },
+      {
+        "question": "What is the difference between std::move and std::forward?",
+        "options": [
+          "No difference",
+          "move unconditionally casts to rvalue; forward conditionally casts based on template argument deduction",
+          "forward is slower",
+          "move is for unique_ptr; forward is for shared_ptr"
+        ],
+        "correctAnswer": "move unconditionally casts to rvalue; forward conditionally casts based on template argument deduction",
+        "explanation": "Note: move always casts to rvalue reference. forward preserves the value category (lvalue stays lvalue)."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Templates & Concepts",
+    "questions": [
+      {
+        "question": "When are templates instantiated?",
+        "options": [
+          "At link time",
+          "At compile time, at the point of use \u2014 the compiler generates a separate copy for each type",
+          "At runtime on first call",
+          "During preprocessing"
+        ],
+        "correctAnswer": "At compile time, at the point of use \u2014 the compiler generates a separate copy for each type",
+        "explanation": "Note: 'Templates are instantiated at the point of use. The compiler needs the full definition visible.'"
+      },
+      {
+        "question": "What problem do C++20 concepts solve?",
+        "options": [
+          "Slow compilation",
+          "Incomprehensible template error messages \u2014 concepts produce clean errors at the call site",
+          "Binary size",
+          "Runtime performance"
+        ],
+        "correctAnswer": "Incomprehensible template error messages \u2014 concepts produce clean errors at the call site",
+        "explanation": "Note: 'The biggest problem with templates has always been error messages. Pass the wrong type and get 300 lines of trace. Concepts fix this.'"
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 Operator Overloading",
+    "questions": [
+      {
+        "question": "Which operators MUST be member functions (not non-member)?",
+        "options": [
+          "+, -, *",
+          "=, [], (), ->",
+          "==, !=, <",
+          ">>, <<"
+        ],
+        "correctAnswer": "=, [], (), ->",
+        "explanation": "Note: 'The rule: =, [], (), -> MUST be members. Others typically non-member for symmetry.'"
+      },
+      {
+        "question": "What does the spaceship operator <=> (C++20) generate?",
+        "options": [
+          "Just ==",
+          "All six comparison operators: <, <=, >, >=, ==, !=",
+          "Just < and >",
+          "Only ordering, not equality"
+        ],
+        "correctAnswer": "All six comparison operators: <, <=, >, >=, ==, !=",
+        "explanation": "Note: 'One operator gives you ALL comparisons automatically. Generates ==, !=, <, <=, >, >= from comparing members.'"
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 C++ Casting & RTTI",
+    "questions": [
+      {
+        "question": "Which cast performs a safe, runtime-checked downcast?",
+        "options": [
+          "static_cast",
+          "dynamic_cast",
+          "const_cast",
+          "reinterpret_cast"
+        ],
+        "correctAnswer": "dynamic_cast",
+        "explanation": "Note: 'dynamic_cast checks at runtime whether the cast is valid by walking the class hierarchy. Returns nullptr (pointer) or throws (reference) on failure.'"
+      },
+      {
+        "question": "What does static_cast do for downcasts?",
+        "options": [
+          "Runtime check",
+          "No runtime check \u2014 compiles silently, undefined behavior if wrong type",
+          "Throws on failure",
+          "Returns nullptr on failure"
+        ],
+        "correctAnswer": "No runtime check \u2014 compiles silently, undefined behavior if wrong type",
+        "explanation": "Note warns: 'static_cast downcasts are dangerous. No runtime check \u2014 if base_ptr is actually Base, not Derived, undefined behavior.'"
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Lambdas & Function Objects",
+    "questions": [
+      {
+        "question": "What does the capture list [] in a lambda control?",
+        "options": [
+          "Return type",
+          "Which external variables the lambda can access and how (by value or reference)",
+          "Parameter types",
+          "The lambda's name"
+        ],
+        "correctAnswer": "Which external variables the lambda can access and how (by value or reference)",
+        "explanation": "Note: 'The capture list controls which variables from the enclosing scope the lambda can access.' [=] copies, [&] references."
+      },
+      {
+        "question": "What is the danger of [&] capture in asynchronous lambdas?",
+        "options": [
+          "It's slower",
+          "Captured references may dangle if the lambda outlives the referenced variables",
+          "It doesn't compile",
+          "It causes memory leaks"
+        ],
+        "correctAnswer": "Captured references may dangle if the lambda outlives the referenced variables",
+        "explanation": "Note warns: 'Capturing by Reference Is Dangerous. If the referenced variable is destroyed before the lambda runs, you have a dangling reference.'"
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Inheritance & Virtual Functions",
+    "questions": [
+      {
+        "question": "What does the virtual keyword enable?",
+        "options": [
+          "Faster function calls",
+          "Runtime dispatch \u2014 the function called depends on the actual object type, not the pointer type",
+          "Compile-time dispatch",
+          "Automatic memory management"
+        ],
+        "correctAnswer": "Runtime dispatch \u2014 the function called depends on the actual object type, not the pointer type",
+        "explanation": "Note: 'virtual tells the compiler: Don't decide which function to call based on the pointer type. Look at the actual object at runtime.'"
+      },
+      {
+        "question": "What does override do and why should you always use it?",
+        "options": [
+          "Makes the function faster",
+          "Compiler verifies the function actually overrides a base class virtual function \u2014 catches typos and signature mismatches",
+          "It's required by the standard",
+          "It prevents the function from being called"
+        ],
+        "correctAnswer": "Compiler verifies the function actually overrides a base class virtual function \u2014 catches typos and signature mismatches",
+        "explanation": "Note: 'Always use override. It catches typos, wrong parameter types, wrong const qualifiers, and missing virtual in base.'"
+      },
+      {
+        "question": "Why must a base class with virtual functions have a virtual destructor?",
+        "options": [
+          "To make the class polymorphic",
+          "So delete through a base pointer calls the correct derived destructor chain",
+          "It's a style convention",
+          "To enable RTTI"
+        ],
+        "correctAnswer": "So delete through a base pointer calls the correct derived destructor chain",
+        "explanation": "Note: 'If a class has ANY virtual function, make its destructor virtual. Without it, delete through base pointer only calls base destructor \u2014 leak.'"
+      }
+    ]
+  },
+  {
+    "note": "12 \u2014 std pmr (C++17)",
+    "questions": [
+      {
+        "question": "What is the key difference between std::vector<int> and std::pmr::vector<int>?",
+        "options": [
+          "No difference",
+          "pmr::vector uses a runtime polymorphic allocator \u2014 same type regardless of where memory comes from; regular vector's allocator is a template parameter",
+          "pmr::vector is faster",
+          "pmr::vector is on the stack"
+        ],
+        "correctAnswer": "pmr::vector uses a runtime polymorphic allocator \u2014 same type regardless of where memory comes from; regular vector's allocator is a template parameter",
+        "explanation": "Note: pmr decouples the allocator from the type. All pmr::vector<int> instances share the same type."
+      },
+      {
+        "question": "What is a monotonic_buffer_resource?",
+        "options": [
+          "A thread-safe pool",
+          "An arena allocator \u2014 pre-allocated buffer, bump-pointer allocation, freed all at once on destruction",
+          "A garbage collector",
+          "A shared memory region"
+        ],
+        "correctAnswer": "An arena allocator \u2014 pre-allocated buffer, bump-pointer allocation, freed all at once on destruction",
+        "explanation": "monotonic_buffer_resource is a bump allocator. Individual deallocations are ignored; the entire buffer is reclaimed when the resource is destroyed."
+      }
+    ]
+  },
+  {
+    "note": "11 \u2014 std deque, set & Container Adaptors",
+    "questions": [
+      {
+        "question": "How does std::deque achieve O(1) push_front and push_back?",
+        "options": [
+          "Linked list of elements",
+          "Array of pointers to fixed-size blocks (chunked array)",
+          "Red-black tree",
+          "Single contiguous array like vector"
+        ],
+        "correctAnswer": "Array of pointers to fixed-size blocks (chunked array)",
+        "explanation": "deque uses a chunked array: a map of pointers to fixed-size blocks. Adding at either end allocates a new block as needed."
+      },
+      {
+        "question": "Which container adaptor provides FIFO (first-in-first-out) behavior?",
+        "options": [
+          "std::stack",
+          "std::queue",
+          "std::priority_queue",
+          "std::deque"
+        ],
+        "correctAnswer": "std::queue",
+        "explanation": "std::queue adapts a container (default deque) to provide FIFO: push at back, pop from front."
+      }
+    ]
+  },
+  {
+    "note": "10 \u2014 std filesystem",
+    "questions": [
+      {
+        "question": "What does std::filesystem::path::stem() return for 'archive.tar.gz'?",
+        "options": [
+          "archive",
+          "archive.tar",
+          "archive.tar.gz",
+          "tar.gz"
+        ],
+        "correctAnswer": "archive.tar",
+        "explanation": "stem() removes only the last extension. 'archive.tar.gz' \u2192 stem = 'archive.tar', extension = '.gz'."
+      },
+      {
+        "question": "What does fs::create_directories() do?",
+        "options": [
+          "Creates only the last directory",
+          "Creates all intermediate directories (like mkdir -p)",
+          "Deletes directories",
+          "Lists directory contents"
+        ],
+        "correctAnswer": "Creates all intermediate directories (like mkdir -p)",
+        "explanation": "create_directories creates the entire path, including any missing parent directories."
+      }
+    ]
+  },
+  {
+    "note": "09 \u2014 std span (C++20)",
+    "questions": [
+      {
+        "question": "What is std::span?",
+        "options": [
+          "A heap-allocated array",
+          "A non-owning view over contiguous data \u2014 pointer + size, zero allocation",
+          "A C++23 container",
+          "A thread-safe wrapper"
+        ],
+        "correctAnswer": "A non-owning view over contiguous data \u2014 pointer + size, zero allocation",
+        "explanation": "Note: 'span is a non-owning view over a contiguous sequence. It stores exactly a pointer and a size. No allocation.'"
+      },
+      {
+        "question": "What is the difference between std::span<T> and std::span<T, N>?",
+        "options": [
+          "No difference",
+          "span<T> has dynamic extent (size stored at runtime, 16 bytes); span<T,N> has static extent (size in type, 8 bytes)",
+          "span<T,N> is slower",
+          "span<T> is deprecated"
+        ],
+        "correctAnswer": "span<T> has dynamic extent (size stored at runtime, 16 bytes); span<T,N> has static extent (size in type, 8 bytes)",
+        "explanation": "Static-extent spans store only the pointer \u2014 the size is a compile-time constant, saving 8 bytes."
+      }
+    ]
+  },
+  {
+    "note": "08 \u2014 Iterators & Algorithms",
+    "questions": [
+      {
+        "question": "What are the five iterator categories in C++?",
+        "correctAnswer": "Input, Output, Forward, Bidirectional, Random Access",
+        "acceptableAnswers": [
+          "input output forward bidirectional random access",
+          "Input Output Forward Bidirectional RandomAccess"
+        ],
+        "explanation": "Note lists five iterator categories: input (read-once), output (write-once), forward (multi-pass), bidirectional (--), random access ([] and +n)."
+      },
+      {
+        "question": "What does std::sort require from its iterators?",
+        "options": [
+          "Forward iterators",
+          "Bidirectional iterators",
+          "Random access iterators",
+          "Input iterators"
+        ],
+        "correctAnswer": "Random access iterators",
+        "explanation": "std::sort requires random access iterators because it needs O(1) element access for partitioning."
+      }
+    ]
+  },
+  {
+    "note": "07 \u2014 std map & unordered_map",
+    "questions": [
+      {
+        "question": "What data structure does std::map use internally?",
+        "options": [
+          "Hash table",
+          "Red-black tree (self-balancing binary search tree)",
+          "Sorted array",
+          "Linked list"
+        ],
+        "correctAnswer": "Red-black tree (self-balancing binary search tree)",
+        "explanation": "std::map is ordered and uses a balanced BST. O(log n) for all operations."
+      },
+      {
+        "question": "What data structure does std::unordered_map use?",
+        "options": [
+          "Red-black tree",
+          "Hash table with chaining",
+          "Sorted array",
+          "B-tree"
+        ],
+        "correctAnswer": "Hash table with chaining",
+        "explanation": "std::unordered_map uses hashing. O(1) average, O(n) worst case for lookups."
+      }
+    ]
+  },
+  {
+    "note": "06 \u2014 std vector & Container Internals",
+    "questions": [
+      {
+        "question": "What three pointers does std::vector store internally?",
+        "options": [
+          "head, tail, next",
+          "begin, end (size), end of storage (capacity)",
+          "first, last, current",
+          "data, size, type"
+        ],
+        "correctAnswer": "begin, end (size), end of storage (capacity)",
+        "explanation": "Note: vector stores begin pointer, end pointer (one past last element), and end-of-capacity pointer. sizeof(vector) = 24 bytes on 64-bit."
+      },
+      {
+        "question": "What is the growth factor used by most std::vector implementations?",
+        "options": [
+          "1.5x (MSVC) or 2x (GCC/Clang)",
+          "Always 2x",
+          "Always 1.5x",
+          "Square of current size"
+        ],
+        "correctAnswer": "1.5x (MSVC) or 2x (GCC/Clang)",
+        "explanation": "Note: GCC/libc++ use 2x; MSVC uses 1.5x. Must be exponential for amortized O(1) push_back."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 std array & C Arrays",
+    "questions": [
+      {
+        "question": "What is the key advantage of std::array over a C-style array?",
+        "options": [
+          "Stored on heap",
+          "Same memory layout but adds .size(), .at() bounds checking, and never decays to pointer",
+          "Always SIMD-optimized",
+          "Automatic bounds checking on every operator[]"
+        ],
+        "correctAnswer": "Same memory layout but adds .size(), .at() bounds checking, and never decays to pointer",
+        "explanation": "std::array is zero-overhead: same contiguous memory as C array, but with container interface."
+      },
+      {
+        "question": "What happens to a C array's size information when passed to a function?",
+        "options": [
+          "It's preserved",
+          "It decays to a pointer \u2014 sizeof becomes pointer size (8 bytes), array size is lost",
+          "It's passed as a hidden second parameter",
+          "The compiler warns about it"
+        ],
+        "correctAnswer": "It decays to a pointer \u2014 sizeof becomes pointer size (8 bytes), array size is lost",
+        "explanation": "C arrays decay to pointers. sizeof(arr) in a function returns 8 (pointer size), not the array size."
+      }
+    ]
+  },
+  {
+    "note": "10 \u2014 std format (C++20)",
+    "questions": [
+      {
+        "question": "What is the key safety advantage of std::format over printf?",
+        "options": [
+          "Faster",
+          "Format string type mismatches are caught at compile time, not runtime",
+          "More format specifiers",
+          "Less memory usage"
+        ],
+        "correctAnswer": "Format string type mismatches are caught at compile time, not runtime",
+        "explanation": "Note: 'Errors in your format string are caught at compile time \u2014 not at 3 AM when a player triggers a rare dialogue path.'"
+      },
+      {
+        "question": "How do you make a custom type work with std::format?",
+        "options": [
+          "Overload operator<<",
+          "Specialize std::formatter<T> with constexpr parse() and format() methods",
+          "Inherit from std::formattable",
+          "Use a registration macro"
+        ],
+        "correctAnswer": "Specialize std::formatter<T> with constexpr parse() and format() methods",
+        "explanation": "Note: 'Custom types integrate via template specialization of std::formatter<T> with a constexpr parse() and a format() method.'"
+      }
+    ]
+  },
+  {
+    "note": "04 \u2014 RAII & The Rule of Five",
+    "questions": [
+      {
+        "question": "What does RAII stand for?",
+        "correctAnswer": "Resource Acquisition Is Initialization",
+        "acceptableAnswers": [
+          "Resource Acquisition Is Initialization",
+          "RAII"
+        ],
+        "explanation": "Note: 'RAII means tie the lifetime of a resource to the lifetime of an object. Constructor acquires, destructor releases.'"
+      },
+      {
+        "question": "What are the five special member functions in the Rule of Five?",
+        "correctAnswer": "Destructor, copy constructor, copy assignment, move constructor, move assignment",
+        "acceptableAnswers": [
+          "destructor copy constructor copy assignment move constructor move assignment",
+          "~T(), T(const T&), T& operator=(const T&), T(T&&), T& operator=(T&&)"
+        ],
+        "explanation": "Rule of Five: if you define any of the five, you should explicitly define all of them for consistent resource management."
+      },
+      {
+        "question": "Why does the Rule of Five exist?",
+        "options": [
+          "Backward compatibility",
+          "If you need a custom destructor (resource ownership), compiler-generated copy/move might do shallow copies of your resource",
+          "Compiler optimization mandate",
+          "C++ standard committee preference"
+        ],
+        "correctAnswer": "If you need a custom destructor (resource ownership), compiler-generated copy/move might do shallow copies of your resource",
+        "explanation": "A custom destructor signals resource ownership. Default copy/move would copy the pointer, not the resource \u2014 double-free or leak."
+      },
+      {
+        "question": "What is the Rule of Zero?",
+        "options": [
+          "Don't use any special members",
+          "Don't declare any special members \u2014 use RAII types (unique_ptr, vector, string) as members so compiler-generated ones are correct",
+          "Always =default everything",
+          "Zero-overhead principle"
+        ],
+        "correctAnswer": "Don't declare any special members \u2014 use RAII types (unique_ptr, vector, string) as members so compiler-generated ones are correct",
+        "explanation": "Rule of Zero: if all members are RAII types, the compiler-generated destructor/copy/move are already correct."
+      },
+      {
+        "question": "In what three situations are destructors guaranteed to run in C++?",
+        "correctAnswer": "Normal scope exit, exception unwinding, and early return/break/continue",
+        "acceptableAnswers": [
+          "scope exit, exception, early return",
+          "normal exit exception early return/break"
+        ],
+        "explanation": "Note lists three guarantees: normal scope exit, exception unwinding (stack unwinding), and any control flow leaving scope."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Smart Pointers & Ownership",
+    "questions": [
+      {
+        "question": "Why don't raw pointers auto-clean heap memory when they go out of scope?",
+        "options": [
+          "Compiler optimization",
+          "The pointer variable (8 bytes holding the address) is destroyed, but the heap object it pointed to is NOT",
+          "C++ limitation",
+          "OS handles it"
+        ],
+        "correctAnswer": "The pointer variable (8 bytes holding the address) is destroyed, but the heap object it pointed to is NOT",
+        "explanation": "Note: 'When a pointer goes out of scope, the pointer VARIABLE is destroyed. But the memory it points to on the heap is NOT.'"
+      },
+      {
+        "question": "What RAII principle do smart pointers implement?",
+        "options": [
+          "Manual new/delete",
+          "Tie resource lifetime to object lifetime \u2014 destructor automatically frees the managed object",
+          "Reference counting everything",
+          "Stack allocation for all data"
+        ],
+        "correctAnswer": "Tie resource lifetime to object lifetime \u2014 destructor automatically frees the managed object",
+        "explanation": "Smart pointer destructor automatically deletes the managed object when the smart pointer itself goes out of scope."
+      },
+      {
+        "question": "What is unique about std::unique_ptr ownership?",
+        "options": [
+          "Multiple pointers can share ownership",
+          "Only one unique_ptr can own the object at a time \u2014 can't be copied, only moved",
+          "It uses reference counting",
+          "It can only point to stack objects"
+        ],
+        "correctAnswer": "Only one unique_ptr can own the object at a time \u2014 can't be copied, only moved",
+        "explanation": "unique_ptr enforces exclusive ownership. Copy is deleted; only move is allowed."
+      },
+      {
+        "question": "When should you use std::shared_ptr over std::unique_ptr?",
+        "options": [
+          "Always \u2014 it's safer",
+          "When multiple owners need to share the same object, and the last one to die cleans it up",
+          "Never \u2014 unique_ptr is always better",
+          "Only in multithreaded code"
+        ],
+        "correctAnswer": "When multiple owners need to share the same object, and the last one to die cleans it up",
+        "explanation": "shared_ptr uses reference counting. Object deleted when the last shared_ptr is destroyed."
+      },
+      {
+        "question": "What is std::weak_ptr used for?",
+        "options": [
+          "A weaker version of unique_ptr",
+          "Breaking reference cycles in shared_ptr graphs \u2014 it doesn't affect the reference count",
+          "Replacing raw pointers everywhere",
+          "Thread-safe weak references"
+        ],
+        "correctAnswer": "Breaking reference cycles in shared_ptr graphs \u2014 it doesn't affect the reference count",
+        "explanation": "weak_ptr observes a shared_ptr's object without owning it. Essential for breaking circular references."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Object Memory Layout",
+    "questions": [
+      {
+        "question": "Why is sizeof(struct{char a; int b; char c;}) typically 12, not 6?",
+        "options": [
+          "Vtable pointer",
+          "Padding \u2014 CPU requires aligned access; compiler inserts invisible bytes",
+          "Hidden members",
+          "sizeof rounds up"
+        ],
+        "correctAnswer": "Padding \u2014 CPU requires aligned access; compiler inserts invisible bytes",
+        "explanation": "Note: 'Six bytes of data, twelve bytes of object. Padding. A 4-byte int must live at an address divisible by 4.'"
+      },
+      {
+        "question": "What hardware constraint drives alignment requirements?",
+        "options": [
+          "OS memory manager",
+          "CPUs read memory in aligned word chunks \u2014 misaligned data crossing a word boundary requires two reads",
+          "C++ standard mandates it",
+          "Compiler optimization only"
+        ],
+        "correctAnswer": "CPUs read memory in aligned word chunks \u2014 misaligned data crossing a word boundary requires two reads",
+        "explanation": "Note: CPUs don't read byte-by-byte. A misaligned int crossing a word boundary needs two memory accesses."
+      },
+      {
+        "question": "How can you reduce padding in a struct?",
+        "options": [
+          "Use smaller types only",
+          "Order members from largest to smallest alignment",
+          "Use #pragma pack everywhere",
+          "Add more members"
+        ],
+        "correctAnswer": "Order members from largest to smallest alignment",
+        "explanation": "Placing larger-alignment members first reduces padding gaps between members."
+      },
+      {
+        "question": "What is the alignment of a double on x86-64?",
+        "options": [
+          "4 bytes",
+          "8 bytes",
+          "16 bytes",
+          "1 byte"
+        ],
+        "correctAnswer": "8 bytes",
+        "explanation": "Note: 'A type of size N must live at an address divisible by N (for fundamental types up to pointer size).' double is 8 bytes."
+      },
+      {
+        "question": "What does AoS vs SoA stand for and which is faster for SIMD?",
+        "options": [
+          "Allocation of Structures vs Structures of Allocation",
+          "Array of Structures vs Structure of Arrays \u2014 SoA is often faster for SIMD",
+          "Access or Store",
+          "None of the above"
+        ],
+        "correctAnswer": "Array of Structures vs Structure of Arrays \u2014 SoA is often faster for SIMD",
+        "explanation": "Structure of Arrays keeps same-type fields contiguous for better cache and SIMD utilization."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Stack vs Heap",
+    "questions": [
+      {
+        "question": "What is the fundamental performance difference between stack and heap allocation?",
+        "options": [
+          "Same speed",
+          "Stack: one CPU instruction (move stack pointer); heap: searching for free space, ~50-200+ cycles",
+          "Heap is faster",
+          "Stack is slower due to LIFO"
+        ],
+        "correctAnswer": "Stack: one CPU instruction (move stack pointer); heap: searching for free space, ~50-200+ cycles",
+        "explanation": "Note states stack allocation is automatic, one CPU instruction. Heap involves searching for free space."
+      },
+      {
+        "question": "What determines the lifetime of a stack variable?",
+        "options": [
+          "Until delete",
+          "Program duration",
+          "Tied to function scope \u2014 destroyed when the function returns",
+          "Until the next allocation"
+        ],
+        "correctAnswer": "Tied to function scope \u2014 destroyed when the function returns",
+        "explanation": "Stack lifetime is automatic \u2014 popped when function returns. Heap: manual via delete."
+      },
+      {
+        "question": "What is the typical maximum stack size?",
+        "options": [
+          "Unlimited",
+          "1-8 MB (platform-dependent)",
+          "Available RAM (gigabytes)",
+          "64 KB"
+        ],
+        "correctAnswer": "1-8 MB (platform-dependent)",
+        "explanation": "Stack ~1-8 MB. Heap: gigabytes. Large data must go on the heap."
+      },
+      {
+        "question": "What register tracks the top of the stack on x86-64?",
+        "options": [
+          "RAX",
+          "RBP",
+          "RSP",
+          "RIP"
+        ],
+        "correctAnswer": "RSP",
+        "explanation": "Note: 'The CPU tracks the top with a register called the stack pointer (RSP on x86-64).'"
+      },
+      {
+        "question": "Why is the stack cache-friendly?",
+        "options": [
+          "It uses a special cache",
+          "It's LIFO \u2014 the top is always in L1/L2 cache, recently used memory is hot",
+          "It preloads data",
+          "It bypasses cache"
+        ],
+        "correctAnswer": "It's LIFO \u2014 the top is always in L1/L2 cache, recently used memory is hot",
+        "explanation": "The stack's LIFO nature means the most recently pushed data sits at the top, which stays cache-hot."
+      }
+    ]
+  },
+  {
+    "note": "Applied Examples - Raw C++ vs Unreal Engine",
+    "questions": [
+      {
+        "question": "In UE, what container should you use when you need fast iteration AND frequent insertions/removals?",
+        "options": [
+          "TArray always",
+          "TArray for iteration, TMap for lookups; profile before choosing anything else",
+          "TLinkedList always",
+          "TSet always"
+        ],
+        "correctAnswer": "TArray for iteration, TMap for lookups; profile before choosing anything else",
+        "explanation": "TArray (contiguous) is cache-optimal for iteration. TMap (hash table) is O(1) for lookups. TLinkedList is almost never the right choice \u2014 pointer chasing destroys cache locality. Profile before deviating from TArray/TMap."
+      }
+    ]
+  },
+  {
+    "note": "Amortized Analysis & Real Profiling Data",
+    "questions": [
+      {
+        "question": "Why is std::vector::push_back O(1) amortized despite occasional reallocation?",
+        "options": [
+          "It's not \u2014 it's O(n)",
+          "The geometric growth (2\u00d7 expansion) means the cost of N pushes is O(N), so average is O(1)",
+          "Reallocation only happens once",
+          "The compiler optimizes it away"
+        ],
+        "correctAnswer": "The geometric growth (2\u00d7 expansion) means the cost of N pushes is O(N), so average is O(1)",
+        "explanation": "Amortized analysis: total cost of N pushes = N + N/2 + N/4 + ... \u2248 2N. Average = 2N/N = O(1). The geometric growth factor (\u00d72) is critical \u2014 a fixed growth (+K) would give O(n) amortized push_back."
+      }
+    ]
+  },
+  {
+    "note": "The Big O Complexity Spectrum",
+    "questions": [
+      {
+        "question": "What is the Big O of binary search?",
+        "options": [
+          "O(1)",
+          "O(n)",
+          "O(log n)",
+          "O(n\u00b2)"
+        ],
+        "correctAnswer": "O(log n)",
+        "explanation": "Binary search halves the search space each step: O(log\u2082 n). For n=1,000,000, binary search takes ~20 steps. Linear search takes up to 1,000,000. This is why sorted data structures enable dramatically faster lookups."
+      }
+    ]
+  },
+  {
+    "note": "GAS Networking & Prediction",
+    "questions": [
+      {
+        "question": "What is the GAS (Gameplay Ability System) prediction model?",
+        "options": [
+          "Server-only execution",
+          "Client predicts ability activation, server corrects if prediction was wrong",
+          "No prediction \u2014 everything runs on server",
+          "Prediction only for movement"
+        ],
+        "correctAnswer": "Client predicts ability activation, server corrects if prediction was wrong",
+        "explanation": "GAS uses client-side prediction: abilities execute locally first (immediate feedback), then the server validates and corrects if needed. Similar to movement prediction in the CharacterMovementComponent. Prediction keys track which activations the server has confirmed."
+      }
+    ]
+  },
+  {
+    "note": "Iris Filtering & Prioritization",
+    "questions": [
+      {
+        "question": "How does the spatial grid filter in Iris achieve O(1) per-pair filtering?",
+        "options": [
+          "By checking distance for each pair",
+          "By precomputing object cell indices and connection visible cell sets \u2014 filter check is cell membership test",
+          "By using a quadtree",
+          "By sorting objects by distance"
+        ],
+        "correctAnswer": "By precomputing object cell indices and connection visible cell sets \u2014 filter check is cell membership test",
+        "explanation": "Grid filter: world divided into cells (~50-100m). Objects register their cell. Connections have a precomputed visible cell set. Filter check: is object's cell in connection's visible set? O(1) set lookup instead of O(n) distance checks."
+      }
+    ]
+  },
+  {
+    "note": "Iris Replication System Overview",
+    "questions": [
+      {
+        "question": "What is Iris in UE5?",
+        "options": [
+          "A rendering system",
+          "UE5's new replication system replacing the legacy actor channel model",
+          "A type of networking protocol",
+          "An AI system"
+        ],
+        "correctAnswer": "UE5's new replication system replacing the legacy actor channel model",
+        "explanation": "Iris is UE5's next-generation replication system. It replaces the per-actor channel model with a data-driven architecture: dirty properties flow through filtering \u2192 prioritization \u2192 serialization pipelines. Designed for large-scale games (100+ players, 1000+ replicated objects)."
+      }
+    ]
+  },
+  {
+    "note": "PushModel & Dirty Marking",
+    "questions": [
+      {
+        "question": "What performance problem does PushModel solve?",
+        "options": [
+          "Network latency",
+          "Traditional replication compares all properties every frame \u2014 PushModel only replicates explicitly marked dirty properties",
+          "Packet loss",
+          "Bandwidth usage on large objects"
+        ],
+        "correctAnswer": "Traditional replication compares all properties every frame \u2014 PushModel only replicates explicitly marked dirty properties",
+        "explanation": "PushModel: properties are only replicated when explicitly marked dirty via MARK_PROPERTY_DIRTY_FROM_NAME(). This eliminates per-frame property comparison for properties that rarely change. Up to 60% CPU savings on the server replication path."
+      }
+    ]
+  },
+  {
+    "note": "RepNotifies & OnRep",
+    "questions": [
+      {
+        "question": "What does RepNotify do?",
+        "options": [
+          "Marks a property for replication",
+          "Calls a callback function when a replicated property's value arrives",
+          "Notifies the server of a property change",
+          "Retries failed replication"
+        ],
+        "correctAnswer": "Calls a callback function when a replicated property's value arrives",
+        "explanation": "RepNotify: when a UPROPERTY(ReplicatedUsing=OnRep_Health) changes on the server, the new value replicates to clients, and OnRep_Health() is called automatically. Use to: play effects, update UI, trigger animations on value changes."
+      }
+    ]
+  },
+  {
+    "note": "RPCs in Unreal Engine",
+    "questions": [
+      {
+        "question": "Which RPC type is called on the server and executed on ALL clients?",
+        "options": [
+          "Server RPC",
+          "Client RPC",
+          "NetMulticast RPC",
+          "Reliable RPC"
+        ],
+        "correctAnswer": "NetMulticast RPC",
+        "explanation": "NetMulticast: called on server, executed on server AND all connected clients. Server: called from client, executed only on server. Client: called from server, executed only on the owning client."
+      }
+    ]
+  },
+  {
+    "note": "Network Roles",
+    "questions": [
+      {
+        "question": "What are the three authority roles in UE networking?",
+        "correctAnswer": "Authority (server), Autonomous Proxy (owning client), Simulated Proxy (other clients)",
+        "acceptableAnswers": [
+          "Authority Autonomous Simulated",
+          "Authority, Autonomous Proxy, Simulated Proxy"
+        ],
+        "explanation": "Authority: runs on server, has full control. Autonomous Proxy: on the owning client's machine, can send RPCs and inputs. Simulated Proxy: on other clients, receives replicated state only. Each role determines what can execute on that instance."
+      }
+    ]
+  },
+  {
+    "note": "Casting/03 \u2014 When to Use & Pitfalls",
+    "questions": [
+      {
+        "question": "What does ExactCast<T> do?",
+        "options": [
+          "Same as Cast<T>",
+          "Only succeeds if the object's class is EXACTLY T \u2014 no derived classes",
+          "Casts to the exact pointer size",
+          "Checks at compile time only"
+        ],
+        "correctAnswer": "Only succeeds if the object's class is EXACTLY T \u2014 no derived classes",
+        "explanation": "ExactCast<T> checks GetClass() == T::StaticClass() \u2014 the type must match exactly. Not even a child class counts. Useful for: validation checks, debugging, ensuring you have precisely the type you expect."
+      }
+    ]
+  },
+  {
+    "note": "Casting/02 \u2014 Interface Casting & References",
+    "questions": [
+      {
+        "question": "Why does interface casting in UE take a different path than class casting?",
+        "options": [
+          "Interfaces are slower to cast",
+          "UINTERFACE types use TIsIInterface trait detection and GetInterfaceAddress() instead of IsA",
+          "Interfaces can't be cast at all",
+          "Interface casting always returns nullptr"
+        ],
+        "correctAnswer": "UINTERFACE types use TIsIInterface trait detection and GetInterfaceAddress() instead of IsA",
+        "explanation": "UE detects interface casting via SFINAE: if constexpr(TIsIInterface<To>::Value) \u2192 use GetInterfaceAddress(). Interfaces don't participate in normal class hierarchy, so IsA<T>() doesn't apply."
+      }
+    ]
+  },
+  {
+    "note": "Casting/01 \u2014 Cast Internals & Variants",
+    "questions": [
+      {
+        "question": "How does Cast<T> achieve its speed advantage over dynamic_cast?",
+        "options": [
+          "It uses inline assembly",
+          "Single bitwise AND on EClassCastFlags vs dynamic_cast's vtable walk and string comparison",
+          "It caches results",
+          "It only works at compile time"
+        ],
+        "correctAnswer": "Single bitwise AND on EClassCastFlags vs dynamic_cast's vtable walk and string comparison",
+        "explanation": "Cast<T> checks a single uint64 bitfield: HasAnyCastFlags(CASTCLASS_AType). One bitwise AND, ~1-2 cycles. dynamic_cast walks the vtable to type_info and performs string comparison \u2014 50-200+ cycles. Cast<T> uses UE's custom reflection, not C++ RTTI."
+      }
+    ]
+  },
+  {
+    "note": "UE Templates & T-Containers",
+    "questions": [
+      {
+        "question": "What is TSubclassOf<T>?",
+        "options": [
+          "A subclass of T",
+          "A type-safe UClass pointer restricted to T and its subclasses",
+          "A template for creating subclasses",
+          "A reflection helper"
+        ],
+        "correctAnswer": "A type-safe UClass pointer restricted to T and its subclasses",
+        "explanation": "TSubclassOf<T> is a UClass* wrapper that only accepts classes derived from T. In the editor, it appears as a class picker dropdown. Used for: 'which projectile class to spawn' properties."
+      }
+    ]
+  },
+  {
+    "note": "UE Enums & Flags",
+    "questions": [
+      {
+        "question": "What does UENUM() enable for an enum?",
+        "options": [
+          "Faster comparison",
+          "Reflection \u2014 GetEnumValueAsString, iteration over values, serialization",
+          "Automatic bitflag support",
+          "Thread safety"
+        ],
+        "correctAnswer": "Reflection \u2014 GetEnumValueAsString, iteration over values, serialization",
+        "explanation": "UENUM() exposes the enum to UE's reflection system. Enables: display names for UI, GetEnumValueAsString(), iteration via ForEachEnum, blueprint exposure, network serialization."
+      }
+    ]
+  },
+  {
+    "note": "TSet Internals",
+    "questions": [
+      {
+        "question": "How does TSet differ from TMap internally?",
+        "options": [
+          "TSet uses less memory",
+          "TSet stores only the element (it IS the key), TMap stores key-value pairs",
+          "TSet is sorted",
+          "TSet uses a different hash function"
+        ],
+        "correctAnswer": "TSet stores only the element (it IS the key), TMap stores key-value pairs",
+        "explanation": "TSet is essentially TMap with no value \u2014 only keys. This means TSparseArray stores just the element, not a key-value pair, saving space. The hash table structure is otherwise identical."
+      }
+    ]
+  },
+  {
+    "note": "TMap Internals",
+    "questions": [
+      {
+        "question": "What data structure does TMap use internally?",
+        "options": [
+          "Red-black tree",
+          "Hash table with separate chaining using TSparseArray",
+          "Sorted array",
+          "Linked list"
+        ],
+        "correctAnswer": "Hash table with separate chaining using TSparseArray",
+        "explanation": "TMap uses a hash table where buckets are indices into a TSparseArray of key-value pairs. Hash collisions chain through next indices. Lookup: hash \u2192 bucket \u2192 walk chain comparing keys."
+      }
+    ]
+  },
+  {
+    "note": "TArray Internals",
+    "questions": [
+      {
+        "question": "What are the three internal members of TArray?",
+        "options": [
+          "Data, Size, Type",
+          "AllocatorInstance, ArrayNum, ArrayMax",
+          "Begin, End, Capacity",
+          "Head, Tail, Count"
+        ],
+        "correctAnswer": "AllocatorInstance, ArrayNum, ArrayMax",
+        "explanation": "TArray stores: AllocatorInstance (manages heap allocation), ArrayNum (number of live elements), ArrayMax (capacity before realloc). ArrayNum \u2264 ArrayMax always, enforced by CheckInvariants()."
+      }
+    ]
+  },
+  {
+    "note": "Move Semantics in UE",
+    "questions": [
+      {
+        "question": "What is UE's equivalent of std::move?",
+        "options": [
+          "Forward<T>",
+          "MoveTemp<T>",
+          "Cast<T>",
+          "CopyTemp<T>"
+        ],
+        "correctAnswer": "MoveTemp<T>",
+        "explanation": "MoveTemp<T>() is UE's std::move equivalent. It's stricter \u2014 it static_asserts against copying const objects. UE's TArray and TMap use MoveTemp for efficient resizing and element transfer."
+      }
+    ]
+  },
+  {
+    "note": "UE Inheritance & UObject System",
+    "questions": [
+      {
+        "question": "What macro must every UObject-derived class contain?",
+        "correctAnswer": "GENERATED_BODY()",
+        "acceptableAnswers": [
+          "GENERATED_BODY",
+          "GENERATED_BODY()"
+        ],
+        "explanation": "GENERATED_BODY() expands to: StaticClass() declaration, EClassCastFlags, and reflection boilerplate. It's placed right after the UCLASS() macro in the class body. Without it, the reflection system can't see the class."
+      }
+    ]
+  },
+  {
+    "note": "FName vs FString vs FText",
+    "questions": [
+      {
+        "question": "Which UE string type is case-insensitive and stored in a global string table?",
+        "correctAnswer": "FName",
+        "acceptableAnswers": [
+          "FName",
+          "Fname",
+          "fname"
+        ],
+        "explanation": "FName is an interned string: stored once in a global table, compared by index (O(1) integer comparison). Case-insensitive. Immutable. Use for: asset names, enum-like identifiers, any string that's compared frequently."
+      }
+    ]
+  },
+  {
+    "note": "Pointer Ecosystem",
+    "questions": [
+      {
+        "question": "Which UE smart pointer is GC-tracked?",
+        "options": [
+          "TSharedPtr",
+          "TUniquePtr",
+          "TObjectPtr",
+          "TWeakObjectPtr"
+        ],
+        "correctAnswer": "TObjectPtr",
+        "explanation": "TObjectPtr is GC-tracked: the garbage collector knows about it and can null it when the object is destroyed. TSharedPtr/TUniquePtr are reference-counted but not GC-aware \u2014 use them for non-UObject types."
+      }
+    ]
+  },
+  {
+    "note": "UHT, Macros & Reflection",
+    "questions": [
+      {
+        "question": "What does UHT (Unreal Header Tool) do?",
+        "options": [
+          "Compiles C++ code",
+          "Parses UCLASS/UPROPERTY/UFUNCTION macros and generates reflection code",
+          "Links object files",
+          "Optimizes shaders"
+        ],
+        "correctAnswer": "Parses UCLASS/UPROPERTY/UFUNCTION macros and generates reflection code",
+        "explanation": "UHT is UE's custom pre-compilation tool. It scans headers for Unreal macros (UCLASS, UPROPERTY, UFUNCTION) and generates .generated.h files containing reflection data, making runtime type information and property iteration possible."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 static in C++",
+    "questions": [
+      {
+        "question": "What does a static variable inside a function do?",
+        "options": [
+          "Makes the variable global",
+          "The variable is initialized once and persists between function calls",
+          "Makes the function faster",
+          "Deletes the variable after the function exits"
+        ],
+        "correctAnswer": "The variable is initialized once and persists between function calls",
+        "explanation": "Function-static variables are initialized on first call and survive until program termination. Used for: singletons, caches that should persist across calls, lazy initialization. Thread-safe initialization since C++11."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 References",
+    "questions": [
+      {
+        "question": "Why pass by const reference instead of by value?",
+        "options": [
+          "It's always faster",
+          "Avoids copying large objects while preventing modification",
+          "The compiler requires it",
+          "It enables move semantics"
+        ],
+        "correctAnswer": "Avoids copying large objects while preventing modification",
+        "explanation": "`const T&` avoids the copy (4MB vector? No copy \u2014 just a pointer) while guaranteeing the function won't modify the argument. For small types (int, float), pass by value is fine \u2014 the pointer indirection costs more than the copy."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Enums & enum class",
+    "questions": [
+      {
+        "question": "What problem does enum class solve that plain enum does not?",
+        "options": [
+          "Performance",
+          "Scoped enumerators \u2014 enum class values don't pollute the enclosing namespace",
+          "Memory usage",
+          "Thread safety"
+        ],
+        "correctAnswer": "Scoped enumerators \u2014 enum class values don't pollute the enclosing namespace",
+        "explanation": "Plain enum 'leaks' its enumerators into the surrounding scope (e.g., you can write 'Red' directly). enum class requires the scope qualifier (Color::Red), preventing name collisions and requiring explicit casts to int."
+      }
+    ]
+  },
+  {
+    "note": "06 \u2014 Compiling & Running Programs",
+    "questions": [
+      {
+        "question": "What are the four stages a .cpp file goes through to become an executable?",
+        "correctAnswer": "Preprocessing, Compilation, Assembly, Linking",
+        "acceptableAnswers": [
+          "preprocessing compilation assembly linking",
+          "preprocessor compiler assembler linker"
+        ],
+        "explanation": "Preprocessor (#include, #define). Compiler (C++ \u2192 assembly). Assembler (assembly \u2192 .o object file). Linker (combine .o files + libraries \u2192 executable)."
+      }
+    ]
+  },
+  {
+    "note": "05 \u2014 Pointers & References",
+    "questions": [
+      {
+        "question": "What is the difference between a pointer and a reference in C++?",
+        "options": [
+          "No difference",
+          "A pointer can be null and reassigned; a reference cannot be null and cannot be reassigned",
+          "References are faster",
+          "Pointers are only for arrays"
+        ],
+        "correctAnswer": "A pointer can be null and reassigned; a reference cannot be null and cannot be reassigned",
+        "explanation": "Pointers: store memory addresses, can be nullptr, can point to different objects. References: aliases for existing variables, must be initialized, cannot be reassigned to refer to a different object. Both generate identical machine code under the hood."
+      }
+    ]
+  },
+  {
+    "note": "03 \u2014 Functions & The Call Stack",
+    "questions": [
+      {
+        "question": "What happens to the stack when a function is called?",
+        "correctAnswer": "Return address is pushed, stack frame is created for local variables, RBP/RSP updated",
+        "acceptableAnswers": [
+          "stack frame created, return address pushed",
+          "return address pushed, locals on stack"
+        ],
+        "explanation": "CALL pushes the return address (next instruction after call). Function prologue pushes RBP, sets RBP=RSP, and subtracts from RSP to make room for local variables. Function epilogue reverses this process."
+      }
+    ]
+  },
+  {
+    "note": "02 \u2014 Control Flow",
+    "questions": [
+      {
+        "question": "How does an if/else statement compile at the assembly level?",
+        "correctAnswer": "cmp instruction sets flags, then conditional jump (je/jne/jg) based on the result",
+        "acceptableAnswers": [
+          "cmp and conditional jump",
+          "cmp + jmp",
+          "compare and jump"
+        ],
+        "explanation": "The compiler generates: CMP to compare values (sets ZF, CF, etc.), then a conditional jump (JE=equal, JNE=not equal, JG=greater). The jump either skips the if-body or falls through into it."
+      }
+    ]
+  },
+  {
+    "note": "01 \u2014 Variables, Types & Memory",
+    "questions": [
+      {
+        "question": "What does a variable declaration like 'int x = 5' do at the hardware level?",
+        "options": [
+          "Nothing \u2014 it's just a concept",
+          "Reserves 4 bytes of memory and stores the binary representation of 5",
+          "Creates a pointer to memory",
+          "Initializes the CPU register"
+        ],
+        "correctAnswer": "Reserves 4 bytes of memory and stores the binary representation of 5",
+        "explanation": "The compiler allocates sizeof(int) bytes (typically 4) on the stack or in the data segment. The value 5 is stored as binary 00000000 00000000 00000000 00000101 across those bytes."
+      }
+    ]
+  },
+  {
+    "note": "00 \u2014 Primer Overview",
+    "questions": [
+      {
+        "question": "What is the first thing a complete beginner should do when starting the C++ Primer?",
+        "options": [
+          "Skip to templates",
+          "Read the primer notes in order, starting with Variables, Types & Memory",
+          "Start with UE Core",
+          "Jump to the exercises"
+        ],
+        "correctAnswer": "Read the primer notes in order, starting with Variables, Types & Memory",
+        "explanation": "The Primer is designed for absolute beginners with zero programming experience. Read in order: 01 Variables \u2192 02 Control Flow \u2192 03 Functions \u2192 04 Arrays \u2192 05 Pointers \u2192 06 Compiling. Each builds on the previous."
+      }
+    ]
+  }
+]
