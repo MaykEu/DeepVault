@@ -30,6 +30,7 @@ const QuizEngine = {
             folderId: r.folderId, noteName: r.noteName,
             answers: [],
             questions: (QUIZ_DATA[noteName] || {}).questions || [],
+            correctCount: r.correctCount,
             wrongCount: r.total - r.correctCount,
             elapsed: r.elapsed, isReview: false
           });
