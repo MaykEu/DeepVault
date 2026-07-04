@@ -9,7 +9,7 @@ var Storage = {
 
   save: function(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); },
 
-  addAttempt: function(folderId, noteName, score, total, answers) {
+  addAttempt: function(folderId, noteName, score, total, answers, elapsed) {
     var data = this.getAll();
     data.attempts.push({
       id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36),
@@ -20,6 +20,7 @@ var Storage = {
       total: total,
       percentage: Math.round((score / total) * 100),
       answers: answers,
+      elapsed: elapsed || 0,
     });
     this.save(data);
     return data.attempts[data.attempts.length - 1];
@@ -41,7 +42,6 @@ var Storage = {
         seen[all[i].note] = true;
       }
     }
-    // Count notes in this folder from NOTES_CONTENT
     var totalNotes = 0;
     for (var k in NOTES_CONTENT) {
       if (NOTES_CONTENT[k].folder === folderId) totalNotes++;
@@ -63,15 +63,11 @@ var Storage = {
     return this.getAttempts(folderId, noteName).length;
   },
 
-  // Recently viewed notes
   addRecentView: function(folderId, noteName) {
     try {
       var recent = JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
-      // Remove duplicate
       recent = recent.filter(function(r) { return !(r.folder === folderId && r.note === noteName); });
-      // Add to front
       recent.unshift({ folder: folderId, note: noteName, date: new Date().toISOString() });
-      // Keep last 20
       if (recent.length > 20) recent = recent.slice(0, 20);
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
     } catch(e) {}
@@ -84,11 +80,8 @@ var Storage = {
   addRecent(folderId, noteName) {
     var data = this.getAll();
     if (!data.recent) data.recent = [];
-    // Remove if already exists
     data.recent = data.recent.filter(function(r) { return !(r.folder === folderId && r.note === noteName); });
-    // Add to front
     data.recent.unshift({ folder: folderId, note: noteName, date: new Date().toISOString() });
-    // Keep max 10
     if (data.recent.length > 10) data.recent = data.recent.slice(0, 10);
     this.save(data);
   },
@@ -109,6 +102,14 @@ var Storage = {
     var data = this.getAll();
     data.recent = [];
     this.save(data);
+  },
+
+  formatTime: function(seconds) {
+    if (!seconds || seconds < 0) return '—';
+    if (seconds < 60) return seconds + 's';
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return m + 'm ' + s + 's';
   },
 
   exportData() {
@@ -132,7 +133,6 @@ var Storage = {
           return;
         }
         var current = self.getAll();
-        // Merge: add imported attempts that don't already exist
         var existingIds = {};
         for (var i = 0; i < current.attempts.length; i++) {
           existingIds[current.attempts[i].id] = true;

@@ -17,17 +17,28 @@ const QuizEngine = {
     `;
   },
 
-  start(container, folderId, noteName) {
+  isMC(q) { return q.options && q.options.length > 0; },
+
+  start(container, folderId, noteName, reviewQuestions) {
     const data = QUIZ_DATA[noteName];
     if (!data) { router.navigate('#/'); return; }
+
+    let questions;
+    if (reviewQuestions && reviewQuestions.length > 0) {
+      questions = reviewQuestions;
+    } else {
+      questions = this.shuffle([...data.questions]).slice(0, 8);
+    }
 
     this.state = {
       folderId,
       noteName,
-      questions: this.shuffle([...data.questions]).slice(0, 8),
+      questions,
       currentIndex: 0,
       answers: [],
       submitted: false,
+      startTime: Date.now(),
+      isReview: !!reviewQuestions,
     };
     this.showQuestion(container);
   },
@@ -43,34 +54,38 @@ const QuizEngine = {
   showQuestion(container) {
     const s = this.state;
     if (s.currentIndex >= s.questions.length) {
+      s.elapsed = Math.round((Date.now() - s.startTime) / 1000);
       Summary.render(container, s);
       return;
     }
 
     const q = s.questions[s.currentIndex];
-    const progress = ((s.currentIndex) / s.questions.length) * 100;
     const answered = s.answers[s.currentIndex] !== undefined;
+    const complete = (s.currentIndex) / s.questions.length * 100;
+    const progressTitle = s.isReview ? 'Review' : 'Quiz';
 
     let html = `
       <div class="quiz-container">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
-          <span style="color:var(--text-secondary);font-size:0.85rem;">Question ${s.currentIndex + 1} of ${s.questions.length}</span>
-          <span style="color:var(--text-muted);font-size:0.8rem;">${answered ? '✓' : '—'}</span>
+        <div class="quiz-progress-header">
+          <span class="quiz-progress-label">${progressTitle} — Question ${s.currentIndex + 1} of ${s.questions.length}</span>
+          <span class="quiz-progress-status">${answered ? '✓ answered' : '—'}</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" style="width:${complete}%"></div>
+        </div>
 
         <div class="quiz-question">
-          <p style="font-size:1.1rem;margin-bottom:1rem;font-weight:500;">${q.question}</p>
+          <p class="quiz-question-text">${q.question}</p>
     `;
 
-    if (q.type === 'multiple_choice') {
+    if (this.isMC(q)) {
       html += '<div class="options-group">';
       const selected = s.answers[s.currentIndex];
       for (let i = 0; i < q.options.length; i++) {
         let cls = 'option-label';
         if (s.submitted) {
-          if (i === q.correctIndex) cls += ' correct';
-          else if (i === selected) cls += ' incorrect';
+          if (i === q.correctIndex) cls += ' option-correct';
+          else if (i === selected && !s.answers[s.currentIndex + '_correct']) cls += ' option-incorrect';
         } else if (i === selected) {
           cls += ' selected';
         }
@@ -83,9 +98,12 @@ const QuizEngine = {
       html += '</div>';
     } else {
       const entered = s.answers[s.currentIndex] || '';
+      const cls = s.submitted
+        ? (s.answers[s.currentIndex + '_correct'] ? 'text-input correct' : 'text-input incorrect')
+        : 'text-input';
       html += `
-        <input type="text" class="text-input ${s.submitted ? (entered === q.correctAnswer ? 'correct' : 'incorrect') : ''}"
-               id="text-answer" value="${entered}" placeholder="Type your answer..."
+        <input type="text" class="${cls}"
+               id="text-answer" value="${entered.replace(/"/g,'&quot;')}" placeholder="Type your answer..."
                ${s.submitted ? 'disabled' : ''}>
       `;
     }
@@ -96,12 +114,13 @@ const QuizEngine = {
         <div class="feedback ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
           ${isCorrect ? '✅ Correct!' : '❌ Incorrect'}
         </div>
-        <p style="color:var(--text-secondary);margin-top:0.8rem;font-size:0.9rem;">${q.explanation}</p>
+        ${q.explanation ? `<p class="quiz-explanation">${q.explanation}</p>` : ''}
       `;
       if (s.currentIndex < s.questions.length - 1) {
         html += `<button class="btn btn-primary" style="margin-top:1rem;" onclick="QuizEngine.nextQuestion()">Next →</button>`;
       } else {
-        html += `<button class="btn btn-success" style="margin-top:1rem;" onclick="QuizEngine.finish()">See Results</button>`;
+        const btnLabel = s.isReview ? 'Finish Review' : 'See Results';
+        html += `<button class="btn btn-success" style="margin-top:1rem;" onclick="QuizEngine.finish()">${btnLabel}</button>`;
       }
     } else {
       html += `<button class="btn btn-primary" style="margin-top:1rem;" onclick="QuizEngine.submitAnswer()">Submit Answer</button>`;
@@ -120,7 +139,7 @@ const QuizEngine = {
     const s = this.state;
     const q = s.questions[s.currentIndex];
     
-    if (q.type === 'multiple_choice') {
+    if (this.isMC(q)) {
       if (s.answers[s.currentIndex] === undefined) return;
       const correct = s.answers[s.currentIndex] === q.correctIndex;
       s.answers[s.currentIndex + '_correct'] = correct;
@@ -147,16 +166,54 @@ const QuizEngine = {
 
   finish() {
     const s = this.state;
-    const score = s.answers.filter((_, i) => i % 2 === 0 && s.answers[i + '_correct'] === true).length;
+    if (!s.elapsed) s.elapsed = Math.round((Date.now() - s.startTime) / 1000);
+    const correctCount = s.answers.filter((_, i) => i % 2 === 0 && s.answers[i + '_correct'] === true).length;
     const answerLog = [];
     for (let i = 0; i < s.questions.length; i++) {
       answerLog.push({
-        questionIndex: i,
+        question: s.questions[i].question,
         given: s.answers[i + '_given'] || s.answers[i] || '',
         correct: s.answers[i + '_correct'] || false,
       });
     }
-    Storage.addAttempt(s.folderId, s.noteName, score, s.questions.length, answerLog);
+
+    if (!s.isReview) {
+      Storage.addAttempt(s.folderId, s.noteName, correctCount, s.questions.length, answerLog, s.elapsed);
+    }
     Summary.render(document.getElementById('app-main'), s);
+  },
+
+  startReview(container, folderId, noteName) {
+    const attempts = Storage.getAttempts(folderId, noteName);
+    if (attempts.length === 0) return;
+
+    const last = attempts[attempts.length - 1];
+    const data = QUIZ_DATA[noteName];
+    if (!data) return;
+
+    // Find questions that were answered incorrectly in the last attempt
+    const wrongQuestions = [];
+    if (last.answers) {
+      for (let i = 0; i < last.answers.length; i++) {
+        if (!last.answers[i].correct) {
+          // Find the original question data
+          const qText = last.answers[i].question;
+          const found = data.questions.find(dq => dq.question === qText);
+          if (found) wrongQuestions.push(found);
+        }
+      }
+    }
+
+    if (wrongQuestions.length === 0) {
+      container.innerHTML = `
+        <div class="summary-card">
+          <h2>🎉 Perfect Score!</h2>
+          <p style="color:var(--text-secondary);">No questions to review — you got them all right!</p>
+          <button class="btn btn-outline" style="margin-top:1rem;" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}/note/${encodeURIComponent(noteName)}/quiz')">Take Full Quiz</button>
+        </div>`;
+      return;
+    }
+
+    this.start(container, folderId, noteName, wrongQuestions);
   },
 };
