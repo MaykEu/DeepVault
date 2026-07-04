@@ -2,7 +2,7 @@ const Summary = {
   render(container, state) {
     const correctCount = state.correctCount !== undefined ? state.correctCount : 
       state.answers.filter((_, i) => i % 2 === 0 && state.answers[i + '_correct'] === true).length;
-    const total = state.questions.length;
+    const total = state.total || state.questions.length;
     const pct = Math.round((correctCount / total) * 100);
     const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
     const emoji = pct >= 80 ? '\u{1F3C6}' : pct >= 50 ? '\u{1F4AA}' : '\u{1F4DA}';
