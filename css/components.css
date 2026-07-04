@@ -12,8 +12,21 @@
 .folder-card .folder-meta { font-size: 0.8rem; color: var(--text-secondary); }
 .folder-card .folder-progress { height: 4px; background: var(--bg-tertiary); border-radius: 2px; margin-top: auto; overflow: hidden; }
 .folder-card .folder-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+.folder-progress-fill.progress-amber { background: #d2991d; }
+.folder-progress-fill.progress-green { background: #3fb950; }
+.folder-progress-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem; text-align: right; }
 .folder-card-ref { border-left-color: var(--text-muted); }
 .folder-card-ref:hover { border-left-color: var(--text-secondary); }
+
+/* Start-here badge */
+.folder-card-first { position: relative; border-left-color: var(--accent); }
+.folder-card-badge {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  background: var(--accent); color: #fff;
+  font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+  padding: 0.15em 0.5em; border-radius: 3px;
+  letter-spacing: 0.03em;
+}
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 0.3em; }

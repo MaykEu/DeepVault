@@ -1,15 +1,39 @@
 const Dashboard = {
   render(container) {
-    var html = '<div class="dashboard">';
+    var html = '';
+
+    // Welcome hero — first-time visitors only
+    if (!localStorage.getItem('dv_onboarded')) {
+      html += '<div class="welcome-hero">' +
+        '<div class="welcome-hero-icon">🎓</div>' +
+        '<div class="welcome-hero-body">' +
+          '<h2>Welcome to DeepVault</h2>' +
+          '<p>164 interactive notes with quizzes across 6 categories — from transistors to Unreal Engine networking.</p>' +
+          '<p><strong>Start with Computer Systems →</strong> Everything builds on understanding the hardware.</p>' +
+        '</div>' +
+        '<button class="welcome-hero-close" onclick="this.parentElement.remove();localStorage.setItem(\'dv_onboarded\',\'1\')">✕</button>' +
+      '</div>';
+    }
+
+    html += '<div class="dashboard">';
     for (var i = 0; i < FOLDERS.length; i++) {
       var folder = FOLDERS[i];
       var stats = Storage.getFolderStats(folder.id);
       var pct = stats.totalNotes > 0 ? Math.round((stats.completedNotes / stats.totalNotes) * 100) : 0;
-      html += '<div class="folder-card" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
+      var pctClass = pct > 0 ? (pct < 50 ? ' progress-amber' : ' progress-green') : '';
+      var isFirst = !localStorage.getItem('dv_onboarded') && i === 0;
+
+      html += '<div class="folder-card' + (isFirst ? ' folder-card-first' : '') + '" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
+        (isFirst ? '<div class="folder-card-badge">Start here</div>' : '') +
         '<div class="folder-icon">' + folder.icon + '</div>' +
         '<div class="folder-name">' + folder.name + '</div>' +
-        '<div class="folder-meta">' + stats.totalNotes + ' notes · ' + (QUIZ_NOTES[folder.id] ? QUIZ_NOTES[folder.id].length : 0) + ' quizzes · ' + stats.completedNotes + ' attempts</div>' +
-        '<div class="folder-progress"><div class="folder-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="folder-meta">' +
+            stats.totalNotes + ' notes' +
+            ' · ' + (QUIZ_NOTES[folder.id] ? QUIZ_NOTES[folder.id].length : 0) + ' quizzes' +
+            (stats.completedNotes > 0 ? ' · ' + stats.completedNotes + ' completed' : '') +
+        '</div>' +
+        '<div class="folder-progress"><div class="folder-progress-fill' + pctClass + '" style="width:' + pct + '%"></div></div>' +
+        (pct > 0 ? '<div class="folder-progress-label">' + pct + '% complete</div>' : '') +
       '</div>';
     }
     html += '</div>';

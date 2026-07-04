@@ -138,3 +138,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 .footnotes { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
 .footnotes h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem; }
 .footnote-item { font-size: 0.85rem; margin-bottom: 0.4rem; }
+
+/* Welcome hero */
+.welcome-hero {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+}
+.welcome-hero-icon { font-size: 2rem; flex-shrink: 0; }
+.welcome-hero-body h2 { margin: 0 0 0.4rem; font-size: 1.1rem; color: var(--accent); }
+.welcome-hero-body p { margin: 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+.welcome-hero-close { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; flex-shrink: 0; }

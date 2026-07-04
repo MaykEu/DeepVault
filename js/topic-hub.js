@@ -132,10 +132,13 @@ const TopicHub = {
       ? 'Best: <strong style="color:' + (best >= 80 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
       : '';
 
+    var noteIdx = NOTES[folder.id] ? NOTES[folder.id].indexOf(note) : -1;
+    var prefix = noteIdx >= 0 ? String(noteIdx + 1).padStart(2, '0') + '. ' : '';
+
     var card = '<div class="note-card">' +
       '<span class="note-dot" style="background:' + dotColor + '"></span>' +
       '<div class="note-info">' +
-        '<div class="note-name">' + note + '</div>' +
+        '<div class="note-name">' + prefix + note + '</div>' +
         (statsHtml ? '<div class="note-stats">' + statsHtml + '</div>' : '') +
         '<span class="note-badge ' + statusClass + '">' + status + '</span>' +
       '</div>';
