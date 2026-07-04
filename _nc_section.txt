@@ -1,2 +1,0 @@
-c
-console.log(Object.keys(NOTES_CONTENT).length)

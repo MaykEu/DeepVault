@@ -38,14 +38,20 @@ Everything stays on your device — no accounts, no servers, no tracking.
 ## Architecture
 
 ```
-index.html   →  Double-click to launch
-convert.py   →  Rebuild data.js from Obsidian vault
-quiz-cli.py  →  Safe quiz management (add, verify, backup, restore)
-test.js      →  Smoke tests (syntax, CSS, quiz format, REFERENCE)
-guide-content.txt  →  Static guide page content
-SKILL.md     →  Full AI contributor reference
-css/         →  base.css + layout.css + components.css (4 themes)
-js/          →  13 vanilla JS files, zero frameworks
+data/               ← 4 independent JSON source files
+├── notes.json      ← Note content (vault → build.py)
+├── quizzes.json    ← Quiz questions (Worker writes here — safe)
+├── folders.json    ← Folder structure
+└── reference.json  ← Glossary, Guide, Learning Paths
+
+build.py            ← Combines sources → js/data.js (validates first)
+quiz-cli.py         ← Safe quiz management (add, verify, backup)
+test.js             ← Smoke tests (syntax, CSS, quiz format)
+convert.py          ← Legacy — replaced by build.py + python convert.py
+index.html          ← Double-click to launch
+css/                ← base.css + layout.css + components.css
+js/                 ← 13 vanilla JS files + generated data.js
+SKILL.md            ← Full AI contributor reference
 ```
 
 See [SKILL.md](SKILL.md) for the complete architecture, data flow, rendering rules, and pitfall documentation.
