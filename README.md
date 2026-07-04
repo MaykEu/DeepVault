@@ -9,14 +9,7 @@
 
 ## What Is This?
 
-DeepVault is an interactive learning platform for mastering computers, programming, and software engineering — from silicon transistors to C++ templates to real-time networking. It comes pre-loaded with a growing collection of notes and quizzes covering:
-
-- **Computer Systems** — from bits and assembly through CPU architecture to GPU
-- **C++ Fundamentals** — across Core Language, Memory, OOP, and Types
-- **Game Math** — trigonometry, matrices, quaternions, collision, UE math
-- **Unreal Engine Core** — UHT, reflection, containers, casting, inheritance
-- **UE Networking** — RPCs, replication, Iris, GAS prediction
-- **Algorithms & Complexity** — Big O, amortized analysis, applied examples
+DeepVault turns an Obsidian vault into an interactive learning platform — quizzes, progress tracking, wiki links, learning paths. **Built for computing education** — programming languages, computer systems, game engines, algorithms, networking, cybersecurity, and everything in between. The current pre-loaded content covers C++, Unreal Engine, game math, and computer systems, but the platform works for any computing domain (Rust, Python, Unity, Godot, Vulkan, or your own stack).
 
 Everything stays on your device — no accounts, no servers, no tracking.
 
@@ -38,12 +31,15 @@ Everything stays on your device — no accounts, no servers, no tracking.
 | 🔍 **Search** | Search all notes by title, heading, or content |
 | 📱 **Mobile** | Responsive design works on phones |
 | 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
+| ⭐ **Bookmarks** | Bookmark notes for quick access under a dedicated tab |
 
 ## Architecture
 
 ```
 index.html   →  Double-click to launch
 convert.py   →  Rebuild data.js from Obsidian vault
+quiz-cli.py  →  Safe quiz management (add, verify, backup, restore)
+test.js      →  Smoke tests (syntax, CSS, quiz format, REFERENCE)
 guide-content.txt  →  Static guide page content
 SKILL.md     →  Full AI contributor reference
 css/         →  base.css + layout.css + components.css (4 themes)
@@ -54,26 +50,21 @@ See [SKILL.md](SKILL.md) for the complete architecture, data flow, rendering rul
 
 ## Adding Your Own Content
 
-You can extend DeepVault with your own notes, categories, and quizzes. The pre-loaded content stays — you're adding to it, not replacing it.
-
-### Add Notes to Existing Categories
-
-1. Write `.md` files in your Obsidian vault folder (e.g., `C++ Fundamentals/My Note.md`)
-2. Run `python convert.py` — it detects new files and rebuilds `data.js`
-3. Add quiz questions for your notes in `js/data.js` (see format below)
-4. Open `index.html` — your notes appear alongside the existing ones
+You can use DeepVault for ANY subject. The platform doesn't care what you're teaching.
 
 ### Add a Brand New Category
 
-1. Create a folder in your Obsidian vault (e.g., `Shaders/`) and add `.md` notes
+1. Create a folder in your Obsidian vault (e.g., `Medicine/`) and add `.md` notes
 2. Add one entry to `FOLDER_MAP` in `convert.py`:
    ```python
-   ('shaders', 'Shader Programming', 'Shaders', '🎨', '#ff6b6b'),
+   ('medicine', 'Medicine', 'Medicine', '🩺', '#ff6b6b'),
    ```
    Format: `(id, display_name, vault_folder, icon, color)`
 3. Run `python convert.py` — your category appears on the dashboard
-4. Add quiz questions for your notes in `QUIZ_DATA` inside `js/data.js`
-5. Run `python convert.py` again — it preserves your quizzes during rebuild
+4. Add quiz questions for your notes using `quiz-cli.py`:
+   ```bash
+   python quiz-cli.py add my_quizzes.json
+   ```
 
 ### Quiz Format
 
@@ -102,32 +93,26 @@ QUIZ_DATA['My Note'] = {
 - Every question must have an explanation
 - See [SKILL.md](SKILL.md) for the complete format reference
 
-## Folder Structure (Vault)
+## Content Quality Standards
 
-```
-Game Development/          ←  Your Obsidian vault root
-├── Computer Systems/
-│   ├── Hardware/              ← 3 subfolders: Hardware, System Software, Concurrency
-├── C++ Fundamentals/
-│   ├── Core Language/     ←  Subfolders → collapsible groups
-│   ├── Memory & Ownership/
-│   ├── OOP & Polymorphism/
-│   └── Types & Data/
-├── Game Math/
-│   ├── Advanced/
-│   └── UE Math/
-├── UE Core/
-├── UE Networking/
-└── Big O Notation/
-```
+DeepVault notes are **lessons, not summaries**. Every note follows these principles:
+
+- **Hardware-first / Concrete-first:** Start from physical reality — what's actually happening — before abstractions
+- **Two-Way Explanation:** Every note has both a simple analogy and a technical deep dive
+- **No shallow summaries:** Deep coverage of concepts, not bullet-point overviews. 700-1100 line notes are normal
+- **Prerequisites callout:** Every note states what you need to know before reading it
+- **See Also with wiki-links:** Every note links to related notes for cross-referencing
+- **Exercises:** Conceptual, code/application, analysis, and real-world problems per note
+
+See [SKILL.md](SKILL.md) for the full pedagogical standards.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or features. AI contributors: read [SKILL.md](SKILL.md) first — it has 10 critical rules and every pitfall we encountered.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or features. AI contributors: read [SKILL.md](SKILL.md) first — it has every pitfall from dozens of commits of development.
 
 ## License
 
-- **Code** (HTML/CSS/JS/`convert.py`): MIT — use, modify, learn from freely
+- **Code** (HTML/CSS/JS/`convert.py`/`quiz-cli.py`): MIT — use, modify, learn from freely
 - **Content** (notes, quizzes, guides): All Rights Reserved — may not be republished (see [CONTENT_LICENSE.md](CONTENT_LICENSE.md))
 
 ---
@@ -136,8 +121,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add quizzes, notes, or feature
 
 DeepVault was built entirely with AI assistance. Every note, quiz, theme, and feature — from the markdown renderer to the collapsible folder groups — was designed, coded, and debugged through AI collaboration. The [SKILL.md](SKILL.md) file documents every architectural decision and pitfall from dozens of commits of development.
 
-**Content is actively updated.** New notes, quizzes, and categories are added regularly from the author's Obsidian vault. Star the repo to stay updated.
+**Content is actively updated.** New notes, quizzes, and categories are added regularly. Star the repo to stay updated.
 
 If you're contributing with AI, load SKILL.md first — it prevents the exact bugs we already solved.
-
-Built for [Mayk's vault](https://github.com/MaykEu). Source-verified against UE 5.8 engine code.
