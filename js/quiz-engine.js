@@ -111,7 +111,7 @@ const QuizEngine = {
 
     if (s.submitted) {
       const isCorrect = s.answers[s.currentIndex + '_correct'];
-      const correctAns = isMC(q) ? q.options[q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || '');
+      const correctAns = this.isMC(q) ? q.options[q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || '');
       html += `
         <div class="feedback ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
           ${isCorrect ? '✅ Correct!' : '❌ Incorrect'}
