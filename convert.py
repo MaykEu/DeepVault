@@ -155,7 +155,7 @@ def main():
     # NOTES_CONTENT
     lines.append('const NOTES_CONTENT = {')
     for name, obj in notes_content.items():
-        lines.append(f"  '{name}': {{\n    title: \"{name}\",\n    folder: \"{obj['folder']}\",\n    content: {json.dumps(obj['content'])}\n  }},")
+        lines.append(f"  '{name}': {{\ntitle: \"{name}\",\nfolder: \"{obj['folder']}\",\ncontent: {json.dumps(obj['content'])}\n  }},")
     lines.append('};\n')
     
     # REFERENCE
@@ -202,6 +202,25 @@ def main():
         sys.exit(1)
     os.remove(tmp)
     
+    
+    # Preserve existing quizzes
+    try:
+        with open(OUTPUT, 'r', encoding='utf-8') as f:
+            old = f.read()
+        qn = old.find('const QUIZ_NOTES = {')
+        qd = old.find('const QUIZ_DATA = {')
+        ref = old.find('const REFERENCE')
+        if qn > 0 and qn < (ref if ref > 0 else len(old)):
+            quiz_block = old[qn:ref if ref > 0 else len(old)]
+            # Strip trailing whitespace/newlines
+            quiz_block = quiz_block.rstrip()
+            if quiz_block:
+                # Insert before REFERENCE
+                ref_pos = output.find('const REFERENCE')
+                if ref_pos > 0:
+                    output = output[:ref_pos] + quiz_block + '\n\n' + output[ref_pos:]
+    except:
+        pass
     # Write
     with open(OUTPUT, 'w', encoding='utf-8') as f:
         f.write(output)
