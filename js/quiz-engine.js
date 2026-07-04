@@ -36,7 +36,6 @@ const QuizEngine = {
             elapsed: r.elapsed, isReview: false
           });
           return;
-          return;
         }
       } catch(e) {}
     }
