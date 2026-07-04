@@ -35,7 +35,7 @@ const QuizEngine = {
             wrongCount: r.total - r.correctCount,
             elapsed: r.elapsed, isReview: false
           });
-          sessionStorage.removeItem('dv_last_result');
+          return;
           return;
         }
       } catch(e) {}
