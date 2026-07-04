@@ -144,24 +144,31 @@ def cmd_verify(args=None):
     ref = data.find("const REFERENCE")
     quizzes = re.findall(r"QUIZ_DATA\['([^']+)'\] = (\{.*?\});", data[:ref])
     
-    # Fallback: parse object literal format: const QUIZ_DATA = { 'name': {...}, ... };
+    # Fallback: parse object literal format using Node.js
     if not quizzes:
         qds = data.find('const QUIZ_DATA = {')
         if qds != -1:
+            import subprocess, tempfile, os
+            brace_start = data.find('{', qds)
             depth = 0
-            for i in range(qds, len(data)):
+            for i in range(brace_start, len(data)):
                 if data[i] == '{': depth += 1
                 elif data[i] == '}': depth -= 1
                 if depth == 0: break
-            raw_obj = data[data.find('{', qds):i+1]
-            # Parse as JSON
-            try:
-                obj = json.loads(raw_obj)
-                for name, qdata in obj.items():
-                    raw = json.dumps(qdata)
-                    quizzes.append((name, raw))
-            except json.JSONDecodeError:
-                pass
+            raw_obj = data[brace_start:i+1]
+            # Write to temp file, eval with node, read back
+            tmpf = tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False, encoding='utf-8')
+            tmpf.write(f"process.stdout.write(JSON.stringify(({raw_obj})));")
+            tmpf.close()
+            result = subprocess.run(['node', tmpf.name], capture_output=True, text=True)
+            os.unlink(tmpf.name)
+            if result.returncode == 0:
+                try:
+                    obj = json.loads(result.stdout)
+                    for name, qdata in obj.items():
+                        quizzes.append((name, json.dumps(qdata)))
+                except json.JSONDecodeError:
+                    pass
     
     errors = 0
     for name, raw in quizzes:
