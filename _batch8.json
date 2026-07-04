@@ -1,0 +1,238 @@
+[
+  {
+    "note": "01 — DRAM Cells & Memory Physics",
+    "questions": [
+      {
+        "question": "What physically stores a bit in DRAM?",
+        "options": [
+          "A transistor",
+          "A capacitor holding or not holding charge (1T1C cell)",
+          "A magnetic domain",
+          "A flip-flop"
+        ],
+        "correctAnswer": "A capacitor holding or not holding charge (1T1C cell)",
+        "explanation": "DRAM = 1 transistor + 1 capacitor per bit. Capacitor charged = 1, discharged = 0. Must be refreshed every ~64ms."
+      },
+      {
+        "question": "Why is DRAM called 'dynamic'?",
+        "options": [
+          "It changes speed",
+          "Capacitor charge leaks out — must be refreshed every ~64ms or data is lost. Unlike SRAM which holds state.",
+          "It's fast",
+          "It uses transistors"
+        ],
+        "correctAnswer": "Capacitor charge leaks out — must be refreshed every ~64ms or data is lost. Unlike SRAM which holds state.",
+        "explanation": "Dynamic = decays. Refresh reads and rewrites every row every 64ms. ~4.5% of DRAM time lost to refresh at normal temp."
+      },
+      {
+        "question": "What is the row buffer and why does it matter?",
+        "options": [
+          "A cache",
+          "When a row is opened, ALL columns are read into sense amplifiers. Subsequent accesses to same row are ~14ns vs ~40ns for closed row.",
+          "A register",
+          "A type of DRAM"
+        ],
+        "correctAnswer": "When a row is opened, ALL columns are read into sense amplifiers. Subsequent accesses to same row are ~14ns vs ~40ns for closed row.",
+        "explanation": "Row buffer hit = ~14ns (column access). Row buffer miss = tRCD + CL = ~40ns (precharge + row activate + column). 3x difference."
+      },
+      {
+        "question": "Why is DRAM latency ~80-100ns while L1 cache is ~1ns?",
+        "options": [
+          "DRAM uses slower technology",
+          "Physical distance (15-25cm PCB trace = ~1ns minimum), DRAM array sensing (~50ns), bus transfer overhead",
+          "DRAM is larger",
+          "L1 uses magic"
+        ],
+        "correctAnswer": "Physical distance (15-25cm PCB trace = ~1ns minimum), DRAM array sensing (~50ns), bus transfer overhead",
+        "explanation": "Four reasons: distance (speed of light), DRAM array internal slowness (tRCD + CL + tRP), pin bandwidth bottleneck, bank precharge."
+      },
+      {
+        "question": "What is the memory wall?",
+        "correctAnswer": "CPU can execute ~400 instructions in the time of one DRAM access (100ns at 4GHz). Every cache level exists to avoid hitting DRAM.",
+        "acceptableAnswers": [
+          "CPU executes 400 instructions per DRAM access",
+          "CPU is much faster than RAM",
+          "the gap between CPU speed and memory latency"
+        ],
+        "explanation": "4 instructions/ns × 100ns = 400 instructions per DRAM access. All caching, prefetching, data-oriented design exists because of this."
+      }
+    ]
+  },
+  {
+    "note": "02 — Page Tables & TLB",
+    "questions": [
+      {
+        "question": "What is virtual memory's fundamental trick?",
+        "options": [
+          "More RAM",
+          "Every process thinks it owns ALL memory starting at address 0. The OS silently translates virtual→physical addresses.",
+          "Faster memory",
+          "Disk as RAM"
+        ],
+        "correctAnswer": "Every process thinks it owns ALL memory starting at address 0. The OS silently translates virtual→physical addresses.",
+        "explanation": "Virtual address space = private illusion. MMU translates every access. Each process has its own page table → different physical frames."
+      },
+      {
+        "question": "How many levels does x86-64 page table have?",
+        "options": [
+          "1",
+          "4 (PML4 → PDPT → PD → PT) — 9 bits each, 12-bit offset = 48-bit virtual address",
+          "8",
+          "16"
+        ],
+        "correctAnswer": "4 (PML4 → PDPT → PD → PT) — 9 bits each, 12-bit offset = 48-bit virtual address",
+        "explanation": "4-level radix tree. Each level = 512 entries. 4 sequential memory accesses for one translation. TLB caches recent translations."
+      },
+      {
+        "question": "What is the TLB and why is it critical?",
+        "options": [
+          "A type of DRAM",
+          "Translation Lookaside Buffer — a small hardware cache (64 entries L1) for recent virtual→physical translations. ~1 cycle hit.",
+          "A page table",
+          "A CPU register"
+        ],
+        "correctAnswer": "Translation Lookaside Buffer — a small hardware cache (64 entries L1) for recent virtual→physical translations. ~1 cycle hit.",
+        "explanation": "TLB hit = ~1 cycle. TLB miss = 4-level page walk (~50-400ns). Without TLB, the MMU would need 4 memory accesses per translation."
+      },
+      {
+        "question": "How much memory does a 64-entry L1 D-TLB cover with 4KB pages?",
+        "options": [
+          "4GB",
+          "256 KB (64 × 4KB) — very small! This is why huge pages matter.",
+          "64 MB",
+          "1 GB"
+        ],
+        "correctAnswer": "256 KB (64 × 4KB) — very small! This is why huge pages matter.",
+        "explanation": "64 entries × 4KB = 256KB. If your working set is larger, TLB misses dominate. Solution: 2MB huge pages → 128MB coverage."
+      },
+      {
+        "question": "What are the three key reasons virtual memory exists?",
+        "correctAnswer": "Isolation (processes can't access each other), simplification (programs start at address 0), overcommit (OS can promise more than physical RAM)",
+        "acceptableAnswers": [
+          "isolation simplification overcommit",
+          "isolation, simplification, overcommit"
+        ],
+        "explanation": "Isolation = process can't read/write other processes. Simplification = every program thinks it starts at 0. Overcommit = allocate 10GB, use 2GB."
+      }
+    ]
+  },
+  {
+    "note": "03 — Page Faults, mmap & Swap",
+    "questions": [
+      {
+        "question": "What are the three types of page faults?",
+        "correctAnswer": "Minor (soft — page in RAM, just update PTE), Major (hard — page on disk, must I/O), Invalid (no mapping — SIGSEGV)",
+        "acceptableAnswers": [
+          "minor major invalid",
+          "minor, major, invalid",
+          "soft hard invalid"
+        ],
+        "explanation": "Minor: ~1-3µs, no I/O. Major: ~50-100µs (NVMe) or 5-10ms (HDD), disk I/O. Invalid: crash (null pointer, use-after-free)."
+      },
+      {
+        "question": "What is demand paging?",
+        "options": [
+          "Loading all pages at once",
+          "Physical pages allocated on FIRST access (page fault). 100MB allocation = microseconds; real cost amortized per 4KB touched.",
+          "Pre-loading pages",
+          "Swapping to disk"
+        ],
+        "correctAnswer": "Physical pages allocated on FIRST access (page fault). 100MB allocation = microseconds; real cost amortized per 4KB touched.",
+        "explanation": "new/malloc creates VMA entries but no physical pages. Each 4KB page faulted in on first write. OS is lazy — laziness is performance."
+      },
+      {
+        "question": "What does mmap do that read() doesn't?",
+        "options": [
+          "Same thing",
+          "Maps a file into virtual address space — file becomes memory. Access triggers page faults that load data on-demand.",
+          "Allocates heap",
+          "Creates a file"
+        ],
+        "correctAnswer": "Maps a file into virtual address space — file becomes memory. Access triggers page faults that load data on-demand.",
+        "explanation": "mmap: file pages mapped into process address space. First access = major page fault → DMA from disk. No explicit read() calls."
+      },
+      {
+        "question": "What is thrashing?",
+        "options": [
+          "Fast swapping",
+          "Working set exceeds physical RAM → constant page faults → system spends more time swapping than computing",
+          "A type of deadlock",
+          "Cache optimization"
+        ],
+        "correctAnswer": "Working set exceeds physical RAM → constant page faults → system spends more time swapping than computing",
+        "explanation": "Thrashing = disk I/O saturation from swap. Mouse lags, CPU idle (waiting for disk). Fix: add RAM or reduce working set."
+      },
+      {
+        "question": "What does mlock()/VirtualLock() do?",
+        "options": [
+          "Nothing",
+          "Pins pages in physical RAM — they can never be swapped out. For latency-critical data (audio buffers, game state).",
+          "Allocates memory",
+          "Locks a mutex"
+        ],
+        "correctAnswer": "Pins pages in physical RAM — they can never be swapped out. For latency-critical data (audio buffers, game state).",
+        "explanation": "mlock prevents swap for critical pages. Tradeoff: reduces swappable pool. Lock sparingly — only what can't tolerate 10ms stall."
+      }
+    ]
+  },
+  {
+    "note": "04 — Huge Pages, NUMA & Boot Process",
+    "questions": [
+      {
+        "question": "How much memory does a 64-entry TLB cover with 2MB huge pages?",
+        "options": [
+          "256 KB",
+          "128 MB (64 × 2MB) — 512× more than 4KB pages",
+          "4 GB",
+          "1 TB"
+        ],
+        "correctAnswer": "128 MB (64 × 2MB) — 512× more than 4KB pages",
+        "explanation": "2MB pages = 21 offset bits (vs 12). One TLB entry covers 512× more. 64 entries × 2MB = 128MB. 1GB pages → 64GB coverage."
+      },
+      {
+        "question": "What is NUMA and why does it matter?",
+        "options": [
+          "A CPU brand",
+          "Non-Uniform Memory Access — on multi-socket systems, each CPU has local RAM (~100ns) and remote RAM (~150-250ns)",
+          "A type of cache",
+          "A page size"
+        ],
+        "correctAnswer": "Non-Uniform Memory Access — on multi-socket systems, each CPU has local RAM (~100ns) and remote RAM (~150-250ns)",
+        "explanation": "Multi-socket: each CPU socket has its own memory controller. Local access fast, remote access 1.5-2.5× slower via inter-socket link."
+      },
+      {
+        "question": "What is Linux's first-touch memory allocation policy?",
+        "options": [
+          "First thread gets all memory",
+          "Physical page allocated from the NUMA node of the thread that FIRST writes to it — placement depends on which thread touches it",
+          "Random allocation",
+          "Round-robin"
+        ],
+        "correctAnswer": "Physical page allocated from the NUMA node of the thread that FIRST writes to it — placement depends on which thread touches it",
+        "explanation": "First-touch: if main thread allocates on socket 0, then worker on socket 1 accesses → ALL accesses are remote (slow). Touch from correct thread."
+      },
+      {
+        "question": "What is the OOM Killer?",
+        "options": [
+          "A debugging tool",
+          "When kernel can't satisfy allocation (no RAM, no swap), it kills a process based on oom_score heuristics",
+          "A type of mutex",
+          "A memory leak detector"
+        ],
+        "correctAnswer": "When kernel can't satisfy allocation (no RAM, no swap), it kills a process based on oom_score heuristics",
+        "explanation": "OOM Killer = last resort. Assigns oom_score (higher = more likely to die). Kills highest-scoring process. No negotiation."
+      },
+      {
+        "question": "What is memory overcommit on Linux?",
+        "options": [
+          "Using too much RAM",
+          "malloc succeeds even when RAM+swap can't cover the request — kernel promises memory, only commits on first write",
+          "A memory leak",
+          "A kernel bug"
+        ],
+        "correctAnswer": "malloc succeeds even when RAM+swap can't cover the request — kernel promises memory, only commits on first write",
+        "explanation": "vm.overcommit_memory=0 (heuristic). malloc(10GB) on 512MB machine → non-NULL! OOM Killer handles when you actually use it."
+      }
+    ]
+  }
+]
