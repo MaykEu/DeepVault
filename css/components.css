@@ -304,25 +304,30 @@
 
 /* Learning Path grid */
 .lp-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem; margin-top: 1.5rem;
 }
 .lp-card, .lp-card:visited, .lp-card:link { text-decoration: none; color: inherit; }
 .lp-card {
   display: flex; flex-direction: column; gap: 0.3rem;
-  padding: 1.2rem 1.25rem;
+  padding: 1rem 1.1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-left: 3px solid var(--text-muted);
+  border-radius: 0 var(--radius) var(--radius) 0;
   text-decoration: none; cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: border-left-color 0.15s, box-shadow 0.15s;
 }
 .lp-card:hover {
-  border-color: var(--accent);
-  box-shadow: 0 0 14px rgba(88,166,255,0.08);
-  transform: translateY(-1px);
+  border-left-color: var(--accent);
+  box-shadow: 0 0 12px rgba(88,166,255,0.06);
   text-decoration: none; color: inherit;
 }
-.lp-card-icon { font-size: 1.6rem; line-height: 1; }
-.lp-card-name { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
-.lp-card-meta { font-size: 0.75rem; color: var(--text-muted); }
+.lp-card-icon { font-size: 1.3rem; line-height: 1; }
+.lp-card-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+.lp-card-meta { font-size: 0.73rem; color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .lp-grid { grid-template-columns: 1fr; }
+}
