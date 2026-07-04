@@ -532,5 +532,342 @@
         "explanation": "Note gives three reasons: prevents accidental temporaries, makes allocations visible, defends against refactoring bugs."
       }
     ]
+  },
+  {
+    "note": "07 — const Correctness",
+    "questions": [
+      {
+        "question": "What does `const int* p;` mean?",
+        "options": [
+          "p is a const pointer to int",
+          "p is a pointer to const int — can't modify the int through p",
+          "Both const",
+          "Neither const"
+        ],
+        "correctAnswer": "p is a pointer to const int — can't modify the int through p",
+        "explanation": "Note: 'Read right-to-left: const int* p = p is a pointer to an int that is const.'"
+      },
+      {
+        "question": "What does `int* const p;` mean?",
+        "options": [
+          "p is pointer to const int",
+          "p is const pointer to int — can't change where p points",
+          "Both const",
+          "Neither const"
+        ],
+        "correctAnswer": "p is const pointer to int — can't change where p points",
+        "explanation": "Note: 'Read right-to-left: int* const p = p is a const pointer to an int.'"
+      },
+      {
+        "question": "What does `const` on a member function mean?",
+        "options": [
+          "Returns const value",
+          "Can only be called on const objects",
+          "This method does not modify the object's observable state — compiler-enforced",
+          "Compile-time constant"
+        ],
+        "correctAnswer": "This method does not modify the object's observable state — compiler-enforced",
+        "explanation": "Note: 'const on a member function means: this method does not modify the object's observable state.'"
+      },
+      {
+        "question": "What is `mutable` used for on member variables?",
+        "options": [
+          "Thread-safety",
+          "Allows modification of that variable even in const methods",
+          "Makes variable volatile",
+          "Enables move semantics"
+        ],
+        "correctAnswer": "Allows modification of that variable even in const methods",
+        "explanation": "Note: 'mutable — can change even in const methods. Used for caching, access counters, mutexes.'"
+      },
+      {
+        "question": "What is the 'shallow const' problem with pointer members?",
+        "options": [
+          "const methods can't be called",
+          "const only protects the pointer itself — not what it points to",
+          "const methods are slower",
+          "No problem exists"
+        ],
+        "correctAnswer": "const only protects the pointer itself — not what it points to",
+        "explanation": "Note warns: 'const only protects TOP-LEVEL members. A pointer member: const prevents changing the pointer, but NOT modifying what it points to.'"
+      },
+      {
+        "question": "What does `const int* const p;` mean?",
+        "options": [
+          "p is pointer to const int",
+          "p is const pointer to const int — can't modify int through p AND can't change where p points",
+          "p is const pointer to int",
+          "Conflicting — won't compile"
+        ],
+        "correctAnswer": "p is const pointer to const int — can't modify int through p AND can't change where p points",
+        "explanation": "Note: 'const int* const p = Both — can't modify the int, can't change the pointer.'"
+      },
+      {
+        "question": "Can a const method call a non-const method on the same object?",
+        "options": [
+          "Yes, always",
+          "No — a const method has a const this pointer, which can't be passed to a non-const method",
+          "Yes, if the method is static",
+          "Only in C++20"
+        ],
+        "correctAnswer": "No — a const method has a const this pointer, which can't be passed to a non-const method",
+        "explanation": "Note: const member functions have `const this`. Calling a non-const method would violate the const contract."
+      },
+      {
+        "question": "What is const-correctness and why is it important?",
+        "options": [
+          "Using const everywhere",
+          "Using const to document and enforce which code can modify which data — catches bugs at compile time",
+          "Making all variables const",
+          "A deprecated C++98 feature"
+        ],
+        "correctAnswer": "Using const to document and enforce which code can modify which data — catches bugs at compile time",
+        "explanation": "Note: const documents intent and enforces it through the compiler. The single most important keyword for preventing bugs."
+      }
+    ]
+  },
+  {
+    "note": "08 — Preprocessor & Macros",
+    "questions": [
+      {
+        "question": "When does the preprocessor run relative to the compiler?",
+        "options": [
+          "After compiler",
+          "During linking",
+          "BEFORE the compiler — it's a text processing step, doesn't understand C++",
+          "Only with #define"
+        ],
+        "correctAnswer": "BEFORE the compiler — it's a text processing step, doesn't understand C++",
+        "explanation": "Note: 'The preprocessor runs BEFORE the compiler. It's a text processing step — it doesn't understand C++.'"
+      },
+      {
+        "question": "What does `#include` literally do?",
+        "options": [
+          "Import only used declarations",
+          "Copy-pastes the entire contents of the included file at the directive's position",
+          "Links to a shared library",
+          "Checks if file exists"
+        ],
+        "correctAnswer": "Copy-pastes the entire contents of the included file at the directive's position",
+        "explanation": "Note: '#include literally copies the entire contents of the included file at the directive's position.'"
+      },
+      {
+        "question": "What problem do include guards solve?",
+        "options": [
+          "Security vulnerabilities",
+          "Multiple definition errors from the same header being included twice in one translation unit",
+          "Slow compilation",
+          "Type mismatches"
+        ],
+        "correctAnswer": "Multiple definition errors from the same header being included twice in one translation unit",
+        "explanation": "Note: 'Include Guards — Prevent Double Inclusion. Without them, class defined twice = compile error.'"
+      },
+      {
+        "question": "What is the difference between `#include <file>` and `#include \"file\"`?",
+        "options": [
+          "No difference",
+          "<file> searches system paths first; \"file\" searches current directory first, then system paths",
+          "<file> for C; \"file\" for C++",
+          "\"file\" is deprecated"
+        ],
+        "correctAnswer": "<file> searches system paths first; \"file\" searches current directory first, then system paths",
+        "explanation": "Note: '#include <file> — standard library, system paths. #include \"file\" — your header, current dir first.'"
+      },
+      {
+        "question": "What does `#define MAX 100` do?",
+        "options": [
+          "Declares a constant integer",
+          "Text replacement — every MAX token is replaced with 100 before the compiler sees it",
+          "Creates a variable named MAX",
+          "Sets a compiler flag"
+        ],
+        "correctAnswer": "Text replacement — every MAX token is replaced with 100 before the compiler sees it",
+        "explanation": "Note: The preprocessor does find-and-replace. Every MAX_HEALTH becomes 100 before compilation."
+      },
+      {
+        "question": "What does `#pragma once` do?",
+        "options": [
+          "Nothing — it's a comment",
+          "An alternative to include guards — ensures the file is included only once per translation unit",
+          "Disables all warnings in the file",
+          "Marks the file as a system header"
+        ],
+        "correctAnswer": "An alternative to include guards — ensures the file is included only once per translation unit",
+        "explanation": "Note: '#pragma once is simpler and supported by every major compiler.' Serves the same purpose as #ifndef guards."
+      },
+      {
+        "question": "What does `#ifdef DEBUG` / `#endif` do?",
+        "options": [
+          "Creates a runtime if-statement",
+          "Conditional compilation — the code between them is only compiled if DEBUG is defined",
+          "Throws a compiler error if DEBUG is not defined",
+          "Optimizes the code differently"
+        ],
+        "correctAnswer": "Conditional compilation — the code between them is only compiled if DEBUG is defined",
+        "explanation": "Note: '#ifdef enables conditional compilation. Debug-only code doesn't exist in release builds.'"
+      }
+    ]
+  },
+  {
+    "note": "09 — String Types & string_view",
+    "questions": [
+      {
+        "question": "What is the Small String Optimization (SSO)?",
+        "options": [
+          "A compiler flag",
+          "Short strings (~15 chars on GCC/MSVC) live inside the string object itself — no heap allocation",
+          "String compression",
+          "A faster allocator"
+        ],
+        "correctAnswer": "Short strings (~15 chars on GCC/MSVC) live inside the string object itself — no heap allocation",
+        "explanation": "Note: 'If short enough (typically 15 chars), the characters live inside the string object itself. SSO.'"
+      },
+      {
+        "question": "What is `std::string_view`?",
+        "options": [
+          "A mutable owning string",
+          "A non-owning, read-only window — just a pointer and length, 16 bytes on 64-bit",
+          "A C++23 replacement",
+          "An auto-freeing string"
+        ],
+        "correctAnswer": "A non-owning, read-only window — just a pointer and length, 16 bytes on 64-bit",
+        "explanation": "Note: 'string_view is a borrowed reference. It doesn't own data. A pointer and a length — 16 bytes.'"
+      },
+      {
+        "question": "Why is `string_view::substr` faster than `string::substr`?",
+        "options": [
+          "Uses SIMD",
+          "Adjusts pointer and length — zero allocation, zero copy",
+          "Higher optimization",
+          "Thread pool"
+        ],
+        "correctAnswer": "Adjusts pointer and length — zero allocation, zero copy",
+        "explanation": "Note: 'substr on string_view just adjusts the pointer and length. string::substr allocates a new string and copies.'"
+      },
+      {
+        "question": "What is the main danger with `string_view`?",
+        "options": [
+          "Slow",
+          "Dangles if the source string is destroyed",
+          "Can't be printed",
+          "Throws exceptions"
+        ],
+        "correctAnswer": "Dangles if the source string is destroyed",
+        "explanation": "Note: 'string_view doesn't own data. If the source is destroyed, the view becomes a dangling reference.'"
+      },
+      {
+        "question": "What is the rule of thumb for choosing between string types?",
+        "correctAnswer": "string when you own the data, string_view when you're just looking at it, const char* for C APIs",
+        "acceptableAnswers": [
+          "own: string, view: string_view, C API: const char*",
+          "string for ownership, string_view for viewing, const char* for C"
+        ],
+        "explanation": "Note: 'string when you own the data. string_view when you're just looking at it. const char* when calling a C API.'"
+      },
+      {
+        "question": "Is `string_view` guaranteed to be null-terminated?",
+        "options": [
+          "Yes, always",
+          "No — it's not guaranteed; use std::string for null-termination",
+          "Only in C++23",
+          "It depends on the source"
+        ],
+        "correctAnswer": "No — it's not guaranteed; use std::string for null-termination",
+        "explanation": "Note: 'string_view is NOT null-terminated. If passing to C function, use std::string or verify manually.'"
+      },
+      {
+        "question": "How many bytes is a typical `std::string` object (without heap data)?",
+        "options": [
+          "8 bytes",
+          "16 bytes",
+          "24-32 bytes",
+          "64 bytes"
+        ],
+        "correctAnswer": "24-32 bytes",
+        "explanation": "Note table shows std::string as 24-32 bytes (includes SSO buffer, size, capacity)."
+      },
+      {
+        "question": "What C++20 header provides std::format for type-safe string formatting?",
+        "options": [
+          "<iostream>",
+          "<sstream>",
+          "<format>",
+          "<string>"
+        ],
+        "correctAnswer": "<format>",
+        "explanation": "Note mentions C++20's std::format as a safer alternative to printf for string formatting."
+      }
+    ]
+  },
+  {
+    "note": "10 — std format (C++20)",
+    "questions": [
+      {
+        "question": "What is the key safety advantage of std::format over printf?",
+        "options": [
+          "Faster execution",
+          "Format string type mismatches are caught at compile time, not runtime",
+          "More format specifiers",
+          "Less memory usage"
+        ],
+        "correctAnswer": "Format string type mismatches are caught at compile time, not runtime",
+        "explanation": "Note: 'Errors in your format string are caught at compile time — not at 3 AM when a player triggers a rare dialogue path.'"
+      },
+      {
+        "question": "How do you make a custom type work with std::format?",
+        "options": [
+          "Overload operator<<",
+          "Specialize std::formatter<T> with constexpr parse() and format() methods",
+          "Inherit from std::formattable",
+          "Use a registration macro"
+        ],
+        "correctAnswer": "Specialize std::formatter<T> with constexpr parse() and format() methods",
+        "explanation": "Note: 'Custom types integrate via template specialization of std::formatter<T> with constexpr parse() and format().'"
+      },
+      {
+        "question": "What does `std::format(\"{1} + {0} = {2}\", 3, 2, 5)` produce?",
+        "options": [
+          "3 + 2 = 5",
+          "2 + 3 = 5",
+          "{1} + {0} = {2}",
+          "5 + 3 = 2"
+        ],
+        "correctAnswer": "2 + 3 = 5",
+        "explanation": "Note: 'Indexed arguments: {N} refers to the Nth argument (0-based). {1}=2, {0}=3, {2}=5 → 2 + 3 = 5.'"
+      },
+      {
+        "question": "What format specifier produces hex output with 0x prefix?",
+        "options": [
+          "{:#x}",
+          "{:x}",
+          "{:#h}",
+          "{:hex}"
+        ],
+        "correctAnswer": "{:#x}",
+        "explanation": "Note: '{:#x} prints 0xff — # adds the 0x prefix. {:x} prints just ff.'"
+      },
+      {
+        "question": "Why is std::format typically faster than std::ostringstream?",
+        "options": [
+          "Uses SIMD",
+          "No per-character locale checks, no sync_with_stdio overhead, no virtual dispatch — single allocation",
+          "Compiled with higher optimization",
+          "Uses GPU"
+        ],
+        "correctAnswer": "No per-character locale checks, no sync_with_stdio overhead, no virtual dispatch — single allocation",
+        "explanation": "Note: 'std::format avoids per-character locale checks, virtual dispatch through streambuf, and sync_with_stdio overhead.'"
+      },
+      {
+        "question": "What is std::format_to used for?",
+        "options": [
+          "Formatting only strings",
+          "Writing formatted output to any output iterator or pre-allocated buffer — no intermediate string allocation",
+          "Formatting to stdout only",
+          "Replacing std::cout"
+        ],
+        "correctAnswer": "Writing formatted output to any output iterator or pre-allocated buffer — no intermediate string allocation",
+        "explanation": "Note: 'format_to writes to arbitrary output iterators. format_to_n writes into a pre-allocated buffer.'"
+      }
+    ]
   }
 ]

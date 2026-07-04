@@ -1,0 +1,422 @@
+[
+  {
+    "note": "09 — std span (C++20)",
+    "questions": [
+      {
+        "question": "What is std::span?",
+        "options": [
+          "Heap array",
+          "Non-owning view over contiguous data — pointer + size, zero allocation",
+          "C++23 container",
+          "Thread-safe wrapper"
+        ],
+        "correctAnswer": "Non-owning view over contiguous data — pointer + size, zero allocation",
+        "explanation": "span stores T* and size_t. No ownership. No allocation."
+      },
+      {
+        "question": "What's the difference between span<T> and span<T,N>?",
+        "options": [
+          "None",
+          "span<T> = dynamic extent (16 bytes); span<T,N> = static extent (8 bytes, size in type)",
+          "span<T,N> is slower",
+          "span<T> deprecated"
+        ],
+        "correctAnswer": "span<T> = dynamic extent (16 bytes); span<T,N> = static extent (8 bytes, size in type)",
+        "explanation": "Static-extent spans store only the pointer — size is compile-time constant."
+      },
+      {
+        "question": "Can span prevent buffer overruns?",
+        "options": [
+          "No",
+          "In debug builds yes (bounds-checked access); in release it enables range-for which can't overrun",
+          "Only with static extent",
+          "Never"
+        ],
+        "correctAnswer": "In debug builds yes (bounds-checked access); in release it enables range-for which can't overrun",
+        "explanation": "span enables debug hardening and range-based loops that naturally can't exceed bounds."
+      },
+      {
+        "question": "What types can span be constructed from?",
+        "options": [
+          "Only vector",
+          "Vector, array, C array, pointer+size, other spans",
+          "Only C arrays",
+          "Only std::array"
+        ],
+        "correctAnswer": "Vector, array, C array, pointer+size, other spans",
+        "explanation": "span is universally constructible from any contiguous range."
+      },
+      {
+        "question": "Does span::subspan() allocate memory?",
+        "options": [
+          "Yes",
+          "No — just pointer arithmetic, O(1) zero-cost slicing",
+          "Only for large spans",
+          "Depends on extent"
+        ],
+        "correctAnswer": "No — just pointer arithmetic, O(1) zero-cost slicing",
+        "explanation": "Like string_view, span::subspan adjusts pointer and length — no allocation, no copy."
+      }
+    ]
+  },
+  {
+    "note": "10 — std filesystem",
+    "questions": [
+      {
+        "question": "What does fs::create_directories() do?",
+        "options": [
+          "Creates only last directory",
+          "Creates all intermediate directories (mkdir -p)",
+          "Deletes directories",
+          "Lists contents"
+        ],
+        "correctAnswer": "Creates all intermediate directories (mkdir -p)",
+        "explanation": "create_directories creates the full path including any missing parent directories."
+      },
+      {
+        "question": "What does path::stem() return for 'archive.tar.gz'?",
+        "options": [
+          "archive",
+          "archive.tar",
+          "archive.tar.gz",
+          "tar.gz"
+        ],
+        "correctAnswer": "archive.tar",
+        "explanation": "stem() removes only the last extension. extension() returns .gz."
+      },
+      {
+        "question": "How do you iterate over files in a directory?",
+        "options": [
+          "fs::read_dir()",
+          "fs::directory_iterator",
+          "fs::list_files()",
+          "fs::scan()"
+        ],
+        "correctAnswer": "fs::directory_iterator",
+        "explanation": "directory_iterator iterates non-recursively. recursive_directory_iterator goes into subdirectories."
+      },
+      {
+        "question": "What is the advantage of error_code overloads over exceptions?",
+        "options": [
+          "Faster",
+          "No exceptions in game loops — error_code is predictable, no stack unwinding cost",
+          "Smaller binary",
+          "Required by standard"
+        ],
+        "correctAnswer": "No exceptions in game loops — error_code is predictable, no stack unwinding cost",
+        "explanation": "Game loops prefer error_code — filesystem errors are expected (file not found, permission denied)."
+      },
+      {
+        "question": "What encoding does fs::path use on Windows vs Linux?",
+        "options": [
+          "Same encoding",
+          "Windows: UTF-16 (wchar_t); Linux: UTF-8 (char)",
+          "Always UTF-8",
+          "Always ASCII"
+        ],
+        "correctAnswer": "Windows: UTF-16 (wchar_t); Linux: UTF-8 (char)",
+        "explanation": "path abstracts platform encoding. Use path's string conversions, not raw c_str()."
+      }
+    ]
+  },
+  {
+    "note": "11 — std deque, set & Container Adaptors",
+    "questions": [
+      {
+        "question": "How does std::deque achieve O(1) push_front AND push_back?",
+        "options": [
+          "Linked list",
+          "Array of pointers to fixed-size blocks (chunked array)",
+          "Red-black tree",
+          "Single contiguous array"
+        ],
+        "correctAnswer": "Array of pointers to fixed-size blocks (chunked array)",
+        "explanation": "deque = chunked array. Push front allocates new block; push back same. No element shift."
+      },
+      {
+        "question": "Which container adaptor is FIFO?",
+        "options": [
+          "stack",
+          "queue",
+          "priority_queue",
+          "deque"
+        ],
+        "correctAnswer": "queue",
+        "explanation": "queue adapts deque to provide FIFO: push at back, pop from front."
+      },
+      {
+        "question": "What internal structure does std::set use?",
+        "options": [
+          "Hash table",
+          "Red-black tree — same as std::map but keys only, no values",
+          "Sorted array",
+          "Linked list"
+        ],
+        "correctAnswer": "Red-black tree — same as std::map but keys only, no values",
+        "explanation": "std::set is a sorted container of unique keys. O(log n) operations."
+      },
+      {
+        "question": "When should you use deque instead of vector?",
+        "options": [
+          "Always",
+          "When you need O(1) push_front AND push_back, and don't need contiguous memory",
+          "Never",
+          "Only for small data"
+        ],
+        "correctAnswer": "When you need O(1) push_front AND push_back, and don't need contiguous memory",
+        "explanation": "deque: O(1) both ends. vector: O(1) back only, O(n) front. deque elements NOT contiguous."
+      },
+      {
+        "question": "What does std::priority_queue provide?",
+        "options": [
+          "FIFO order",
+          "Always returns the largest element (max-heap by default)",
+          "LIFO order",
+          "Random access"
+        ],
+        "correctAnswer": "Always returns the largest element (max-heap by default)",
+        "explanation": "priority_queue is a max-heap. top() returns the largest element. pop() removes it."
+      }
+    ]
+  },
+  {
+    "note": "12 — std pmr (C++17)",
+    "questions": [
+      {
+        "question": "What is the key difference between vector<int> and pmr::vector<int>?",
+        "options": [
+          "None",
+          "pmr::vector uses runtime polymorphic allocator — same type regardless of memory source",
+          "pmr is faster",
+          "pmr is on stack"
+        ],
+        "correctAnswer": "pmr::vector uses runtime polymorphic allocator — same type regardless of memory source",
+        "explanation": "All pmr::vector<int> share the same type. Allocator is a runtime pointer, not template param."
+      },
+      {
+        "question": "What is a monotonic_buffer_resource?",
+        "options": [
+          "Thread-safe pool",
+          "Arena allocator — bump-pointer, freed all at once on destruction",
+          "GC",
+          "Shared memory"
+        ],
+        "correctAnswer": "Arena allocator — bump-pointer, freed all at once on destruction",
+        "explanation": "monotonic_buffer_resource = bump allocator. No individual frees. Reset by destroying the resource."
+      },
+      {
+        "question": "What is the performance advantage of pmr + monotonic over default allocator?",
+        "options": [
+          "No difference",
+          "Allocations are bump-pointer (extremely fast); no fragmentation; no per-object heap overhead",
+          "Uses less memory",
+          "Thread-safe by default"
+        ],
+        "correctAnswer": "Allocations are bump-pointer (extremely fast); no fragmentation; no per-object heap overhead",
+        "explanation": "Monotonic: one subtraction per alloc. No heap walking. Benchmark: 3-10x faster than default allocator."
+      },
+      {
+        "question": "What does unsynchronized_pool_resource do?",
+        "options": [
+          "Thread-safe pool",
+          "Pool of same-sized blocks — not thread-safe, designed for single-thread use",
+          "Global heap wrapper",
+          "Arena allocator"
+        ],
+        "correctAnswer": "Pool of same-sized blocks — not thread-safe, designed for single-thread use",
+        "explanation": "unsynchronized = no internal locking. Faster for single-thread use. Use synchronized_pool_resource for thread safety."
+      },
+      {
+        "question": "How do you use std::pmr with existing code that takes const vector<int>&?",
+        "options": [
+          "Can't — different types",
+          "pmr::vector<int> IS the same type — works with any memory_resource*",
+          "Must rewrite function signatures",
+          "Only with templates"
+        ],
+        "correctAnswer": "pmr::vector<int> IS the same type — works with any memory_resource*",
+        "explanation": "The killer feature: same type regardless of allocator. Functions taking pmr::vector<T> work with any backing resource."
+      }
+    ]
+  },
+  {
+    "note": "01 — Inheritance & Virtual Functions",
+    "questions": [
+      {
+        "question": "What does virtual enable?",
+        "options": [
+          "Faster calls",
+          "Runtime dispatch — function called depends on actual object type, not pointer type",
+          "Compile-time dispatch",
+          "Auto memory"
+        ],
+        "correctAnswer": "Runtime dispatch — function called depends on actual object type, not pointer type",
+        "explanation": "'virtual: Don't decide based on pointer type. Look at actual object at runtime.'"
+      },
+      {
+        "question": "What does override do?",
+        "options": [
+          "Makes faster",
+          "Compiler verifies function actually overrides base virtual — catches typos and signature mismatches",
+          "Required",
+          "Prevents calling"
+        ],
+        "correctAnswer": "Compiler verifies function actually overrides base virtual — catches typos and signature mismatches",
+        "explanation": "'Always use override. Catches typos, wrong params, wrong const, missing virtual in base.'"
+      },
+      {
+        "question": "Why virtual destructor required?",
+        "options": [
+          "Polymorphism",
+          "Delete through base pointer calls correct derived destructor chain",
+          "Style",
+          "RTTI"
+        ],
+        "correctAnswer": "Delete through base pointer calls correct derived destructor chain",
+        "explanation": "Without virtual destructor, delete Base* only calls ~Base(), leaking derived resources."
+      },
+      {
+        "question": "What is object slicing?",
+        "options": [
+          "Memory optimization",
+          "Copying a derived object to a base object — derived members are sliced off",
+          "Thread issue",
+          "Compiler warning"
+        ],
+        "correctAnswer": "Copying a derived object to a base object — derived members are sliced off",
+        "explanation": "'Enemy e; Character c = e; — SLICED! c is just Character. Enemy members lost.'"
+      },
+      {
+        "question": "What does final do on a class?",
+        "options": [
+          "Optimizes",
+          "Prevents further inheritance — no class can derive from it",
+          "Makes destructor virtual",
+          "Enables RTTI"
+        ],
+        "correctAnswer": "Prevents further inheritance — no class can derive from it",
+        "explanation": "final on class = no more derived classes. final on virtual function = no further overrides."
+      }
+    ]
+  },
+  {
+    "note": "02 — Lambdas & Function Objects",
+    "questions": [
+      {
+        "question": "What does the capture [] control?",
+        "options": [
+          "Return type",
+          "Which external variables lambda can access and how (by value or reference)",
+          "Parameters",
+          "Name"
+        ],
+        "correctAnswer": "Which external variables lambda can access and how (by value or reference)",
+        "explanation": "Capture list: [=] copies everything, [&] references everything, [x, &y] mixed."
+      },
+      {
+        "question": "What is the danger of [&] in async lambdas?",
+        "options": [
+          "Slower",
+          "Dangling references — if lambda outlives captured variables",
+          "Doesn't compile",
+          "Memory leak"
+        ],
+        "correctAnswer": "Dangling references — if lambda outlives captured variables",
+        "explanation": "'Capturing by Reference Is Dangerous. If referenced variable destroyed before lambda runs → UB.'"
+      },
+      {
+        "question": "What does mutable do on a lambda?",
+        "options": [
+          "Thread-safety",
+          "Allows modifying captured-by-value variables inside the lambda",
+          "Enables move",
+          "Prevents copy"
+        ],
+        "correctAnswer": "Allows modifying captured-by-value variables inside the lambda",
+        "explanation": "By default, lambda operator() is const. mutable removes that const."
+      },
+      {
+        "question": "What does std::function cost compared to a template parameter?",
+        "options": [
+          "Nothing",
+          "Virtual-like dispatch + potential heap allocation for large captures",
+          "Less memory",
+          "Faster"
+        ],
+        "correctAnswer": "Virtual-like dispatch + potential heap allocation for large captures",
+        "explanation": "std::function uses type erasure. Prefer template parameters for performance-critical code."
+      },
+      {
+        "question": "What is a generic lambda (C++14)?",
+        "options": [
+          "Lambda with explicit types",
+          "Lambda with auto parameters — generates templated operator()",
+          "Lambda in a template",
+          "Lambda with concepts"
+        ],
+        "correctAnswer": "Lambda with auto parameters — generates templated operator()",
+        "explanation": "[](auto a, auto b) { return a + b; } generates a template operator(). Works with any types."
+      }
+    ]
+  },
+  {
+    "note": "03 — C++ Casting & RTTI",
+    "questions": [
+      {
+        "question": "Which cast performs safe runtime-checked downcast?",
+        "options": [
+          "static_cast",
+          "dynamic_cast",
+          "const_cast",
+          "reinterpret_cast"
+        ],
+        "correctAnswer": "dynamic_cast",
+        "explanation": "dynamic_cast walks class hierarchy at runtime. Returns nullptr (pointer) or throws (reference) on failure."
+      },
+      {
+        "question": "What does static_cast do for downcasts?",
+        "options": [
+          "Runtime check",
+          "No runtime check — compiles silently, UB if wrong type",
+          "Throws",
+          "Returns nullptr"
+        ],
+        "correctAnswer": "No runtime check — compiles silently, UB if wrong type",
+        "explanation": "'static_cast downcasts are dangerous. No runtime check — if Base* is actually Base, not Derived → UB.'"
+      },
+      {
+        "question": "What does const_cast remove?",
+        "options": [
+          "volatile",
+          "const or volatile qualifiers",
+          "references",
+          "type information"
+        ],
+        "correctAnswer": "const or volatile qualifiers",
+        "explanation": "const_cast is the ONLY cast that can change cv-qualifiers. Modifying a const-declared object is still UB."
+      },
+      {
+        "question": "What does reinterpret_cast do?",
+        "options": [
+          "Converts types",
+          "Reinterprets bits of one type as another — no conversion, just treat these bytes as different type",
+          "Deletes objects",
+          "Checks types"
+        ],
+        "correctAnswer": "Reinterprets bits of one type as another — no conversion, just treat these bytes as different type",
+        "explanation": "reinterpret_cast is the nuclear option. Only for serialization, memory-mapped I/O, opaque handles."
+      },
+      {
+        "question": "What does C++20's std::bit_cast provide over reinterpret_cast?",
+        "options": [
+          "Faster",
+          "Defined behavior for trivially copyable types — no strict aliasing violation",
+          "More casts",
+          "Runtime check"
+        ],
+        "correctAnswer": "Defined behavior for trivially copyable types — no strict aliasing violation",
+        "explanation": "'std::bit_cast guarantees same size, copies bits, doesn't violate strict aliasing. Always prefer over reinterpret_cast.'"
+      }
+    ]
+  }
+]
