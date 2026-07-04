@@ -1,0 +1,310 @@
+[
+  {
+    "note": "00 — Primer Overview",
+    "questions": [
+      {
+        "question": "What is the C++ Primer designed for?",
+        "options": [
+          "Experienced C++ developers looking for a reference",
+          "Absolute beginners with zero programming experience",
+          "Game engine architects optimizing rendering",
+          "CS PhD students"
+        ],
+        "correctAnswer": "Absolute beginners with zero programming experience",
+        "explanation": "The note states: 'The entry point for absolute beginners. These notes assume zero prior experience.'"
+      },
+      {
+        "question": "What approach does the Primer take to teaching?",
+        "options": [
+          "Object-oriented design patterns first",
+          "Hardware-first — starting from transistors and bytes",
+          "Template metaprogramming from day one",
+          "Copy-paste from tutorials"
+        ],
+        "correctAnswer": "Hardware-first — starting from transistors and bytes",
+        "explanation": "The note: 'They start from hardware — what a transistor does, how a byte stores a number, what happens when you press compile.'"
+      },
+      {
+        "question": "How many notes are in the Primer reading sequence (excluding the overview)?",
+        "correctAnswer": "6",
+        "acceptableAnswers": [
+          "6",
+          "six"
+        ],
+        "explanation": "The reading order table lists 6 notes: Variables, Control Flow, Functions, Arrays & Vectors, Pointers & References, Compiling & Running."
+      },
+      {
+        "question": "What should a student do after finishing the C++ Primer?",
+        "options": [
+          "Read the Concurrency notes",
+          "Follow the Learning Path to the full C++ Fundamentals",
+          "Start writing a game engine immediately",
+          "Re-read the Primer notes again"
+        ],
+        "correctAnswer": "Follow the Learning Path to the full C++ Fundamentals",
+        "explanation": "The note: 'After this primer, you're ready for the full C++ Fundamentals Learning Path.'"
+      },
+      {
+        "question": "According to the study guide, what should you do with every code example?",
+        "correctAnswer": "Type it",
+        "acceptableAnswers": [
+          "Type it",
+          "type it",
+          "type every code example",
+          "type it yourself"
+        ],
+        "explanation": "The How to Study section: 'Type every code example — don't copy-paste.'"
+      },
+      {
+        "question": "What should you do before moving to the next note?",
+        "options": [
+          "Read the note twice",
+          "Complete every exercise",
+          "Watch a video tutorial",
+          "Post on a forum"
+        ],
+        "correctAnswer": "Complete every exercise",
+        "explanation": "Study guide: 'Complete every exercise before moving on.'"
+      },
+      {
+        "question": "Which of these is NOT in the Primer reading order?",
+        "options": [
+          "Variables, Types & Memory",
+          "Control Flow",
+          "Inheritance & Virtual Functions",
+          "Functions & The Call Stack"
+        ],
+        "correctAnswer": "Inheritance & Virtual Functions",
+        "explanation": "Inheritance is in the OOP section, not the Primer. The Primer covers fundamentals: variables, control flow, functions, arrays, pointers, compiling."
+      }
+    ]
+  },
+  {
+    "note": "01 — Variables, Types & Memory",
+    "questions": [
+      {
+        "question": "At the hardware level, what physically stores a single bit in DRAM?",
+        "options": [
+          "A transistor",
+          "A capacitor holding or not holding charge",
+          "A magnetic platter sector",
+          "A floating gate transistor"
+        ],
+        "correctAnswer": "A capacitor holding or not holding charge",
+        "explanation": "Note: 'RAM is a grid of billions of microscopic capacitors. One capacitor holds charge (1) or doesn't (0) = one bit.'"
+      },
+      {
+        "question": "How many bytes does `int score = 0;` reserve on modern platforms?",
+        "options": [
+          "1 byte",
+          "2 bytes",
+          "4 bytes",
+          "8 bytes"
+        ],
+        "correctAnswer": "4 bytes",
+        "explanation": "Note: 'the compiler reserves 4 bytes (32 capacitors) in RAM' for an int."
+      },
+      {
+        "question": "What three properties does every variable have?",
+        "correctAnswer": "A name, a type, and an address",
+        "acceptableAnswers": [
+          "name, type, and address",
+          "name type address",
+          "a name a type and an address"
+        ],
+        "explanation": "Note: 'Every variable has three properties: a name, a type (how to interpret the bits), and an address (where in the capacitor grid).'"
+      },
+      {
+        "question": "How does the CPU allocate space for local variables on the stack?",
+        "options": [
+          "Calls malloc() internally",
+          "Subtracts from the RSP register",
+          "Adds to the RBP register",
+          "Writes to a special allocation table"
+        ],
+        "correctAnswer": "Subtracts from the RSP register",
+        "explanation": "Note: 'Allocation = subtract from RSP. Deallocation = add to RSP. One CPU instruction.'"
+      },
+      {
+        "question": "The same 32-bit pattern 0x42C80000 can represent different values depending on type. What value as a float?",
+        "correctAnswer": "100.0",
+        "acceptableAnswers": [
+          "100.0",
+          "100",
+          "100.0f"
+        ],
+        "explanation": "The type lens table shows: interpreted as float → 100.0. Same bits, different meaning."
+      },
+      {
+        "question": "Why does `bool` waste 7 bits of a byte?",
+        "options": [
+          "The C++ standard requires it",
+          "The CPU's smallest addressable unit is one byte — it cannot address individual bits",
+          "Compilers are lazy about bool optimization",
+          "It's reserved for future use"
+        ],
+        "correctAnswer": "The CPU's smallest addressable unit is one byte — it cannot address individual bits",
+        "explanation": "Note warns: 'CPU can't address bits. 8 bools = 8 bytes, not 1.'"
+      },
+      {
+        "question": "How are signed integers encoded in modern C++?",
+        "options": [
+          "Sign-magnitude",
+          "One's complement",
+          "Two's complement",
+          "IEEE 754"
+        ],
+        "correctAnswer": "Two's complement",
+        "explanation": "Note: 'Negate: flip all bits, add 1.' Enables a single adder circuit for both signed and unsigned."
+      },
+      {
+        "question": "What are the three fields of an IEEE 754 single-precision float?",
+        "correctAnswer": "Sign, exponent, and mantissa",
+        "acceptableAnswers": [
+          "sign exponent mantissa",
+          "sign, exponent, and mantissa",
+          "sign exponent and mantissa",
+          "sign, exponent, significand"
+        ],
+        "explanation": "32 bits: sign (1 bit), exponent (8 bits, bias 127), mantissa (23 bits with implicit leading 1)."
+      },
+      {
+        "question": "What does `sizeof` return and when is it evaluated?",
+        "options": [
+          "The runtime size of a variable, evaluated at runtime",
+          "The compile-time size in bytes, evaluated by the compiler before code generation",
+          "The number of elements in an array",
+          "The alignment requirement of a type"
+        ],
+        "correctAnswer": "The compile-time size in bytes, evaluated by the compiler before code generation",
+        "explanation": "Note: 'NOT a function call — evaluated at compile time. Zero runtime cost.'"
+      },
+      {
+        "question": "Why doesn't `0.1f + 0.2f == 0.3f`?",
+        "options": [
+          "C++ doesn't support decimal arithmetic",
+          "0.1 and 0.2 cannot be exactly represented in binary floating point",
+          "The == operator doesn't work with floats",
+          "It's a compiler bug"
+        ],
+        "correctAnswer": "0.1 and 0.2 cannot be exactly represented in binary floating point",
+        "explanation": "Note: 'Floats are approximate. Never use ==.' Binary FP can't exactly represent 0.1 or 0.2."
+      }
+    ]
+  },
+  {
+    "note": "02 — Control Flow",
+    "questions": [
+      {
+        "question": "What does RIP hold?",
+        "options": [
+          "Memory addresses",
+          "Decoded instructions",
+          "The address of the next instruction to execute",
+          "The caller's return address"
+        ],
+        "correctAnswer": "The address of the next instruction to execute",
+        "explanation": "Note: 'RIP holds the address of the next instruction. Control flow is anything that makes RIP jump.'"
+      },
+      {
+        "question": "What assembly instructions does an `if` statement compile to?",
+        "options": [
+          "test followed by branch",
+          "cmp followed by a conditional jump (jle, jg, etc.)",
+          "if followed by goto",
+          "evaluate followed by select"
+        ],
+        "correctAnswer": "cmp followed by a conditional jump (jle, jg, etc.)",
+        "explanation": "Note: 'The hardware doesn't know if. It knows cmp (subtract, set flags) and jmp variants.'"
+      },
+      {
+        "question": "Which CPU flag is set when a comparison produces a result of zero?",
+        "options": [
+          "SF (Sign Flag)",
+          "ZF (Zero Flag)",
+          "OF (Overflow Flag)",
+          "CF (Carry Flag)"
+        ],
+        "correctAnswer": "ZF (Zero Flag)",
+        "explanation": "Note: 'ZF (Zero Flag): result = 0 (values equal).' The je instruction tests this flag."
+      },
+      {
+        "question": "Why is a `switch` with dense case values faster than a long `if-else` chain?",
+        "options": [
+          "The compiler unrolls the switch into parallel comparisons",
+          "Switch uses a jump table — O(1) indexed jump instead of O(N) sequential comparisons",
+          "Switch statements are compiled to GPU shaders",
+          "The CPU has a special SWITCH instruction"
+        ],
+        "correctAnswer": "Switch uses a jump table — O(1) indexed jump instead of O(N) sequential comparisons",
+        "explanation": "Note: 'switch on dense values = jump table. One subtraction, one range check, one indexed jump. O(1).'"
+      },
+      {
+        "question": "What is the typical cycle penalty for a branch misprediction?",
+        "correctAnswer": "~15-20 cycles",
+        "acceptableAnswers": [
+          "15-20 cycles",
+          "15-20",
+          "~15-20 cycles",
+          "about 15-20"
+        ],
+        "explanation": "Note: 'if wrong flushes the pipeline — ~15-20 cycle penalty.'"
+      },
+      {
+        "question": "Which loop construct saves one `jmp` instruction compared to `while`?",
+        "options": [
+          "for",
+          "while",
+          "do-while",
+          "All loops compile identically"
+        ],
+        "correctAnswer": "do-while",
+        "explanation": "Note: 'do-while — Saves One Jump. No initial forward conditional jump because the body always executes at least once.'"
+      },
+      {
+        "question": "Do `for` and `while` loops produce different assembly code for equivalent logic?",
+        "options": [
+          "Yes — for is always faster",
+          "Yes — while is always faster",
+          "No — they produce identical assembly",
+          "It depends on the compiler optimization level"
+        ],
+        "correctAnswer": "No — they produce identical assembly",
+        "explanation": "Note: 'for produces EXACTLY the same machine code as the equivalent while. Syntactic sugar — no performance difference.'"
+      },
+      {
+        "question": "What do `break` and `continue` compile to?",
+        "options": [
+          "Function calls to the runtime",
+          "Unconditional jmp instructions — single cycle",
+          "The int 3 software interrupt",
+          "They are handled entirely by the optimizer with no assembly representation"
+        ],
+        "correctAnswer": "Unconditional jmp instructions — single cycle",
+        "explanation": "Note: 'Both compile to single unconditional jmp instructions — not function calls, zero overhead.'"
+      },
+      {
+        "question": "Why does sorting data before a branch-heavy loop sometimes make it faster?",
+        "options": [
+          "Sorted data compresses better in cache",
+          "The branch predictor thrives on patterns — sorted data creates predictable branches",
+          "The compiler optimizes sorted loops differently",
+          "It eliminates the need for branching entirely"
+        ],
+        "correctAnswer": "The branch predictor thrives on patterns — sorted data creates predictable branches",
+        "explanation": "Note: 'Sorting data before processing can make a loop faster because the branch predictor thrives on patterns.'"
+      },
+      {
+        "question": "What happens when a `switch` case has no `break`?",
+        "options": [
+          "The program crashes",
+          "Execution falls through to the next case",
+          "The compiler rejects it",
+          "The case is skipped"
+        ],
+        "correctAnswer": "Execution falls through to the next case",
+        "explanation": "Note: 'Without break, execution falls through — deliberate C heritage for shared handlers.'"
+      }
+    ]
+  }
+]
