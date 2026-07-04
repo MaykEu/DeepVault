@@ -88,7 +88,7 @@ See the full guide in [README.md](README.md#add-a-brand-new-category). Short ver
 3. Run `python convert.py` — everything else is automatic
 
 ### 4. Fix Bugs or Add Features
-- **Read [SKILL.md](SKILL.md) first** — it has every pitfall from 66 commits of development
+- **Read [SKILL.md](SKILL.md) first** — it has every pitfall from dozens of commits of development
 - JavaScript: ES5-compatible for core init files (`app.js`, `router.js`). Learn and quiz files can use modern syntax
 - CSS: Use CSS variables (`var(--bg-primary)`) — all 4 themes must work
 - After any CSS edit, verify braces: `python -c "c=open('css/components.css').read(); ..."`
