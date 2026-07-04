@@ -1,0 +1,304 @@
+{
+  "03 — Functions & The Call Stack": {
+    "questions": [
+      {
+        "question": "What is the difference between a function declaration and a definition?",
+        "options": [
+          "They are the same thing — the terms are interchangeable",
+          "A declaration provides the body; a definition just states the function exists",
+          "A declaration tells the compiler the function exists; a definition provides the body (instructions)",
+          "A declaration is in the .h file; a definition is in the .cpp file"
+        ],
+        "correctAnswer": "A declaration tells the compiler the function exists; a definition provides the body (instructions)",
+        "explanation": "The note states: 'A declaration tells the compiler this function exists somewhere. A definition provides the body — the actual instructions.'"
+      },
+      {
+        "question": "What is the difference between parameters and arguments?",
+        "options": [
+          "They are the same thing",
+          "Parameters are the variables in the declaration; arguments are the values passed at the call site",
+          "Arguments are in the declaration; parameters are passed at the call site",
+          "Parameters are for input; arguments are for output"
+        ],
+        "correctAnswer": "Parameters are the variables in the declaration; arguments are the values passed at the call site",
+        "explanation": "The note states: 'Parameters are the variables in the declaration (a, b). Arguments are the values at the call site (Add(3, 4)).'"
+      },
+      {
+        "question": "What does the `call` instruction do at the hardware level?",
+        "options": [
+          "Calls malloc to allocate stack space",
+          "Saves all registers to memory then jumps",
+          "Pushes the return address onto the stack (RSP-=8, [RSP]=RIP_next) and jumps to the function (RIP=&func)",
+          "Sends an interrupt to the OS kernel"
+        ],
+        "correctAnswer": "Pushes the return address onto the stack (RSP-=8, [RSP]=RIP_next) and jumps to the function (RIP=&func)",
+        "explanation": "The note shows the three steps of call: '1. RSP = RSP - 8, 2. [RSP] = RIP_next (save return address), 3. RIP = &Add (jump to function).'"
+      },
+      {
+        "question": "What does the `ret` instruction do?",
+        "options": [
+          "Returns the value in RAX to the OS",
+          "Pops the return address from the stack into RIP and increments RSP",
+          "Destroys the stack frame and calls the destructor",
+          "Jumps to the instruction before the call"
+        ],
+        "correctAnswer": "Pops the return address from the stack into RIP and increments RSP",
+        "explanation": "The note shows: 'ret: 1. RIP = [RSP] (pop return address), 2. RSP = RSP + 8 (reclaim stack space).'"
+      },
+      {
+        "question": "Which register holds the return value of a function on x86-64?",
+        "options": [
+          "RSP",
+          "RBP",
+          "RAX",
+          "RIP"
+        ],
+        "correctAnswer": "RAX",
+        "explanation": "The note states: 'Integer/pointer returns go in RAX. Float returns in XMM0.' The caller reads RAX after ret to get the result."
+      },
+      {
+        "question": "What is the stack frame prologue?",
+        "options": [
+          "The first line of code in a function",
+          "push rbp; mov rbp, rsp; sub rsp, N — saves the caller's frame pointer, establishes a new base, allocates locals",
+          "The return statement at the end of a function",
+          "The call instruction itself"
+        ],
+        "correctAnswer": "push rbp; mov rbp, rsp; sub rsp, N — saves the caller's frame pointer, establishes a new base, allocates locals",
+        "explanation": "The note shows the prologue as: 'push rbp (save caller's frame pointer), mov rbp, rsp (new frame base), sub rsp, N (allocate N bytes for locals).'"
+      },
+      {
+        "question": "What causes a stack overflow?",
+        "options": [
+          "Calling too many different functions",
+          "Recursion that exhausts the fixed-size stack — RSP crosses into unmapped guard pages",
+          "Allocating too much memory with new",
+          "Using too many local variables in a single function"
+        ],
+        "correctAnswer": "Recursion that exhausts the fixed-size stack — RSP crosses into unmapped guard pages",
+        "explanation": "The note states: 'When RSP crosses into unmapped guard pages beyond the stack allocation, the MMU raises a page fault → OS delivers SIGSEGV.'"
+      },
+      {
+        "question": "How does Tail Call Optimization transform a recursive call?",
+        "options": [
+          "It inlines the recursive function body",
+          "It replaces `call` with `jmp`, reusing the same stack frame for constant stack depth",
+          "It moves the recursion to the heap",
+          "It unrolls the recursion into a loop using templates"
+        ],
+        "correctAnswer": "It replaces `call` with `jmp`, reusing the same stack frame for constant stack depth",
+        "explanation": "The note states: 'Tail Call Optimization changes call to jmp, reusing the same frame. Constant stack depth.'"
+      }
+    ]
+  },
+  "01 — Enums & enum class": {
+    "questions": [
+      {
+        "question": "What is the main purpose of an enum?",
+        "options": [
+          "To save memory by using smaller integer types",
+          "To replace magic numbers with named, self-documenting constants",
+          "To enable compile-time computation",
+          "To create type hierarchies like classes"
+        ],
+        "correctAnswer": "To replace magic numbers with named, self-documenting constants",
+        "explanation": "The note states: 'An enum is a set of named integer constants. Instead of passing magic numbers, you pass names with meaning.'"
+      },
+      {
+        "question": "Why can't two plain enums share member names in the same scope?",
+        "options": [
+          "The C++ standard forbids it for performance reasons",
+          "Plain enum values leak into the surrounding scope — two enums with 'Red' would conflict",
+          "The linker can't resolve duplicate enum names",
+          "It's a compiler bug, not a language rule"
+        ],
+        "correctAnswer": "Plain enum values leak into the surrounding scope — two enums with 'Red' would conflict",
+        "explanation": "The note shows: 'enum Color { Red, Green, Blue }; enum TrafficLight { Red, Yellow, Green }; // ERROR — Red and Green already defined!'"
+      },
+      {
+        "question": "What are two key advantages of `enum class` over plain `enum`?",
+        "correctAnswer": "Strongly typed (no implicit conversion to int) and scoped (values must be accessed with scope prefix)",
+        "acceptableAnswers": [
+          "strongly typed and scoped",
+          "no implicit int conversion and scoped",
+          "type safety and scoping",
+          "strong typing and scope"
+        ],
+        "explanation": "The note states: 'enum class is strongly typed and scoped. Values don't leak, don't convert to int implicitly, and don't conflict with other enums.'"
+      },
+      {
+        "question": "How do you convert an `enum class` value to its underlying integer?",
+        "options": [
+          "Just assign it — the conversion is automatic",
+          "Use `static_cast<int>(value)` or C++23's `std::to_underlying(value)`",
+          "Call `.value()` on the enum",
+          "Use `(int)value` — C-style cast"
+        ],
+        "correctAnswer": "Use `static_cast<int>(value)` or C++23's `std::to_underlying(value)`",
+        "explanation": "The note shows: 'int x = static_cast<int>(Color::Red);' and mentions std::to_underlying in C++23."
+      },
+      {
+        "question": "What underlying type does an enum use by default?",
+        "options": [
+          "uint8_t",
+          "int",
+          "size_t",
+          "unsigned int"
+        ],
+        "correctAnswer": "int",
+        "explanation": "The note states: 'By default, the underlying type is int for both enum styles.' You can specify a smaller type like uint8_t to save memory."
+      },
+      {
+        "question": "Why would you specify `enum class Permission : uint8_t` instead of the default?",
+        "options": [
+          "To make the enum values larger",
+          "To save memory — 1 byte instead of 4, important when enums are stored in arrays or as struct members",
+          "To enable bitwise operations",
+          "To make the enum work with templates"
+        ],
+        "correctAnswer": "To save memory — 1 byte instead of 4, important when enums are stored in arrays or as struct members",
+        "explanation": "The note states: 'Use uint8_t for small enums. UE uses uint8 extensively for enum class types. This saves memory when enums are stored in arrays or as struct members.'"
+      }
+    ]
+  },
+  "02 — References": {
+    "questions": [
+      {
+        "question": "What is a reference in C++?",
+        "options": [
+          "A copy of a variable stored on the heap",
+          "An alias — another name for an existing variable, not a copy and not a pointer",
+          "A smart pointer that automatically deallocates",
+          "A const pointer that can never be null"
+        ],
+        "correctAnswer": "An alias — another name for an existing variable, not a copy and not a pointer",
+        "explanation": "The note states: 'A reference is an alias — another name for an existing variable. It's not a copy and not a pointer. It IS the original variable.'"
+      },
+      {
+        "question": "What happens when you assign to a reference?",
+        "options": [
+          "The reference changes to point to the new value's address",
+          "The original variable the reference aliases is modified",
+          "A copy of the new value is made, leaving the original unchanged",
+          "The program crashes because references are immutable"
+        ],
+        "correctAnswer": "The original variable the reference aliases is modified",
+        "explanation": "The note states: 'ref = 100; // Changes original to 100. original = 200; // Changes ref to 200 — they're the SAME variable.'"
+      },
+      {
+        "question": "What is a key difference between references and pointers?",
+        "options": [
+          "References can be null; pointers cannot",
+          "References must be initialized when declared and cannot be reassigned; pointers can be null and reassigned",
+          "References are stored on the heap; pointers on the stack",
+          "References are slower than pointers"
+        ],
+        "correctAnswer": "References must be initialized when declared and cannot be reassigned; pointers can be null and reassigned",
+        "explanation": "The note states: 'References must be bound at declaration, cannot be null, and cannot be reassigned. Pointers can be null, reassigned, and require explicit dereference.'"
+      },
+      {
+        "question": "What is pass-by-reference used for?",
+        "options": [
+          "To make a copy of arguments for the function",
+          "To avoid copying large objects — the function receives a reference to the original data",
+          "To enable function overloading",
+          "To make the function run faster by using CPU registers"
+        ],
+        "correctAnswer": "To avoid copying large objects — the function receives a reference to the original data",
+        "explanation": "The note describes references enabling 'zero-copy parameter passing.' The function works directly on the caller's data."
+      },
+      {
+        "question": "How are references typically implemented at the hardware level?",
+        "options": [
+          "As a special CPU register",
+          "As a pointer under the hood — the compiler stores an address",
+          "As a hash table lookup",
+          "As a direct alias in the symbol table with no runtime representation"
+        ],
+        "correctAnswer": "As a pointer under the hood — the compiler stores an address",
+        "explanation": "The Systems Connection note states: 'References are typically implemented as pointers under the hood — the compiler stores an address.'"
+      }
+    ]
+  },
+  "03 — static in C++": {
+    "questions": [
+      {
+        "question": "How many distinct meanings does the `static` keyword have in C++?",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "correctAnswer": "4",
+        "explanation": "The note explicitly states: 'One Keyword, Four Meanings.' The four contexts are: member variable, member function, local variable, and global variable/function."
+      },
+      {
+        "question": "What does a static member variable do?",
+        "options": [
+          "Creates a separate copy for each class instance",
+          "Creates one variable shared across ALL instances of the class",
+          "Prevents the variable from being modified",
+          "Makes the variable only visible in the .cpp file"
+        ],
+        "correctAnswer": "Creates one variable shared across ALL instances of the class",
+        "explanation": "The note states: 'Static Member Variables — One Copy, Shared By All. One variable shared by ALL Soldier objects.'"
+      },
+      {
+        "question": "What is the Static Initialization Order Fiasco?",
+        "options": [
+          "When static variables are initialized in the wrong order due to undefined construction order across translation units — causing crashes before main()",
+          "When a static variable is initialized twice",
+          "When static functions are called in the wrong order",
+          "When inline static variables conflict with out-of-class definitions"
+        ],
+        "correctAnswer": "When static variables are initialized in the wrong order due to undefined construction order across translation units — causing crashes before main()",
+        "explanation": "The note states: 'Global static objects across multiple .cpp files have unspecified construction order. One reads another that hasn't been constructed yet — crash before main().'"
+      },
+      {
+        "question": "How does Meyer's Singleton (function-local static) solve the init order fiasco?",
+        "options": [
+          "It uses mutexes to serialize initialization",
+          "It defers initialization to the first function call, eliminating ordering dependencies between translation units",
+          "It moves all static variables to the heap",
+          "It uses compiler attributes to force initialization order"
+        ],
+        "correctAnswer": "It defers initialization to the first function call, eliminating ordering dependencies between translation units",
+        "explanation": "The note shows: 'static std::string& GetLogPath() { static std::string path = \"/var/log/app.log\"; return path; } — Now order doesn't matter, path is constructed when GetLogPath() is first called.'"
+      },
+      {
+        "question": "What does C++17 `inline static` allow you to do?",
+        "options": [
+          "Mark a static variable as always inlined by the optimizer",
+          "Define a static member variable directly in the class definition — no out-of-class .cpp definition required",
+          "Share a static variable across DLL boundaries",
+          "Make a static variable thread-local"
+        ],
+        "correctAnswer": "Define a static member variable directly in the class definition — no out-of-class .cpp definition required",
+        "explanation": "The note states: 'C++17 inline static — No Out-of-Class Definition Needed. Definition AND declaration in one place!'"
+      },
+      {
+        "question": "What does `static` at file/namespace scope do?",
+        "options": [
+          "Makes the variable shared across all .cpp files",
+          "Gives the variable/function internal linkage — visible only within this translation unit (.cpp file)",
+          "Makes the variable initialize before main()",
+          "Prevents the variable from being modified"
+        ],
+        "correctAnswer": "Gives the variable/function internal linkage — visible only within this translation unit (.cpp file)",
+        "explanation": "The note states: 'Static Global Variables/Functions — Internal Linkage. The variable/function is private to this translation unit.'"
+      },
+      {
+        "question": "Since which C++ standard is static local variable initialization thread-safe?",
+        "options": [
+          "C++98",
+          "C++03",
+          "C++11",
+          "C++17"
+        ],
+        "correctAnswer": "C++11",
+        "explanation": "The note states: 'Thread safety (C++11+): Static local initialization is guaranteed thread-safe. The compiler inserts a hidden lock.'"
+      }
+    ]
+  }
+}
