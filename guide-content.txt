@@ -111,6 +111,17 @@ Your quiz progress lives in your browser's localStorage. To continue studying on
 
 Export and Import buttons are at the bottom of the dashboard. No account needed.
 
+### Cloud Sync
+
+Sync your progress across all devices with a free GitHub token. Click **☁️ Sync** at the bottom of the dashboard:
+
+1. Create a **classic token** at [github.com/settings/tokens](https://github.com/settings/tokens) — check ONLY the `gist` scope
+2. Paste it into DeepVault and click **Connect**
+3. Progress auto-saves to a private GitHub Gist after every quiz and bookmark
+4. On another device, paste the same token — all progress auto-loads
+
+Your data stays in YOUR GitHub account — private, encrypted, invisible to anyone else.
+
 ---
 
 Double-click index.html to launch. Everything stays on your device.
