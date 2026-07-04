@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script src="js/data.js"></script>
+<script>
+var results = [];
+results.push('FOLDERS: ' + FOLDERS.length);
+results.push('NOTES: ' + Object.keys(NOTES).length);
+results.push('REFERENCE: ' + Object.keys(REFERENCE).length);
+results.push('NOTES_CONTENT: ' + Object.keys(NOTES_CONTENT).length);
+results.push('FOLDER_GROUPS: ' + Object.keys(FOLDER_GROUPS).length);
+document.body.textContent = results.join('\\n');
+</script>
+</body></html>
