@@ -189,7 +189,7 @@ def main():
         new_root_str = ', '.join(f"'{n}'" for n in clean_root)
         return full.replace(root_m.group(0), f"'': [{new_root_str}]")
     
-    output = re2.sub(r"'(?:computer-systems|cpp-fundamentals|game-math)':\s*\{[^}]+\}", fix_root, output, flags=re2.DOTALL)
+    output = re2.sub(r"'(?:computer-systems|cpp-fundamentals|game-math|ue-core)':\s*\{[^}]+\}", fix_root, output, flags=re2.DOTALL)
 
     # Validate
     tmp = 'D:/temp_dv_validate.js'

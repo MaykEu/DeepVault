@@ -38,7 +38,7 @@ const FOLDER_GROUPS = {
     'UE Math': ['Collision & Intersection Math', 'Curves, Ranges & Random', 'FMath — Interpolation & Utility', 'FTransform & FMatrix', 'FVector, FRotator, FQuat — The Core Types'],
   },
   'ue-core': {
-    '': ['FName vs FString vs FText', 'Move Semantics in UE', 'Pointer Ecosystem', 'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Inheritance & UObject System', 'UE Templates & T-Containers', 'UHT, Macros & Reflection', '00 — Casting Overview', '01 — Cast Internals & Variants', '02 — Interface Casting & References', '03 — When to Use & Pitfalls'],
+    '': ['FName vs FString vs FText', 'Move Semantics in UE', 'Pointer Ecosystem', 'TArray Internals', 'TMap Internals', 'TSet Internals', 'UE Enums & Flags', 'UE Inheritance & UObject System', 'UE Templates & T-Containers', 'UHT, Macros & Reflection'],
     'Casting': ['00 — Casting Overview', '01 — Cast Internals & Variants', '02 — Interface Casting & References', '03 — When to Use & Pitfalls'],
   },
   'ue-networking': {
