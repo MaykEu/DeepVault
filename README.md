@@ -72,14 +72,12 @@ You can use DeepVault for ANY subject. The platform doesn't care what you're tea
 QUIZ_DATA['My Note'] = {
   questions: [
     {
-      type: "multiple_choice",
       question: "What is X?",
       options: ["Option A", "Option B", "Option C"],
-      correctIndex: 1,
+      correctAnswer: "Option B",
       explanation: "Because..."
     },
     {
-      type: "text_input",
       question: "Explain Y",
       correctAnswer: "The correct answer",
       acceptableAnswers: ["alt phrasing 1", "alt phrasing 2"],
