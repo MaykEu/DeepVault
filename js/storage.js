@@ -155,4 +155,20 @@ var Storage = {
     reader.readAsText(file);
   },
 
+  // Bookmarks
+  toggleBookmark: function(fid, nn) {
+    var bm = this.getAll().bookmarks || [];
+    var idx = bm.findIndex(function(b) { return b[0] === fid && b[1] === nn; });
+    if (idx >= 0) bm.splice(idx, 1);
+    else bm.push([fid, nn]);
+    var d = this.getAll(); d.bookmarks = bm; this.save(d);
+    return idx < 0; // true = now bookmarked
+  },
+  isBookmarked: function(fid, nn) {
+    return (this.getAll().bookmarks || []).some(function(b) { return b[0] === fid && b[1] === nn; });
+  },
+  getBookmarks: function() {
+    return this.getAll().bookmarks || [];
+  },
+
 };

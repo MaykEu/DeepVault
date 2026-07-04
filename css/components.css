@@ -364,3 +364,12 @@
 @media (max-width: 768px) {
   .lp-grid { grid-template-columns: 1fr; }
 }
+
+/* Bookmark star */
+.bookmark-star {
+  font-size: 1.1rem; cursor: pointer; user-select: none;
+  padding: 0.15em; margin-left: auto;
+  color: var(--text-muted); transition: color 0.15s, transform 0.15s;
+}
+.bookmark-star:hover { color: #d2991d; transform: scale(1.15); }
+.bookmark-star.active { color: #d2991d; }
