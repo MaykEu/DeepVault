@@ -11,6 +11,8 @@
 
 DeepVault turns an Obsidian vault into an interactive learning platform — quizzes, progress tracking, wiki links, learning paths. **Built for computing education** — programming languages, computer systems, game engines, algorithms, networking, cybersecurity, and everything in between. The current pre-loaded content covers C++, Unreal Engine, game math, and computer systems, but the platform works for any computing domain (Rust, Python, Unity, Godot, Vulkan, or your own stack).
 
+Content assumes basic programming familiarity. Start with the [Computer Systems Learning Path](https://maykeu.github.io/DeepVault/#/reference/Learning%20Path%20%E2%80%94%20Computer%20Systems) if you're new to computing.
+
 Everything stays on your device — no accounts, no servers, no tracking.
 
 ## Quick Start
