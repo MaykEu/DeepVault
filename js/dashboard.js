@@ -72,14 +72,57 @@ const Dashboard = {
     }
     html += '</div>';
 
-    // Import/Export at bottom
+    // Import/Export/Gist Sync at bottom
     html += '<div class="toolbar" style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">' +
       '<span style="font-size:0.75rem;color:var(--text-muted);margin-right:auto;">Progress saved to this browser. Move between devices: </span>' +
-      '<button class="btn btn-outline btn-sm" onclick="Storage.exportData()">\u{1F4E5} Export</button>' +
+      '<button class="btn btn-outline btn-sm" onclick="Dashboard.showSync()">☁️ Sync</button>' +
+      '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="Storage.exportData()">\u{1F4E5} Export</button>' +
       '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="document.getElementById(\'import-file\').click()">\u{1F4E4} Import</button>' +
       '<input type="file" id="import-file" accept=".json" style="display:none" onchange="Storage.importData(this.files[0])">' +
     '</div>';
 
     container.innerHTML = html;
   },
+
+  // Gist sync UI
+  showSync: function() {
+    var token = Storage.getGistToken();
+    var connected = !!token;
+    var status = '<div style="margin-top:1rem;padding:1rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);">';
+    if (connected) {
+      status += '<p style="margin:0 0 0.75rem;">☁️ Connected — progress auto-saves to GitHub Gist.</p>' +
+        '<button class="btn btn-outline btn-sm" onclick="Dashboard.doSync()">🔄 Sync Now</button> ' +
+        '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="Storage.setGistToken(\'\');Storage.setGistId(\'\');Dashboard.render(document.getElementById(\'app-main\'))">Disconnect</button>';
+    } else {
+      status += '<p style="margin:0 0 0.5rem;font-size:0.85rem;">Sync progress across devices with a GitHub token.</p>' +
+        '<p style="margin:0 0 0.75rem;font-size:0.75rem;color:var(--text-muted);">Create a token at github.com/settings/tokens — check ONLY the <strong>gist</strong> scope. Paste it below:</p>' +
+        '<input id="gist-token-input" class="text-input" placeholder="ghp_..." style="width:100%;margin-bottom:0.5rem;">' +
+        '<button class="btn btn-primary btn-sm" onclick="Dashboard.connectGist()">Connect</button> ' +
+        '<button class="btn btn-outline btn-sm" style="margin-left:4px;" onclick="Dashboard.render(document.getElementById(\'app-main\'))">Cancel</button>';
+    }
+    status += '<div id="sync-status" style="margin-top:0.5rem;font-size:0.8rem;"></div>';
+    status += '</div>';
+    var tb = document.querySelector('.toolbar');
+    if (tb) tb.insertAdjacentHTML('afterend', status);
+  },
+
+  connectGist: function() {
+    var inp = document.getElementById('gist-token-input');
+    if (!inp || !inp.value) return;
+    Storage.setGistToken(inp.value.trim());
+    Dashboard.doSync();
+  },
+
+  doSync: async function() {
+    var st = document.getElementById('sync-status');
+    if (st) st.innerHTML = '<span style="color:var(--warning)">🟡 Syncing...</span>';
+    var r = await Storage.syncToGist();
+    if (r === 'ok') {
+      if (st) st.innerHTML = '<span style="color:var(--success)">🟢 Synced!</span>';
+      Dashboard.render(document.getElementById('app-main'));
+    } else {
+      if (st) st.innerHTML = '<span style="color:var(--danger)">🔴 Sync failed. Check your token.</span>';
+    }
+  },
+
 };

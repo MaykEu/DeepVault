@@ -179,6 +179,7 @@ const QuizEngine = {
 
     if (!s.isReview) {
       Storage.addAttempt(s.folderId, s.noteName, correctCount, s.questions.length, answerLog, s.elapsed);
+      if (Storage.getGistToken()) Storage.syncToGist();
     }
     Summary.render(document.getElementById('app-main'), s);
   },
