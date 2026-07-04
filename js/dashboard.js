@@ -88,7 +88,7 @@ const Dashboard = {
     var status = '<div style="margin-top:1rem;padding:1rem;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);">';
     if (connected) {
       status += '<p style="margin:0 0 0.75rem;">☁️ Connected — <span style="color:var(--success)">🟢</span> progress auto-saves to GitHub Gist.</p>' +
-        '<button class="btn btn-outline btn-sm" onclick="Storage.setGistToken(\'\');Storage.setGistId(\'\');Dashboard.render(document.getElementById(\'app-main\'))">Disconnect</button>';
+        '<button class="btn btn-outline btn-sm" onclick="Storage.setGistToken(\'\');Storage.setGistId(\'\');Dashboard.render(document.getElementById(\'app-main\'))">Disconnect</button>' + '<button class="btn btn-outline btn-sm" style="margin-left:4px;color:var(--danger);" onclick="if(confirm(\'Delete ALL progress?\')){localStorage.clear();sessionStorage.clear();location.reload()}">Reset Data</button>';
     } else {
       status += '<p style="margin:0 0 0.5rem;font-size:0.85rem;">Sync progress across devices with a GitHub token.</p>' +
         '<p style="margin:0 0 0.75rem;font-size:0.75rem;color:var(--text-muted);">Create a <strong>classic token</strong> at github.com/settings/tokens — check ONLY the <strong>gist</strong> scope. Paste it below:</p>' +
