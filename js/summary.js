@@ -21,7 +21,7 @@ const Summary = {
 
     const heading = state.isReview ? 'Review Complete!' : 'Quiz Complete!';
     const reviewBtn = !state.isReview && incorrectCount > 0
-      ? '<button class="btn btn-outline" onclick="QuizEngine.startReview(document.getElementById(\'app-main\'),\'' + state.folderId.replace(/'/g,"\\'") + '\',\'' + state.noteName.replace(/'/g,"\\'") + '\')">\u{1F501} Review ' + incorrectCount + ' Incorrect</button>'
+      ? '<button class="btn btn-outline" onclick="QuizEngine.startReview(document.getElementById(\'app-main\'),\'' + state.folderId.replace(/'/g,"\\'") + '\',\'' + state.noteName.replace(/&/g,'&amp;').replace(/'/g,"\\'") + '\')">\u{1F501} Review ' + incorrectCount + ' Incorrect</button>'
       : '';
 
     container.innerHTML =
