@@ -1,6 +1,7 @@
 const Summary = {
   render(container, state) {
-    const correctCount = state.answers.filter((_, i) => i % 2 === 0 && state.answers[i + '_correct'] === true).length;
+    const correctCount = state.correctCount !== undefined ? state.correctCount : 
+      state.answers.filter((_, i) => i % 2 === 0 && state.answers[i + '_correct'] === true).length;
     const total = state.questions.length;
     const pct = Math.round((correctCount / total) * 100);
     const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
@@ -8,7 +9,7 @@ const Summary = {
     const elapsed = state.elapsed || 0;
 
     const attempts = Storage.getAttempts(state.folderId, state.noteName);
-    const incorrectCount = total - correctCount;
+    const incorrectCount = state.wrongCount !== undefined ? state.wrongCount : (total - correctCount);
     const historyHtml = attempts.length > 1 ? attempts.slice().reverse().slice(0, 8).map(a => {
       const d = new Date(a.date);
       const aColor = a.percentage >= 80 ? 'var(--success)' : a.percentage >= 50 ? 'var(--warning)' : 'var(--danger)';
@@ -21,7 +22,7 @@ const Summary = {
 
     const heading = state.isReview ? 'Review Complete!' : 'Quiz Complete!';
     const reviewBtn = !state.isReview && incorrectCount > 0
-      ? '<button class="btn btn-outline" onclick="QuizEngine.startReview(document.getElementById(\'app-main\'),\'' + state.folderId.replace(/'/g,"\\'") + '\',\'' + state.noteName.replace(/&/g,'&amp;').replace(/'/g,"\\'") + '\')">\u{1F501} Review ' + incorrectCount + ' Incorrect</button>'
+      ? '<button class="btn btn-outline" onclick="QuizEngine.startReview(document.getElementById(\'app-main\'),\'' + state.folderId.replace(/'/g,"\\'") + '\',\'' + state.noteName.replace(/&/g,'&amp;').replace(/'/g,"\\'") + '\')">\u{1F501} Retry ' + incorrectCount + ' Mistakes</button>'
       : '';
 
     container.innerHTML =

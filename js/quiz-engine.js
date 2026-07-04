@@ -20,6 +20,24 @@ const QuizEngine = {
   isMC(q) { return q.options && q.options.length > 0; },
 
   start(container, folderId, noteName, reviewQuestions) {
+    // If returning from history, show last result
+    var lastResult = sessionStorage.getItem('dv_last_result');
+    if (lastResult && !reviewQuestions) {
+      try {
+        var r = JSON.parse(lastResult);
+        if (r.folderId === folderId && r.noteName === noteName) {
+          Summary.render(container, {
+            folderId: r.folderId, noteName: r.noteName,
+            answers: [],
+            questions: (QUIZ_DATA[noteName] || {}).questions || [],
+            wrongCount: r.total - r.correctCount,
+            elapsed: r.elapsed, isReview: false
+          });
+          return;
+        }
+      } catch(e) {}
+    }
+
     const data = QUIZ_DATA[noteName];
     if (!data) { router.navigate('#/'); return; }
 
