@@ -143,7 +143,8 @@ const QuizEngine = {
     
     if (this.isMC(q)) {
       if (s.answers[s.currentIndex] === undefined) return;
-      const correct = s.answers[s.currentIndex] === q.correctIndex;
+      const correctIdx = q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer);
+      const correct = s.answers[s.currentIndex] === correctIdx;
       s.answers[s.currentIndex + '_correct'] = correct;
       s.answers[s.currentIndex + '_given'] = q.options[s.answers[s.currentIndex]];
     } else {
