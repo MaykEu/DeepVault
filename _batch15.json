@@ -45,6 +45,17 @@
         ],
         "a": "Apply noise to the INPUT coordinates of another noise — creates flowing, organic, marble-like patterns",
         "e": "warp(x,y) = noise(x + noise(x+a,y+b), y + noise(x+c,y+d)). Distorted input → organic swirls. Used for smoke, clouds, lava."
+      },
+      {
+        "q": "What is domain warping?",
+        "o": [
+          "Random offset",
+          "Apply noise to INPUT coordinates of another noise — creates flowing, organic, marble-like patterns",
+          "A noise type",
+          "A rendering method"
+        ],
+        "a": "Apply noise to INPUT coordinates of another noise — creates flowing, organic, marble-like patterns",
+        "e": "warp(x,y) = noise(x + noise1, y + noise2). Nested noise distortion. Produces swirling, fluid-like textures. Used for smoke, clouds."
       }
     ]
   },
@@ -83,6 +94,28 @@
         ],
         "a": "Divide domain into equal strata (grid cells), place one sample per stratum — guarantees coverage, reduces variance",
         "e": "Stratified = jittered grid. One sample per cell, random position within. Guarantees no large gaps. Used for shadow maps, SSAO, TAA."
+      },
+      {
+        "q": "What is jittered/stratified sampling?",
+        "o": [
+          "Random only",
+          "Divide domain into grid cells, place one random sample per cell — guarantees coverage, no large gaps",
+          "Poisson disc",
+          "Blue noise"
+        ],
+        "a": "Divide domain into grid cells, place one random sample per cell — guarantees coverage, no large gaps",
+        "e": "Stratified = jittered grid. N cells = N samples, one per cell. Reduces variance compared to pure random. Used for anti-aliasing, shadow maps."
+      },
+      {
+        "q": "What is the void-and-cluster algorithm?",
+        "o": [
+          "A* variant",
+          "Generates blue noise: finds largest gap (void), places point; finds tightest cluster, removes point. Iterates to convergence.",
+          "Poisson disc",
+          "Random sampling"
+        ],
+        "a": "Generates blue noise: finds largest gap (void), places point; finds tightest cluster, removes point. Iterates to convergence.",
+        "e": "Void-and-cluster produces blue noise textures. Start white noise, iteratively fill voids and break clusters. Pre-compute once, tile at runtime."
       }
     ]
   },
@@ -121,6 +154,28 @@
         ],
         "a": "Any continuous function R³→R — distance field, noise, metaballs, implicit surfaces. Isosurface at f(x,y,z)=threshold.",
         "e": "Marching Cubes doesn't care about the source. SDF = exact distance. Noise = organic terrain. Metaballs = blobby merging. All produce valid meshes."
+      },
+      {
+        "q": "What is the turtle graphics interpretation of an L-system?",
+        "o": [
+          "A rendering method",
+          "F=draw forward, +=turn right, -=turn left, []=push state, ]=pop state. Converts L-string to geometry.",
+          "A noise function",
+          "A tree species"
+        ],
+        "a": "F=draw forward, +=turn right, -=turn left, []=push state, ]=pop state. Converts L-string to geometry.",
+        "e": "Turtle: pen with position and heading. F draws line. [ saves position/heading on stack, ] restores. Enables branching structures."
+      },
+      {
+        "q": "What are the 15 unique cases in Marching Cubes?",
+        "o": [
+          "Edge cases",
+          "256 voxel configurations reduce to 15 by rotational symmetry. Each case defines triangle vertices along cube edges.",
+          "All cases",
+          "Error cases"
+        ],
+        "a": "256 voxel configurations reduce to 15 by rotational symmetry. Each case defines triangle vertices along cube edges.",
+        "e": "8 corners × 2 states = 256. Rotation/reflection reduces to 15 unique topological cases. Lookup table maps case→triangle list."
       }
     ]
   },
@@ -148,6 +203,39 @@
         ],
         "a": "Compute CDF, invert it, sample uniform [0,1] → CDF⁻¹(uniform). Generates samples from arbitrary distribution.",
         "e": "CDF = cumulative distribution. Invert analytically or numerically. Sample uniform→apply inverse→get sample from target distribution."
+      },
+      {
+        "q": "What is the difference between pseudo-random and quasi-random sequences?",
+        "o": [
+          "Same",
+          "Pseudo-random: each sample independent (clumps). Quasi-random (Sobol, Halton): low-discrepancy — samples fill space evenly.",
+          "Quasi is faster",
+          "Pseudo is better"
+        ],
+        "a": "Pseudo-random: each sample independent (clumps). Quasi-random (Sobol, Halton): low-discrepancy — samples fill space evenly.",
+        "e": "Quasi-random = deterministic, evenly spaced. Better convergence for Monte Carlo integration. Sobol sequence used in UE5 Lightmass."
+      },
+      {
+        "q": "What is importance sampling?",
+        "o": [
+          "Uniform sampling",
+          "Drawing samples proportional to where the integrand is large — reduces variance without increasing sample count",
+          "Grid sampling",
+          "Random sampling"
+        ],
+        "a": "Drawing samples proportional to where the integrand is large — reduces variance without increasing sample count",
+        "e": "Instead of uniform (wastes samples on darkness), sample where light is. Cosine-weighted hemisphere, GGX specular lobe."
+      },
+      {
+        "q": "What is Metropolis-Hastings sampling?",
+        "o": [
+          "A simple method",
+          "MCMC: generates samples from a distribution by proposing moves and accepting/rejecting based on probability ratio. Good for complex PDFs.",
+          "A type of noise",
+          "A rendering method"
+        ],
+        "a": "MCMC: generates samples from a distribution by proposing moves and accepting/rejecting based on probability ratio. Good for complex PDFs.",
+        "e": "Metropolis: random walk that converges to target distribution. Proposal + acceptance probability. Handles distributions where direct sampling is hard."
       }
     ]
   },
@@ -175,6 +263,39 @@
         ],
         "a": "3D pixels — volumetric elements. Store density, material, color per cell. Used for terrain, medical imaging, UE Voxel Plugin.",
         "e": "VOlumetric piXEL. Minecraft-style worlds, medical CT scans, UE Voxel Plugin. Marching Cubes converts voxels to meshes."
+      },
+      {
+        "q": "What is an octree used for?",
+        "o": [
+          "Only rendering",
+          "Spatial indexing: 3D recursive subdivision into 8 octants. Used for collision, LOD, voxel compression, light mapping",
+          "Only collision",
+          "Only storage"
+        ],
+        "a": "Spatial indexing: 3D recursive subdivision into 8 octants. Used for collision, LOD, voxel compression, light mapping",
+        "e": "Each node: 0 or 8 children. Subdivide when cell has too many objects. UE lightmass, some collision queries, voxel plugins all use octrees."
+      },
+      {
+        "q": "How does sparse voxel octree (SVO) save memory?",
+        "o": [
+          "Compression",
+          "Only store nodes that contain data — skip empty regions. Dense grid = O(n³); SVO = O(surface area).",
+          "It doesn't",
+          "Texture storage"
+        ],
+        "a": "Only store nodes that contain data — skip empty regions. Dense grid = O(n³); SVO = O(surface area).",
+        "e": "SVO: only allocate where geometry exists. Vast empty spaces = no nodes. Enables high-resolution voxel data without memory explosion."
+      },
+      {
+        "q": "What is ray-voxel traversal?",
+        "o": [
+          "A rendering method",
+          "Marching ray through voxel grid: step to next voxel boundary along each axis. Efficient for ray casting in voxel worlds.",
+          "A collision method",
+          "A navigation method"
+        ],
+        "a": "Marching ray through voxel grid: step to next voxel boundary along each axis. Efficient for ray casting in voxel worlds.",
+        "e": "DDA (Digital Differential Analyzer): advance ray to next voxel boundary. O(number of voxels traversed). Used in voxel ray tracing, Minecraft-style games."
       }
     ]
   },
@@ -202,6 +323,37 @@
         ],
         "a": "Rasterizer (triangles→fragments), output merger (depth test, blend) — not programmable, just configurable",
         "e": "Fixed-function = non-programmable stages. Rasterizer: generates fragments from triangles. Output merger: depth/stencil test, blending. Extremely fast dedicated silicon."
+      },
+      {
+        "q": "What are the programmable stages of the GPU pipeline?",
+        "correctAnswer": "Vertex shader, hull shader, domain shader, geometry shader, pixel shader, compute shader",
+        "acceptableAnswers": [
+          "vertex, pixel, compute shaders",
+          "vertex shader pixel shader compute shader"
+        ],
+        "explanation": "Vertex: transform vertices. Pixel: color fragments. Compute: arbitrary parallel work. Hull/Domain: tessellation. Geometry: primitive manipulation."
+      },
+      {
+        "q": "What happens in the rasterizer stage?",
+        "o": [
+          "Shading",
+          "Converts triangles to pixel fragments — determines which pixels are covered, interpolates vertex attributes across triangle",
+          "Lighting",
+          "Post-processing"
+        ],
+        "a": "Converts triangles to pixel fragments — determines which pixels are covered, interpolates vertex attributes across triangle",
+        "e": "Rasterizer = fixed-function. Triangle setup → edge walking → fragment generation. Interpolates depth, UV, color, normal per fragment."
+      },
+      {
+        "q": "What is a render target?",
+        "o": [
+          "A camera",
+          "Memory buffer GPU renders into — can be framebuffer (screen), texture, or multiple targets (MRT).",
+          "A shader",
+          "A mesh"
+        ],
+        "a": "Memory buffer GPU renders into — can be framebuffer (screen), texture, or multiple targets (MRT).",
+        "e": "Render target = output surface. Color buffer, depth buffer, stencil. Deferred rendering uses multiple targets (GBuffer)."
       }
     ]
   }

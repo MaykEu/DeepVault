@@ -25,11 +25,11 @@ const HistoryView = {
           for (var ai = 0; ai < a.answers.length; ai++) {
             var ans = a.answers[ai];
             var qNum = (typeof ans.questionIdx === 'number' ? ans.questionIdx + 1 : ai + 1);
-            var qText = ans.questionText || ('Question ' + qNum);
+            var qText = (ans.questionText || ans.question || 'Question ' + qNum);
             if (ans.correct) {
-              detailHtml += '<div class="history-detail-row correct"><strong>Q' + qNum + ':</strong> ' + qText + '<br><span class="detail-answer">\u2705 ' + (ans.userAnswer || '') + '</span></div>';
+              detailHtml += '<div class="history-detail-row correct"><strong>Q' + qNum + ':</strong> ' + qText + '<br><span class="detail-answer">\u2705 ' + ((ans.userAnswer || ans.given || '')) + '</span></div>';
             } else {
-              detailHtml += '<div class="history-detail-row wrong"><strong>Q' + qNum + ':</strong> ' + qText + '<br><span class="detail-answer">\u274c Your answer: ' + (ans.userAnswer || '(blank)') + '</span><br><span class="detail-correct">Correct: ' + (ans.correctAnswer || '?') + '</span></div>';
+              detailHtml += '<div class="history-detail-row wrong"><strong>Q' + qNum + ':</strong> ' + qText + '<br><span class="detail-answer">\u274c Your answer: ' + (ans.userAnswer || '(blank)') + '</span><br><span class="detail-correct">Correct: ' + ((ans.correctAnswer || '?')) + '</span></div>';
             }
           }
           detailHtml += '</div>';

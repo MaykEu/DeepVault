@@ -60,7 +60,7 @@ const QuizEngine = {
     }
 
     const q = s.questions[s.currentIndex];
-    const answered = s.answers[s.currentIndex] !== undefined;
+    const answered = s.answers[s.currentIndex] !== undefined || (document.getElementById('text-answer') && document.getElementById('text-answer').value.trim());
     const complete = (s.currentIndex) / s.questions.length * 100;
     const progressTitle = s.isReview ? 'Review' : 'Quiz';
 

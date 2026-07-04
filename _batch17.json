@@ -23,6 +23,39 @@
         ],
         "correctAnswer": "nullptr — always check result. Cast<T>(Obj) returns nullptr if Obj is not a T.",
         "explanation": "Cast<T> returns T* or nullptr. Pattern: if(auto* Actor = Cast<AActor>(Obj)) { Actor->DoThing(); }. No exception path."
+      },
+      {
+        "q": "What is the UE Cast<T> return value on failure?",
+        "o": [
+          "Throws",
+          "nullptr — always check return. Cast<T>(Obj) returns T* or nullptr. No exceptions in UE.",
+          "The original object",
+          "A default T"
+        ],
+        "a": "nullptr — always check return. Cast<T>(Obj) returns T* or nullptr. No exceptions in UE.",
+        "e": "if(AActor* A = Cast<AActor>(Obj)) { A->DoThing(); }. Null-check pattern. No RTTI, no exception. Fast O(1) class flag comparison."
+      },
+      {
+        "q": "What is the difference between Cast and CastChecked?",
+        "o": [
+          "Same",
+          "Cast: returns nullptr on failure. CastChecked: asserts/crashes on failure — use when the type MUST be correct",
+          "Cast is faster",
+          "CastChecked is deprecated"
+        ],
+        "a": "Cast: returns nullptr on failure. CastChecked: asserts/crashes on failure — use when the type MUST be correct",
+        "e": "CastChecked = 'I know this is the right type.' Crash if wrong (better than silent nullptr bug). Use in controlled paths where failure = logic error."
+      },
+      {
+        "q": "How does Cast<T> achieve O(1) without RTTI?",
+        "o": [
+          "It doesn't",
+          "UHT generates StaticClass() with TCastFlags. Cast compares class flags — integer comparison, no vtable walk.",
+          "dynamic_cast",
+          "reinterpret_cast"
+        ],
+        "a": "UHT generates StaticClass() with TCastFlags. Cast compares class flags — integer comparison, no vtable walk.",
+        "e": "TCastFlags<T> = compile-time bitmask. GetClass()->HasAnyCastFlag(Flags). One integer AND. Much faster than dynamic_cast (vtable walk + type_info compare)."
       }
     ]
   },
@@ -50,6 +83,39 @@
         ],
         "correctAnswer": "Is this machine the network authority (server) for this actor?",
         "explanation": "HasAuthority() = GetLocalRole() == ROLE_Authority. Use this to guard server-only logic: spawning, damage, state changes."
+      },
+      {
+        "q": "What does ROLE_AutonomousProxy mean?",
+        "o": [
+          "Server",
+          "The client that OWNS this actor — receives client RPCs, runs input prediction. Only one client has this role per actor.",
+          "Other clients",
+          "All clients"
+        ],
+        "a": "The client that OWNS this actor — receives client RPCs, runs input prediction. Only one client has this role per actor.",
+        "e": "AutonomousProxy = 'this is my pawn.' Input prediction runs here. Client RPCs delivered here. Server sees this actor as ROLE_Authority."
+      },
+      {
+        "q": "What does GetLocalRole() return on a dedicated server?",
+        "o": [
+          "ROLE_SimulatedProxy",
+          "ROLE_Authority — server is always the authority for all actors",
+          "ROLE_AutonomousProxy",
+          "ROLE_None"
+        ],
+        "a": "ROLE_Authority — server is always the authority for all actors",
+        "e": "Dedicated server: all actors have local role = ROLE_Authority. No autonomous proxies (no local player). No simulated proxies (no rendering)."
+      },
+      {
+        "q": "What ROLE does a pawn have on other clients?",
+        "o": [
+          "Authority",
+          "ROLE_SimulatedProxy — other clients simulate the pawn based on replicated state, no input",
+          "AutonomousProxy",
+          "None"
+        ],
+        "a": "ROLE_SimulatedProxy — other clients simulate the pawn based on replicated state, no input",
+        "e": "SimulatedProxy = 'someone else's pawn.' Receives replicated position, velocity. No input processing. Smoothly interpolates server state."
       }
     ]
   },
@@ -66,6 +132,50 @@
         ],
         "correctAnswer": "Marks a function as Server RPC — called on client, executes on server. UFUNCTION(Client) = opposite. UFUNCTION(NetMulticast) = all.",
         "explanation": "Server RPC: client→server. Client RPC: server→owning client. NetMulticast: server→all clients. Must have _Implementation suffix on definition."
+      },
+      {
+        "q": "What does UFUNCTION(Server, Reliable) do?",
+        "o": [
+          "Only server calls",
+          "Client calls → executes on server. Reliable = guaranteed delivery in order. Must have _Implementation suffix.",
+          "Only client calls",
+          "Multicast"
+        ],
+        "a": "Client calls → executes on server. Reliable = guaranteed delivery in order. Must have _Implementation suffix.",
+        "e": "Server RPC: declared in header with UFUNCTION(Server, Reliable). Implementation: MyFunc_Implementation(). Client calls MyFunc() → server executes _Implementation."
+      },
+      {
+        "q": "What does UFUNCTION(NetMulticast) do?",
+        "o": [
+          "Client to server",
+          "Server calls → executes on server AND all clients. Used for effects everyone should see.",
+          "Server only",
+          "Client only"
+        ],
+        "a": "Server calls → executes on server AND all clients. Used for effects everyone should see.",
+        "e": "NetMulticast: server invokes, all clients execute. No _Implementation suffix (called directly). Use for explosions, announcements, global effects."
+      },
+      {
+        "q": "What is the difference between Reliable and Unreliable RPCs?",
+        "o": [
+          "Same",
+          "Reliable: guaranteed delivery, ordered, can bottleneck. Unreliable: may drop, no guarantee, faster. Use Unreliable for frequent/fire-and-forget.",
+          "Unreliable is faster",
+          "Reliable is deprecated"
+        ],
+        "a": "Reliable: guaranteed delivery, ordered, can bottleneck. Unreliable: may drop, no guarantee, faster. Use Unreliable for frequent/fire-and-forget.",
+        "e": "Reliable = TCP-like. Unreliable = UDP-like. Use Reliable for critical events (damage, death). Use Unreliable for cosmetic (footsteps, muzzle flash)."
+      },
+      {
+        "q": "What does WithValidation add to an RPC?",
+        "o": [
+          "Nothing",
+          "Adds _Validate function — server checks parameters before executing. Returns false to block. Anti-cheat measure.",
+          "Speed",
+          "Multicast"
+        ],
+        "a": "Adds _Validate function — server checks parameters before executing. Returns false to block. Anti-cheat measure.",
+        "e": "UFUNCTION(Server, WithValidation). Server calls MyFunc_Validate(params) → if false, kicks client. Validates damage values, ability usage, movement limits."
       }
     ]
   },
@@ -82,6 +192,50 @@
         ],
         "correctAnswer": "When Health replicates from server to client, OnRep_Health() callback is called on client — add effects, UI updates",
         "explanation": "ReplicatedUsing enables callback on value change. Used for reactive effects: damage flash, health bar update. OnRep receives the OLD value for comparison."
+      },
+      {
+        "q": "What does UPROPERTY(ReplicatedUsing=OnRep_Func) trigger?",
+        "o": [
+          "Nothing",
+          "When property replicates from server to client, OnRep_Func() is called on client — add effects, update UI",
+          "Server call",
+          "Multicast"
+        ],
+        "a": "When property replicates from server to client, OnRep_Func() is called on client — add effects, update UI",
+        "e": "ReplicatedUsing: client receives new value → OnRep callback fires. Used for reactive UI, damage effects, state transitions."
+      },
+      {
+        "q": "What is the difference between Replicated and ReplicatedUsing?",
+        "o": [
+          "Same",
+          "Replicated: silent update (client variable changes, no callback). ReplicatedUsing: update + callback function invoked.",
+          "One is faster",
+          "Deprecated"
+        ],
+        "a": "Replicated: silent update (client variable changes, no callback). ReplicatedUsing: update + callback function invoked.",
+        "e": "Use Replicated for position/velocity (handled by movement component). Use ReplicatedUsing for health (need damage flash), state (need animation trigger)."
+      },
+      {
+        "q": "Does the server call OnRep when it changes a ReplicatedUsing variable?",
+        "o": [
+          "Yes, always",
+          "No — OnRep only fires on CLIENTS when the replicated value arrives. Server must manually call effects.",
+          "Sometimes",
+          "Only in Blueprints"
+        ],
+        "a": "No — OnRep only fires on CLIENTS when the replicated value arrives. Server must manually call effects.",
+        "e": "OnRep is client-only. Server: change variable → call effect function manually OR rely on the client to trigger effects via OnRep."
+      },
+      {
+        "q": "What is PushModel (UE5) for replication?",
+        "o": [
+          "A rendering technique",
+          "Explicit dirty marking: MARK_PROPERTY_DIRTY_FROM_NAME. Only replicates changed properties. Saves bandwidth.",
+          "A network protocol",
+          "Deprecated"
+        ],
+        "a": "Explicit dirty marking: MARK_PROPERTY_DIRTY_FROM_NAME. Only replicates changed properties. Saves bandwidth.",
+        "e": "PushModel: opt-in. You explicitly mark properties dirty. Without it, UE compares ALL replicated properties every tick (expensive). PushModel reduces comparison cost."
       }
     ]
   },
@@ -109,6 +263,39 @@
         ],
         "correctAnswer": "Quadratic — nested loops over input. 1000 elements = 1M operations. 100K elements = 10B. Unusable at scale.",
         "explanation": "O(n²): bubble sort, naive collision detection. Double the input = 4x the time. Must be avoided at scale. Use hashing or spatial partitioning."
+      },
+      {
+        "q": "What is O(log n) and what algorithms achieve it?",
+        "o": [
+          "Constant",
+          "Logarithmic — binary search, balanced tree operations. Doubling input = 1 more step. Scales excellently.",
+          "Linear",
+          "Quadratic"
+        ],
+        "a": "Logarithmic — binary search, balanced tree operations. Doubling input = 1 more step. Scales excellently.",
+        "e": "log₂(1M) ≈ 20. Binary search, BST find/insert, heap push/pop. Any 'divide problem size by constant each step' algorithm."
+      },
+      {
+        "q": "What is O(n log n) and why is it the lower bound for comparison sorting?",
+        "o": [
+          "Arbitrary",
+          "Decision tree argument: n! possible orderings, each comparison gives 1 bit → need log₂(n!) ≈ n log n comparisons. Optimal.",
+          "It could be faster with quantum computing",
+          "It's not a real bound"
+        ],
+        "a": "Decision tree argument: n! possible orderings, each comparison gives 1 bit → need log₂(n!) ≈ n log n comparisons. Optimal.",
+        "e": "Ω(n log n) = lower bound for comparison-based sorting. Merge sort, heap sort, quicksort (average) achieve this. Counting sort beats it by NOT comparing."
+      },
+      {
+        "q": "What is amortized O(1) and how does vector::push_back achieve it?",
+        "o": [
+          "Always O(1)",
+          "Individual push_back may be O(n) (reallocation), but averaged over N pushes it's O(1) — reallocation happens rarely.",
+          "Never O(1)",
+          "It doesn't achieve it"
+        ],
+        "a": "Individual push_back may be O(n) (reallocation), but averaged over N pushes it's O(1) — reallocation happens rarely.",
+        "e": "Amortized = average over sequence. Push N elements: O(N) total = O(1) amortized per push. Reallocation copies old elements — costs O(old_size)."
       }
     ]
   }
