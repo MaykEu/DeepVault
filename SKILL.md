@@ -225,3 +225,33 @@ Mirrors Obsidian subfolder structure. Collapsed by default. Root notes shown abo
 | `←` / `→` | Previous / Next note (in Learn view) |
 | `Enter` | Submit quiz answer |
 | `Escape` | Close search results / theme dropdown |
+
+
+
+## Wiki Link Handler — Critical Patterns (learned 2026-07-04)
+
+### Table Parser Pipe-Splitting Bug
+**Symptom:** All wiki links in LP table rows show "(coming soon)".  
+**Root cause:** Table parser split on `|` inside `[[link|alias]]` wiki links — treated the pipe as a cell separator instead of an alias delimiter.  
+**Fix:** Track `inBr` (inside brackets) state alongside `inBt` (inside backticks) in the table cell splitter. Two additions:
+```js
+// 1. Add bracket tracking
+var cells=[],cur='',inBt=false,inBr=false;
+
+// 2. Check inBr alongside inBt
+if(line[j]==='`')inBt=!inBt;
+else if(line[j]==='['&&line[j+1]==='[')inBr=true;  
+else if(line[j]===']'&&line[j+1]===']')inBr=false;
+if(line[j]==='|'&&!inBt&&!inBr&&...)  // Don't split on | inside [[ ]]
+```
+
+### Greedy vs Non-Greedy Prefix Stripping
+**Pattern:** Wiki link resolution must handle multi-level folder paths (`Hardware/Storage/00 — Overview`) AND aliases with slashes (`variant/optional/any`).  
+**Solution:** Split on `|` FIRST (extract target from alias), THEN strip folder prefix greedily:
+```js
+cn = name.split('|')[0].replace(/^.*\//,'')  // split on | first, then strip all prefixes
+```
+**Pitfall:** `replace(/^[^/]+\//)` (non-greedy) doesn't strip multi-level paths. `replace(/^.*\//)` (greedy) eats alias text containing `/`. ALWAYS split on `|` first.
+
+### Browser Tools First for Debugging
+**Pattern:** Always verify website issues with browser tools (`browser_navigate`, `browser_console`) before writing Python simulations. The browser shows the ACTUAL rendered output — simulations can miss edge cases. `agent-browser install` may be needed first.

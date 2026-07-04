@@ -8,7 +8,7 @@ Every folder on the dashboard contains **Learn** notes and **Quiz** exercises:
 
 | Mode | What It Does |
 |---|---|
-| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. Password-protected. |
+| **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. |
 | **Quiz** | 5-10 randomized questions per note — multiple choice and text input. Instant feedback. Scores saved locally on your device. |
 
 ### Tracking Your Progress
@@ -21,9 +21,9 @@ Progress is based on **quiz scores only** — reading a note does not count. Her
 | **IN PROGRESS** | At least 1 attempt, but best score is below 80% |
 | **COMPLETED** | You scored 80% or higher on at least one attempt |
 
-The folder header shows your overall completion percentage (completedNotes / totalNotes). Quiz scores and attempt history are saved locally via localStorage — they never leave your device.
+The folder header shows your overall completion percentage. Quiz scores and attempt history are saved locally via localStorage — they never leave your device.
 
-**Wiki links** like [[CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page. Links to notes not yet available show "(coming soon)".
+**Wiki links** like [[04 — CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page.
 
 **Recent notes** appear on the dashboard below your folders — quick jump back to what you were studying.
 
@@ -31,101 +31,68 @@ The folder header shows your overall completion percentage (completedNotes / tot
 
 ## Master Study Order
 
-This vault is designed to be read in order. Each note builds on the ones before it.
+This vault is designed to be read in order. Each note builds on the ones before it. See the [[Learning Path]] for the full reading order — this is just the big-picture map.
 
-### Layer 1 — Computer Systems — 20 notes (start here)
+### Layer 1 — Computer Systems (start here)
 
 Without understanding the hardware, C++ is just magic words. Start with the physical reality.
 
-1. [[Bits, Bytes & Number Systems]] — What a bit physically IS
-2. [[Negative Numbers & Endianness]] — Two's complement, signed vs unsigned
-3. [[Assembly Language]] — The bridge between C++ and hardware
-4. [[CPU Architecture]] — Fetch-decode-execute, pipelining, branch prediction
-5. [[Memory Hierarchy]] — Cache lines, L1/L2/L3, why RAM is slow
-6. [[RAM & Virtual Memory]] — Page tables, TLB, mmap, swap
-7. [[Virtual Memory — The Full Picture]] — Segmentation, page replacement, Linux reclamation
-8. [[Memory Allocation — From malloc to Buddy System]] — malloc internals, buddy system, slab, custom allocators
-9. [[Storage]] — HDD vs SSD, filesystems, page cache
-10. [[RAID]] — Striping, mirroring, parity, ZFS, the write hole
-11. [[Function Calls & Stack Frames]] — How call and ret actually work
-12. [[Compiler Pipeline]] — Preprocessor to assembler to linker
-13. [[Linking & Executables]] — Static vs dynamic linking, DLLs
-14. [[Syscalls & Kernel]] — Protection rings, syscall instruction, futex
-15. [[Scheduling — MLFQ & Proportional Share]] — MLFQ, lottery/stride scheduling, CFS, EEVDF
-16. [[Threads & Processes]] — Scheduler, context switching, thread pools
-17. [[Concurrency & Synchronization]] — Mutexes, atomics, memory ordering, lock-free and lock-based structures
-18. [[Condition Variables & Semaphores]] — Waiting rooms, producer-consumer, barriers, POSIX semaphores
-19. [[Deadlock — The Four Conditions]] — Coffman conditions, prevention, priority inversion
-20. [[GPU Architecture Overview]] — SIMT, VRAM, compute shaders
+Covering: bits and bytes → assembly → CPU → memory hierarchy → virtual memory → storage → DMA → networking → boot process → GPU → interrupts → system software → concurrency. Over 50 notes from transistor to thread pool.
 
-Use the [[Learning Path]] for a detailed walkthrough with phase-by-phase guidance.
+Start with [[01 — Bits, Bytes & Number Systems]] and follow the [[Learning Path — Computer Systems|Computer Systems Learning Path]].
 
 ### Layer 2 — C++ Fundamentals
 
 Once you understand the hardware, learn the language that runs on it.
 
-1. **Memory & Ownership** — [[Stack vs Heap]], [[Object Memory Layout]], [[std vector & Container Internals]], [[RAII, Lifetimes & The Rule of Five]]
-2. **Smart Pointers** — [[Smart Pointers & Ownership]], [[Move Semantics & Perfect Forwarding]], [[References]], [[const Correctness]], [[static in C++]]
-3. **Core Language** — [[Enums & enum class]], [[Preprocessor & Macros]], [[Type Deduction — auto, decltype]], [[Structured Bindings]]
-4. **Types & Data** — [[Operator Overloading]]
-5. **OOP & Polymorphism** — [[Inheritance & Virtual Functions]], [[Lambdas & Function Objects]]
-6. **Cross-Cutting** — [[C++ Casting & RTTI]], [[Templates & Concepts]], [[C++ vs UE C++ — Key Differences]], [[String Types & string_view]], [[Explicit & Implicit Conversion]]
+45 notes across 6 phases: Primer (absolute beginner) → Syntax & Types → Memory → OOP & Generics → Modern C++ → Engine Bridge. Every note has exercises.
+
+Start with [[01 — Primer/00 — Primer Overview|C++ Primer]] and follow the [[Learning Path — C++ Fundamentals|C++ Learning Path]].
 
 ### Layer 3 — Game Math
 
-The mathematics that make 3D worlds possible. Start with [[From Trigonometry to 3D Transformations]] for the big picture, then dive into:
+The mathematics that make 3D worlds possible.
 
-1. [[Trigonometry & Vectors]] — The foundation of all 3D
-2. [[Matrices & Coordinate Systems]] — Transforming objects in space
-3. [[Quaternions & 3D Rotations]] — Why gimbals lock and quaternions don't
-4. [[Curves, Interpolation & Kinematics]] — Smooth motion and animation
-5. [[Collision Detection Math]] — How engines detect when things touch
-6. [[Geometric Algebra]] — The unified framework behind it all
+41 notes across 10 subfolders: Trigonometry → Matrices → Quaternions → Collision Detection → Physics Simulation → Animation → Navigation → Rendering → Procedural Generation → Audio & Networking → Geometric Algebra → UE Bridge. Framework-agnostic (pure C++ structs, not UE-specific).
 
-Then bridge to UE: [[FVector, FRotator, FQuat — The Core Types]], [[FTransform & FMatrix]], [[FMath — Interpolation & Utility]], [[Collision & Intersection Math]], [[Curves, Ranges & Random]].
+Start with [[From Trigonometry to 3D Transformations]] and follow the [[Learning Path — Game Math|Game Math Learning Path]].
 
 ### Layer 4 — Unreal Engine Core
 
-How UE turns C++ into a game engine. Start with [[From UCLASS to Running Object — The UE Core Pipeline]] for the map, then:
+How UE turns C++ into a game engine.
 
-1. [[UHT, Macros & Reflection]] — How the header tool works
-2. [[Pointer Ecosystem]] — TObjectPtr vs TSharedPtr vs TUniquePtr
-3. [[FName vs FString vs FText]] — UE's string types
-4. [[Casting in Unreal Engine]] — Cast<T> vs dynamic_cast
-5. [[UE Inheritance & UObject System]] — The class hierarchy
-6. [[TArray Internals]], [[TMap Internals]], [[TSet Internals]] — UE's containers
-7. [[UE Enums & Flags]] — UENUM and bitflags
-8. [[UE Templates & T-Containers]]
-9. [[Move Semantics in UE]]
+14 notes: UHT & Macros → Pointer Ecosystem → String Types → Casting → Containers → Templates → Move Semantics.
+
+Start with [[UHT, Macros & Reflection]] and follow the [[Learning Path — Unreal Engine Core|UE Core Learning Path]].
 
 ### Layer 5 — UE Networking
 
-Multiplayer from the hardware up. Start with [[From Input to Replication — The Networking Pipeline]], then:
+Multiplayer from the hardware up.
 
-1. [[Network Roles]] — Authority, autonomy, simulated proxies
-2. [[RPCs in Unreal Engine]] — Client/Server/Multicast
-3. [[RepNotifies & OnRep]] — Replicating state
-4. [[PushModel & Dirty Marking]] — Optimizing replication
-5. [[Iris Replication System Overview]] — UE5's replication architecture
-6. [[Iris Filtering & Prioritization]] — Who sees what
-7. [[GAS Networking & Prediction]] — Ability System multiplayer
+7 notes: Network Roles → RPCs → RepNotifies → PushModel → Iris Replication → Iris Filtering → GAS Networking.
+
+Start with [[Network Roles]] and follow the [[Learning Path — Unreal Engine Networking|UE Networking Learning Path]].
 
 ### Layer 6 — Big O & Algorithms
 
-[[The Big O Complexity Spectrum]], [[Amortized Analysis & Real Profiling Data]], [[Applied Examples - Raw C++ vs Unreal Engine]].
+6 notes: Complexity classes → Amortized analysis → Applied examples → Sorting algorithms → Graph algorithms → Dynamic programming.
+
+Start with [[The Big O Complexity Spectrum]] and follow the [[Learning Path — Algorithms & Complexity|Algorithms Learning Path]].
 
 ---
 
 ## Reference
 
 - [[Glossary]] — Every acronym defined (MMU, TLB, PTE, MESI, PLT, GOT...)
-- [[Learning Path]] — The full Computer Systems reading order with phase descriptions
+- [[Learning Path]] — All six category paths
 - Use the right-side table of contents to jump between sections in any note
 - Check the dashboard for recently viewed notes and quiz scores
 
 ---
 
-DeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. ### Moving Between Devices
+DeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. 
+
+### Moving Between Devices
 
 Your quiz progress lives in your browser's localStorage. To continue studying on another device:
 
