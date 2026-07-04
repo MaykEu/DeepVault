@@ -489,7 +489,7 @@
           "Move semantics"
         ],
         "correctAnswer": "The CRTP pattern — no more static_cast<Derived*>(this)",
-        "explanation": "'Deducing this kills CRTP. void f(this Self&& self) deduces derived type automatically.'"
+        "explanation": "Note: 'Deducing this kills the CRTP pattern. void f(this Self&& self) deduces the derived type automatically.'"
       },
       {
         "question": "What is std::expected<T,E>?",
@@ -500,7 +500,73 @@
           "Coroutine type"
         ],
         "correctAnswer": "Rust-style Result — holds either T (value) or E (error), forces error handling",
-        "explanation": "expected<T,E> = value OR error. Monadic operations: and_then, transform, or_else."
+        "explanation": "expected<T,E> = value OR error. Monadic operations: and_then, transform, or_else. Replaces pair<T,bool> pattern."
+      },
+      {
+        "question": "What monadic operation chains std::optional calls without nested ifs?",
+        "options": [
+          "optional::get()",
+          "optional::and_then() and optional::transform()",
+          "optional::value()",
+          "optional::reset()"
+        ],
+        "correctAnswer": "optional::and_then() and optional::transform()",
+        "explanation": "C++23 adds and_then (chain), transform (map), or_else (fallback). Eliminates nested if-checking."
+      },
+      {
+        "question": "What does std::flat_map use internally instead of a tree?",
+        "options": [
+          "Hash table",
+          "Sorted contiguous arrays (vectors) — binary search, cache-friendly",
+          "Linked list",
+          "B-tree"
+        ],
+        "correctAnswer": "Sorted contiguous arrays (vectors) — binary search, cache-friendly",
+        "explanation": "flat_map stores keys+values in sorted vectors. O(log n) binary search, cache-friendly iteration. Inserts are O(n)."
+      },
+      {
+        "question": "What does multidimensional operator[] (C++23) enable?",
+        "options": [
+          "Multiple return values",
+          "grid[x, y, z] — multiple arguments to operator[]",
+          "Parallel array access",
+          "SIMD operations"
+        ],
+        "correctAnswer": "grid[x, y, z] — multiple arguments to operator[]",
+        "explanation": "Before C++23: operator()(x,y,z) or tuple. C++23: operator[](x,y,z) natively."
+      },
+      {
+        "question": "What does if consteval detect?",
+        "options": [
+          "Exception context",
+          "Whether code is executing at compile time vs runtime",
+          "Template instantiation",
+          "Optimization level"
+        ],
+        "correctAnswer": "Whether code is executing at compile time vs runtime",
+        "explanation": "if consteval: branch taken only during compile-time evaluation. Different algorithms for compile vs runtime."
+      },
+      {
+        "question": "What does std::println provide over std::cout << std::format?",
+        "options": [
+          "Nothing new",
+          "Direct formatted output with newline — no intermediate string allocation, compile-time checked",
+          "Faster runtime",
+          "Only for debugging"
+        ],
+        "correctAnswer": "Direct formatted output with newline — no intermediate string allocation, compile-time checked",
+        "explanation": "std::println writes directly to stream buffer. No intermediate std::string. Compile-time format string validation."
+      },
+      {
+        "question": "Why is C++23 called a 'completion' release?",
+        "options": [
+          "It's the last C++ release",
+          "It polishes C++20 features and fills gaps rather than introducing paradigm shifts",
+          "It focuses only on performance",
+          "It deprecates old features"
+        ],
+        "correctAnswer": "It polishes C++20 features and fills gaps rather than introducing paradigm shifts",
+        "explanation": "Note: 'C++23 is a completion release — it polishes features from C++20, fills long-standing gaps.'"
       }
     ]
   },
@@ -511,23 +577,89 @@
         "question": "Why does UE disable C++ exceptions?",
         "options": [
           "Too slow",
-          "Performance predictability, code size, console platform constraints",
+          "Performance predictability, code size, and console platform constraints",
           "Windows incompatibility",
-          "Deprecated"
+          "Deprecated in C++20"
         ],
-        "correctAnswer": "Performance predictability, code size, console platform constraints",
-        "explanation": "UE replaces exceptions with check()/ensure()/verify() macros for predictable performance."
+        "correctAnswer": "Performance predictability, code size, and console platform constraints",
+        "explanation": "Exceptions add 5-15% binary size and make control flow unpredictable. UE uses macros instead."
       },
       {
-        "question": "What does UE use instead of dynamic_cast?",
+        "question": "What does check(expr) do?",
         "options": [
-          "static_cast",
-          "Cast<T>() — UE's own casting system using static class flags",
-          "reinterpret_cast",
-          "Nothing"
+          "Logs a warning",
+          "If false → crashes immediately with message + callstack — in dev AND shipping builds",
+          "Throws exception",
+          "Returns false"
         ],
-        "correctAnswer": "Cast<T>() — UE's own casting system using static class flags",
-        "explanation": "UE disables RTTI. Cast<T>() uses compile-time class flags for O(1) type checking without vtable walking."
+        "correctAnswer": "If false → crashes immediately with message + callstack — in dev AND shipping builds",
+        "explanation": "check() is fatal in all builds. ensure() logs and continues (dev only). verify() like check but expr runs in shipping too."
+      },
+      {
+        "question": "How does UE's Cast<T>() work without RTTI?",
+        "options": [
+          "It doesn't — UE uses dynamic_cast",
+          "Uses compile-time static class flags generated by UHT — O(1) type check",
+          "Falls back to reinterpret_cast",
+          "Uses virtual functions"
+        ],
+        "correctAnswer": "Uses compile-time static class flags generated by UHT — O(1) type check",
+        "explanation": "UHT generates StaticClass() and TCastFlags. Cast<T>() compares flags — no vtable walk, no RTTI overhead."
+      },
+      {
+        "question": "What UE type replaces std::string?",
+        "options": [
+          "TCHAR",
+          "FString",
+          "FName",
+          "FText"
+        ],
+        "correctAnswer": "FString",
+        "explanation": "FString = mutable heap string (like std::string). FName = interned string (O(1) comparison). FText = localizable."
+      },
+      {
+        "question": "What is the difference between FName and FString?",
+        "options": [
+          "No difference",
+          "FName is an interned, immutable string — O(1) comparison via index; FString is a regular mutable string",
+          "FName is shorter",
+          "FName is deprecated"
+        ],
+        "correctAnswer": "FName is an interned, immutable string — O(1) comparison via index; FString is a regular mutable string",
+        "explanation": "FName stores strings in a global table. Comparing two FNames is comparing integers (table indices)."
+      },
+      {
+        "question": "Why can't you use raw AActor* to keep a UObject alive in UE?",
+        "options": [
+          "It works fine",
+          "Only UPROPERTY() members and TObjectPtr prevent GC — raw pointers don't count as references",
+          "UE doesn't use pointers",
+          "AActor is abstract"
+        ],
+        "correctAnswer": "Only UPROPERTY() members and TObjectPtr prevent GC — raw pointers don't count as references",
+        "explanation": "Note: 'A raw AActor* does NOT prevent garbage collection. Only UPROPERTY() and TObjectPtr<T> keep UObjects alive.'"
+      },
+      {
+        "question": "What UE type replaces std::shared_ptr for non-UObject types?",
+        "options": [
+          "TObjectPtr",
+          "TSharedPtr",
+          "TUniquePtr",
+          "FSharedRef"
+        ],
+        "correctAnswer": "TSharedPtr",
+        "explanation": "TSharedPtr is reference-counted like shared_ptr but for non-UObject types. TObjectPtr is for UObject GC tracking."
+      },
+      {
+        "question": "What does ensure() do differently from check()?",
+        "options": [
+          "Same thing",
+          "Logs error + callstack but continues execution — only in development builds, stripped from shipping",
+          "Crashes harder",
+          "Only works in debugger"
+        ],
+        "correctAnswer": "Logs error + callstack but continues execution — only in development builds, stripped from shipping",
+        "explanation": "ensure() is for non-fatal errors you want to know about during development without crashing. Stripped from shipping."
       }
     ]
   },
@@ -546,13 +678,68 @@
       {
         "question": "What does the preprocessor do with #include?",
         "options": [
-          "Import declarations",
-          "Copy-pastes entire file at directive position",
-          "Links library",
-          "Checks existence"
+          "Import only used declarations",
+          "Copy-pastes the entire file at the directive position",
+          "Links to a shared library",
+          "Checks file existence"
         ],
-        "correctAnswer": "Copy-pastes entire file at directive position",
-        "explanation": "#include = text paste. <iostream> adds ~25,000 lines before compiler sees it."
+        "correctAnswer": "Copy-pastes the entire file at the directive position",
+        "explanation": "#include = text paste. <iostream> adds ~25,000 lines before the compiler sees it."
+      },
+      {
+        "question": "What does the linker resolve?",
+        "options": [
+          "Syntax errors",
+          "Symbols — connects 'require' in one .o to 'provide' in another .o or library",
+          "Includes",
+          "Template instantiation"
+        ],
+        "correctAnswer": "Symbols — connects 'require' in one .o to 'provide' in another .o or library",
+        "explanation": "Each .o has a symbol table: what it provides (defines) and what it requires (declared but not defined). Linker matches them."
+      },
+      {
+        "question": "What does the OS loader do before main() runs?",
+        "options": [
+          "Nothing",
+          "Creates process with private virtual address space, maps .text/.data/.bss/stack/heap, loads dynamic libs",
+          "Compiles the program",
+          "Runs the garbage collector"
+        ],
+        "correctAnswer": "Creates process with private virtual address space, maps .text/.data/.bss/stack/heap, loads dynamic libs",
+        "explanation": "Loader: create process → map segments → load dynamic libraries → jump to _start → __libc_start_main → main()."
+      },
+      {
+        "question": "What file extension does the assembler output?",
+        "options": [
+          ".cpp",
+          ".i",
+          ".s",
+          ".o / .obj"
+        ],
+        "correctAnswer": ".o / .obj",
+        "explanation": "Assembler: .s (assembly text) → .o (binary machine code + symbol table + relocation entries)."
+      },
+      {
+        "question": "What does the compiler's optimizer do?",
+        "options": [
+          "Just formats code",
+          "Inlining, dead code elimination, loop unrolling, vectorization — transforms IR to faster equivalent",
+          "Links libraries",
+          "Handles templates"
+        ],
+        "correctAnswer": "Inlining, dead code elimination, loop unrolling, vectorization — transforms IR to faster equivalent",
+        "explanation": "Compiler: C++ → AST → IR (GIMPLE/LLVM IR) → optimized IR → target assembly. Optimization happens at IR level."
+      },
+      {
+        "question": "What is an 'undefined reference' linker error?",
+        "options": [
+          "Syntax error in code",
+          "A symbol was declared but never defined — the linker can't find its .o or library",
+          "Missing #include",
+          "Wrong compiler version"
+        ],
+        "correctAnswer": "A symbol was declared but never defined — the linker can't find its .o or library",
+        "explanation": "Undefined reference = linker found a 'require' with no matching 'provide'. Forgot to link a .cpp or library."
       }
     ]
   },
@@ -560,15 +747,59 @@
     "note": "03 — Modules (C++20)",
     "questions": [
       {
-        "question": "Primary advantage of C++20 modules over #include?",
+        "question": "What is the primary advantage of modules over #include?",
         "options": [
           "Faster runtime",
-          "Dramatically faster compilation — pre-compiled, not text-pasted",
+          "Dramatically faster compilation — modules are pre-compiled once, not text-pasted into every file",
           "Smaller binary",
           "Easier syntax"
         ],
-        "correctAnswer": "Dramatically faster compilation — pre-compiled, not text-pasted",
-        "explanation": "import std; replaces pasting the entire standard library. Modules are parsed once, used many times."
+        "correctAnswer": "Dramatically faster compilation — modules are pre-compiled once, not text-pasted into every file",
+        "explanation": "import std; replaces pasting the entire standard library. Modules parsed once, used many times."
+      },
+      {
+        "question": "What does 'export' do in a module?",
+        "options": [
+          "Nothing special",
+          "Makes a function/type/namespace visible to importers — without export, it's internal",
+          "Optimizes the code",
+          "Enables templates"
+        ],
+        "correctAnswer": "Makes a function/type/namespace visible to importers — without export, it's internal",
+        "explanation": "Only exported entities are accessible to consumers. Non-exported = module-private."
+      },
+      {
+        "question": "What is a module partition?",
+        "options": [
+          "A separate module",
+          "A way to split a large module internally — consumers import the primary module and see everything",
+          "A deprecated feature",
+          "A header file"
+        ],
+        "correctAnswer": "A way to split a large module internally — consumers import the primary module and see everything",
+        "explanation": "Partitions (module mymath:basics) are internal organization. Consumers only import mymath."
+      },
+      {
+        "question": "What is a header unit?",
+        "options": [
+          "A special kind of module",
+          "A pre-compiled header imported as module: import <iostream>; — migration bridge from #include",
+          "A C++23 feature only",
+          "A deprecated pattern"
+        ],
+        "correctAnswer": "A pre-compiled header imported as module: import <iostream>; — migration bridge from #include",
+        "explanation": "Header units let you import existing headers as modules. Not as clean as named modules (macro leakage possible)."
+      },
+      {
+        "question": "Why doesn't UE use modules yet?",
+        "options": [
+          "They don't work",
+          "Compiler support stabilized only recently; UBT needs changes; BMI not portable; massive codebase",
+          "Modules are too slow",
+          "Epic doesn't like C++20"
+        ],
+        "correctAnswer": "Compiler support stabilized only recently; UBT needs changes; BMI not portable; massive codebase",
+        "explanation": "Four reasons: unstable compiler support until 2022-23, UBT changes needed, BMI format not portable, 20-year codebase."
       }
     ]
   },
@@ -578,13 +809,56 @@
       {
         "question": "What is stack unwinding?",
         "options": [
-          "Optimization",
-          "When exception thrown, destructors of local objects called in reverse order to find catch handler",
+          "A compiler optimization",
+          "When an exception is thrown, destructors of all local objects are called in reverse order as the stack backtracks to find a catch handler",
           "Memory cleanup",
-          "Inlining"
+          "Function inlining"
         ],
-        "correctAnswer": "When exception thrown, destructors of local objects called in reverse order to find catch handler",
-        "explanation": "Stack unwinding = runtime destroys local objects searching up the call stack for matching catch."
+        "correctAnswer": "When an exception is thrown, destructors of all local objects are called in reverse order as the stack backtracks to find a catch handler",
+        "explanation": "Each frame's cleanup runs destructors in reverse construction order. Exception tables map PC addresses to cleanup actions."
+      },
+      {
+        "question": "Why should you always catch by const reference?",
+        "options": [
+          "Performance",
+          "Avoids slicing — catching by value would copy and potentially slice derived exception types",
+          "Required by the standard",
+          "It's just convention"
+        ],
+        "correctAnswer": "Avoids slicing — catching by value would copy and potentially slice derived exception types",
+        "explanation": "catch (const std::exception& e) preserves the actual exception type. catch (std::exception e) slices it."
+      },
+      {
+        "question": "What are the three exception safety guarantee levels?",
+        "correctAnswer": "Basic (no leaks), Strong (commit-or-rollback), No-throw (cannot fail)",
+        "acceptableAnswers": [
+          "basic strong no-throw",
+          "basic, strong, and no-throw",
+          "Basic Strong No-throw"
+        ],
+        "explanation": "Basic: no leaks but state may change. Strong: succeeds OR state unchanged. No-throw: never fails (destructors, swap)."
+      },
+      {
+        "question": "What happens if a destructor throws during stack unwinding?",
+        "options": [
+          "It's caught normally",
+          "std::terminate() — double exception is fatal, program dies immediately",
+          "The exception is ignored",
+          "The program continues"
+        ],
+        "correctAnswer": "std::terminate() — double exception is fatal, program dies immediately",
+        "explanation": "Throwing from destructor during another exception = two active exceptions → std::terminate(). Destructors must be noexcept."
+      },
+      {
+        "question": "How does the runtime know which destructors to call during unwinding?",
+        "options": [
+          "It guesses",
+          "Exception tables (.eh_frame on Linux, .pdata/.xdata on Windows) map every PC address to cleanup actions",
+          "It walks the call stack manually",
+          "The compiler inserts try/catch everywhere"
+        ],
+        "correctAnswer": "Exception tables (.eh_frame on Linux, .pdata/.xdata on Windows) map every PC address to cleanup actions",
+        "explanation": "The compiler generates unwind tables. At runtime, the exception machinery uses these tables to find and execute cleanup code."
       }
     ]
   },
@@ -594,13 +868,57 @@
       {
         "question": "What is CMake?",
         "options": [
-          "Compiler",
-          "Build system generator — creates native build files (Makefiles, VS solutions) from CMakeLists.txt",
-          "Linker",
-          "Package manager"
+          "A compiler",
+          "A meta-build system — generates native build files (Makefiles, VS solutions) from CMakeLists.txt",
+          "A linker",
+          "A package manager"
         ],
-        "correctAnswer": "Build system generator — creates native build files (Makefiles, VS solutions) from CMakeLists.txt",
-        "explanation": "CMake is a meta-build system. Platform-independent script → platform-specific build files."
+        "correctAnswer": "A meta-build system — generates native build files (Makefiles, VS solutions) from CMakeLists.txt",
+        "explanation": "CMake reads CMakeLists.txt and outputs platform-specific build files. It doesn't build directly."
+      },
+      {
+        "question": "Why should you build out-of-source?",
+        "options": [
+          "It's faster",
+          "Keeps generated files separate from source — can delete build/ and regenerate cleanly",
+          "Required by CMake",
+          "For version control"
+        ],
+        "correctAnswer": "Keeps generated files separate from source — can delete build/ and regenerate cleanly",
+        "explanation": "mkdir build && cd build && cmake .. — all generated files in build/. Never build in the source directory."
+      },
+      {
+        "question": "What does target_link_libraries do?",
+        "options": [
+          "Copies libraries",
+          "Specifies that a target depends on another library — linker will resolve symbols from it",
+          "Downloads libraries",
+          "Creates a library"
+        ],
+        "correctAnswer": "Specifies that a target depends on another library — linker will resolve symbols from it",
+        "explanation": "target_link_libraries(MyGame PRIVATE Engine) tells CMake MyGame needs Engine. PRIVATE = only MyGame needs it."
+      },
+      {
+        "question": "What is the difference between STATIC and SHARED libraries?",
+        "options": [
+          "No difference",
+          "STATIC = copied into executable at link time; SHARED = loaded at runtime (.dll/.so)",
+          "STATIC is faster",
+          "SHARED is deprecated"
+        ],
+        "correctAnswer": "STATIC = copied into executable at link time; SHARED = loaded at runtime (.dll/.so)",
+        "explanation": "add_library(Engine STATIC ...) vs SHARED. Static increases binary size; shared reduces it but adds runtime dependency."
+      },
+      {
+        "question": "What does CMake's configure step do?",
+        "options": [
+          "Compiles",
+          "Generates build files — reads CMakeLists.txt, detects compiler, finds dependencies, creates Makefiles/sln",
+          "Links",
+          "Runs tests"
+        ],
+        "correctAnswer": "Generates build files — reads CMakeLists.txt, detects compiler, finds dependencies, creates Makefiles/sln",
+        "explanation": "cmake .. is configure. cmake --build . is build. They're separate steps — reconfigure only when CMakeLists.txt changes."
       }
     ]
   }
