@@ -81,10 +81,11 @@ const QuizEngine = {
     if (this.isMC(q)) {
       html += '<div class="options-group">';
       const selected = s.answers[s.currentIndex];
+      const correctIdx = q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer);
       for (let i = 0; i < q.options.length; i++) {
         let cls = 'option-label';
         if (s.submitted) {
-          if (i === q.correctIndex) cls += ' option-correct';
+          if (i === correctIdx) cls += ' option-correct';
           else if (i === selected && !s.answers[s.currentIndex + '_correct']) cls += ' option-incorrect';
         } else if (i === selected) {
           cls += ' selected';
