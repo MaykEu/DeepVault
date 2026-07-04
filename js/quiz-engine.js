@@ -20,8 +20,10 @@ const QuizEngine = {
   isMC(q) { return q.options && q.options.length > 0; },
 
   start(container, folderId, noteName, reviewQuestions) {
-    // If returning from history, show last result
-    var lastResult = sessionStorage.getItem('dv_last_result');
+    // If returning from history, show last result (unless fresh start requested)
+    var freshStart = sessionStorage.getItem('dv_fresh_start');
+    if (freshStart) { sessionStorage.removeItem('dv_fresh_start'); }
+    var lastResult = freshStart ? null : sessionStorage.getItem('dv_last_result');
     if (lastResult && !reviewQuestions) {
       try {
         var r = JSON.parse(lastResult);
@@ -35,7 +37,6 @@ const QuizEngine = {
             wrongCount: r.total - r.correctCount,
             elapsed: r.elapsed, isReview: false
           });
-          sessionStorage.removeItem('dv_last_result');
           return;
         }
       } catch(e) {}
