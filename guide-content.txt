@@ -23,6 +23,15 @@ Progress is based on **quiz scores only** — reading a note does not count. Her
 
 The folder header shows your overall completion percentage. Quiz scores and attempt history are saved locally via localStorage — they never leave your device.
 
+### Bookmarks
+
+**Bookmark notes** you want to return to — click the ☆ star on any note card in the Study tab. Bookmarked notes appear under the ⭐ Bookmarks tab for quick access.
+
+- Click ☆ to bookmark → turns to ⭐ (gold)  
+- Click ⭐ to remove bookmark
+- Switch to the Bookmarks tab to see only your bookmarked notes
+- Bookmarks are included in Export/Import — they travel with your progress
+
 **Wiki links** like [[04 — CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page.
 
 **Recent notes** appear on the dashboard below your folders — quick jump back to what you were studying.
