@@ -3,7 +3,8 @@ const HistoryView = {
     const attempts = Storage.getAttempts(folderId, noteName);
     const folder = FOLDERS.find(f => f.id === folderId);
 
-    var html = '<h2 class="page-title">\u{1F4CA} Score History</h2>';
+    var html = '<a href="#" class="back-link" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '/note/' + encodeURIComponent(noteName) + '/quiz\')">\u2190 Back</a>';
+    html += '<h2 class="page-title">\u{1F4CA} Score History</h2>';
     html += '<p style="color:var(--text-secondary);margin-bottom:1.5rem;">' + noteName + '</p>';
 
     if (attempts.length === 0) {
@@ -29,7 +30,6 @@ const HistoryView = {
     html +=
       '<div style="margin-top:1.5rem;">' +
         '<button class="btn btn-primary" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '/note/' + encodeURIComponent(noteName) + '/quiz\')">Take Quiz</button>' +
-        '<button class="btn btn-outline btn-sm" style="margin-left:0.5rem;" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '/note/' + encodeURIComponent(noteName) + '/learn\')">\u{1F4D6} Back to Note</button>' +
         '<button class="btn btn-outline btn-sm" style="margin-left:0.5rem;" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folderId) + '\')">\u2190 Back to ' + (folder ? folder.name : 'Folder') + '</button>' +
       '</div>';
 

@@ -306,5 +306,398 @@
         "explanation": "Note: 'Without break, execution falls through — deliberate C heritage for shared handlers.'"
       }
     ]
+  },
+  {
+    "note": "03 — Functions & The Call Stack",
+    "questions": [
+      {
+        "question": "What is the difference between a function declaration and a definition?",
+        "options": [
+          "They are the same thing",
+          "A declaration provides the body; a definition states existence",
+          "A declaration tells the compiler the function exists; a definition provides the body (instructions)",
+          "A declaration is in the .h file; a definition is in the .cpp file"
+        ],
+        "correctAnswer": "A declaration tells the compiler the function exists; a definition provides the body (instructions)",
+        "explanation": "Note: 'A declaration tells the compiler this function exists somewhere. A definition provides the body — the actual instructions.'"
+      },
+      {
+        "question": "What is the difference between parameters and arguments?",
+        "options": [
+          "They are the same thing",
+          "Parameters are in the declaration; arguments are the values at the call site",
+          "Arguments are in the declaration; parameters are at the call site",
+          "Parameters are input; arguments are output"
+        ],
+        "correctAnswer": "Parameters are in the declaration; arguments are the values at the call site",
+        "explanation": "Note: 'Parameters are the variables in the declaration (a, b). Arguments are the values at the call site (Add(3, 4)).'"
+      },
+      {
+        "question": "What does the `call` instruction do at the hardware level?",
+        "options": [
+          "Calls malloc to allocate stack space",
+          "Saves all registers to memory then jumps",
+          "Pushes the return address (RSP-=8, [RSP]=RIP_next) and jumps (RIP=&func)",
+          "Sends an interrupt to the OS kernel"
+        ],
+        "correctAnswer": "Pushes the return address (RSP-=8, [RSP]=RIP_next) and jumps (RIP=&func)",
+        "explanation": "Note: 'call: 1. RSP=RSP-8, 2. [RSP]=RIP_next (save return address), 3. RIP=&Add (jump to function).'"
+      },
+      {
+        "question": "What does the `ret` instruction do?",
+        "options": [
+          "Returns the value in RAX to the OS",
+          "Pops the return address from the stack into RIP and increments RSP",
+          "Destroys the stack frame and calls the destructor",
+          "Jumps to the instruction before the call"
+        ],
+        "correctAnswer": "Pops the return address from the stack into RIP and increments RSP",
+        "explanation": "Note: 'ret: 1. RIP=[RSP] (pop return address), 2. RSP=RSP+8 (reclaim stack space).'"
+      },
+      {
+        "question": "Which register holds the return value of a function on x86-64?",
+        "options": [
+          "RSP",
+          "RBP",
+          "RAX",
+          "RIP"
+        ],
+        "correctAnswer": "RAX",
+        "explanation": "Note: 'Integer/pointer returns go in RAX. Float returns in XMM0.'"
+      },
+      {
+        "question": "What is the stack frame prologue?",
+        "options": [
+          "The first line of code in main()",
+          "push rbp; mov rbp, rsp; sub rsp, N — saves caller's frame pointer, establishes base, allocates locals",
+          "The return statement at the end",
+          "The call instruction itself"
+        ],
+        "correctAnswer": "push rbp; mov rbp, rsp; sub rsp, N — saves caller's frame pointer, establishes base, allocates locals",
+        "explanation": "Note shows: 'push rbp (save caller's frame pointer), mov rbp, rsp (new frame base), sub rsp, N (allocate locals).'"
+      },
+      {
+        "question": "What causes a stack overflow?",
+        "options": [
+          "Calling too many different functions",
+          "Recursion that exhausts the fixed-size stack — RSP crosses unmapped guard pages",
+          "Allocating too much memory with new",
+          "Using too many local variables in a single function"
+        ],
+        "correctAnswer": "Recursion that exhausts the fixed-size stack — RSP crosses unmapped guard pages",
+        "explanation": "Note: 'When RSP crosses into unmapped guard pages, the MMU raises a page fault → SIGSEGV.'"
+      },
+      {
+        "question": "How does Tail Call Optimization transform a recursive call?",
+        "options": [
+          "It inlines the function body",
+          "It replaces call with jmp, reusing the same stack frame for constant stack depth",
+          "It moves the recursion to the heap",
+          "It unrolls the recursion using templates"
+        ],
+        "correctAnswer": "It replaces call with jmp, reusing the same stack frame for constant stack depth",
+        "explanation": "Note: 'Tail Call Optimization changes call to jmp, reusing the same frame. Constant stack depth.'"
+      },
+      {
+        "question": "At the hardware level, how does pass-by-value work?",
+        "options": [
+          "The entire object is copied to the heap",
+          "The argument's bits are copied into a register (or stack slot) — the function sees the copy, not the original",
+          "A pointer to the original is passed automatically",
+          "The compiler generates a copy constructor call"
+        ],
+        "correctAnswer": "The argument's bits are copied into a register (or stack slot) — the function sees the copy, not the original",
+        "explanation": "Note: 'At the hardware level: health's 4 bytes are copied into the EDI register. The function only sees EDI.'"
+      },
+      {
+        "question": "What is the maximum stack size on Linux, and roughly how many recursive calls can a simple function make?",
+        "options": [
+          "Unlimited — millions of calls",
+          "~8 MB — roughly 130,000-170,000 recursive calls",
+          "~1 GB — billions of calls",
+          "~64 KB — about 1,000 calls"
+        ],
+        "correctAnswer": "~8 MB — roughly 130,000-170,000 recursive calls",
+        "explanation": "Note: 'With an 8 MB stack (Linux), ~130,000-170,000 recursive calls max. Each frame costs ~48-64 bytes.'"
+      }
+    ]
+  },
+  {
+    "note": "04 — Arrays, Vectors & Loops",
+    "questions": [
+      {
+        "question": "Why is accessing consecutive array elements fast?",
+        "options": [
+          "The compiler precomputes all values",
+          "Spatial locality — a 64-byte cache line loads 16 consecutive ints at once",
+          "Arrays use special fast RAM banks",
+          "The CPU predicts the next index"
+        ],
+        "correctAnswer": "Spatial locality — a 64-byte cache line loads 16 consecutive ints at once",
+        "explanation": "Note: 'Accessing arr[0] pulls a 64-byte cache line — arr[0] through arr[15] arrive in L1 cache in one go.'"
+      },
+      {
+        "question": "What happens when you access `arr[-1]` or `arr[100]` on a C-style array of size 10?",
+        "options": [
+          "The program throws an exception",
+          "The compiler refuses to compile this",
+          "Undefined behavior — might crash, might silently corrupt memory",
+          "The OS catches the error and prints a warning"
+        ],
+        "correctAnswer": "Undefined behavior — might crash, might silently corrupt memory",
+        "explanation": "Note warns: 'Nothing stops arr[5] or arr[-1]. Undefined behavior — might crash, might silently corrupt.'"
+      },
+      {
+        "question": "What happens to a C-style array when passed to a function?",
+        "options": [
+          "A copy of the entire array is made",
+          "It decays to a pointer — sizeof becomes pointer size (8), array size is lost",
+          "It is passed by reference automatically",
+          "The function receives the array's capacity"
+        ],
+        "correctAnswer": "It decays to a pointer — sizeof becomes pointer size (8), array size is lost",
+        "explanation": "Note: 'C arrays decay to pointers when passed to functions — sizeof(arr) becomes pointer size, not array size.'"
+      },
+      {
+        "question": "What advantage does std::array have over a C-style array?",
+        "options": [
+          "It's stored on the heap for safety",
+          "It always bounds-checks every access",
+          "Same memory layout as C array but adds .size(), .at() bounds-checking, and never decays to pointer",
+          "It uses SIMD instructions internally"
+        ],
+        "correctAnswer": "Same memory layout as C array but adds .size(), .at() bounds-checking, and never decays to pointer",
+        "explanation": "Note: 'Zero-overhead: same memory layout as C array, no heap allocation, adds safety through .at() and size through .size(). Never decays.'"
+      },
+      {
+        "question": "What happens internally when std::vector runs out of capacity on push_back?",
+        "options": [
+          "It throws an exception",
+          "It allocates a new larger buffer, moves/copies all elements, and deallocates the old buffer",
+          "It links to a new memory block, keeping the old one",
+          "It compresses existing elements"
+        ],
+        "correctAnswer": "It allocates a new larger buffer, moves/copies all elements, and deallocates the old buffer",
+        "explanation": "Note describes reallocation: allocate bigger, move everything, free the old buffer."
+      },
+      {
+        "question": "How can you prevent std::vector reallocations?",
+        "options": [
+          "Use a smaller type",
+          "Call .reserve(n) before pushing to pre-allocate capacity",
+          "Use .shrink_to_fit() regularly",
+          "Reallocations can't be prevented"
+        ],
+        "correctAnswer": "Call .reserve(n) before pushing to pre-allocate capacity",
+        "explanation": "Note mentions reserve() as the way to prevent reallocations by allocating capacity upfront."
+      },
+      {
+        "question": "What does std::vector::size() return vs std::vector::capacity()?",
+        "options": [
+          "Same thing",
+          "size() = elements stored; capacity() = allocated slots before next reallocation",
+          "size() = allocated slots; capacity() = elements stored",
+          "size() = bytes; capacity() = elements"
+        ],
+        "correctAnswer": "size() = elements stored; capacity() = allocated slots before next reallocation",
+        "explanation": "Note: 'size() is how many elements are stored. capacity() is how many fit before the next reallocation.'"
+      },
+      {
+        "question": "Which loop form prevents accidental copies of elements?",
+        "options": [
+          "for (auto x : vec)",
+          "for (auto& x : vec)",
+          "for (int i = 0; i < vec.size(); i++)",
+          "for (auto* x : vec)"
+        ],
+        "correctAnswer": "for (auto& x : vec)",
+        "explanation": "Note: 'for (auto x : vec) copies every element. Use for (auto& x : vec) instead.' Auto strips references."
+      }
+    ]
+  },
+  {
+    "note": "05 — Pointers & References",
+    "questions": [
+      {
+        "question": "What does `int* p = &x;` do?",
+        "options": [
+          "Creates a copy of x named p",
+          "Stores the memory address of x in p",
+          "Creates an alias p that IS x",
+          "Initializes p to the same value as x"
+        ],
+        "correctAnswer": "Stores the memory address of x in p",
+        "explanation": "Note: 'p stores the ADDRESS of x. & = address of.' The diagram shows p contains 0x7FFF1000."
+      },
+      {
+        "question": "How many memory accesses does `*p = 100` require at the assembly level?",
+        "options": [
+          "One",
+          "Two — one to load the address from p, one to write 100 to that address",
+          "Three",
+          "Zero — the compiler optimizes it away"
+        ],
+        "correctAnswer": "Two — one to load the address from p, one to write 100 to that address",
+        "explanation": "Note assembly: 'mov rax, [p]' (load address from p) then 'mov [rax], 100' (write) — two memory accesses."
+      },
+      {
+        "question": "What does pointer arithmetic `p + n` actually compute?",
+        "options": [
+          "p + n bytes",
+          "p + n × sizeof(*p) bytes",
+          "p + n × 4 bytes always",
+          "p + n words"
+        ],
+        "correctAnswer": "p + n × sizeof(*p) bytes",
+        "explanation": "Note: 'p + n advances by n × sizeof(element) bytes.' For int* p, p+2 advances 8 bytes (2 × 4)."
+      },
+      {
+        "question": "Which of these are equivalent ways to access the 3rd element of an array?",
+        "options": [
+          "arr[2] and *(p + 2) only",
+          "arr[2], *(p + 2), and *(arr + 2) only",
+          "arr[2], *(p + 2), *(arr + 2), and 2[arr]",
+          "arr[2] only"
+        ],
+        "correctAnswer": "arr[2], *(p + 2), *(arr + 2), and 2[arr]",
+        "explanation": "Note: 'arr[2] ≡ *(p + 2) ≡ *(arr + 2) ≡ 2[arr] — all identical.' arr[i] = *(arr + i)."
+      },
+      {
+        "question": "What happens when you dereference a nullptr?",
+        "options": [
+          "Returns 0",
+          "Throws std::nullptr_exception",
+          "Undefined behavior — typically a crash (segfault/access violation)",
+          "The compiler prevents this at compile time"
+        ],
+        "correctAnswer": "Undefined behavior — typically a crash (segfault/access violation)",
+        "explanation": "Note: 'Dereferencing nullptr → undefined behavior (typically crash).'"
+      },
+      {
+        "question": "Why do smart pointers prevent memory leaks that raw pointers can't?",
+        "options": [
+          "They use a garbage collector",
+          "Their destructor automatically deletes the managed object when the pointer goes out of scope",
+          "They store data on the stack instead of the heap",
+          "They use reference counting for everything"
+        ],
+        "correctAnswer": "Their destructor automatically deletes the managed object when the pointer goes out of scope",
+        "explanation": "Note: 'Smart pointer destructor automatically deletes the managed object. Raw pointers never auto-delete.'"
+      },
+      {
+        "question": "What does `void*` represent?",
+        "options": [
+          "A pointer to nothing",
+          "A generic pointer that can hold any address — must be cast before dereferencing",
+          "A pointer to a void function",
+          "An invalid pointer"
+        ],
+        "correctAnswer": "A generic pointer that can hold any address — must be cast before dereferencing",
+        "explanation": "Note: void* is a type-erased pointer. You can't dereference it without casting to a concrete type first."
+      },
+      {
+        "question": "What is the difference between `int* p` and `int *p`?",
+        "options": [
+          "int* p is preferred in C++",
+          "int *p is preferred in C",
+          "There is no difference — the compiler treats them identically",
+          "int* p declares a pointer; int *p dereferences"
+        ],
+        "correctAnswer": "There is no difference — the compiler treats them identically",
+        "explanation": "Note: Both are equivalent. The * binds to the variable name, not the type — 'int *p, x' declares one pointer and one int."
+      }
+    ]
+  },
+  {
+    "note": "06 — Compiling & Running Programs",
+    "questions": [
+      {
+        "question": "What are the four stages of the C++ compilation pipeline, in order?",
+        "correctAnswer": "Preprocessor, Compiler, Assembler, Linker",
+        "acceptableAnswers": [
+          "Preprocessor, Compiler, Assembler, Linker",
+          "preprocessor compiler assembler linker",
+          "Preprocessor → Compiler → Assembler → Linker"
+        ],
+        "explanation": "Note pipeline: .cpp → Preprocessor (.i) → Compiler (.s) → Assembler (.o) → Linker (.exe)."
+      },
+      {
+        "question": "What does the preprocessor do with `#include <iostream>`?",
+        "options": [
+          "Imports only the declarations actually used",
+          "Copy-pastes the entire iostream file (~25,000 lines) into your source",
+          "Links to the iostream shared library at runtime",
+          "Generates a forward declaration for every symbol"
+        ],
+        "correctAnswer": "Copy-pastes the entire iostream file (~25,000 lines) into your source",
+        "explanation": "Note: '#include — copy-paste entire file. Preprocessed: ~25,000 lines (entire iostream pasted).'"
+      },
+      {
+        "question": "At which stage do syntax errors and type errors get caught?",
+        "options": [
+          "Preprocessor",
+          "Compiler",
+          "Assembler",
+          "Linker"
+        ],
+        "correctAnswer": "Compiler",
+        "explanation": "Note: 'Compiler errors occur here — syntax, type errors.' The compiler is the stage that understands C++."
+      },
+      {
+        "question": "What does the linker do?",
+        "options": [
+          "Converts assembly to machine code",
+          "Expands all #include directives",
+          "Resolves symbols — connects function calls to their definitions across object files",
+          "Optimizes the generated machine code"
+        ],
+        "correctAnswer": "Resolves symbols — connects function calls to their definitions across object files",
+        "explanation": "Note: 'The linker resolves symbols. Connects declarations in one file to definitions in another.'"
+      },
+      {
+        "question": "What does an 'undefined reference' linker error mean?",
+        "options": [
+          "You have a syntax error",
+          "You declared a function but never defined it anywhere the linker can find",
+          "Your preprocessor macros are broken",
+          "The compiler ran out of memory"
+        ],
+        "correctAnswer": "You declared a function but never defined it anywhere the linker can find",
+        "explanation": "Note: 'Undefined reference: you declared a function but didn't define it, or forgot to link the .cpp file.'"
+      },
+      {
+        "question": "What file extension does the assembler produce?",
+        "options": [
+          ".cpp",
+          ".i",
+          ".s",
+          ".o / .obj"
+        ],
+        "correctAnswer": ".o / .obj",
+        "explanation": "Note: Assembler converts .s (assembly) to .o (object file with machine code + symbol table)."
+      },
+      {
+        "question": "What is the difference between a .o file and an executable?",
+        "options": [
+          "No difference",
+          "A .o file contains machine code with unresolved symbols; the executable has all symbols resolved and a main() entry point",
+          "A .o file is text; an executable is binary",
+          "A .o file is for debugging only"
+        ],
+        "correctAnswer": "A .o file contains machine code with unresolved symbols; the executable has all symbols resolved and a main() entry point",
+        "explanation": "Note: Object files have machine code + symbol table with unresolved references. The linker resolves all symbols into the final executable."
+      },
+      {
+        "question": "Which g++ flag shows the preprocessor output?",
+        "options": [
+          "-S",
+          "-c",
+          "-E",
+          "-o"
+        ],
+        "correctAnswer": "-E",
+        "explanation": "Note: 'View preprocessor output: g++ -E hello.cpp -o hello.i'. -S generates assembly, -c compiles to object, -o sets output filename."
+      }
+    ]
   }
 ]
