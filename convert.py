@@ -10,7 +10,8 @@ Usage: python convert.py
 import json, os, re, subprocess, sys
 
 VAULT = r"C:\Users\sofia\Documents\Obsidian\Game Development"
-OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"
+OUTPUT_DIR = r"D:\User\Desktop\DeepVault\data"
+OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"  # Legacy — build.py generates this
 
 FOLDER_MAP = [
     ('computer-systems', 'Computer Systems', 'Computer Systems', '\U0001F5A5\uFE0F', '#58a6ff'),
@@ -221,11 +222,59 @@ def main():
                     output = output[:ref_pos] + quiz_block + '\n\n' + output[ref_pos:]
     except:
         pass
-    # Write
-    with open(OUTPUT, 'w', encoding='utf-8') as f:
-        f.write(output)
+    # Write data files
+    import json as json2
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    print(f"Done. {len(output)} bytes, {len(notes_content)} notes, {len(quizzes)} quizzes")
+    # Extract quizzes from data.js if exists
+    old_quizzes = {'quizzes': {}, 'quiz_notes': {}}
+    if os.path.exists(OUTPUT):
+        with open(OUTPUT, 'r', encoding='utf-8') as f:
+            old_data = f.read()
+        ref_pos = old_data.find('const REFERENCE')
+        if ref_pos > 0:
+            import re as re3
+            for m in re3.finditer(r"QUIZ_DATA\['([^']+)'\] = (\{.*?\});", old_data[:ref_pos], re3.DOTALL):
+                try: old_quizzes['quizzes'][m.group(1)] = json2.loads(m.group(2))
+                except: pass
+            qn = old_data.find('const QUIZ_NOTES = {')
+            if qn > 0:
+                qn_end = old_data.find('\n};\n', qn) + 4
+                for m in re3.finditer(r"'([^']+)':\s*\[(.*?)\]", old_data[qn:qn_end], re3.DOTALL):
+                    notes = re3.findall(r"'([^']+)'", m.group(2))
+                    old_quizzes['quiz_notes'][m.group(1)] = notes
+    
+    # Build notes.json
+    notes_out = {}
+    for name, obj in notes_content.items():
+        notes_out[name] = {'content': obj['content'], 'folder': obj['folder']}
+    with open(os.path.join(OUTPUT_DIR, 'notes.json'), 'w', encoding='utf-8') as f:
+        json2.dump(notes_out, f, indent=2)
+    
+    # Build folders.json
+    with open(os.path.join(OUTPUT_DIR, 'folders.json'), 'w', encoding='utf-8') as f:
+        json2.dump(folder_groups, f, indent=2)
+    
+    # Build reference.json
+    ref_out = {}
+    for rn, rc in reference.items():
+        ref_out[rn] = rc
+    with open(os.path.join(OUTPUT_DIR, 'reference.json'), 'w', encoding='utf-8') as f:
+        json2.dump(ref_out, f, indent=2)
+    
+    # Preserve existing quizzes
+    quiz_path = os.path.join(OUTPUT_DIR, 'quizzes.json')
+    if not os.path.exists(quiz_path):
+        with open(quiz_path, 'w', encoding='utf-8') as f:
+            json2.dump(old_quizzes, f, indent=2)
+    
+    # Run build.py
+    r = subprocess.run(['python', os.path.join(os.path.dirname(OUTPUT_DIR), 'build.py')], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(f"build.py FAILED:\n{r.stderr[-600:]}")
+        sys.exit(1)
+    print(r.stdout.strip())
+    print(f"Done. {len(notes_content)} notes converted.")
     for fid, _, _, _, _ in FOLDER_MAP:
         print(f"  {fid}: {len(notes_flat[fid])} notes, {len(quiz_notes[fid])} quizzes, {len(groups[fid])} groups")
 
