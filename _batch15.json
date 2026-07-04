@@ -1,0 +1,98 @@
+[
+  {
+    "note": "01 — Noise Generation",
+    "questions": [
+      {
+        "question": "What is Perlin noise?",
+        "options": [
+          "Random noise",
+          "Gradient-based smooth noise — places random gradient vectors at grid points, interpolates dot products. Natural-looking.",
+          "White noise",
+          "Value noise"
+        ],
+        "correctAnswer": "Gradient-based smooth noise — places random gradient vectors at grid points, interpolates dot products. Natural-looking.",
+        "explanation": "Ken Perlin 1983. Gradient at each lattice point. Dot with offset vector. Smoothstep interpolation. Zero at integer grid points."
+      }
+    ]
+  },
+  {
+    "note": "02 — Sampling & Placement",
+    "questions": [
+      {
+        "question": "What is Poisson disc sampling?",
+        "options": [
+          "Random",
+          "Points placed with minimum distance r between all pairs, maximally dense. Natural-looking distribution.",
+          "Grid based",
+          "Stratified"
+        ],
+        "correctAnswer": "Points placed with minimum distance r between all pairs, maximally dense. Natural-looking distribution.",
+        "explanation": "Dart-throwing: random candidates in annulus [r,2r]. Accept if no neighbor within r. Used for foliage placement, object scattering."
+      }
+    ]
+  },
+  {
+    "note": "03 — L-Systems & Marching Cubes",
+    "questions": [
+      {
+        "question": "What is an L-system?",
+        "options": [
+          "A tree only",
+          "A parallel string rewriting system — axiom + production rules → geometric interpretation via turtle graphics",
+          "A rendering method",
+          "A noise type"
+        ],
+        "correctAnswer": "A parallel string rewriting system — axiom + production rules → geometric interpretation via turtle graphics",
+        "explanation": "Lindenmayer 1968. Axiom→rule application→string→turtle graphics. F=draw, +=turn, []=push/pop for branching. Generates plants, trees."
+      }
+    ]
+  },
+  {
+    "note": "04 — Probability & Randomness",
+    "questions": [
+      {
+        "question": "What is importance sampling?",
+        "options": [
+          "Sampling uniformly",
+          "Drawing samples from a distribution proportional to where the integrand is large — reduces variance",
+          "Random sampling",
+          "Grid sampling"
+        ],
+        "correctAnswer": "Drawing samples from a distribution proportional to where the integrand is large — reduces variance",
+        "explanation": "Instead of uniform sampling (wastes samples on low-contribution regions), sample where it matters. Essential for Monte Carlo rendering."
+      }
+    ]
+  },
+  {
+    "note": "05 — Voxels & Octrees",
+    "questions": [
+      {
+        "question": "What is an octree?",
+        "options": [
+          "A binary tree",
+          "3D spatial partitioning: recursively subdivide space into 8 octants. Each node has 0 or 8 children.",
+          "A 2D structure",
+          "A list"
+        ],
+        "correctAnswer": "3D spatial partitioning: recursively subdivide space into 8 octants. Each node has 0 or 8 children.",
+        "explanation": "Octree = 3D quadtree. Used for spatial indexing (collision, rendering), level-of-detail, voxel compression. UE uses for lightmass and some collision."
+      }
+    ]
+  },
+  {
+    "note": "00 — Rendering",
+    "questions": [
+      {
+        "question": "What is the graphics pipeline from vertices to pixels?",
+        "options": [
+          "Single step",
+          "Vertex shader → rasterizer → pixel shader → output merger. Programmable stages (shaders) + fixed-function (rasterizer).",
+          "Only shaders",
+          "Only fixed-function"
+        ],
+        "correctAnswer": "Vertex shader → rasterizer → pixel shader → output merger. Programmable stages (shaders) + fixed-function (rasterizer).",
+        "explanation": "Vertex shader: transform vertices. Rasterizer: generate fragments. Pixel shader: compute color. Output merger: depth test, blend. UE's RHI abstracts this."
+      }
+    ]
+  }
+]

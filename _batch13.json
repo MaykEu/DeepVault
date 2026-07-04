@@ -1,0 +1,221 @@
+[
+  {
+    "note": "02 — Steering Behaviors",
+    "questions": [
+      {
+        "question": "What are Craig Reynolds' steering behaviors?",
+        "options": [
+          "A* variants",
+          "Simple forces combining to produce complex motion: seek, flee, arrive, wander, separation, alignment, cohesion",
+          "Physics simulations",
+          "Animation techniques"
+        ],
+        "correctAnswer": "Simple forces combining to produce complex motion: seek, flee, arrive, wander, separation, alignment, cohesion",
+        "explanation": "Steering = desired velocity - current velocity. Each behavior computes a force. Combine via weighted sum or priority. Emergent flocking from 3 rules."
+      },
+      {
+        "question": "What three rules produce flocking/boids behavior?",
+        "correctAnswer": "Separation (avoid neighbors), alignment (match average heading), cohesion (move toward center of neighbors)",
+        "acceptableAnswers": [
+          "separation alignment cohesion",
+          "separation, alignment, cohesion"
+        ],
+        "explanation": "Reynolds 1987. Three simple rules = emergent flock. No leader, no centralized control. Each boid reacts only to local neighbors."
+      },
+      {
+        "question": "What is the arrive behavior?",
+        "options": [
+          "Same as seek",
+          "Seek with deceleration — slows down as it approaches target, stops at target instead of overshooting",
+          "A flocking rule",
+          "A pathfinding method"
+        ],
+        "correctAnswer": "Seek with deceleration — slows down as it approaches target, stops at target instead of overshooting",
+        "explanation": "Arrive: if within slowing radius, scale speed by distance/radius. Seek would overshoot and orbit. Arrive smoothly decelerates to zero."
+      },
+      {
+        "q": "What is separation steering?",
+        "o": [
+          "Grouping",
+          "Steer away from nearby neighbors — prevents crowding. Force inversely proportional to distance.",
+          "Following",
+          "Wandering"
+        ],
+        "a": "Steer away from nearby neighbors — prevents crowding. Force inversely proportional to distance.",
+        "e": "For each neighbor within radius: compute repulsion vector away from neighbor. Sum and normalize. Key component of flocking."
+      },
+      {
+        "q": "What is wander steering?",
+        "o": [
+          "Random teleport",
+          "Produces random, smooth wandering motion — projects a circle ahead, picks random point on circle, steers toward it",
+          "Pathfinding",
+          "Flocking"
+        ],
+        "a": "Produces random, smooth wandering motion — projects a circle ahead, picks random point on circle, steers toward it",
+        "e": "Wander: circle projected ahead of agent. Random displacement on circle changes each frame. Produces natural-looking random movement."
+      }
+    ]
+  },
+  {
+    "note": "03 — Navmesh Generation",
+    "questions": [
+      {
+        "question": "What algorithm generates navigation meshes in UE?",
+        "options": [
+          "Manual authoring",
+          "Recast — voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
+          "A*",
+          "Random generation"
+        ],
+        "correctAnswer": "Recast — voxelizes geometry, marks walkable surfaces, generates convex polygons, creates graph",
+        "explanation": "Recast pipeline: voxelization → filter walkable → generate distance field → contour → polygon mesh → detail mesh. Detour handles runtime pathfinding."
+      },
+      {
+        "question": "What is 'string pulling' in pathfinding?",
+        "options": [
+          "A debug tool",
+          "Post-processing step that smooths the A* path on a navmesh — removes unnecessary waypoints by pulling the path tight",
+          "A search algorithm",
+          "A type of heuristic"
+        ],
+        "correctAnswer": "Post-processing step that smooths the A* path on a navmesh — removes unnecessary waypoints by pulling the path tight",
+        "explanation": "A* on navmesh gives polygon corners. String pulling (funnel algorithm) smooths to shortest path within the navmesh corridor."
+      },
+      {
+        "q": "What does Detour do at runtime?",
+        "o": [
+          "Generates navmesh",
+          "Pathfinding queries on the pre-generated navmesh — A*, string pulling, crowd simulation",
+          "Renders",
+          "Physics"
+        ],
+        "a": "Pathfinding queries on the pre-generated navmesh — A*, string pulling, crowd simulation",
+        "e": "Detour = runtime component. Uses Recast-generated data. Provides pathfinding queries, local avoidance, crowd movement."
+      },
+      {
+        "q": "What is the voxelization step in Recast?",
+        "o": [
+          "Rendering",
+          "Converts 3D geometry into a heightfield — voxels marked as walkable if slope < max and step height < max",
+          "Animation",
+          "Physics"
+        ],
+        "a": "Converts 3D geometry into a heightfield — voxels marked as walkable if slope < max and step height < max",
+        "e": "Recast: triangle mesh → voxel heightfield. Each column stores walkable spans. Filter by agent height, max slope, max step."
+      }
+    ]
+  },
+  {
+    "note": "00 — Collision Detection Overview",
+    "questions": [
+      {
+        "question": "What is the two-phase collision detection architecture?",
+        "options": [
+          "Single phase",
+          "Broad phase (cheap, find potential pairs) + Narrow phase (expensive, precise test on candidates)",
+          "Three phases",
+          "No phases"
+        ],
+        "correctAnswer": "Broad phase (cheap, find potential pairs) + Narrow phase (expensive, precise test on candidates)",
+        "explanation": "Broad phase: O(n log n) spatial partitioning (grid, octree, sweep-and-prune). Narrow phase: geometric tests (AABB, SAT, GJK)."
+      },
+      {
+        "question": "What is the tunneling problem?",
+        "options": [
+          "Memory leak",
+          "Fast-moving object passes through thin wall in one frame — collision missed between discrete checks",
+          "A type of collision",
+          "A rendering issue"
+        ],
+        "correctAnswer": "Fast-moving object passes through thin wall in one frame — collision missed between discrete checks",
+        "explanation": "Solution: CCD (Continuous Collision Detection) — sweep shape along path. Or sub-stepping (run physics at higher frequency). UE: bUseCCD."
+      },
+      {
+        "q": "What is the sweep-and-prune broad phase?",
+        "o": [
+          "Random check",
+          "Sort AABB min-x values, sweep across. Objects with overlapping x-intervals are candidates. Extend to y, z.",
+          "Tree traversal",
+          "Hash based"
+        ],
+        "a": "Sort AABB min-x values, sweep across. Objects with overlapping x-intervals are candidates. Extend to y, z.",
+        "e": "Sweep-and-prune (sort and sweep): O(n log n) sort, then linear sweep. Good for many moving objects. Used in Bullet Physics."
+      }
+    ]
+  },
+  {
+    "note": "01 — AABB and Sphere",
+    "questions": [
+      {
+        "question": "How do you test if two AABBs overlap?",
+        "options": [
+          "Check all vertices",
+          "Check if intervals overlap on ALL three axes: (a_min ≤ b_max) AND (a_max ≥ b_min) for x, y, z",
+          "Check one axis",
+          "Check distance"
+        ],
+        "correctAnswer": "Check if intervals overlap on ALL three axes: (a_min ≤ b_max) AND (a_max ≥ b_min) for x, y, z",
+        "explanation": "AABB-AABB = 6 comparisons (2 per axis). O(1). Separating axis: if any axis has gap, no overlap. All 3 overlap = collision."
+      },
+      {
+        "question": "How do you find the closest point on an AABB to a point?",
+        "options": [
+          "Center of AABB",
+          "Clamp each coordinate: x = clamp(px, min.x, max.x), same for y, z",
+          "Distance formula",
+          "Iterative"
+        ],
+        "correctAnswer": "Clamp each coordinate: x = clamp(px, min.x, max.x), same for y, z",
+        "explanation": "Clamp to each axis-aligned interval. Result is the point ON or INSIDE the AABB closest to the query point. Basis of sphere-AABB test."
+      },
+      {
+        "q": "How do you test sphere-sphere collision?",
+        "o": [
+          "Complex math",
+          "Distance between centers < sum of radii. O(1), one distance calculation.",
+          "AABB test",
+          "Ray cast"
+        ],
+        "a": "Distance between centers < sum of radii. O(1), one distance calculation.",
+        "e": "|c1 - c2| < r1 + r2. Square both sides to avoid sqrt: |c1-c2|² < (r1+r2)². Fastest collision test. Use for broad-phase rough checks."
+      },
+      {
+        "q": "How do you test sphere-AABB collision?",
+        "correctAnswer": "Find closest point on AABB to sphere center (clamp each coordinate), then check distance to that point < sphere radius",
+        "acceptableAnswers": [
+          "closest point on AABB then distance check",
+          "clamp coordinates check distance"
+        ],
+        "explanation": "1. Clamp sphere center to AABB min/max → closest point. 2. Distance from closest point to center < radius = collision. O(1)."
+      }
+    ]
+  },
+  {
+    "note": "02 — Ray Casting",
+    "questions": [
+      {
+        "question": "What is the slab method for ray-AABB intersection?",
+        "options": [
+          "Check each vertex",
+          "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry ≤ t_exit for all 3 axes.",
+          "Check distance",
+          "Iterative"
+        ],
+        "correctAnswer": "Compute ray entry/exit times for each axis pair. Overlap of all intervals = hit. t_entry ≤ t_exit for all 3 axes.",
+        "explanation": "For each axis: t_near = (min - origin) / dir, t_far = (max - origin) / dir. t_enter = max of t_nears. t_exit = min of t_fars. Hit if t_enter ≤ t_exit."
+      },
+      {
+        "question": "What is the Moller-Trumbore algorithm?",
+        "options": [
+          "AABB test",
+          "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
+          "Sphere test",
+          "GJK variant"
+        ],
+        "correctAnswer": "Fast ray-triangle intersection — solves barycentric coordinates via Cramer's rule with precomputed edge vectors. O(1).",
+        "explanation": "M-T: computes (u,v,t) where u,v are barycentrics and t is ray distance. Hit if u≥0, v≥0, u+v≤1, t>0. Standard method for ray-triangle."
+      }
+    ]
+  }
+]

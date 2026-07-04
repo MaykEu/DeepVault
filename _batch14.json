@@ -1,0 +1,196 @@
+[
+  {
+    "note": "03 — Separating Axis Theorem",
+    "questions": [
+      {
+        "question": "What is the Separating Axis Theorem (SAT)?",
+        "options": [
+          "A distance test",
+          "Two convex polyhedra don't overlap iff there exists an axis where their projections don't overlap. Test candidate axes.",
+          "A bounding volume",
+          "A ray test"
+        ],
+        "correctAnswer": "Two convex polyhedra don't overlap iff there exists an axis where their projections don't overlap. Test candidate axes.",
+        "explanation": "SAT: project both shapes onto axis. If projections don't overlap → separating axis found → NO collision. If ALL candidate axes overlap → collision."
+      },
+      {
+        "question": "Which axes must be tested for OBB-OBB SAT?",
+        "correctAnswer": "15 axes: 3 face normals of A + 3 face normals of B + 9 cross products of edges (3×3)",
+        "acceptableAnswers": [
+          "15 axes",
+          "3+3+9",
+          "face normals plus edge cross products"
+        ],
+        "explanation": "Box A: 3 face normals. Box B: 3 face normals. Cross products: 3 edges of A × 3 edges of B = 9 axes. Total: 15. Test all 15."
+      },
+      {
+        "q": "What shape pairs can SAT handle?",
+        "o": [
+          "Only AABBs",
+          "Any convex polyhedra — works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes.",
+          "Only spheres",
+          "Infinite shapes"
+        ],
+        "a": "Any convex polyhedra — works for OBB, convex hulls, capsules. Requires enumerating candidate separating axes.",
+        "e": "SAT is exact for convex polyhedra. Number of axes tested depends on shape complexity. OBB-OBB = 15 axes. Triangle-triangle = 11 axes."
+      },
+      {
+        "q": "What is the difference between SAT and GJK?",
+        "o": [
+          "Same thing",
+          "SAT tests static set of axes (good for boxes). GJK iteratively finds separating axis (works for ANY convex shape, no pre-computed axes).",
+          "GJK is faster",
+          "SAT is newer"
+        ],
+        "a": "SAT tests static set of axes (good for boxes). GJK iteratively finds separating axis (works for ANY convex shape, no pre-computed axes).",
+        "e": "SAT: fixed axis set, O(num_faces²) for OBB. GJK: iterative, ~3-6 iterations for convex shapes. GJK is more general."
+      }
+    ]
+  },
+  {
+    "note": "04 — GJK Algorithm",
+    "questions": [
+      {
+        "question": "What does GJK compute?",
+        "options": [
+          "Distance",
+          "Whether two convex shapes overlap — by checking if the origin is inside their Minkowski difference",
+          "Contact points",
+          "Normals"
+        ],
+        "correctAnswer": "Whether two convex shapes overlap — by checking if the origin is inside their Minkowski difference",
+        "explanation": "GJK: iteratively builds simplex in Minkowski difference space (A - B). If origin is inside simplex → overlap. Support function finds extreme points."
+      },
+      {
+        "question": "What is the Minkowski difference used in GJK?",
+        "options": [
+          "A+B",
+          "A - B = {a - b | a∈A, b∈B}. If origin ∈ (A - B), then A and B intersect.",
+          "A×B",
+          "|A-B|"
+        ],
+        "correctAnswer": "A - B = {a - b | a∈A, b∈B}. If origin ∈ (A - B), then A and B intersect.",
+        "explanation": "Minkowski difference transforms intersection test into origin-inclusion test. GJK doesn't need to explicitly compute A - B — uses support function."
+      },
+      {
+        "question": "What is the support function in GJK?",
+        "options": [
+          "A helper",
+          "Returns the point in a shape furthest in a given direction — used to build the simplex iteratively",
+          "A distance function",
+          "A normal"
+        ],
+        "correctAnswer": "Returns the point in a shape furthest in a given direction — used to build the simplex iteratively",
+        "explanation": "support(shape, direction) = argmax(p·direction for p in shape). GJK calls this to find next simplex vertex. O(1) for simple shapes, O(n) for meshes."
+      },
+      {
+        "q": "What is EPA (Expanding Polytope Algorithm)?",
+        "o": [
+          "Same as GJK",
+          "Extends GJK — after detecting overlap, EPA expands simplex to find penetration depth and contact normal",
+          "A rendering technique",
+          "A broad phase"
+        ],
+        "a": "Extends GJK — after detecting overlap, EPA expands simplex to find penetration depth and contact normal",
+        "e": "GJK detects overlap. EPA computes MTV (Minimum Translation Vector) — how far and in what direction to push shapes apart. GJK+EPA = full collision response."
+      }
+    ]
+  },
+  {
+    "note": "01 — Rigid Body Dynamics",
+    "questions": [
+      {
+        "question": "What does Newton's Second Law (F=ma) govern in physics engines?",
+        "options": [
+          "Rotation only",
+          "Linear acceleration: a = F/m. Integrate acceleration to get velocity, velocity to get position.",
+          "Collision only",
+          "Nothing"
+        ],
+        "correctAnswer": "Linear acceleration: a = F/m. Integrate acceleration to get velocity, velocity to get position.",
+        "explanation": "Forces cause acceleration. Gravity: F=mg. Friction, springs, constraints all produce forces. Integration accumulates force effects over time."
+      },
+      {
+        "question": "What is the inertia tensor?",
+        "options": [
+          "A scalar",
+          "3×3 matrix describing how mass is distributed — determines angular acceleration from torque: τ = I·α",
+          "A vector",
+          "A force"
+        ],
+        "correctAnswer": "3×3 matrix describing how mass is distributed — determines angular acceleration from torque: τ = I·α",
+        "explanation": "Rotational analog of mass. Inertia tensor depends on shape and mass distribution. Diagonalized in principal axes. Harder to rotate around axes with larger inertia."
+      },
+      {
+        "q": "What is angular velocity?",
+        "o": [
+          "Same as linear",
+          "ω — rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s).",
+          "A force",
+          "A position"
+        ],
+        "a": "ω — rate of rotation around an axis. Direction = rotation axis, magnitude = speed (rad/s).",
+        "e": "ω is a 3D vector. Direction = axis of rotation (right-hand rule). magnitude = radians per second. L = I·ω (angular momentum)."
+      }
+    ]
+  },
+  {
+    "note": "02 — Numerical Integration",
+    "questions": [
+      {
+        "question": "What is Euler integration?",
+        "options": [
+          "Exact solution",
+          "Simplest: pos += vel·dt; vel += acc·dt. O(dt) error per step. Unstable for stiff systems.",
+          "Analytical",
+          "Implicit"
+        ],
+        "correctAnswer": "Simplest: pos += vel·dt; vel += acc·dt. O(dt) error per step. Unstable for stiff systems.",
+        "explanation": "Explicit Euler: first-order. Cheap but diverges for oscillatory systems unless dt is very small. Game physics at 60Hz often uses semi-implicit Euler."
+      },
+      {
+        "question": "What is semi-implicit Euler (symplectic)?",
+        "options": [
+          "Same as explicit",
+          "vel += acc·dt FIRST, then pos += vel·dt. More stable than explicit Euler for same cost. Standard in game physics.",
+          "Implicit method",
+          "Analytical"
+        ],
+        "correctAnswer": "vel += acc·dt FIRST, then pos += vel·dt. More stable than explicit Euler for same cost. Standard in game physics.",
+        "explanation": "Symplectic Euler preserves energy better than explicit. Order matters: update velocity first, then use NEW velocity for position. UE physics uses this."
+      }
+    ]
+  },
+  {
+    "note": "03 — Constraints & Contact",
+    "questions": [
+      {
+        "question": "What is a constraint in physics simulation?",
+        "options": [
+          "A bug",
+          "A rule enforcing a relationship between bodies — distance joint, hinge, contact (non-penetration). Solved iteratively.",
+          "A force",
+          "A type of collision"
+        ],
+        "correctAnswer": "A rule enforcing a relationship between bodies — distance joint, hinge, contact (non-penetration). Solved iteratively.",
+        "explanation": "Constraints: equality (joints) and inequality (contacts). Solved via sequential impulse (projected Gauss-Seidel) in most game engines."
+      }
+    ]
+  },
+  {
+    "note": "04 — Continuous Collision Detection",
+    "questions": [
+      {
+        "question": "What is Time of Impact (TOI)?",
+        "options": [
+          "Collision time",
+          "The exact time two moving shapes first touch. CCD computes TOI to prevent tunneling for fast-moving objects.",
+          "Frame time",
+          "Response time"
+        ],
+        "correctAnswer": "The exact time two moving shapes first touch. CCD computes TOI to prevent tunneling for fast-moving objects.",
+        "explanation": "TOI = t ∈ [0,1] where first contact occurs. Conservative advancement: iterative search for TOI by advancing shapes until distance < epsilon."
+      }
+    ]
+  }
+]

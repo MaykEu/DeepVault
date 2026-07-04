@@ -1,0 +1,242 @@
+[
+  {
+    "note": "00 — Geometric Algebra Overview",
+    "questions": [
+      {
+        "question": "What does Geometric Algebra unify?",
+        "options": [
+          "Nothing",
+          "Vectors, complex numbers, quaternions, matrices, Plucker coordinates — all under one algebraic framework",
+          "Only rotations",
+          "Only projections"
+        ],
+        "correctAnswer": "Vectors, complex numbers, quaternions, matrices, Plucker coordinates — all under one algebraic framework",
+        "explanation": "GA: one algebra, one product (geometric product). Complex numbers = 2D even subalgebra. Quaternions = 3D even subalgebra. Unifies dot+cross."
+      },
+      {
+        "question": "What is the geometric product of two vectors?",
+        "options": [
+          "Just dot",
+          "ab = a·b + a∧b — scalar (dot) PLUS bivector (wedge)",
+          "Just wedge",
+          "A matrix"
+        ],
+        "correctAnswer": "ab = a·b + a∧b — scalar (dot) PLUS bivector (wedge)",
+        "explanation": "Geometric product = symmetric part (dot, scalar) + antisymmetric part (wedge, bivector). Like complex numbers: real + imaginary."
+      },
+      {
+        "question": "What are the grades in a 3D multivector?",
+        "options": [
+          "Just vectors",
+          "Grade 0 (scalar), Grade 1 (vector, 3 components), Grade 2 (bivector, 3), Grade 3 (trivector, 1) — 2³=8 total",
+          "Only scalars",
+          "Infinite grades"
+        ],
+        "correctAnswer": "Grade 0 (scalar), Grade 1 (vector, 3 components), Grade 2 (bivector, 3), Grade 3 (trivector, 1) — 2³=8 total",
+        "explanation": "Pascal's triangle per dimension. 1,3,3,1 for 3D. Total = 2^dimension. Multivector = sum of all grades."
+      },
+      {
+        "question": "Why is the cross product a 3D-only accident?",
+        "options": [
+          "Design choice",
+          "Cross product = Hodge dual of wedge: a×b = (a∧b)*. Only in 3D does the dual of a bivector give a vector. Wedge works in any dimension.",
+          "Faster in 3D",
+          "Historical"
+        ],
+        "correctAnswer": "Cross product = Hodge dual of wedge: a×b = (a∧b)*. Only in 3D does the dual of a bivector give a vector. Wedge works in any dimension.",
+        "explanation": "In 3D: bivectors have 3 components = vectors have 3 components → duality possible. In 4D: bivectors have 6 components → can't map to 4-vector."
+      },
+      {
+        "q": "How do complex numbers relate to GA?",
+        "o": [
+          "Not related",
+          "Complex numbers ARE the even subalgebra of 2D GA — scalar + bivector. a+bi ↔ a + b·e₁₂.",
+          "Complex numbers are older",
+          "GA uses complex numbers"
+        ],
+        "a": "Complex numbers ARE the even subalgebra of 2D GA — scalar + bivector. a+bi ↔ a + b·e₁₂.",
+        "e": "2D GA: basis {1, e₁, e₂, e₁₂}. Even subalgebra: {1, e₁₂}. e₁₂² = -1. This IS the complex numbers. i = e₁₂."
+      }
+    ]
+  },
+  {
+    "note": "01 — Multivectors, Products & Rotors",
+    "questions": [
+      {
+        "question": "What is a rotor in Geometric Algebra?",
+        "options": [
+          "A motor",
+          "The GA version of a quaternion — scalar + bivector. Rotates vectors via sandwich product: v' = RvR̃.",
+          "A translation",
+          "A matrix"
+        ],
+        "correctAnswer": "The GA version of a quaternion — scalar + bivector. Rotates vectors via sandwich product: v' = RvR̃.",
+        "explanation": "Rotor: R = cos(θ/2) - sin(θ/2)B where B is unit bivector. Same 4 components as quaternion. Isomorphic to quaternions."
+      },
+      {
+        "question": "What does the sandwich product RvR̃ do?",
+        "options": [
+          "Nothing special",
+          "Rotates vector v by twice the angle encoded in rotor R. R̃ is reverse (conjugate) of R.",
+          "Translates",
+          "Scales"
+        ],
+        "correctAnswer": "Rotates vector v by twice the angle encoded in rotor R. R̃ is reverse (conjugate) of R.",
+        "explanation": "Sandwich = universal GA pattern. Reflection: -nvn. Rotation: RvR̃ (two reflections). Translation: TvT̃. Everything is a sandwich."
+      },
+      {
+        "question": "How are rotors more general than quaternions?",
+        "options": [
+          "They're not",
+          "Rotors work in ANY dimension — 2D (complex numbers), 3D (quaternions), 4D+. Quaternions only in 3D.",
+          "They're faster",
+          "Smaller"
+        ],
+        "correctAnswer": "Rotors work in ANY dimension — 2D (complex numbers), 3D (quaternions), 4D+. Quaternions only in 3D.",
+        "explanation": "Dimension-independence is the rotor's key advantage. 2D rotor = 2 components (complex). 3D rotor = 4 components (quaternion). 4D rotor = 8 components."
+      },
+      {
+        "q": "What does a∧b = 0 mean geometrically?",
+        "o": [
+          "They are perpendicular",
+          "a and b are collinear (parallel) — they span zero area",
+          "They are equal",
+          "They are opposites"
+        ],
+        "a": "a and b are collinear (parallel) — they span zero area",
+        "e": "Wedge product = 0 iff vectors are linearly dependent (parallel). a∧b = |a||b|sin(θ)·B. sin(0)=0, sin(180)=0."
+      },
+      {
+        "q": "What is the pseudoscalar I in 3D GA?",
+        "o": [
+          "A unit vector",
+          "I = e₁₂₃ — the volume element. I² = -1 (in Euclidean). Multiplying by I flips grade (vector↔bivector, scalar↔trivector).",
+          "A rotor",
+          "A scalar"
+        ],
+        "a": "I = e₁₂₃ — the volume element. I² = -1 (in Euclidean). Multiplying by I flips grade (vector↔bivector, scalar↔trivector).",
+        "e": "I = Hodge dual operator. v·I converts vector to bivector. I²=-1 makes it behave like imaginary unit. Basis of complex/quaternion behavior in GA."
+      }
+    ]
+  },
+  {
+    "note": "02 — PGA & Applications",
+    "questions": [
+      {
+        "question": "What is Projective Geometric Algebra (PGA)?",
+        "options": [
+          "A 2D-only algebra",
+          "Models 3D Euclidean geometry in a 4D algebra with degenerate metric (e₀²=0). Points=trivectors, lines=bivectors, planes=vectors.",
+          "A rendering technique",
+          "A type of rotor"
+        ],
+        "correctAnswer": "Models 3D Euclidean geometry in a 4D algebra with degenerate metric (e₀²=0). Points=trivectors, lines=bivectors, planes=vectors.",
+        "explanation": "PGA: adds projective dimension. Points are intersections of 3 planes. Lines = join of 2 points. Ray-plane intersection = meet(L,Π). One operation."
+      },
+      {
+        "question": "What is a motor in PGA?",
+        "options": [
+          "An engine",
+          "Rigid body motion (rotation + translation) as one object. Motor = even-grade element. Acts via sandwich. Generalizes dual quaternions.",
+          "A rotor",
+          "A translator"
+        ],
+        "correctAnswer": "Rigid body motion (rotation + translation) as one object. Motor = even-grade element. Acts via sandwich. Generalizes dual quaternions.",
+        "explanation": "Motor slerp: one interpolation for rotation AND translation. No separate lerp(pos) + slerp(quat). Unified rigid body interpolation."
+      },
+      {
+        "question": "How does PGA express ray-plane intersection?",
+        "options": [
+          "Parametric equation",
+          "L ∨ Π — the meet (regressive product) of a line L and plane Π is their intersection point. One algebraic product.",
+          "Iterative",
+          "Matrix solve"
+        ],
+        "correctAnswer": "L ∨ Π — the meet (regressive product) of a line L and plane Π is their intersection point. One algebraic product.",
+        "explanation": "Join (∧) creates higher grade. Meet (∨) = intersection. Ray = join(camera, farPoint). Hit = meet(ray, plane). All algebra, no special cases."
+      },
+      {
+        "q": "Why is e₀² = 0 in PGA?",
+        "o": [
+          "Bug",
+          "e₀ is a null vector representing the ideal point at origin — encodes translation. Null vectors are the key to modeling Euclidean geometry projectively.",
+          "e₀ doesn't exist",
+          "e₀ is a regular vector"
+        ],
+        "a": "e₀ is a null vector representing the ideal point at origin — encodes translation. Null vectors are the key to modeling Euclidean geometry projectively.",
+        "e": "PGA = Cl(3,0,1) — degenerate metric. e₀²=0 enables translation via rotor-like sandwich. Same algebra models points, lines, planes, and rigid motions."
+      },
+      {
+        "q": "How many components does a PGA motor have?",
+        "o": [
+          "4",
+          "8 (scalar + 6 bivectors + pseudoscalar) — isomorphic to dual quaternion",
+          "16",
+          "3"
+        ],
+        "a": "8 (scalar + 6 bivectors + pseudoscalar) — isomorphic to dual quaternion",
+        "e": "Motor = even-grade element in PGA. 8 components: 1 scalar, 3 e₀ᵢ bivectors (translation), 3 eᵢⱼ bivectors (rotation), 1 e₀₁₂₃. Represents rigid body motion."
+      }
+    ]
+  },
+  {
+    "note": "01 — A Star & Pathfinding",
+    "questions": [
+      {
+        "question": "What makes A* different from Dijkstra's algorithm?",
+        "options": [
+          "No difference",
+          "A* uses a heuristic h(n) estimating distance to goal — guides search toward target. Dijkstra is h(n)=0 (explores all directions).",
+          "A* is slower",
+          "A* is simpler"
+        ],
+        "correctAnswer": "A* uses a heuristic h(n) estimating distance to goal — guides search toward target. Dijkstra is h(n)=0 (explores all directions).",
+        "explanation": "f(n) = g(n) + h(n). g = cost from start. h = estimated cost to goal. If h is admissible (never overestimates), A* finds optimal path."
+      },
+      {
+        "question": "What makes a heuristic admissible for A*?",
+        "options": [
+          "Any estimate",
+          "h(n) must never overestimate the true remaining cost — typically Euclidean distance for spatial grids",
+          "h(n) must be zero",
+          "h(n) must be exact"
+        ],
+        "correctAnswer": "h(n) must never overestimate the true remaining cost — typically Euclidean distance for spatial grids",
+        "explanation": "Admissible = optimistic. Euclidean distance ≤ actual path distance. Manhattan distance on grid = admissible (but not on diagonals)."
+      },
+      {
+        "question": "What data structure makes A* efficient?",
+        "options": [
+          "Array",
+          "Priority queue (min-heap) — always expand the node with lowest f(n) first",
+          "Stack",
+          "Hash table"
+        ],
+        "correctAnswer": "Priority queue (min-heap) — always expand the node with lowest f(n) first",
+        "explanation": "Open set = min-heap by f(n). Extract-min gives best candidate. Closed set = visited nodes. O(b^d) worst case; heuristic reduces this dramatically."
+      },
+      {
+        "q": "What is a navigation mesh (navmesh)?",
+        "o": [
+          "A grid",
+          "A polygon mesh representing walkable areas — A* finds paths along mesh edges/vertices, much fewer nodes than grids",
+          "A type of graph",
+          "An obstacle"
+        ],
+        "a": "A polygon mesh representing walkable areas — A* finds paths along mesh edges/vertices, much fewer nodes than grids",
+        "e": "Navmesh: convex polygons = nodes. Shared edges = connections. Much fewer nodes than grid cells. UE generates navmesh from level geometry."
+      },
+      {
+        "q": "What is the difference between A* on a grid vs a navmesh?",
+        "o": [
+          "Same algorithm",
+          "Grid: thousands of cells, Manhattan/Euclidean heuristic. Navmesh: dozens of polygons, Euclidean heuristic between centroids + edge costs. Navmesh is much faster.",
+          "Navmesh uses different algorithm",
+          "Grid is always better"
+        ],
+        "a": "Grid: thousands of cells, Manhattan/Euclidean heuristic. Navmesh: dozens of polygons, Euclidean heuristic between centroids + edge costs. Navmesh is much faster.",
+        "e": "Navmesh drastically reduces search space. UE's Recast/Detour generates navmeshes. Pathfinding on navmesh = string-pulling for smooth final path."
+      }
+    ]
+  }
+]
