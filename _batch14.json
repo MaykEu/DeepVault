@@ -158,6 +158,28 @@
         ],
         "correctAnswer": "vel += acc·dt FIRST, then pos += vel·dt. More stable than explicit Euler for same cost. Standard in game physics.",
         "explanation": "Symplectic Euler preserves energy better than explicit. Order matters: update velocity first, then use NEW velocity for position. UE physics uses this."
+      },
+      {
+        "q": "What is Verlet integration?",
+        "o": [
+          "Euler variant",
+          "pos(t+dt)=2·pos(t)-pos(t-dt)+acc·dt². Velocity-free, time-reversible, good energy conservation.",
+          "Implicit",
+          "Analytical"
+        ],
+        "a": "pos(t+dt)=2·pos(t)-pos(t-dt)+acc·dt². Velocity-free, time-reversible, good energy conservation.",
+        "e": "Verlet: no explicit velocity. Velocity = (pos(t+dt)-pos(t-dt))/(2·dt). Used in molecular dynamics, cloth simulation."
+      },
+      {
+        "q": "What is fixed vs variable timestep in physics?",
+        "o": [
+          "Same",
+          "Fixed: deterministic, reproducible. Variable: frame-rate matched. UE: fixed physics timestep with sub-stepping for stability.",
+          "Variable is better",
+          "Only variable"
+        ],
+        "a": "Fixed: deterministic, reproducible. Variable: frame-rate matched. UE: fixed physics timestep with sub-stepping for stability.",
+        "e": "Fixed timestep = stability, reproducibility. Variable = frame-synced. UE physics runs at fixed rate (default 60Hz) with accumulator for sub-steps."
       }
     ]
   },
@@ -174,6 +196,17 @@
         ],
         "correctAnswer": "A rule enforcing a relationship between bodies — distance joint, hinge, contact (non-penetration). Solved iteratively.",
         "explanation": "Constraints: equality (joints) and inequality (contacts). Solved via sequential impulse (projected Gauss-Seidel) in most game engines."
+      },
+      {
+        "q": "What is sequential impulse solving?",
+        "o": [
+          "A rendering technique",
+          "Iteratively resolves constraints one at a time — projects velocities to satisfy constraint, repeats. Standard in game physics.",
+          "A collision method",
+          "A broad phase"
+        ],
+        "a": "Iteratively resolves constraints one at a time — projects velocities to satisfy constraint, repeats. Standard in game physics.",
+        "e": "Projected Gauss-Seidel. Solve each constraint independently, repeat. Converges over iterations. UE's PhysX/Chaos use 4-8 iterations per frame."
       }
     ]
   },
@@ -190,6 +223,17 @@
         ],
         "correctAnswer": "The exact time two moving shapes first touch. CCD computes TOI to prevent tunneling for fast-moving objects.",
         "explanation": "TOI = t ∈ [0,1] where first contact occurs. Conservative advancement: iterative search for TOI by advancing shapes until distance < epsilon."
+      },
+      {
+        "q": "What is conservative advancement for TOI?",
+        "o": [
+          "A rendering method",
+          "Iterative search: advance shapes by safe distance (guaranteed no collision), check again. Converges to TOI.",
+          "A broad phase",
+          "A narrow phase"
+        ],
+        "a": "Iterative search: advance shapes by safe distance (guaranteed no collision), check again. Converges to TOI.",
+        "e": "Conservative advancement: move by distance to closest feature (safe step). Compute new closest distance. Repeat until distance < epsilon. Bullet, PhysX use this."
       }
     ]
   }

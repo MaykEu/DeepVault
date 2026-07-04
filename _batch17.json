@@ -1,0 +1,115 @@
+[
+  {
+    "note": "00 — Casting Overview",
+    "questions": [
+      {
+        "question": "How does UE Cast<T> work without RTTI?",
+        "options": [
+          "dynamic_cast",
+          "UHT generates StaticClass() with class flags. Cast<T> compares flags — O(1), no vtable walk.",
+          "reinterpret_cast",
+          "static_cast"
+        ],
+        "correctAnswer": "UHT generates StaticClass() with class flags. Cast<T> compares flags — O(1), no vtable walk.",
+        "explanation": "DECLARE_CASTCLASS_FLAGS generates TCastFlags<T>. Cast<T> checks UObject::GetClass()->HasAnyCastFlag(TCastFlags<T>). Fast, no RTTI."
+      },
+      {
+        "question": "What does Cast<T> return on failure?",
+        "options": [
+          "Throws",
+          "nullptr — always check result. Cast<T>(Obj) returns nullptr if Obj is not a T.",
+          "The original object",
+          "A default T"
+        ],
+        "correctAnswer": "nullptr — always check result. Cast<T>(Obj) returns nullptr if Obj is not a T.",
+        "explanation": "Cast<T> returns T* or nullptr. Pattern: if(auto* Actor = Cast<AActor>(Obj)) { Actor->DoThing(); }. No exception path."
+      }
+    ]
+  },
+  {
+    "note": "Network Roles",
+    "questions": [
+      {
+        "question": "What are the three network roles in UE?",
+        "options": [
+          "Client only",
+          "ROLE_Authority (server), ROLE_AutonomousProxy (owning client), ROLE_SimulatedProxy (other clients)",
+          "Server only",
+          "Peer to peer"
+        ],
+        "correctAnswer": "ROLE_Authority (server), ROLE_AutonomousProxy (owning client), ROLE_SimulatedProxy (other clients)",
+        "explanation": "Authority: server, has final say. Autonomous: client that owns the pawn. Simulated: everyone else's pawn. Role determines execution path."
+      },
+      {
+        "question": "What does HasAuthority() check?",
+        "options": [
+          "Is client",
+          "Is this machine the network authority (server) for this actor?",
+          "Is dedicated server",
+          "Is listen server"
+        ],
+        "correctAnswer": "Is this machine the network authority (server) for this actor?",
+        "explanation": "HasAuthority() = GetLocalRole() == ROLE_Authority. Use this to guard server-only logic: spawning, damage, state changes."
+      }
+    ]
+  },
+  {
+    "note": "RPCs in Unreal Engine",
+    "questions": [
+      {
+        "question": "What does UFUNCTION(Server) do?",
+        "options": [
+          "Nothing",
+          "Marks a function as Server RPC — called on client, executes on server. UFUNCTION(Client) = opposite. UFUNCTION(NetMulticast) = all.",
+          "Only in Blueprints",
+          "Deprecated"
+        ],
+        "correctAnswer": "Marks a function as Server RPC — called on client, executes on server. UFUNCTION(Client) = opposite. UFUNCTION(NetMulticast) = all.",
+        "explanation": "Server RPC: client→server. Client RPC: server→owning client. NetMulticast: server→all clients. Must have _Implementation suffix on definition."
+      }
+    ]
+  },
+  {
+    "note": "RepNotifies & OnRep",
+    "questions": [
+      {
+        "question": "What does UPROPERTY(ReplicatedUsing=OnRep_Health) do?",
+        "options": [
+          "Nothing",
+          "When Health replicates from server to client, OnRep_Health() callback is called on client — add effects, UI updates",
+          "Prevents replication",
+          "Makes it const"
+        ],
+        "correctAnswer": "When Health replicates from server to client, OnRep_Health() callback is called on client — add effects, UI updates",
+        "explanation": "ReplicatedUsing enables callback on value change. Used for reactive effects: damage flash, health bar update. OnRep receives the OLD value for comparison."
+      }
+    ]
+  },
+  {
+    "note": "The Big O Complexity Spectrum",
+    "questions": [
+      {
+        "question": "What is O(1) and when is it achievable?",
+        "options": [
+          "Any algorithm",
+          "Constant time — independent of input size. Array access, hash table lookup (average). The ideal complexity.",
+          "Only in math",
+          "Never"
+        ],
+        "correctAnswer": "Constant time — independent of input size. Array access, hash table lookup (average). The ideal complexity.",
+        "explanation": "O(1) = runtime doesn't grow with input. arr[i], map.find(key) average. The holy grail. Rare for complex operations."
+      },
+      {
+        "question": "What is O(n²) and why is it dangerous?",
+        "options": [
+          "Fast",
+          "Quadratic — nested loops over input. 1000 elements = 1M operations. 100K elements = 10B. Unusable at scale.",
+          "Always fine",
+          "O(1)"
+        ],
+        "correctAnswer": "Quadratic — nested loops over input. 1000 elements = 1M operations. 100K elements = 10B. Unusable at scale.",
+        "explanation": "O(n²): bubble sort, naive collision detection. Double the input = 4x the time. Must be avoided at scale. Use hashing or spatial partitioning."
+      }
+    ]
+  }
+]

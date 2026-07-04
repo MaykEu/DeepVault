@@ -170,10 +170,13 @@ const QuizEngine = {
     const correctCount = s.answers.filter((_, i) => i % 2 === 0 && s.answers[i + '_correct'] === true).length;
     const answerLog = [];
     for (let i = 0; i < s.questions.length; i++) {
+      const q = s.questions[i];
+      const isMC = !!q.options;
       answerLog.push({
-        question: s.questions[i].question,
-        given: s.answers[i + '_given'] || s.answers[i] || '',
+        questionText: q.question,
+        userAnswer: isMC ? (q.options[s.answers[i]] || '') : (s.answers[i] || ''),
         correct: s.answers[i + '_correct'] || false,
+        correctAnswer: isMC ? q.options[q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || ''),
       });
     }
 

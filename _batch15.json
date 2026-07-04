@@ -12,6 +12,39 @@
         ],
         "correctAnswer": "Gradient-based smooth noise — places random gradient vectors at grid points, interpolates dot products. Natural-looking.",
         "explanation": "Ken Perlin 1983. Gradient at each lattice point. Dot with offset vector. Smoothstep interpolation. Zero at integer grid points."
+      },
+      {
+        "q": "What is fractal noise (fBm)?",
+        "o": [
+          "Single octave",
+          "Sum of multiple noise octaves at different scales: Σ amplitude·noise(frequency·x). Amplitude halves each octave, frequency doubles.",
+          "A type of Perlin",
+          "White noise"
+        ],
+        "a": "Sum of multiple noise octaves at different scales: Σ amplitude·noise(frequency·x). Amplitude halves each octave, frequency doubles.",
+        "e": "Fractal Brownian Motion. Octaves=detail layers. Lacunarity=frequency multiplier. Gain=amplitude衰减. Terrain = 4-8 octaves."
+      },
+      {
+        "q": "What is Worley/Voronoi noise?",
+        "o": [
+          "Gradient noise",
+          "Distance to nearest random feature point — creates cell-like patterns (stone, skin, organic)",
+          "Value noise",
+          "Perlin variant"
+        ],
+        "a": "Distance to nearest random feature point — creates cell-like patterns (stone, skin, organic)",
+        "e": "Voronoi: random points in cells. F1 = nearest distance. F2-F1 = edge intensity. Produces cellular/crack patterns."
+      },
+      {
+        "q": "What is domain warping?",
+        "o": [
+          "Random offset",
+          "Apply noise to the INPUT coordinates of another noise — creates flowing, organic, marble-like patterns",
+          "A type of Perlin",
+          "White noise variant"
+        ],
+        "a": "Apply noise to the INPUT coordinates of another noise — creates flowing, organic, marble-like patterns",
+        "e": "warp(x,y) = noise(x + noise(x+a,y+b), y + noise(x+c,y+d)). Distorted input → organic swirls. Used for smoke, clouds, lava."
       }
     ]
   },
@@ -28,6 +61,28 @@
         ],
         "correctAnswer": "Points placed with minimum distance r between all pairs, maximally dense. Natural-looking distribution.",
         "explanation": "Dart-throwing: random candidates in annulus [r,2r]. Accept if no neighbor within r. Used for foliage placement, object scattering."
+      },
+      {
+        "q": "What is blue noise?",
+        "o": [
+          "Just random",
+          "Point distribution with minimal low-frequency energy — no visible clumping. Optimal for rendering, dithering, scattering.",
+          "White noise",
+          "Pink noise"
+        ],
+        "a": "Point distribution with minimal low-frequency energy — no visible clumping. Optimal for rendering, dithering, scattering.",
+        "e": "Blue noise spectrum: low energy at low frequencies (no clumping), peak at sampling frequency. Pre-computed textures (64×64, 128×128)."
+      },
+      {
+        "q": "What is stratified sampling?",
+        "o": [
+          "Random only",
+          "Divide domain into equal strata (grid cells), place one sample per stratum — guarantees coverage, reduces variance",
+          "Poisson disc",
+          "Blue noise"
+        ],
+        "a": "Divide domain into equal strata (grid cells), place one sample per stratum — guarantees coverage, reduces variance",
+        "e": "Stratified = jittered grid. One sample per cell, random position within. Guarantees no large gaps. Used for shadow maps, SSAO, TAA."
       }
     ]
   },
@@ -44,6 +99,28 @@
         ],
         "correctAnswer": "A parallel string rewriting system — axiom + production rules → geometric interpretation via turtle graphics",
         "explanation": "Lindenmayer 1968. Axiom→rule application→string→turtle graphics. F=draw, +=turn, []=push/pop for branching. Generates plants, trees."
+      },
+      {
+        "q": "What is Marching Cubes?",
+        "o": [
+          "A tree generator",
+          "Extracts isosurface from 3D scalar field — classifies 8 corners of each voxel, indexes 256-entry lookup table for triangles",
+          "A noise function",
+          "A rendering method"
+        ],
+        "a": "Extracts isosurface from 3D scalar field — classifies 8 corners of each voxel, indexes 256-entry lookup table for triangles",
+        "e": "Marching Cubes: for each voxel, 8 corners inside/outside → 256 configs → triangle vertices along edges. 15 unique topological cases."
+      },
+      {
+        "q": "What is the scalar field input to Marching Cubes?",
+        "o": [
+          "Any continuous function R³→R — distance field, noise, metaballs, implicit surfaces. Isosurface at f(x,y,z)=threshold.",
+          "Only noise",
+          "Only SDFs",
+          "Only voxels"
+        ],
+        "a": "Any continuous function R³→R — distance field, noise, metaballs, implicit surfaces. Isosurface at f(x,y,z)=threshold.",
+        "e": "Marching Cubes doesn't care about the source. SDF = exact distance. Noise = organic terrain. Metaballs = blobby merging. All produce valid meshes."
       }
     ]
   },
@@ -60,6 +137,17 @@
         ],
         "correctAnswer": "Drawing samples from a distribution proportional to where the integrand is large — reduces variance",
         "explanation": "Instead of uniform sampling (wastes samples on low-contribution regions), sample where it matters. Essential for Monte Carlo rendering."
+      },
+      {
+        "q": "What is the inversion method for sampling?",
+        "o": [
+          "Rejection",
+          "Compute CDF, invert it, sample uniform [0,1] → CDF⁻¹(uniform). Generates samples from arbitrary distribution.",
+          "Direct sampling",
+          "Grid sampling"
+        ],
+        "a": "Compute CDF, invert it, sample uniform [0,1] → CDF⁻¹(uniform). Generates samples from arbitrary distribution.",
+        "e": "CDF = cumulative distribution. Invert analytically or numerically. Sample uniform→apply inverse→get sample from target distribution."
       }
     ]
   },
@@ -76,6 +164,17 @@
         ],
         "correctAnswer": "3D spatial partitioning: recursively subdivide space into 8 octants. Each node has 0 or 8 children.",
         "explanation": "Octree = 3D quadtree. Used for spatial indexing (collision, rendering), level-of-detail, voxel compression. UE uses for lightmass and some collision."
+      },
+      {
+        "q": "What are voxels?",
+        "o": [
+          "Pixels",
+          "3D pixels — volumetric elements. Store density, material, color per cell. Used for terrain, medical imaging, UE Voxel Plugin.",
+          "Triangles",
+          "Points"
+        ],
+        "a": "3D pixels — volumetric elements. Store density, material, color per cell. Used for terrain, medical imaging, UE Voxel Plugin.",
+        "e": "VOlumetric piXEL. Minecraft-style worlds, medical CT scans, UE Voxel Plugin. Marching Cubes converts voxels to meshes."
       }
     ]
   },
@@ -92,6 +191,17 @@
         ],
         "correctAnswer": "Vertex shader → rasterizer → pixel shader → output merger. Programmable stages (shaders) + fixed-function (rasterizer).",
         "explanation": "Vertex shader: transform vertices. Rasterizer: generate fragments. Pixel shader: compute color. Output merger: depth test, blend. UE's RHI abstracts this."
+      },
+      {
+        "q": "What does fixed-function hardware do in the GPU pipeline?",
+        "o": [
+          "Nothing",
+          "Rasterizer (triangles→fragments), output merger (depth test, blend) — not programmable, just configurable",
+          "Everything",
+          "Shaders"
+        ],
+        "a": "Rasterizer (triangles→fragments), output merger (depth test, blend) — not programmable, just configurable",
+        "e": "Fixed-function = non-programmable stages. Rasterizer: generates fragments from triangles. Output merger: depth/stencil test, blending. Extremely fast dedicated silicon."
       }
     ]
   }
