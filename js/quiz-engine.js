@@ -1,5 +1,3 @@
-function startFreshQuiz(fid, nn) { sessionStorage.setItem('dv_fresh_start','1'); router.navigate('#/folder/' + encodeURIComponent(fid) + '/note/' + encodeURIComponent(nn) + '/quiz'); }
-
 const QuizEngine = {
   state: null,
 
@@ -22,28 +20,6 @@ const QuizEngine = {
   isMC(q) { return q.options && q.options.length > 0; },
 
   start(container, folderId, noteName, reviewQuestions) {
-    // If returning from history, show last result (unless fresh start requested)
-    var freshStart = sessionStorage.getItem('dv_fresh_start');
-    if (freshStart) { sessionStorage.removeItem('dv_fresh_start'); }
-    var lastResult = freshStart ? null : sessionStorage.getItem('dv_last_result');
-    if (lastResult && !reviewQuestions) {
-      try {
-        var r = JSON.parse(lastResult);
-        if (r.folderId === folderId && r.noteName === noteName) {
-          Summary.render(container, {
-            folderId: r.folderId, noteName: r.noteName,
-            answers: [],
-            questions: (QUIZ_DATA[noteName] || {}).questions || [],
-            total: r.total,
-            correctCount: r.correctCount,
-            wrongCount: r.total - r.correctCount,
-            elapsed: r.elapsed, isReview: false
-          });
-          return;
-        }
-      } catch(e) {}
-    }
-
     const data = QUIZ_DATA[noteName];
     if (!data) { router.navigate('#/'); return; }
 
@@ -128,7 +104,7 @@ const QuizEngine = {
         : 'text-input';
       html += `
         <input type="text" class="${cls}"
-               id="text-answer" value="${(typeof entered==='string'?entered.replace(/"/g,'&quot;'):entered)}" placeholder="Type your answer..."
+               id="text-answer" value="${entered.replace(/"/g,'&quot;')}" placeholder="Type your answer..."
                ${s.submitted ? 'disabled' : ''}>
       `;
     }

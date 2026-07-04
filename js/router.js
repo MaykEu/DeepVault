@@ -20,6 +20,11 @@ const router = {
       TopicHub.render(main, folder);
     } else if (parts.length === 4 && parts[0] === 'folder' && parts[2] === 'note') {
       QuizEngine.render(main, decodeURIComponent(parts[1]), decodeURIComponent(parts[3]));
+    } else if (parts.length === 5 && parts[4] === 'summary') {
+      var r = JSON.parse(sessionStorage.getItem('dv_last_result') || '{}');
+      Summary.render(main, {folderId: decodeURIComponent(parts[1]), noteName: decodeURIComponent(parts[3]),
+        answers: [], questions: [], total: r.total || 0, correctCount: r.correctCount || 0,
+        wrongCount: (r.total||0) - (r.correctCount||0), elapsed: r.elapsed || 0, isReview: false});
     } else if (parts.length === 5 && parts[4] === 'quiz') {
       QuizEngine.start(main, decodeURIComponent(parts[1]), decodeURIComponent(parts[3]));
     } else if (parts.length === 5 && parts[4] === 'learn') {
