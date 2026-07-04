@@ -142,7 +142,7 @@ def cmd_list(args=None):
 def cmd_verify(args=None):
     data = read_data()
     ref = data.find("const REFERENCE")
-    quizzes = re.findall(r"QUIZ_DATA\['([^']+)'\] = (\{[^}]*\});", data[:ref])
+    quizzes = re.findall(r"QUIZ_DATA\['([^']+)'\] = (\{.*?\});", data[:ref])
     
     errors = 0
     for name, raw in quizzes:
@@ -172,7 +172,7 @@ def cmd_verify(args=None):
 def cmd_backup(args=None):
     data = read_data()
     ref = data.find("const REFERENCE")
-    quizzes = re.findall(r"QUIZ_DATA\['([^']+)'\] = (\{[^}]*\});", data[:ref])
+    quizzes = re.findall(r"QUIZ_DATA\['([^']+)'\] = (\{.*?\});", data[:ref])
     
     backup = []
     for name, raw in quizzes:
