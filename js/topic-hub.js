@@ -138,7 +138,7 @@ const TopicHub = {
     var card = '<div class="note-card">' +
       '<span class="note-dot" style="background:' + dotColor + '"></span>' +
       '<div class="note-info">' +
-        '<div class="note-name">' + prefix + note + '</div>' +
+        '<div class="note-name">' + prefix + note.replace(/^\d+ — /,'') + '</div>' +
         (statsHtml ? '<div class="note-stats">' + statsHtml + '</div>' : '') +
         '<span class="note-badge ' + statusClass + '">' + status + '</span>' +
       '</div>';
