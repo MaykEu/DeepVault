@@ -211,9 +211,8 @@ const QuizEngine = {
     if (last.answers) {
       for (let i = 0; i < last.answers.length; i++) {
         if (!last.answers[i].correct) {
-          // Find the original question data
-          const qText = last.answers[i].question;
-          const found = data.questions.find(dq => dq.question === qText);
+          const qText = last.answers[i].questionText || last.answers[i].question;
+          const found = data.questions.find(dq => (dq.question || dq.q) === qText);
           if (found) wrongQuestions.push(found);
         }
       }
@@ -224,7 +223,7 @@ const QuizEngine = {
         <div class="summary-card">
           <h2>🎉 Perfect Score!</h2>
           <p style="color:var(--text-secondary);">No questions to review — you got them all right!</p>
-          <button class="btn btn-outline" style="margin-top:1rem;" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}/note/${encodeURIComponent(noteName)}/quiz')">Take Full Quiz</button>
+          <button class="btn btn-outline" style="margin-top:1rem;" href="javascript:void(0)" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}/note/${encodeURIComponent(noteName)}/quiz')">Take Full Quiz</button>
         </div>`;
       return;
     }
