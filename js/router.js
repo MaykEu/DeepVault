@@ -1,5 +1,5 @@
 const router = {
-  navigate: function(hash) { window.location.hash = hash; },
+  navigate: function(hash) { if (hash === window.location.hash) { this.route(); return; } window.location.hash = hash; },
   init: function() {
     var self = this;
     window.addEventListener('hashchange', function() { self.route(); });
