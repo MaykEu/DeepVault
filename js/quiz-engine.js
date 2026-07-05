@@ -157,11 +157,11 @@ const QuizEngine = {
       if (!el || !el.value.trim()) return;
       const answer = el.value.trim();
       s.answers[s.currentIndex] = answer;
-      const ansLower = answer.toLowerCase();
-      const corrLower = q.correctAnswer.toLowerCase();
+      const ansLower = answer.replace(/\s/g,'').toLowerCase();
+      const corrLower = q.correctAnswer.replace(/\s/g,'').toLowerCase();
       // Exact match or acceptable answers
       var correct = ansLower === corrLower
-        || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.toLowerCase() === ansLower; }));
+        || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.replace(/\s/g,'').toLowerCase() === ansLower; }));
       // Keyword match: user input contains most key words from correct answer
       if (!correct && corrLower.length > 10) {
         var keywords = corrLower.split(/[\s,;—\-]+/).filter(function(w) { return w.length > 2; });
