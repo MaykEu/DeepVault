@@ -9506,37 +9506,37 @@
     "01 — Cast Internals & Variants": {
       "questions": [
         {
-          "question": "How does UE Cast<T> achieve O(1) type checking without RTTI?",
+          "question": "How does Cast<T> achieve O(1) without RTTI?",
           "options": [
-            "It uses dynamic_cast",
-            "UHT generates static class flags (EClassCastFlags) per class. Cast<T> does one integer AND to check if the object's class has the flag for T.",
-            "It uses reinterpret_cast",
-            "It uses virtual functions"
+            "It doesn't",
+            "UHT generates StaticClass() with TCastFlags<T>. Cast compares flags as integer AND — no vtable walk.",
+            "dynamic_cast",
+            "reinterpret_cast"
           ],
-          "correctAnswer": "UHT generates static class flags (EClassCastFlags) per class. Cast<T> does one integer AND to check if the object's class has the flag for T.",
-          "explanation": "DECLARE_CASTCLASS_FLAGS macro generates TCastFlags<T>. Cast<T> calls Object->GetClass()->HasAnyCastFlag(TCastFlags<T>::Value). One integer AND — no vtable walk, no type_info compare."
+          "correctAnswer": "UHT generates StaticClass() with TCastFlags<T>. Cast compares flags as integer AND — no vtable walk.",
+          "explanation": "Each UClass has a bitmask of cast flags (EClassCastFlags). Cast<T> checks GetClass()->HasAnyCastFlag(TCastFlags<T>::value). Single integer operation."
         },
         {
-          "question": "What is the difference between Cast<T> and CastChecked<T>?",
+          "question": "What is CastChecked?",
           "options": [
-            "Same",
-            "Cast returns nullptr on failure. CastChecked fatally asserts on failure — use when the type MUST be correct.",
-            "Cast is faster",
-            "CastChecked is deprecated"
+            "A slower Cast",
+            "Asserts/crashes if the cast fails — use when the type MUST be correct",
+            "Returns nullptr",
+            "A deprecated function"
           ],
-          "correctAnswer": "Cast returns nullptr on failure. CastChecked fatally asserts on failure — use when the type MUST be correct.",
-          "explanation": "Cast<T>(Obj) → T* or nullptr. CastChecked<T>(Obj) → T* or crash. Use CastChecked when failure indicates a logic bug (e.g., GetOwner() must be APlayerController)."
+          "correctAnswer": "Asserts/crashes if the cast fails — use when the type MUST be correct",
+          "explanation": "CastChecked<T>(Obj) = 'I know Obj is T'. Crashes on failure (better than silent nullptr bug). Use in controlled paths where failure = logic error."
         },
         {
-          "question": "What is ExactCast?",
+          "question": "What does DECLARE_CASTCLASS_FLAGS do?",
           "options": [
-            "Same as Cast",
-            "Checks for EXACT class match, not inheritance — Cast<APawn> succeeds for ACharacter; ExactCast<APawn> fails for ACharacter",
-            "A faster Cast",
-            "Deprecated"
+            "Nothing visible",
+            "Generates a compile-time bitmask for fast Cast<T> checks — one bit per class in the hierarchy",
+            "Marks a class as abstract",
+            "Creates a Blueprint class"
           ],
-          "correctAnswer": "Checks for EXACT class match, not inheritance — Cast<APawn> succeeds for ACharacter; ExactCast<APawn> fails for ACharacter",
-          "explanation": "ExactCast uses GetClass() == StaticClass() instead of IsA(). Use when you need to verify the exact type, not just derived-from. Rare — most cases want Cast (inheritance-friendly)."
+          "correctAnswer": "Generates a compile-time bitmask for fast Cast<T> checks — one bit per class in the hierarchy",
+          "explanation": "DECLARE_CASTCLASS_FLAGS(T) creates TCastFlags_V<T> for O(1) cast checking. Used by Cast<T>(). Without it, Cast falls back to IsA<T>() which is slower."
         }
       ]
     },
@@ -9545,191 +9545,429 @@
         {
           "question": "When should you use Cast<T> vs IsA<T>?",
           "options": [
-            "Same thing",
-            "Cast: 'is this a T? give me T*. IsA: 'is this a T?' return bool. Use Cast when you need the typed pointer; use IsA when you only need the boolean check.",
-            "Cast is faster",
+            "No difference",
+            "Cast<T>: do something WITH the result (calls methods). IsA<T>: just checking (bool, no dereference).",
+            "Cast is always better",
             "IsA is deprecated"
           ],
-          "correctAnswer": "Cast: 'is this a T? give me T*. IsA: 'is this a T?' return bool. Use Cast when you need the typed pointer; use IsA when you only need the boolean check.",
-          "explanation": "IsA<T>() = Cast<T>(this) != nullptr but cheaper — doesn't compute the return pointer, just the flag check. Use IsA for filtering; use Cast when you need to call T-specific functions."
+          "correctAnswer": "Cast<T>: do something WITH the result (calls methods). IsA<T>: just checking (bool, no dereference).",
+          "explanation": "Cast<T> returns T* or nullptr — use when you need to call T methods. IsA<T>() returns bool — use for filtering (e.g., 'if (Actor->IsA<AEnemy>())'). IsA is slightly faster."
         },
         {
-          "question": "What is the performance pitfall of Cast<T> in tight loops?",
+          "question": "What is the #1 casting pitfall in UE?",
           "options": [
-            "No issue",
-            "Even though Cast is fast (~5-10 cycles), calling it per-element in a large array defeats cache and branch prediction. Cast once, cache the result.",
-            "It crashes",
-            "Memory leak"
+            "Slow performance",
+            "Forgetting to check for nullptr after Cast<T> — accessing null pointer → crash",
+            "Memory leak",
+            "Wrong type cast"
           ],
-          "correctAnswer": "Even though Cast is fast (~5-10 cycles), calling it per-element in a large array defeats cache and branch prediction. Cast once, cache the result.",
-          "explanation": "Pattern: TArray<AActor*> Actors; for(auto* A : Actors) { if(APlayerController* PC = Cast<APlayerController>(A)) {...} }. Better: filter first, or use TArray<APlayerController*> directly."
+          "correctAnswer": "Forgetting to check for nullptr after Cast<T> — accessing null pointer → crash",
+          "explanation": "Cast<T> returns nullptr on failure. Pattern: 'if (auto* Actor = Cast<AActor>(Obj)) { Actor->DoThing(); }'. Always null-check. Use CastChecked when failure is impossible."
         },
         {
-          "question": "What happens if you Cast<T> from an object that's being garbage collected?",
+          "question": "Why not use dynamic_cast in UE?",
           "options": [
-            "Crash",
-            "Cast returns nullptr — the object's class flags are still valid until destruction, but IsPendingKill returns true. Always check IsValid() after Cast.",
-            "Successful cast",
-            "Memory leak"
+            "It works fine",
+            "UE disables RTTI — dynamic_cast doesn't exist. Use Cast<T> instead.",
+            "It's slower only",
+            "It's deprecated in C++20"
           ],
-          "correctAnswer": "Cast returns nullptr — the object's class flags are still valid until destruction, but IsPendingKill returns true. Always check IsValid() after Cast.",
-          "explanation": "Pending kill objects still pass IsA checks but are about to be destroyed. Use IsValid(Obj) which checks both nullptr AND pending kill. UE5 deprecates IsPendingKill in favor of TObjectPtr."
+          "correctAnswer": "UE disables RTTI — dynamic_cast doesn't exist. Use Cast<T> instead.",
+          "explanation": "UE builds with /GR- (no RTTI). dynamic_cast, typeid don't exist. Cast<T> uses static class flags generated by UHT — faster and works without RTTI."
         }
       ]
     },
     "TSet Internals": {
       "questions": [
         {
-          "question": "What data structure does TSet use internally?",
+          "question": "What data structure does TSet use?",
           "options": [
             "Red-black tree",
-            "Hash table — same sparse array with chaining as TMap, but stores only keys (no values)",
+            "Hash table — same as TMap but keys only, no values. O(1) average lookup.",
             "Sorted array",
             "Linked list"
           ],
-          "correctAnswer": "Hash table — same sparse array with chaining as TMap, but stores only keys (no values)",
-          "explanation": "TSet = TMap<Key, void> conceptually. Uses sparse array for iteration efficiency and hash table for O(1) lookup. Keys must be hashable (GetTypeHash). Unique elements only."
+          "correctAnswer": "Hash table — same as TMap but keys only, no values. O(1) average lookup.",
+          "explanation": "TSet = TMap<Key, void> internally. Uses sparse array with chaining. Elements must have GetTypeHash(). No duplicates allowed. Like std::unordered_set."
         },
         {
-          "question": "What is TArray::Contains vs TSet::Contains performance?",
+          "question": "What does TSet::Contains() return?",
           "options": [
-            "Same",
-            "TArray::Contains = O(n) linear scan. TSet::Contains = O(1) hash lookup. TSet is dramatically faster for membership testing.",
-            "TSet is slower",
-            "TArray is always better"
+            "The element",
+            "true if the element exists in the set",
+            "An index",
+            "An iterator"
           ],
-          "correctAnswer": "TArray::Contains = O(n) linear scan. TSet::Contains = O(1) hash lookup. TSet is dramatically faster for membership testing.",
-          "explanation": "Use TArray for ordered, indexed access. Use TSet for fast membership tests and unique constraints. Common anti-pattern: TArray::Contains in a loop (O(n²)) — use TSet (O(n))."
+          "correctAnswer": "true if the element exists in the set",
+          "explanation": "Contains(Key) returns bool. Use Find(Key) to get a pointer to the stored element (useful for custom hash/equality types)."
+        },
+        {
+          "question": "How do you iterate over a TSet?",
+          "options": [
+            "Index-based only",
+            "Range-for or iterator-based — TSet supports begin()/end(). Order is arbitrary (hash order).",
+            "You can't iterate",
+            "Only via TMap"
+          ],
+          "correctAnswer": "Range-for or iterator-based — TSet supports begin()/end(). Order is arbitrary (hash order).",
+          "explanation": "TSet is a range: 'for (auto& Item : MySet)'. Order is implementation-defined (hash bucket order). Use TSortedSet or sort separately if order matters."
         }
       ]
     },
     "UE Enums & Flags": {
       "questions": [
         {
-          "question": "What does UENUM() macro provide for an enum?",
+          "question": "What is UENUM() used for?",
           "options": [
             "Nothing",
-            "Reflection — Blueprint access, serialization, string conversion (EnumToString), and enum range iteration support",
-            "Faster enums",
-            "Memory optimization"
+            "Exposes a C++ enum to Blueprint, reflection, and the editor — UHT generates metadata",
+            "Marking a UCLASS",
+            "Creating a struct",
+            "Network replication"
           ],
-          "correctAnswer": "Reflection — Blueprint access, serialization, string conversion (EnumToString), and enum range iteration support",
-          "explanation": "UENUM() generates reflection data for the enum. Without it: no Blueprint access, no GetValueAsString(), no ForEachEnum iteration. Similar to UCLASS/USTRUCT but for enums."
+          "correctAnswer": "Exposes a C++ enum to Blueprint, reflection, and the editor — UHT generates metadata",
+          "explanation": "UENUM() marks an enum for UE reflection. Enables: Blueprint enum variables, editor dropdowns, replication, serialization. Without it, the enum is C++ only."
         },
         {
-          "question": "What is the difference between ENUM_CLASS_FLAGS and a regular enum class?",
+          "question": "What is the ENUM_CLASS_FLAGS macro for?",
           "options": [
-            "No difference",
-            "ENUM_CLASS_FLAGS enables bitwise operators (|, &, ^, ~) for using the enum as a bitmask/flags field",
-            "It's slower",
-            "It's deprecated"
+            "A comment",
+            "Enables bitwise operations (|, &, ^) on enum class values — creates a strongly-typed bitfield",
+            "Marks a UCLASS",
+            "Creates a Blueprint enum"
           ],
-          "correctAnswer": "ENUM_CLASS_FLAGS enables bitwise operators (|, &, ^, ~) for using the enum as a bitmask/flags field",
-          "explanation": "ENUM_CLASS_FLAGS(ECollisionChannel) generates operator|, operator&, etc. for the enum. Values should be powers of 2. Used for collision channels, object flags, debug rendering flags."
+          "correctAnswer": "Enables bitwise operations (|, &, ^) on enum class values — creates a strongly-typed bitfield",
+          "explanation": "ENUM_CLASS_FLAGS(EMyFlags) overloads | & ^ for the enum class type. Used for: collision channels, gameplay tags, permission flags. Compile-time type-safe."
         }
       ]
     },
     "UE Templates & T-Containers": {
       "questions": [
         {
-          "question": "What is the T-prefix naming convention in UE?",
+          "question": "Why does UE use T-prefixed container templates instead of STL?",
           "options": [
             "Style only",
-            "UE's template classes use T prefix: TArray, TMap, TSet, TSharedPtr, TUniquePtr — distinguishes UE containers from std::",
-            "Required by UHT",
-            "For Blueprint compatibility"
+            "Custom allocator integration, reflection support, GC awareness, and console platform optimizations not available in STL",
+            "STL is slower",
+            "STL doesn't compile on consoles"
           ],
-          "correctAnswer": "UE's template classes use T prefix: TArray, TMap, TSet, TSharedPtr, TUniquePtr — distinguishes UE containers from std::",
-          "explanation": "UE convention: T prefix = template. F = struct/plain class. U = UObject-derived. A = AActor-derived. I = interface. E = enum."
+          "correctAnswer": "Custom allocator integration, reflection support, GC awareness, and console platform optimizations not available in STL",
+          "explanation": "TArray, TMap, TSet integrate with UE's allocator system (FMemory), support UPROPERTY serialization, and work with UE's reflection system. STL containers don't."
         },
         {
-          "question": "Can UE template containers store UObject pointers?",
+          "question": "What is the key difference between TArray and std::vector?",
           "options": [
-            "Yes, directly",
-            "TArray<AActor*> works BUT the raw pointers DON'T prevent GC. Use TArray<TObjectPtr<AActor>> or add UPROPERTY() to the owning struct.",
-            "No",
-            "Only TMap can"
+            "No difference",
+            "TArray supports UPROPERTY serialization, replication, and Blueprint access. Similar performance, different API.",
+            "TArray is faster always",
+            "TArray is on the heap only"
           ],
-          "correctAnswer": "TArray<AActor*> works BUT the raw pointers DON'T prevent GC. Use TArray<TObjectPtr<AActor>> or add UPROPERTY() to the owning struct.",
-          "explanation": "UE GC doesn't see raw pointers inside TArray members. If you need GC tracking, use TObjectPtr, or mark the containing struct member as UPROPERTY(). This is the #1 UE crash bug."
+          "correctAnswer": "TArray supports UPROPERTY serialization, replication, and Blueprint access. Similar performance, different API.",
+          "explanation": "Both are dynamic arrays with exponential growth. TArray adds: UPROPERTY (GC/replication/BP), Slack parameter on growth, and Emplace instead of emplace_back."
         }
       ]
     },
     "GAS Networking & Prediction": {
       "questions": [
         {
-          "question": "How does GAS (Gameplay Ability System) handle networked ability prediction?",
+          "question": "What does GAS stand for in Unreal Engine?",
           "options": [
-            "It doesn't",
-            "Client predicts ability activation locally for instant feedback. Server validates and corrects. Mispredictions are rolled back — similar to CharacterMovementComponent prediction.",
-            "Server-only",
-            "Always wait for server"
+            "General Animation System",
+            "Gameplay Ability System — UE's framework for abilities, attributes, and effects",
+            "Global Asset System",
+            "Game Audio System"
           ],
-          "correctAnswer": "Client predicts ability activation locally for instant feedback. Server validates and corrects. Mispredictions are rolled back — similar to CharacterMovementComponent prediction.",
-          "explanation": "GAS uses PredictionKey system. Client: predict → execute locally immediately, send to server. Server: validate (cooldown, cost, tags) → execute authoritatively. Misprediction: roll back client state."
+          "correctAnswer": "Gameplay Ability System — UE's framework for abilities, attributes, and effects",
+          "explanation": "GAS provides: UGameplayAbility (abilities with cooldowns/costs), UAttributeSet (replicated stats), and UGameplayEffect (buffs/debuffs). Server-authoritative with client prediction."
         },
         {
-          "question": "What are GameplayTags used for in GAS?",
+          "question": "How does GAS handle client-side prediction of abilities?",
           "options": [
-            "Cosmetics",
-            "Hierarchical tagging system — abilities are granted/blocked based on tag presence. Blocked tags prevent activation. Required tags must be present.",
-            "UI only",
-            "Debugging"
+            "It doesn't predict",
+            "The client activates the ability locally for instant feedback; the server validates and corrects. Similar to movement prediction.",
+            "Always server-only",
+            "Via rollback netcode"
           ],
-          "correctAnswer": "Hierarchical tagging system — abilities are granted/blocked based on tag presence. Blocked tags prevent activation. Required tags must be present.",
-          "explanation": "ActivationBlockedTags, ActivationRequiredTags, CancelAbilitiesWithTag. Tags are hierarchical: 'State.Stunned' blocks 'State.Stunned.Immobile' too. Central to GAS logic — no tags, no GAS."
+          "correctAnswer": "The client activates the ability locally for instant feedback; the server validates and corrects. Similar to movement prediction.",
+          "explanation": "Client predicts ability activation (animation, effects). Server validates (checks cooldowns, costs) and either confirms or corrects. Replication reconciles state on misprediction."
+        },
+        {
+          "question": "What is a GameplayTag used for in GAS?",
+          "options": [
+            "A display name",
+            "Hierarchical tags for categorizing abilities, effects, and blocking interactions (e.g., 'Ability.Magic.Fire')",
+            "A player name",
+            "A debugging label"
+          ],
+          "correctAnswer": "Hierarchical tags for categorizing abilities, effects, and blocking interactions (e.g., 'Ability.Magic.Fire')",
+          "explanation": "FGameplayTag = hierarchical string identifier. Used for: ability tags (what an ability IS), cancel tags (what cancels it), block tags (what prevents it). O(1) comparison via FName index."
         }
       ]
     },
     "Iris Filtering & Prioritization": {
       "questions": [
         {
-          "question": "What is Iris in UE5 networking?",
+          "question": "What is the Iris replication system in UE5?",
           "options": [
-            "A rendering feature",
-            "UE5's new replication system — replaces the legacy replication graph. Uses filtering (who should receive) and prioritization (bandwidth allocation).",
-            "A gameplay system",
-            "A UI framework"
+            "A rendering system",
+            "Next-gen replication: replaces legacy Actor channel replication with filtered, prioritized, bandwidth-managed data delivery",
+            "A networking protocol",
+            "An AI system"
           ],
-          "correctAnswer": "UE5's new replication system — replaces the legacy replication graph. Uses filtering (who should receive) and prioritization (bandwidth allocation).",
-          "explanation": "Iris = UE5's next-gen replication. Filter: spatial (distance-based), frequency (relevance). Prioritize: allocate bandwidth to most important actors for each connection. More scalable than legacy system."
+          "correctAnswer": "Next-gen replication: replaces legacy Actor channel replication with filtered, prioritized, bandwidth-managed data delivery",
+          "explanation": "Iris is UE5's new replication system. Features: data stream filtering (only send what's relevant), dynamic prioritization (important objects get more bandwidth), bandwidth management (fair sharing)."
         },
         {
-          "question": "What is spatial filtering in Iris?",
+          "question": "What does Iris filtering do?",
           "options": [
-            "3D rendering",
-            "Actors are only replicated to connections that can see them — grid-based or distance-based culling of replication data",
-            "Audio filtering",
-            "Physics"
+            "Nothing",
+            "Determines which clients receive which replicated data — e.g., only nearby players get enemy position updates",
+            "Encrypts data",
+            "Compresses data"
           ],
-          "correctAnswer": "Actors are only replicated to connections that can see them — grid-based or distance-based culling of replication data",
-          "explanation": "Iris spatial filter: don't replicate actors that are too far away or not in the connection's relevant world area. Reduces per-connection bandwidth. Configurable cull distance per actor."
+          "correctAnswer": "Determines which clients receive which replicated data — e.g., only nearby players get enemy position updates",
+          "explanation": "Iris filters data per connection. Spatial filtering: only replicate nearby objects. Conditional filtering: only replicate when condition holds (e.g., team match). Reduces bandwidth."
+        },
+        {
+          "question": "What does Iris prioritization do?",
+          "options": [
+            "FIFO ordering",
+            "Dynamically assigns replication priority — important objects (player pawn) get more bandwidth than less important ones (ambient props)",
+            "Random selection",
+            "Round-robin"
+          ],
+          "correctAnswer": "Dynamically assigns replication priority — important objects (player pawn) get more bandwidth than less important ones (ambient props)",
+          "explanation": "Prioritization: player pawn = highest priority (frequent updates). Distant enemies = lower priority (less frequent). Under bandwidth pressure, low-priority objects are throttled first."
         }
       ]
     },
     "PushModel & Dirty Marking": {
       "questions": [
         {
-          "question": "What is PushModel in UE5 replication?",
+          "question": "What does PushModel do in UE5 replication?",
           "options": [
+            "Nothing new",
+            "Explicit dirty marking — you call MARK_PROPERTY_DIRTY to tell the system a property changed, avoiding per-tick property comparison",
             "A rendering technique",
-            "Explicit dirty marking — you call MARK_PROPERTY_DIRTY_FROM_NAME to tell the replication system a property changed. Without PushModel, UE compares all properties every tick.",
-            "A physics model",
-            "A UI framework"
+            "Automatic replication"
           ],
-          "correctAnswer": "Explicit dirty marking — you call MARK_PROPERTY_DIRTY_FROM_NAME to tell the replication system a property changed. Without PushModel, UE compares all properties every tick.",
-          "explanation": "PushModel = opt-in optimization. MARK_PROPERTY_DIRTY tells the replicator 'this changed'. Default: UE compares every replicated property's value every tick → expensive. PushModel: only marked properties replicate → bandwidth & CPU savings."
+          "correctAnswer": "Explicit dirty marking — you call MARK_PROPERTY_DIRTY to tell the system a property changed, avoiding per-tick property comparison",
+          "explanation": "Without PushModel, UE compares every replicated property every tick to detect changes. PushModel: you mark properties dirty explicitly. System only replicates changed properties. Huge bandwidth savings."
         },
         {
-          "question": "What is the CPU cost of replication without PushModel?",
+          "question": "How do you enable PushModel for a property?",
+          "options": [
+            "It's automatic",
+            "Mark the UPROPERTY with Replicated and the class with PushModel; call MARK_PROPERTY_DIRTY_FROM_NAME when the value changes",
+            "Add a macro",
+            "Set a config flag only"
+          ],
+          "correctAnswer": "Mark the UPROPERTY with Replicated and the class with PushModel; call MARK_PROPERTY_DIRTY_FROM_NAME when the value changes",
+          "explanation": "Opt-in: set bPushModel = true on the class. Use MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PropertyName) when modifying. Only dirty properties are considered for replication."
+        }
+      ]
+    },
+    "04 — Sorting Algorithms": {
+      "questions": [
+        {
+          "question": "What is the average time complexity of quicksort?",
+          "options": [
+            "O(n)",
+            "O(n log n)",
+            "O(n²)",
+            "O(log n)"
+          ],
+          "correctAnswer": "O(n log n)",
+          "explanation": "Quicksort: O(n log n) average, O(n²) worst case (already sorted with bad pivot). Introsort (std::sort) uses quicksort with heapsort fallback to guarantee O(n log n) worst case."
+        },
+        {
+          "question": "When is counting sort better than comparison-based sorts?",
+          "options": [
+            "Always",
+            "When the range of values is small and known — O(n+k) beats O(n log n) for small k",
+            "Never",
+            "Only for strings"
+          ],
+          "correctAnswer": "When the range of values is small and known — O(n+k) beats O(n log n) for small k",
+          "explanation": "Counting sort: O(n+k) where k = value range. No comparisons. For k << n log n, it's faster. Used for: sorting player scores (0-1000), pixel luminance, character frequencies."
+        }
+      ]
+    },
+    "05 — Graph Algorithms": {
+      "questions": [
+        {
+          "question": "What problem does Dijkstra's algorithm solve?",
+          "options": [
+            "Sorting",
+            "Shortest path from a single source to all other nodes in a weighted graph with non-negative edges",
+            "Maximum flow",
+            "Minimum spanning tree"
+          ],
+          "correctAnswer": "Shortest path from a single source to all other nodes in a weighted graph with non-negative edges",
+          "explanation": "Dijkstra: priority queue of unvisited nodes. O(E log V) with min-heap. Finds shortest paths. Greedy — always picks closest unvisited node. Fails with negative edge weights."
+        },
+        {
+          "question": "What does BFS find on an unweighted graph?",
+          "options": [
+            "Maximum flow",
+            "Shortest path in terms of edge count — level-order traversal",
+            "Topological order",
+            "Articulation points"
+          ],
+          "correctAnswer": "Shortest path in terms of edge count — level-order traversal",
+          "explanation": "BFS = queue-based traversal. Visits nodes in increasing distance from source. Guarantees shortest path by edge count on unweighted graphs. O(V+E)."
+        }
+      ]
+    },
+    "06 — Dynamic Programming": {
+      "questions": [
+        {
+          "question": "What is the core principle of dynamic programming?",
+          "options": [
+            "Recursion without memoization",
+            "Break a problem into overlapping subproblems, solve each once, store results (memoization/tabulation), combine for final answer",
+            "Divide and conquer",
+            "Brute force"
+          ],
+          "correctAnswer": "Break a problem into overlapping subproblems, solve each once, store results (memoization/tabulation), combine for final answer",
+          "explanation": "DP = optimal substructure + overlapping subproblems. Two approaches: top-down (memoization: cache recursive results), bottom-up (tabulation: fill table iteratively). Converts exponential to polynomial."
+        },
+        {
+          "question": "What classic DP problem is used in game AI pathfinding with limited resources?",
+          "options": [
+            "Fibonacci",
+            "Knapsack problem — maximize value with limited weight capacity. Used for: ability loadout selection, loot optimization with inventory weight limit.",
+            "Sorting",
+            "Graph coloring"
+          ],
+          "correctAnswer": "Knapsack problem — maximize value with limited weight capacity. Used for: ability loadout selection, loot optimization with inventory weight limit.",
+          "explanation": "0/1 Knapsack: each item taken or not. O(n·W) DP. Unbounded: unlimited copies. Used in games for character builds, resource allocation, procedural loot."
+        }
+      ]
+    },
+    "Amortized Analysis & Real Profiling Data": {
+      "questions": [
+        {
+          "question": "What is amortized analysis?",
+          "options": [
+            "Worst-case analysis",
+            "Average cost per operation over a sequence — expensive operations are rare, averaging to cheap per-op cost",
+            "Best-case analysis",
+            "Constant analysis"
+          ],
+          "correctAnswer": "Average cost per operation over a sequence — expensive operations are rare, averaging to cheap per-op cost",
+          "explanation": "Example: dynamic array push. Single push may be O(n) (reallocation), but N pushes cost O(N) total → O(1) amortized per push. Used to prove efficiency of data structures."
+        },
+        {
+          "question": "What does profiling on actual hardware reveal that Big O doesn't?",
           "options": [
             "Nothing",
-            "Every tick, UE memcmps the current value of every replicated property against the last sent value for every replicated actor. O(actors × properties).",
-            "Small fixed cost",
-            "Only bandwidth"
+            "Cache misses, branch mispredictions, memory latency — real performance differs from asymptotic analysis. O(n log n) with 10× cache misses can be slower than O(n²) with perfect cache.",
+            "Algorithm correctness",
+            "Memory usage"
           ],
-          "correctAnswer": "Every tick, UE memcmps the current value of every replicated property against the last sent value for every replicated actor. O(actors × properties).",
-          "explanation": "100 actors × 20 replicated properties = 2000 memcmps per tick at 60Hz. PushModel: only properties you explicitly mark dirty are checked. Massive CPU savings for large worlds."
+          "correctAnswer": "Cache misses, branch mispredictions, memory latency — real performance differs from asymptotic analysis. O(n log n) with 10× cache misses can be slower than O(n²) with perfect cache.",
+          "explanation": "Big O ignores constants. Reality: cache effects dominate at scale. Linear scan of sorted array (O(n)) often beats binary search (O(log n)) for small N due to prefetching. Profile, don't assume."
+        }
+      ]
+    },
+    "Applied Examples - Raw C++ vs Unreal Engine": {
+      "questions": [
+        {
+          "question": "Why does TArray::Contains perform differently than std::find on vector?",
+          "options": [
+            "Same performance",
+            "TArray stores a size counter and uses direct pointer access. std::find uses iterator abstraction. Both O(n) but TArray may have ~10-20% less overhead.",
+            "TArray is always faster",
+            "std::find is always faster"
+          ],
+          "correctAnswer": "TArray stores a size counter and uses direct pointer access. std::find uses iterator abstraction. Both O(n) but TArray may have ~10-20% less overhead.",
+          "explanation": "Both linear scan. But TArray avoids iterator abstraction overhead. The real difference: TArray stores inline allocator pointer — better cache locality than separate std::vector allocator."
+        },
+        {
+          "question": "What is the performance difference between TMap::Find and std::unordered_map::find?",
+          "options": [
+            "Identical",
+            "Both O(1) hash lookup. TMap uses sparse array (better iteration/cache) vs std's node-based chaining (pointer chasing). TMap iteration is significantly faster.",
+            "TMap is slower",
+            "std is always better"
+          ],
+          "correctAnswer": "Both O(1) hash lookup. TMap uses sparse array (better iteration/cache) vs std's node-based chaining (pointer chasing). TMap iteration is significantly faster.",
+          "explanation": "Both O(1) average. TMap: keys/values in contiguous sparse array → cache-friendly iteration. std::unordered_map: separately allocated nodes → pointer-chasing on iteration. TMap wins on traversal speed."
+        }
+      ]
+    },
+    "Iris Replication System Overview": {
+      "questions": [
+        {
+          "question": "What is the key architectural difference between Iris and legacy replication?",
+          "options": [
+            "No difference",
+            "Legacy: per-Actor channels (one channel per replicated Actor). Iris: data streams (filtered, prioritized, bandwidth-managed) that decouple replication from Actor lifecycle.",
+            "Iris uses less memory",
+            "Iris is slower"
+          ],
+          "correctAnswer": "Legacy: per-Actor channels (one channel per replicated Actor). Iris: data streams (filtered, prioritized, bandwidth-managed) that decouple replication from Actor lifecycle.",
+          "explanation": "Legacy replication opens a channel per Actor (expensive). Iris uses data streams that can be filtered per connection, prioritized dynamically, and managed for bandwidth efficiency."
+        }
+      ]
+    },
+    "02 — Interface Casting & References": {
+      "questions": [
+        {
+          "question": "How does UE implement interfaces without multiple inheritance?",
+          "options": [
+            "It doesn't use interfaces",
+            "UINTERFACE paired with IInterface class — UHT generates message dispatch tables instead of virtual inheritance",
+            "Standard C++ virtual inheritance",
+            "Diamond inheritance"
+          ],
+          "correctAnswer": "UINTERFACE paired with IInterface class — UHT generates message dispatch tables instead of virtual inheritance",
+          "explanation": "UE interfaces: UINTERFACE (metadata, never instantiated) + I prefixed class (actual C++ interface). UHT generates a mapping table for O(1) interface function lookup without virtual inheritance."
+        },
+        {
+          "question": "What does GetInterfaceAddress do in UE casting?",
+          "options": [
+            "Returns a string address",
+            "Returns the C++ IInterface pointer from a UObject — handles the offset between UObject and interface vtable",
+            "Nothing",
+            "Returns a network address"
+          ],
+          "correctAnswer": "Returns the C++ IInterface pointer from a UObject — handles the offset between UObject and interface vtable",
+          "explanation": "An object implementing an interface stores the interface vtable at a different offset from the UObject base. GetInterfaceAddress computes the correct pointer for interface method calls."
+        },
+        {
+          "question": "How do you check if a UObject implements an interface?",
+          "options": [
+            "Use dynamic_cast",
+            "Use obj->GetClass()->ImplementsInterface(UMyInterface::StaticClass()) or cast to the interface",
+            "Use instanceof",
+            "Try calling and catch"
+          ],
+          "correctAnswer": "Use obj->GetClass()->ImplementsInterface(UMyInterface::StaticClass()) or cast to the interface",
+          "explanation": "ImplementsInterface returns bool (fast check via class flags). Or use IMyInterface* Iface = Cast<IMyInterface>(Obj); if (Iface) { Iface->InterfaceMethod(); }."
+        },
+        {
+          "question": "Why can't you use C++ multiple inheritance for interfaces in UE?",
+          "options": [
+            "Style",
+            "UE's reflection and GC system require a single UObject base — multiple virtual inheritance would break the GUObjectArray layout and GC traversal",
+            "Performance",
+            "Compiler limitations"
+          ],
+          "correctAnswer": "UE's reflection and GC system require a single UObject base — multiple virtual inheritance would break the GUObjectArray layout and GC traversal",
+          "explanation": "UObject uses a fixed memory layout for GC and reflection. Virtual inheritance adds vtable pointers at unpredictable offsets. UE sidesteps this with message dispatch tables generated by UHT."
+        },
+        {
+          "question": "What does Cast<T> do for interface types?",
+          "options": [
+            "Fails always",
+            "Returns nullptr always",
+            "Returns the IInterface pointer — uses GetInterfaceAddress internally for UINTERFACE types",
+            "Converts to string"
+          ],
+          "correctAnswer": "Returns the IInterface pointer — uses GetInterfaceAddress internally for UINTERFACE types",
+          "explanation": "Cast<IInterfaceType> works differently from Cast<UObjectType>. For interfaces, it calls GetInterfaceAddress() to compute the correct pointer offset. UHT generates the dispatch logic."
         }
       ]
     }
