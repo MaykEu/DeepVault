@@ -68,12 +68,24 @@ for fid, dname, vfolder, icon, color in folder_list:
     lines.append(f"  {{id:'{fid}', name:'{dname}', icon:'{icon}', color:'{color}'}},")
 lines.append("];\n")
 
-# 2. FOLDER_GROUPS
+# 2. FOLDER_GROUPS — with explicit group ordering per folder
+group_order = {
+    'computer-systems': ['Hardware/Core', 'Hardware/Storage', 'Hardware/RAM & Virtual Memory',
+                          'System Software/Core', 'System Software/Function Calls',
+                          'Concurrency'],
+    'cpp-fundamentals': ['01 — Primer', '02 — Syntax & Types', '03 — Memory',
+                          '04 — OOP & Generics', '05 — Modern C++', '06 — Bridge'],
+}
 lines.append("const FOLDER_GROUPS = {")
 for fid, _, _, _, _ in folder_list:
     if fid in folders and folders[fid]:
         entries = []
-        for group_name, note_list in folders[fid].items():
+        fgroups = folders[fid]
+        order = group_order.get(fid, list(fgroups.keys()))
+        # Sort groups by their position in the order list
+        ordered_groups = sorted(fgroups.items(), 
+            key=lambda x: order.index(x[0]) if x[0] in order else 999)
+        for group_name, note_list in ordered_groups:
             key = group_name if group_name != "_root" else ""
             nl = ", ".join(f"'{n}'" for n in note_list)
             entries.append(f"    '{key}': [{nl}]")
