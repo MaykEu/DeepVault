@@ -8634,6 +8634,1104 @@
           "explanation": "Two threads on one core share L1/L2 cache. Thread A can measure cache timing to infer what Thread B accessed. Disable SMT to eliminate this attack surface."
         }
       ]
+    },
+    "Deadlock — The Four Conditions": {
+      "questions": [
+        {
+          "question": "What are Coffman's four necessary conditions for deadlock?",
+          "correctAnswer": "Mutual exclusion, hold-and-wait, no preemption, circular wait",
+          "acceptableAnswers": [
+            "mutual exclusion, hold-and-wait, no preemption, circular wait",
+            "mutual exclusion hold and wait no preemption circular wait"
+          ],
+          "explanation": "All four must hold for deadlock to occur. Break any one to prevent/recover from deadlock. Lock ordering breaks circular wait; try_lock breaks hold-and-wait."
+        },
+        {
+          "question": "How does consistent lock ordering prevent deadlock?",
+          "options": [
+            "It makes locks faster",
+            "If every thread acquires locks in the same global order (always A before B), circular wait is impossible",
+            "It uses fewer locks",
+            "It's a debugging tool"
+          ],
+          "correctAnswer": "If every thread acquires locks in the same global order (always A before B), circular wait is impossible",
+          "explanation": "Lock ordering eliminates the circular wait condition. Thread 1: lock(A), lock(B). Thread 2: lock(A), lock(B) — same order, no cycle possible."
+        },
+        {
+          "question": "What is the hold-and-wait condition?",
+          "options": [
+            "A thread holds no locks",
+            "A thread holds at least one resource while waiting to acquire additional resources",
+            "A thread waits without holding",
+            "A thread releases all locks before waiting"
+          ],
+          "correctAnswer": "A thread holds at least one resource while waiting to acquire additional resources",
+          "explanation": "Thread holds lock A while waiting for lock B. If Thread B holds lock B while waiting for lock A — deadlock. Break this by acquiring all locks atomically or releasing held locks before waiting."
+        },
+        {
+          "question": "What is the difference between deadlock and livelock?",
+          "options": [
+            "They're the same",
+            "Deadlock: threads are blocked (sleeping). Livelock: threads are actively changing state but making zero net progress — like two people trying to pass in a corridor",
+            "Livelock is faster",
+            "Deadlock is recoverable"
+          ],
+          "correctAnswer": "Deadlock: threads are blocked (sleeping). Livelock: threads are actively changing state but making zero net progress — like two people trying to pass in a corridor",
+          "explanation": "Deadlock = blocked in FUTEX_WAIT, consuming no CPU. Livelock = threads are RUNNABLE, executing CAS loops, but yield to each other endlessly — burning CPU, zero progress."
+        },
+        {
+          "question": "What is starvation in the context of locking?",
+          "options": [
+            "A deadlock variant",
+            "A thread is ready to run but is perpetually denied the resource because higher-priority threads keep acquiring it",
+            "A performance problem",
+            "A type of livelock"
+          ],
+          "correctAnswer": "A thread is ready to run but is perpetually denied the resource because higher-priority threads keep acquiring it",
+          "explanation": "Starvation: a low-priority thread never gets the lock. Fix with fair queuing (ticket lock) or priority inheritance."
+        }
+      ]
+    },
+    "Scheduling — MLFQ & Proportional Share": {
+      "questions": [
+        {
+          "question": "What is the Multi-Level Feedback Queue (MLFQ)?",
+          "options": [
+            "A single queue",
+            "A scheduler with multiple priority queues — jobs move between queues based on observed behavior (CPU-bound drop, I/O-bound rise)",
+            "A hardware queue",
+            "A networking scheduler"
+          ],
+          "correctAnswer": "A scheduler with multiple priority queues — jobs move between queues based on observed behavior (CPU-bound drop, I/O-bound rise)",
+          "explanation": "MLFQ learns: short/I/O jobs get high priority. Long CPU jobs get demoted to lower priority with longer time slices. Balances responsiveness with throughput."
+        },
+        {
+          "question": "How does MLFQ prevent starvation of low-priority jobs?",
+          "options": [
+            "It doesn't",
+            "Priority boost — periodically move all jobs to the top queue, giving everyone a chance",
+            "It kills low-priority jobs",
+            "It uses more cores"
+          ],
+          "correctAnswer": "Priority boost — periodically move all jobs to the top queue, giving everyone a chance",
+          "explanation": "Periodic priority boost prevents indefinite starvation. All jobs temporarily get highest priority, ensuring long-running CPU jobs eventually get CPU time."
+        },
+        {
+          "question": "What is proportional share scheduling?",
+          "options": [
+            "Equal shares for all",
+            "Each process gets a guaranteed fraction of CPU time — e.g., Process A gets 2x more than B via lottery or stride scheduling",
+            "First-come-first-serve",
+            "Round-robin only"
+          ],
+          "correctAnswer": "Each process gets a guaranteed fraction of CPU time — e.g., Process A gets 2x more than B via lottery or stride scheduling",
+          "explanation": "Lottery: each process holds tickets. Scheduler randomly draws — more tickets = more wins. Stride: deterministic, each process has a stride value — smallest stride runs next."
+        },
+        {
+          "question": "What is the Linux CFS (Completely Fair Scheduler)?",
+          "options": [
+            "A lottery scheduler",
+            "A proportional share scheduler using virtual runtime (vruntime) — the thread with the lowest vruntime runs next",
+            "A MLFQ variant",
+            "A real-time scheduler"
+          ],
+          "correctAnswer": "A proportional share scheduler using virtual runtime (vruntime) — the thread with the lowest vruntime runs next",
+          "explanation": "CFS tracks vruntime per thread (actual runtime weighted by priority). Red-black tree ordered by vruntime. Pick leftmost (minimum vruntime) to run. Perfect fairness over time."
+        },
+        {
+          "question": "What scheduling class do real-time threads use on Linux?",
+          "options": [
+            "CFS",
+            "SCHED_FIFO or SCHED_RR — always preempts CFS threads, provides deterministic scheduling",
+            "SCHED_BATCH",
+            "SCHED_IDLE"
+          ],
+          "correctAnswer": "SCHED_FIFO or SCHED_RR — always preempts CFS threads, provides deterministic scheduling",
+          "explanation": "Real-time classes have static priority above CFS (nice -20 to +19). SCHED_FIFO: runs until it yields. SCHED_RR: round-robin with time slice. Always chosen before CFS threads."
+        }
+      ]
+    },
+    "01 — Projection & Clip Space": {
+      "questions": [
+        {
+          "question": "What does the perspective projection matrix do?",
+          "options": [
+            "Translates vertices",
+            "Maps 3D view-space coordinates to clip space — divides x and y by z (distance), creating perspective foreshortening",
+            "Rotates the camera",
+            "Lighting calculation"
+          ],
+          "correctAnswer": "Maps 3D view-space coordinates to clip space — divides x and y by z (distance), creating perspective foreshortening",
+          "explanation": "Perspective matrix stores z in the w component. After vertex shader, the GPU performs the homogeneous divide (x/w, y/w, z/w) — this creates perspective: far objects appear smaller."
+        },
+        {
+          "question": "What is the homogeneous divide (perspective divide)?",
+          "options": [
+            "A vertex shader operation",
+            "GPU hardware step: divides xyz by w after the vertex shader — converts from homogeneous clip space to NDC",
+            "A pixel shader",
+            "A CPU operation"
+          ],
+          "correctAnswer": "GPU hardware step: divides xyz by w after the vertex shader — converts from homogeneous clip space to NDC",
+          "explanation": "After the vertex shader outputs clip-space coordinates, the GPU's fixed-function hardware performs x/w, y/w, z/w. This is NOT programmable — it always happens."
+        },
+        {
+          "question": "Why does the projection matrix store z in the w component?",
+          "options": [
+            "It doesn't",
+            "To enable perspective-correct interpolation — w contains the original view-space depth, used to interpolate texture coordinates correctly in screen space",
+            "For debugging",
+            "For lighting"
+          ],
+          "correctAnswer": "To enable perspective-correct interpolation — w contains the original view-space depth, used to interpolate texture coordinates correctly in screen space",
+          "explanation": "Screen-space interpolation of triangle attributes is NOT linear in 3D. Dividing by w (perspective-correct interpolation) fixes this — textures don't warp on triangles viewed at an angle."
+        },
+        {
+          "question": "What is clip space and what happens there?",
+          "options": [
+            "The final screen",
+            "A coordinate space where vertices are tested against the view frustum — triangles partially outside the frustum are clipped, generating new vertices at the boundary",
+            "Camera space",
+            "World space"
+          ],
+          "correctAnswer": "A coordinate space where vertices are tested against the view frustum — triangles partially outside the frustum are clipped, generating new vertices at the boundary",
+          "explanation": "In clip space (-w ≤ x,y,z ≤ w), the GPU clips triangles against the 6 frustum planes. Triangles fully inside pass through. Partially visible triangles generate new edge vertices."
+        },
+        {
+          "question": "What is reversed-Z and why is it used?",
+          "options": [
+            "The Z-axis is flipped",
+            "Far plane mapped to 0, near plane to 1 — floating point precision is denser near 0, giving better depth precision for distant objects",
+            "A rendering technique",
+            "A camera setting"
+          ],
+          "correctAnswer": "Far plane mapped to 0, near plane to 1 — floating point precision is denser near 0, giving better depth precision for distant objects",
+          "explanation": "Standard mapping: near=0, far=1 wastes precision close to camera where it's less needed. Reversed-Z uses FP's natural precision distribution (dense near 0) for far objects where Z-fighting occurs. UE5 uses reversed-Z."
+        }
+      ]
+    },
+    "02 — Barycentric Coordinates": {
+      "questions": [
+        {
+          "question": "What are barycentric coordinates?",
+          "options": [
+            "Pixel coordinates",
+            "Three weights (α,β,γ) that express a point inside a triangle as a weighted sum of its vertices — α+β+γ=1, all ≥0 for interior points",
+            "UV coordinates",
+            "Screen coordinates"
+          ],
+          "correctAnswer": "Three weights (α,β,γ) that express a point inside a triangle as a weighted sum of its vertices — α+β+γ=1, all ≥0 for interior points",
+          "explanation": "P = α·A + β·B + γ·C. At vertex A: (1,0,0). At centroid: (1/3,1/3,1/3). Used to interpolate any vertex attribute (color, UV, normal) across the triangle surface."
+        },
+        {
+          "question": "How does the GPU rasterizer compute barycentric coordinates?",
+          "options": [
+            "It doesn't",
+            "Edge functions — for each pixel, compute signed distances to three edges. Normalize to get (α,β,γ).",
+            "Ray tracing",
+            "Matrix inversion"
+          ],
+          "correctAnswer": "Edge functions — for each pixel, compute signed distances to three edges. Normalize to get (α,β,γ).",
+          "explanation": "GPU computes E01, E12, E20 edge functions for a pixel. Normalize by triangle area. These ARE the barycentric weights. Extremely efficient — a few MADs per pixel."
+        },
+        {
+          "question": "Why does perspective-correct interpolation need barycentrics divided by w?",
+          "options": [
+            "It doesn't",
+            "Screen-space barycentrics are NOT the same as 3D barycentrics due to perspective distortion. Dividing by the interpolated 1/w fixes this.",
+            "For performance",
+            "For anti-aliasing"
+          ],
+          "correctAnswer": "Screen-space barycentrics are NOT the same as 3D barycentrics due to perspective distortion. Dividing by the interpolated 1/w fixes this.",
+          "explanation": "Without perspective correction: floor textures warp (affine texture mapping, PS1 style). With it: correct perspective. GPU computes α/z, β/z, γ/z and 1/z, then divides to get correct 3D barycentrics."
+        },
+        {
+          "question": "Where on the triangle does α=1?",
+          "options": [
+            "The centroid",
+            "Vertex A",
+            "The midpoint of BC",
+            "Outside the triangle"
+          ],
+          "correctAnswer": "Vertex A",
+          "explanation": "At vertex A: barycentrics are (1,0,0). At B: (0,1,0). At C: (0,0,1). Each vertex has 1 for its own weight and 0 for others."
+        },
+        {
+          "question": "What is the interior test using barycentrics?",
+          "options": [
+            "Check distance to center",
+            "All three barycentric coordinates must be ≥ 0 and ≤ 1",
+            "Check color value",
+            "Check depth"
+          ],
+          "correctAnswer": "All three barycentric coordinates must be ≥ 0 and ≤ 1",
+          "explanation": "If any barycentric is negative, the point lies outside the triangle. α,β,γ ≥ 0 AND α+β+γ=1 means point is inside or on edge. This is how the GPU determines pixel coverage."
+        }
+      ]
+    },
+    "03 — BRDF & Lighting Models": {
+      "questions": [
+        {
+          "question": "What does BRDF stand for and what does it model?",
+          "correctAnswer": "Bidirectional Reflectance Distribution Function — models how light reflects off a surface: given incoming and outgoing directions, returns the ratio of reflected radiance",
+          "acceptableAnswers": [
+            "Bidirectional Reflectance Distribution Function",
+            "BRDF"
+          ],
+          "explanation": "BRDF(ωi, ωo) = dLo(ωo) / dEi(ωi). Physically based: must be reciprocal f(ωi,ωo)=f(ωo,ωi) and energy conserving ∫f·cosθ dω ≤ 1."
+        },
+        {
+          "question": "What three terms compose the Cook-Torrance microfacet BRDF?",
+          "correctAnswer": "Normal Distribution Function (D — roughness), Geometric Shadowing (G — self-shadowing), Fresnel (F — angle-dependent reflectance)",
+          "acceptableAnswers": [
+            "D, G, F",
+            "Normal Distribution, Geometric Shadowing, Fresnel",
+            "NDF, Geometry, Fresnel"
+          ],
+          "explanation": "Cook-Torrance = D·G·F / (4·(n·l)·(n·v)). D= GGX/Trowbridge-Reitz. G= Smith. F= Schlick approximation. Physically based — used in UE5, Unity HDRP."
+        },
+        {
+          "question": "What does the GGX normal distribution function model?",
+          "options": [
+            "Light color",
+            "Microfacet distribution — how many microfacets are aligned with the half-vector at given roughness",
+            "Shadow",
+            "Specular color"
+          ],
+          "correctAnswer": "Microfacet distribution — how many microfacets are aligned with the half-vector at given roughness",
+          "explanation": "GGX gives the long specular tail seen in real materials. Roughness=0: sharp mirror. Roughness=1: diffuse-like. Used universally in PBR."
+        },
+        {
+          "question": "What is the Fresnel effect?",
+          "options": [
+            "Light absorption",
+            "Reflectance increases at grazing angles — water looks reflective at the horizon but transparent looking straight down",
+            "Diffuse lighting",
+            "Shadow mapping"
+          ],
+          "correctAnswer": "Reflectance increases at grazing angles — water looks reflective at the horizon but transparent looking straight down",
+          "explanation": "Schlick approximation: F = F0 + (1-F0)·(1-cosθ)⁵. F0 = reflectance at normal incidence (~0.04 for non-metals, tinted for metals). At 90°, ALL materials become fully reflective."
+        },
+        {
+          "question": "What is the difference between metallic and dielectric (non-metal) F0 values?",
+          "options": [
+            "No difference",
+            "Dielectrics: F0 ~0.04 (grayscale). Metals: F0 is tinted (gold=orange, copper=reddish) and much higher (0.5-1.0)",
+            "Metals are darker",
+            "Dielectrics are always white"
+          ],
+          "correctAnswer": "Dielectrics: F0 ~0.04 (grayscale). Metals: F0 is tinted (gold=orange, copper=reddish) and much higher (0.5-1.0)",
+          "explanation": "Metalness workflow: metal=0 → F0=0.04 (dielectric). metal=1 → F0=BaseColor (metal — no diffuse, all color comes from specular). This is the core of PBR texturing."
+        }
+      ]
+    },
+    "04 — Spherical Harmonics": {
+      "questions": [
+        {
+          "question": "What do spherical harmonics encode?",
+          "options": [
+            "Vertex positions",
+            "Lighting information on a sphere — direction-dependent irradiance for diffuse global illumination",
+            "Texture coordinates",
+            "Mesh topology"
+          ],
+          "correctAnswer": "Lighting information on a sphere — direction-dependent irradiance for diffuse global illumination",
+          "explanation": "SH encodes functions on a sphere using basis functions (Y_lm). For diffuse GI, 9 coefficients (3 bands, l≤2) capture ~99% of lighting energy."
+        },
+        {
+          "question": "How many SH coefficients encode diffuse indirect lighting?",
+          "options": [
+            "1",
+            "9 (3 bands, l=0,1,2)",
+            "64",
+            "Unlimited"
+          ],
+          "correctAnswer": "9 (3 bands, l=0,1,2)",
+          "explanation": "Diffuse lighting is low-frequency — 3 bands (9 coefficients) capture >99% of the signal. Each coefficient is an RGB vector. UE's SkyLight uses 3rd-order SH."
+        },
+        {
+          "question": "What does the l=0 (first band) SH coefficient represent?",
+          "options": [
+            "Directional light",
+            "The average (DC) ambient light level — a constant value over the sphere",
+            "Shadow information",
+            "Specular highlights"
+          ],
+          "correctAnswer": "The average (DC) ambient light level — a constant value over the sphere",
+          "explanation": "Y_00 = constant. The l=0 coefficient is the mean irradiance — the ambient base level. Higher bands add directional variation."
+        },
+        {
+          "question": "How are SH coefficients used in a shader?",
+          "options": [
+            "They're not",
+            "Reconstruct irradiance: dot the SH coefficients with the basis functions evaluated at the surface normal direction",
+            "For texture sampling",
+            "For vertex animation"
+          ],
+          "correctAnswer": "Reconstruct irradiance: dot the SH coefficients with the basis functions evaluated at the surface normal direction",
+          "explanation": "At runtime: evaluate Y_lm(normal) → dot with stored coefficients → get irradiance in that direction. 9 dot products per pixel."
+        }
+      ]
+    },
+    "05 — Monte Carlo & Path Tracing": {
+      "questions": [
+        {
+          "question": "What is the fundamental principle of Monte Carlo integration?",
+          "options": [
+            "Analytic solutions",
+            "Estimate integrals by averaging random samples: ∫f(x)dx ≈ (1/N)·Σ f(x_i)/p(x_i)",
+            "Precomputed tables",
+            "Finite differences"
+          ],
+          "correctAnswer": "Estimate integrals by averaging random samples: ∫f(x)dx ≈ (1/N)·Σ f(x_i)/p(x_i)",
+          "explanation": "MC integration: draw N random samples from distribution p(x), evaluate integrand f(x)/p(x) at each, average. Converges at O(1/√N). Unbiased."
+        },
+        {
+          "question": "What does importance sampling improve?",
+          "options": [
+            "Nothing",
+            "Reduces variance by drawing more samples where the integrand is large — matches sampling distribution to the function",
+            "Speed only",
+            "Memory usage"
+          ],
+          "correctAnswer": "Reduces variance by drawing more samples where the integrand is large — matches sampling distribution to the function",
+          "explanation": "Sampling uniformly wastes samples on dark regions. Importance sampling concentrates samples on bright regions (lights, specular lobes)."
+        },
+        {
+          "question": "What is Russian roulette in path tracing?",
+          "options": [
+            "A game",
+            "Probabilistically terminating paths: with probability p, continue; with probability 1-p, stop and divide by p. Unbiased, limits infinite recursion.",
+            "A Russian game",
+            "A type of noise"
+          ],
+          "correctAnswer": "Probabilistically terminating paths: with probability p, continue; with probability 1-p, stop and divide by p. Unbiased, limits infinite recursion.",
+          "explanation": "Without RR, path length is unbounded. RR terminates paths randomly while preserving the expected value (divide surviving paths by p)."
+        },
+        {
+          "question": "What is the rendering equation?",
+          "correctAnswer": "L_o = L_e + ∫ f_r·L_i·(n·ω_i)·dω_i — outgoing light = emitted + reflected (BRDF × incident light × cosine term integrated over hemisphere)",
+          "acceptableAnswers": [
+            "L_o = L_e + integral of BRDF * L_i * cos",
+            "rendering equation"
+          ],
+          "explanation": "Kajiya 1986. L_o = emitted + reflected. Reflected = integral over hemisphere of BRDF × incoming radiance × cosine of incident angle. Path tracing solves this recursively."
+        }
+      ]
+    },
+    "06 — Color Spaces & HDR": {
+      "questions": [
+        {
+          "question": "What is the difference between sRGB and linear color space?",
+          "options": [
+            "No difference",
+            "sRGB is gamma-encoded (~γ=2.2) for perceptual uniformity and efficient 8-bit storage; linear is physically correct for light calculations",
+            "sRGB is faster",
+            "Linear is deprecated"
+          ],
+          "correctAnswer": "sRGB is gamma-encoded (~γ=2.2) for perceptual uniformity and efficient 8-bit storage; linear is physically correct for light calculations",
+          "explanation": "Light is linear (2× photons = 2× brightness). sRGB applies gamma for perceptual encoding (more bits in darks). Shading MUST happen in linear space; convert sRGB→linear before and linear→sRGB after."
+        },
+        {
+          "question": "Why does HDR rendering matter?",
+          "options": [
+            "It's just brighter",
+            "Preserves light values >1.0 for bloom, tone mapping, and eye adaptation — without HDR, bright areas clip to white",
+            "It's faster",
+            "It uses less memory"
+          ],
+          "correctAnswer": "Preserves light values >1.0 for bloom, tone mapping, and eye adaptation — without HDR, bright areas clip to white",
+          "explanation": "HDR stores radiance values beyond [0,1]. Tone mapping compresses HDR→LDR for display. Bloom extracts bright regions. Without HDR, fire, sun, and bright lights all clip to pure white."
+        },
+        {
+          "question": "What is ACES tone mapping?",
+          "options": [
+            "A color space only",
+            "Academy Color Encoding System — industry-standard HDR→display transform with cinematic color response and desaturation of brights",
+            "A file format",
+            "A GPU feature"
+          ],
+          "correctAnswer": "Academy Color Encoding System — industry-standard HDR→display transform with cinematic color response and desaturation of brights",
+          "explanation": "ACES is the film industry standard. Maps HDR scene radiance to display colors with realistic highlight roll-off and color accuracy. Used in UE5 by default."
+        }
+      ]
+    },
+    "07 — Signed Distance Fields": {
+      "questions": [
+        {
+          "question": "What is a signed distance field?",
+          "options": [
+            "A texture",
+            "A function f(x) returning the distance to the nearest surface, with negative values inside the object",
+            "A rendering technique only",
+            "A type of shader"
+          ],
+          "correctAnswer": "A function f(x) returning the distance to the nearest surface, with negative values inside the object",
+          "explanation": "SDF: f(p) < 0 inside, = 0 on surface, > 0 outside. |f(p)| = distance to nearest surface. Enables ray marching, smooth blending, and CSG operations."
+        },
+        {
+          "question": "How does SDF ray marching work?",
+          "options": [
+            "Step by fixed amount",
+            "March along ray by the SDF value at current point — guaranteed not to overshoot, adapts step size",
+            "Binary search",
+            "Random steps"
+          ],
+          "correctAnswer": "March along ray by the SDF value at current point — guaranteed not to overshoot, adapts step size",
+          "explanation": "SDF ray marching: step distance = f(point). Since f is the minimum distance to any surface, stepping by f guarantees you won't cross a surface. Converges fast near surfaces."
+        },
+        {
+          "question": "What is smooth min (smin) used for in SDF modeling?",
+          "options": [
+            "Nothing",
+            "Blends two SDFs smoothly — creates organic connection between shapes without sharp edges",
+            "Boolean operations",
+            "Ray marching"
+          ],
+          "correctAnswer": "Blends two SDFs smoothly — creates organic connection between shapes without sharp edges",
+          "explanation": "smin(a, b, k) = -log(exp(-k·a) + exp(-k·b))/k. Blends the minimum of two SDFs. k controls blend radius. Creates metaball-like merging."
+        }
+      ]
+    },
+    "FVector, FRotator, FQuat — The Core Types": {
+      "questions": [
+        {
+          "question": "What is FVector in Unreal Engine?",
+          "options": [
+            "A string type",
+            "A 3D vector (float X, Y, Z) — position, direction, velocity. Core math type.",
+            "A rotation type",
+            "A color type"
+          ],
+          "correctAnswer": "A 3D vector (float X, Y, Z) — position, direction, velocity. Core math type.",
+          "explanation": "FVector is a 12-byte struct (3 floats). Used everywhere: Actor location, velocity, surface normals, direction vectors. Equivalent to glm::vec3 or XMFLOAT3."
+        },
+        {
+          "question": "What does FRotator store?",
+          "options": [
+            "A quaternion",
+            "Euler angles (Pitch, Yaw, Roll) in degrees — intuitive but suffers from gimbal lock",
+            "A matrix",
+            "A vector"
+          ],
+          "correctAnswer": "Euler angles (Pitch, Yaw, Roll) in degrees — intuitive but suffers from gimbal lock",
+          "explanation": "FRotator = (Pitch, Yaw, Roll) in degrees. Used in Blueprints and editor for human readability. Internally converted to FQuat for rotation math. Avoid for interpolation."
+        },
+        {
+          "question": "Why use FQuat instead of FRotator for rotation?",
+          "options": [
+            "FRotator is deprecated",
+            "FQuat avoids gimbal lock, enables smooth interpolation (SLERP), and composes rotations correctly",
+            "FQuat is smaller",
+            "FQuat is faster to render"
+          ],
+          "correctAnswer": "FQuat avoids gimbal lock, enables smooth interpolation (SLERP), and composes rotations correctly",
+          "explanation": "FQuat = 4 floats (x,y,z,w). No gimbal lock. SLERP provides constant angular velocity. FRotator is for human input; FQuat is for math."
+        },
+        {
+          "question": "What does FVector::DotProduct compute?",
+          "options": [
+            "Cross product",
+            "|A||B|cos(θ) — projection of A onto B. Zero when perpendicular.",
+            "Distance",
+            "Angle in degrees"
+          ],
+          "correctAnswer": "|A||B|cos(θ) — projection of A onto B. Zero when perpendicular.",
+          "explanation": "A·B > 0: acute angle. = 0: perpendicular. < 0: obtuse. Used for: view direction test (DotProduct(Forward, ToTarget)), lighting (N·L)."
+        }
+      ]
+    },
+    "FTransform & FMatrix": {
+      "questions": [
+        {
+          "question": "What does FTransform store?",
+          "options": [
+            "Only rotation",
+            "Rotation (FQuat), Translation (FVector), and Scale3D (FVector) — the complete rigid-body transform",
+            "Only position",
+            "A 4x4 matrix directly"
+          ],
+          "correctAnswer": "Rotation (FQuat), Translation (FVector), and Scale3D (FVector) — the complete rigid-body transform",
+          "explanation": "FTransform decomposes transforms: Rotation (quaternion, no gimbal lock), Translation (vector), Scale (vector). More efficient than storing a full 4x4 matrix."
+        },
+        {
+          "question": "How is a 4x4 matrix constructed from an FTransform?",
+          "options": [
+            "It can't",
+            "Scale matrix · Rotation matrix · Translation matrix — composed in that order (SRT)",
+            "Rotation only",
+            "Direct component storage"
+          ],
+          "correctAnswer": "Scale matrix · Rotation matrix · Translation matrix — composed in that order (SRT)",
+          "explanation": "SRT order: Scale → Rotate → Translate. The quaternion converts to 3x3 rotation, embedded in 4x4 with translation. ToMatrixWithScale() produces the final transform."
+        },
+        {
+          "question": "What is the relationship between FTransform and FMatrix in UE?",
+          "options": [
+            "No relationship",
+            "FTransform is the decomposed storage; FMatrix is the 4x4 computation-ready form. Convert with ToMatrixWithScale()",
+            "They're the same",
+            "FTransform is deprecated"
+          ],
+          "correctAnswer": "FTransform is the decomposed storage; FMatrix is the 4x4 computation-ready form. Convert with ToMatrixWithScale()",
+          "explanation": "FTransform for storage (no redundancy, no shear). FMatrix for GPU (shaders need 4x4). Convert at CPU→GPU boundary."
+        }
+      ]
+    },
+    "FMath — Interpolation & Utility": {
+      "questions": [
+        {
+          "question": "What does FMath::Lerp do?",
+          "options": [
+            "Rotates",
+            "Linear interpolation: A + (B-A)·Alpha. Alpha=0 → A; Alpha=1 → B.",
+            "Clamps",
+            "Normalizes"
+          ],
+          "correctAnswer": "Linear interpolation: A + (B-A)·Alpha. Alpha=0 → A; Alpha=1 → B.",
+          "explanation": "Lerp(A, B, Alpha) blends between A and B. Unclamped: Alpha outside [0,1] extrapolates. Used everywhere: animation blending, camera smoothing, color transitions."
+        },
+        {
+          "question": "What does FMath::Clamp do?",
+          "options": [
+            "Interpolates",
+            "Constrains a value between Min and Max: if X < Min → Min; if X > Max → Max; else → X",
+            "Averages",
+            "Finds the maximum"
+          ],
+          "correctAnswer": "Constrains a value between Min and Max: if X < Min → Min; if X > Max → Max; else → X",
+          "explanation": "Clamp(X, Min, Max) ensures X ∈ [Min, Max]. Used for player input bounds, camera pitch limits, health bar percentages."
+        },
+        {
+          "question": "What does FMath::Sin/Cos use — radians or degrees?",
+          "options": [
+            "Degrees",
+            "Radians — all UE math uses radians internally",
+            "Both — configurable",
+            "Neither"
+          ],
+          "correctAnswer": "Radians — all UE math uses radians internally",
+          "explanation": "UE's FMath trig functions take radians. FMath::DegreesToRadians() and RadiansToDegrees() convert. FRotator stores degrees for editor display only."
+        }
+      ]
+    },
+    "Collision & Intersection Math": {
+      "questions": [
+        {
+          "question": "What is the closest point on a line segment to a point?",
+          "options": [
+            "The midpoint",
+            "Project the point onto the line, clamp the parameter t to [0,1]",
+            "The endpoint",
+            "The origin"
+          ],
+          "correctAnswer": "Project the point onto the line, clamp the parameter t to [0,1]",
+          "explanation": "t = dot(P-A, B-A) / dot(B-A, B-A). Clamp t to [0,1]. Closest point = A + t·(B-A). For t<0 → A; for t>1 → B; otherwise the projection."
+        },
+        {
+          "question": "What geometric operation does the dot product enable for collision?",
+          "options": [
+            "Area calculation",
+            "Projecting one vector onto another — used for closest point, separation axis tests, and distance to plane",
+            "Rotation",
+            "Volume calculation"
+          ],
+          "correctAnswer": "Projecting one vector onto another — used for closest point, separation axis tests, and distance to plane",
+          "explanation": "Dot product measures how parallel two vectors are. a·b = |a||b|cos(θ). Essential for: point-to-line projection, plane distance, SAT overlap testing."
+        }
+      ]
+    },
+    "Curves, Ranges & Random": {
+      "questions": [
+        {
+          "question": "What is FRichCurve in UE?",
+          "options": [
+            "A single keyframe",
+            "A cubic Bezier curve with key-value pairs and configurable tangents — used for animation, timeline, and material curves",
+            "A random number generator",
+            "A color curve"
+          ],
+          "correctAnswer": "A cubic Bezier curve with key-value pairs and configurable tangents — used for animation, timeline, and material curves",
+          "explanation": "FRichCurve stores keyframes with Arrive/Leave tangents. Evaluates via cubic Hermite interpolation between keys. Used in UCurveFloat, TimelineComponent, material instances."
+        },
+        {
+          "question": "What does FMath::RandRange do?",
+          "options": [
+            "Returns 0 or 1",
+            "Returns a random float in [Min, Max]",
+            "Generates a random vector",
+            "Generates a random integer only"
+          ],
+          "correctAnswer": "Returns a random float in [Min, Max]",
+          "explanation": "FMath::RandRange(Min, Max) uses FRandomStream internally. RandRange with ints → integer in [Min, Max]. Seed with FRandomStream for deterministic randomness."
+        }
+      ]
+    },
+    "Condition Variables & Semaphores": {
+      "questions": [
+        {
+          "question": "What does a condition variable solve?",
+          "options": [
+            "Mutual exclusion",
+            "Blocking a thread until a condition becomes true",
+            "Memory ordering",
+            "Thread creation"
+          ],
+          "correctAnswer": "Blocking a thread until a condition becomes true",
+          "explanation": "A CV allows threads to wait (sleep) until notified that a condition holds. cv.wait() atomically releases the mutex and blocks. cv.notify_one() wakes one waiter."
+        },
+        {
+          "question": "Why must a condition variable always be used with a mutex?",
+          "options": [
+            "Performance",
+            "To protect the shared condition state from concurrent modification",
+            "It's required by the C++ standard without reason",
+            "Historical legacy"
+          ],
+          "correctAnswer": "To protect the shared condition state from concurrent modification",
+          "explanation": "The condition (e.g., queue not empty) is shared state. The mutex prevents races between checking the condition and waiting on the CV — without it, a wakeup could be missed."
+        },
+        {
+          "question": "What is the difference between notify_one and notify_all?",
+          "options": [
+            "No difference",
+            "notify_one wakes one waiting thread; notify_all wakes all",
+            "notify_all is faster",
+            "notify_one is deprecated"
+          ],
+          "correctAnswer": "notify_one wakes one waiting thread; notify_all wakes all",
+          "explanation": "notify_one: unblocks one arbitrary waiter (good for single-consumer). notify_all: unblocks all waiters (needed when different threads wait for different conditions on the same CV)."
+        },
+        {
+          "question": "What does spurious wakeup mean?",
+          "options": [
+            "A bug in the kernel",
+            "wait() can return even without a corresponding notify() — always check the condition in a while loop",
+            "A performance optimization",
+            "A type of deadlock"
+          ],
+          "correctAnswer": "wait() can return even without a corresponding notify() — always check the condition in a while loop",
+          "explanation": "The OS may wake a thread waiting on a CV for no reason. Always wrap wait() in 'while(!condition) cv.wait(lock)' — never use 'if'."
+        },
+        {
+          "question": "What does cv.wait(lock, predicate) do?",
+          "options": [
+            "Just waits",
+            "Atomically releases the mutex and sleeps until the predicate is true — equivalent to while(!pred()) cv.wait(lock)",
+            "Only checks predicate",
+            "Does nothing special"
+          ],
+          "correctAnswer": "Atomically releases the mutex and sleeps until the predicate is true — equivalent to while(!pred()) cv.wait(lock)",
+          "explanation": "The two-argument wait is the recommended form. It handles spurious wakeups internally by re-checking the predicate on each wakeup."
+        }
+      ]
+    },
+    "Threads & Processes — Overview": {
+      "questions": [
+        {
+          "question": "What is the key difference between a process and a thread?",
+          "options": [
+            "No difference",
+            "Processes have separate memory; threads share memory within a process",
+            "Threads are faster only",
+            "Processes can't have threads"
+          ],
+          "correctAnswer": "Processes have separate memory; threads share memory within a process",
+          "explanation": "A process has its own virtual address space. Threads within the same process share the heap, globals, and file descriptors."
+        },
+        {
+          "question": "What does each thread have that is private?",
+          "options": [
+            "Nothing",
+            "Its own stack and register set",
+            "Its own heap",
+            "Its own global variables"
+          ],
+          "correctAnswer": "Its own stack and register set",
+          "explanation": "Each thread has private stack memory and CPU register state (saved during context switches). Heap and globals are shared."
+        },
+        {
+          "question": "What does std::thread::join() do?",
+          "options": [
+            "Starts the thread",
+            "Blocks until the thread finishes execution",
+            "Detaches the thread",
+            "Kills the thread"
+          ],
+          "correctAnswer": "Blocks until the thread finishes execution",
+          "explanation": "join() waits for the thread to complete. Must be called before the std::thread object is destroyed (otherwise std::terminate)."
+        },
+        {
+          "question": "Why is thread creation expensive?",
+          "options": [
+            "It's not expensive",
+            "It allocates a stack (~1-8MB) and requires kernel scheduling setup",
+            "It only costs a few CPU cycles",
+            "It's only expensive on Windows"
+          ],
+          "correctAnswer": "It allocates a stack (~1-8MB) and requires kernel scheduling setup",
+          "explanation": "Thread creation: allocate stack memory, set up kernel thread structure, add to scheduler. Thread pools amortize this cost by reusing pre-created threads."
+        },
+        {
+          "question": "What happens if a std::thread destructor runs while the thread is still joinable?",
+          "options": [
+            "The thread auto-joins",
+            "std::terminate() is called",
+            "The thread is detached silently",
+            "The thread continues in the background"
+          ],
+          "correctAnswer": "std::terminate() is called",
+          "explanation": "A std::thread destructor calls terminate() if join() or detach() hasn't been called first. Always join or detach before the thread object goes out of scope."
+        }
+      ]
+    },
+    "00 — RAM & Virtual Memory Overview": {
+      "questions": [
+        {
+          "question": "What problem does virtual memory solve?",
+          "options": [
+            "CPU speed",
+            "Isolation between processes and the illusion of more memory than physically available",
+            "Heat dissipation",
+            "Network latency"
+          ],
+          "correctAnswer": "Isolation between processes and the illusion of more memory than physically available",
+          "explanation": "Virtual memory gives each process its own private address space and enables overcommit — allocating more virtual memory than physical RAM."
+        },
+        {
+          "question": "What hardware unit translates virtual addresses to physical addresses?",
+          "options": [
+            "ALU",
+            "MMU (Memory Management Unit)",
+            "FPU",
+            "GPU"
+          ],
+          "correctAnswer": "MMU (Memory Management Unit)",
+          "explanation": "The MMU intercepts every memory access, walks the page table (or checks the TLB), and translates the virtual address to a physical address."
+        },
+        {
+          "question": "What does the TLB cache?",
+          "options": [
+            "Data from RAM",
+            "Recent virtual-to-physical address translations",
+            "CPU instructions",
+            "Disk sectors"
+          ],
+          "correctAnswer": "Recent virtual-to-physical address translations",
+          "explanation": "The Translation Lookaside Buffer caches page table entries. A TLB hit is ~1 cycle; a miss requires a 4-level page table walk (~50-400ns)."
+        },
+        {
+          "question": "What is a page fault?",
+          "options": [
+            "A crash",
+            "When a virtual address has no valid physical mapping — triggers OS handler to allocate or swap in a page",
+            "A type of interrupt",
+            "A kernel bug"
+          ],
+          "correctAnswer": "When a virtual address has no valid physical mapping — triggers OS handler to allocate or swap in a page",
+          "explanation": "Minor fault: page in RAM but not in process's page table (just update PTE). Major fault: page on disk (must I/O). Invalid fault: no mapping at all (SIGSEGV)."
+        },
+        {
+          "question": "How big is a standard virtual memory page on x86?",
+          "options": [
+            "1KB",
+            "4KB",
+            "64KB",
+            "1MB"
+          ],
+          "correctAnswer": "4KB",
+          "explanation": "The standard page size on x86-64 is 4KB (4096 bytes). Huge pages are 2MB or 1GB for reduced TLB pressure."
+        }
+      ]
+    },
+    "00 — Storage Overview": {
+      "questions": [
+        {
+          "question": "What is the fundamental performance difference between HDDs and SSDs?",
+          "options": [
+            "HDDs are faster",
+            "HDDs are mechanical (seek+rotation ~12ms); SSDs are electronic (~100μs random access)",
+            "No difference",
+            "SSDs wear out faster only"
+          ],
+          "correctAnswer": "HDDs are mechanical (seek+rotation ~12ms); SSDs are electronic (~100μs random access)",
+          "explanation": "HDD random 4KB read: ~12ms (mechanical). SSD random 4KB read: ~100μs (electronic). ~100x difference. Sequential speeds are closer: ~250MB/s vs ~7GB/s."
+        },
+        {
+          "question": "Why are SSDs faster for random reads than HDDs?",
+          "options": [
+            "They have more cache",
+            "No mechanical seek or rotational latency — any address is equally fast to access",
+            "They spin faster",
+            "They use better compression"
+          ],
+          "correctAnswer": "No mechanical seek or rotational latency — any address is equally fast to access",
+          "explanation": "SSDs have zero seek time and zero rotational latency. Every memory cell is electronically addressable regardless of position. HDDs must physically move the head."
+        },
+        {
+          "question": "What is the page cache?",
+          "options": [
+            "CPU cache for page tables",
+            "RAM caching recently accessed disk data — avoids hitting the disk for repeated reads",
+            "A type of SSD",
+            "Virtual memory"
+          ],
+          "correctAnswer": "RAM caching recently accessed disk data — avoids hitting the disk for repeated reads",
+          "explanation": "The page cache buffers disk data in RAM. Read hits the page cache = ~100ns. Read misses = disk access = ~100μs (SSD) to ~10ms (HDD)."
+        },
+        {
+          "question": "What does fsync() guarantee?",
+          "options": [
+            "Faster writes",
+            "Data is flushed from page cache to durable storage before returning",
+            "Error checking",
+            "Compression"
+          ],
+          "correctAnswer": "Data is flushed from page cache to durable storage before returning",
+          "explanation": "write() goes to the page cache only (volatile RAM). fsync() forces the dirty pages to disk. Without fsync, power loss = data loss from the cache."
+        },
+        {
+          "question": "What does an inode store?",
+          "options": [
+            "The filename",
+            "File metadata: size, permissions, timestamps, and data block pointers",
+            "The file data itself",
+            "The directory path"
+          ],
+          "correctAnswer": "File metadata: size, permissions, timestamps, and data block pointers",
+          "explanation": "Every file has one inode storing everything EXCEPT the filename. Filenames live in directory entries that point to inodes. Hard links = multiple directory entries → same inode."
+        }
+      ]
+    },
+    "01 — Cast Internals & Variants": {
+      "questions": [
+        {
+          "question": "How does UE Cast<T> achieve O(1) type checking without RTTI?",
+          "options": [
+            "It uses dynamic_cast",
+            "UHT generates static class flags (EClassCastFlags) per class. Cast<T> does one integer AND to check if the object's class has the flag for T.",
+            "It uses reinterpret_cast",
+            "It uses virtual functions"
+          ],
+          "correctAnswer": "UHT generates static class flags (EClassCastFlags) per class. Cast<T> does one integer AND to check if the object's class has the flag for T.",
+          "explanation": "DECLARE_CASTCLASS_FLAGS macro generates TCastFlags<T>. Cast<T> calls Object->GetClass()->HasAnyCastFlag(TCastFlags<T>::Value). One integer AND — no vtable walk, no type_info compare."
+        },
+        {
+          "question": "What is the difference between Cast<T> and CastChecked<T>?",
+          "options": [
+            "Same",
+            "Cast returns nullptr on failure. CastChecked fatally asserts on failure — use when the type MUST be correct.",
+            "Cast is faster",
+            "CastChecked is deprecated"
+          ],
+          "correctAnswer": "Cast returns nullptr on failure. CastChecked fatally asserts on failure — use when the type MUST be correct.",
+          "explanation": "Cast<T>(Obj) → T* or nullptr. CastChecked<T>(Obj) → T* or crash. Use CastChecked when failure indicates a logic bug (e.g., GetOwner() must be APlayerController)."
+        },
+        {
+          "question": "What is ExactCast?",
+          "options": [
+            "Same as Cast",
+            "Checks for EXACT class match, not inheritance — Cast<APawn> succeeds for ACharacter; ExactCast<APawn> fails for ACharacter",
+            "A faster Cast",
+            "Deprecated"
+          ],
+          "correctAnswer": "Checks for EXACT class match, not inheritance — Cast<APawn> succeeds for ACharacter; ExactCast<APawn> fails for ACharacter",
+          "explanation": "ExactCast uses GetClass() == StaticClass() instead of IsA(). Use when you need to verify the exact type, not just derived-from. Rare — most cases want Cast (inheritance-friendly)."
+        }
+      ]
+    },
+    "03 — When to Use & Pitfalls": {
+      "questions": [
+        {
+          "question": "When should you use Cast<T> vs IsA<T>?",
+          "options": [
+            "Same thing",
+            "Cast: 'is this a T? give me T*. IsA: 'is this a T?' return bool. Use Cast when you need the typed pointer; use IsA when you only need the boolean check.",
+            "Cast is faster",
+            "IsA is deprecated"
+          ],
+          "correctAnswer": "Cast: 'is this a T? give me T*. IsA: 'is this a T?' return bool. Use Cast when you need the typed pointer; use IsA when you only need the boolean check.",
+          "explanation": "IsA<T>() = Cast<T>(this) != nullptr but cheaper — doesn't compute the return pointer, just the flag check. Use IsA for filtering; use Cast when you need to call T-specific functions."
+        },
+        {
+          "question": "What is the performance pitfall of Cast<T> in tight loops?",
+          "options": [
+            "No issue",
+            "Even though Cast is fast (~5-10 cycles), calling it per-element in a large array defeats cache and branch prediction. Cast once, cache the result.",
+            "It crashes",
+            "Memory leak"
+          ],
+          "correctAnswer": "Even though Cast is fast (~5-10 cycles), calling it per-element in a large array defeats cache and branch prediction. Cast once, cache the result.",
+          "explanation": "Pattern: TArray<AActor*> Actors; for(auto* A : Actors) { if(APlayerController* PC = Cast<APlayerController>(A)) {...} }. Better: filter first, or use TArray<APlayerController*> directly."
+        },
+        {
+          "question": "What happens if you Cast<T> from an object that's being garbage collected?",
+          "options": [
+            "Crash",
+            "Cast returns nullptr — the object's class flags are still valid until destruction, but IsPendingKill returns true. Always check IsValid() after Cast.",
+            "Successful cast",
+            "Memory leak"
+          ],
+          "correctAnswer": "Cast returns nullptr — the object's class flags are still valid until destruction, but IsPendingKill returns true. Always check IsValid() after Cast.",
+          "explanation": "Pending kill objects still pass IsA checks but are about to be destroyed. Use IsValid(Obj) which checks both nullptr AND pending kill. UE5 deprecates IsPendingKill in favor of TObjectPtr."
+        }
+      ]
+    },
+    "TSet Internals": {
+      "questions": [
+        {
+          "question": "What data structure does TSet use internally?",
+          "options": [
+            "Red-black tree",
+            "Hash table — same sparse array with chaining as TMap, but stores only keys (no values)",
+            "Sorted array",
+            "Linked list"
+          ],
+          "correctAnswer": "Hash table — same sparse array with chaining as TMap, but stores only keys (no values)",
+          "explanation": "TSet = TMap<Key, void> conceptually. Uses sparse array for iteration efficiency and hash table for O(1) lookup. Keys must be hashable (GetTypeHash). Unique elements only."
+        },
+        {
+          "question": "What is TArray::Contains vs TSet::Contains performance?",
+          "options": [
+            "Same",
+            "TArray::Contains = O(n) linear scan. TSet::Contains = O(1) hash lookup. TSet is dramatically faster for membership testing.",
+            "TSet is slower",
+            "TArray is always better"
+          ],
+          "correctAnswer": "TArray::Contains = O(n) linear scan. TSet::Contains = O(1) hash lookup. TSet is dramatically faster for membership testing.",
+          "explanation": "Use TArray for ordered, indexed access. Use TSet for fast membership tests and unique constraints. Common anti-pattern: TArray::Contains in a loop (O(n²)) — use TSet (O(n))."
+        }
+      ]
+    },
+    "UE Enums & Flags": {
+      "questions": [
+        {
+          "question": "What does UENUM() macro provide for an enum?",
+          "options": [
+            "Nothing",
+            "Reflection — Blueprint access, serialization, string conversion (EnumToString), and enum range iteration support",
+            "Faster enums",
+            "Memory optimization"
+          ],
+          "correctAnswer": "Reflection — Blueprint access, serialization, string conversion (EnumToString), and enum range iteration support",
+          "explanation": "UENUM() generates reflection data for the enum. Without it: no Blueprint access, no GetValueAsString(), no ForEachEnum iteration. Similar to UCLASS/USTRUCT but for enums."
+        },
+        {
+          "question": "What is the difference between ENUM_CLASS_FLAGS and a regular enum class?",
+          "options": [
+            "No difference",
+            "ENUM_CLASS_FLAGS enables bitwise operators (|, &, ^, ~) for using the enum as a bitmask/flags field",
+            "It's slower",
+            "It's deprecated"
+          ],
+          "correctAnswer": "ENUM_CLASS_FLAGS enables bitwise operators (|, &, ^, ~) for using the enum as a bitmask/flags field",
+          "explanation": "ENUM_CLASS_FLAGS(ECollisionChannel) generates operator|, operator&, etc. for the enum. Values should be powers of 2. Used for collision channels, object flags, debug rendering flags."
+        }
+      ]
+    },
+    "UE Templates & T-Containers": {
+      "questions": [
+        {
+          "question": "What is the T-prefix naming convention in UE?",
+          "options": [
+            "Style only",
+            "UE's template classes use T prefix: TArray, TMap, TSet, TSharedPtr, TUniquePtr — distinguishes UE containers from std::",
+            "Required by UHT",
+            "For Blueprint compatibility"
+          ],
+          "correctAnswer": "UE's template classes use T prefix: TArray, TMap, TSet, TSharedPtr, TUniquePtr — distinguishes UE containers from std::",
+          "explanation": "UE convention: T prefix = template. F = struct/plain class. U = UObject-derived. A = AActor-derived. I = interface. E = enum."
+        },
+        {
+          "question": "Can UE template containers store UObject pointers?",
+          "options": [
+            "Yes, directly",
+            "TArray<AActor*> works BUT the raw pointers DON'T prevent GC. Use TArray<TObjectPtr<AActor>> or add UPROPERTY() to the owning struct.",
+            "No",
+            "Only TMap can"
+          ],
+          "correctAnswer": "TArray<AActor*> works BUT the raw pointers DON'T prevent GC. Use TArray<TObjectPtr<AActor>> or add UPROPERTY() to the owning struct.",
+          "explanation": "UE GC doesn't see raw pointers inside TArray members. If you need GC tracking, use TObjectPtr, or mark the containing struct member as UPROPERTY(). This is the #1 UE crash bug."
+        }
+      ]
+    },
+    "GAS Networking & Prediction": {
+      "questions": [
+        {
+          "question": "How does GAS (Gameplay Ability System) handle networked ability prediction?",
+          "options": [
+            "It doesn't",
+            "Client predicts ability activation locally for instant feedback. Server validates and corrects. Mispredictions are rolled back — similar to CharacterMovementComponent prediction.",
+            "Server-only",
+            "Always wait for server"
+          ],
+          "correctAnswer": "Client predicts ability activation locally for instant feedback. Server validates and corrects. Mispredictions are rolled back — similar to CharacterMovementComponent prediction.",
+          "explanation": "GAS uses PredictionKey system. Client: predict → execute locally immediately, send to server. Server: validate (cooldown, cost, tags) → execute authoritatively. Misprediction: roll back client state."
+        },
+        {
+          "question": "What are GameplayTags used for in GAS?",
+          "options": [
+            "Cosmetics",
+            "Hierarchical tagging system — abilities are granted/blocked based on tag presence. Blocked tags prevent activation. Required tags must be present.",
+            "UI only",
+            "Debugging"
+          ],
+          "correctAnswer": "Hierarchical tagging system — abilities are granted/blocked based on tag presence. Blocked tags prevent activation. Required tags must be present.",
+          "explanation": "ActivationBlockedTags, ActivationRequiredTags, CancelAbilitiesWithTag. Tags are hierarchical: 'State.Stunned' blocks 'State.Stunned.Immobile' too. Central to GAS logic — no tags, no GAS."
+        }
+      ]
+    },
+    "Iris Filtering & Prioritization": {
+      "questions": [
+        {
+          "question": "What is Iris in UE5 networking?",
+          "options": [
+            "A rendering feature",
+            "UE5's new replication system — replaces the legacy replication graph. Uses filtering (who should receive) and prioritization (bandwidth allocation).",
+            "A gameplay system",
+            "A UI framework"
+          ],
+          "correctAnswer": "UE5's new replication system — replaces the legacy replication graph. Uses filtering (who should receive) and prioritization (bandwidth allocation).",
+          "explanation": "Iris = UE5's next-gen replication. Filter: spatial (distance-based), frequency (relevance). Prioritize: allocate bandwidth to most important actors for each connection. More scalable than legacy system."
+        },
+        {
+          "question": "What is spatial filtering in Iris?",
+          "options": [
+            "3D rendering",
+            "Actors are only replicated to connections that can see them — grid-based or distance-based culling of replication data",
+            "Audio filtering",
+            "Physics"
+          ],
+          "correctAnswer": "Actors are only replicated to connections that can see them — grid-based or distance-based culling of replication data",
+          "explanation": "Iris spatial filter: don't replicate actors that are too far away or not in the connection's relevant world area. Reduces per-connection bandwidth. Configurable cull distance per actor."
+        }
+      ]
+    },
+    "PushModel & Dirty Marking": {
+      "questions": [
+        {
+          "question": "What is PushModel in UE5 replication?",
+          "options": [
+            "A rendering technique",
+            "Explicit dirty marking — you call MARK_PROPERTY_DIRTY_FROM_NAME to tell the replication system a property changed. Without PushModel, UE compares all properties every tick.",
+            "A physics model",
+            "A UI framework"
+          ],
+          "correctAnswer": "Explicit dirty marking — you call MARK_PROPERTY_DIRTY_FROM_NAME to tell the replication system a property changed. Without PushModel, UE compares all properties every tick.",
+          "explanation": "PushModel = opt-in optimization. MARK_PROPERTY_DIRTY tells the replicator 'this changed'. Default: UE compares every replicated property's value every tick → expensive. PushModel: only marked properties replicate → bandwidth & CPU savings."
+        },
+        {
+          "question": "What is the CPU cost of replication without PushModel?",
+          "options": [
+            "Nothing",
+            "Every tick, UE memcmps the current value of every replicated property against the last sent value for every replicated actor. O(actors × properties).",
+            "Small fixed cost",
+            "Only bandwidth"
+          ],
+          "correctAnswer": "Every tick, UE memcmps the current value of every replicated property against the last sent value for every replicated actor. O(actors × properties).",
+          "explanation": "100 actors × 20 replicated properties = 2000 memcmps per tick at 60Hz. PushModel: only properties you explicitly mark dirty are checked. Massive CPU savings for large worlds."
+        }
+      ]
     }
   },
   "quiz_notes": {

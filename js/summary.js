@@ -36,7 +36,7 @@ const Summary = {
         '</div>' +
         '<p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">' + state.noteName + '</p>' +
         '<div class="summary-actions">' +
-'<button class="btn btn-outline" onclick="QuizEngine.start(document.getElementById(\'app-main\'),' + state.folderId.replace(/'/g,\"\\\\'\") + ',' + state.noteName.replace(/'/g,\"\\\\'\") + ')">\u{1F504} Try Again</button>' +
+'<button class="btn btn-outline" onclick="router.navigate(' + String.fromCharCode(39) + '#/folder/' + String.fromCharCode(39) + ' + encodeURIComponent(state.folderId) + ' + String.fromCharCode(39) + '/note/' + String.fromCharCode(39) + ' + encodeURIComponent(state.noteName) + ' + String.fromCharCode(39) + '/quiz' + String.fromCharCode(39) + ')">\u{1F504} Try Again</button>' +
           reviewBtn +
           '<button class="btn btn-outline" onclick="router.navigate(\'#/folder/' + encodeURIComponent(state.folderId) + '/note/' + encodeURIComponent(state.noteName) + '/history\')">\u{1F4CA} View History</button>' +
         '</div>' +
