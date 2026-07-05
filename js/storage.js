@@ -34,19 +34,23 @@ var Storage = {
 
   getFolderStats: function(folderId) {
     var all = this.getAll().attempts;
-    var seen = {};
+    var best = {};
     var totalQuizzes = 0;
     for (var i = 0; i < all.length; i++) {
       if (all[i].folder === folderId) {
         totalQuizzes++;
-        seen[all[i].note] = true;
+        if (!best[all[i].note] || all[i].percentage > best[all[i].note]) {
+          best[all[i].note] = all[i].percentage;
+        }
       }
     }
+    var completedNotes = 0;
+    for (var n in best) { if (best[n] >= 100) completedNotes++; }
     var totalNotes = 0;
     for (var k in NOTES_CONTENT) {
       if (NOTES_CONTENT[k].folder === folderId) totalNotes++;
     }
-    return { totalQuizzes: totalQuizzes, completedNotes: Object.keys(seen).length, totalNotes: totalNotes };
+    return { totalQuizzes: totalQuizzes, completedNotes: completedNotes, totalNotes: totalNotes };
   },
 
   getBestScore: function(folderId, noteName) {

@@ -138,13 +138,13 @@ const TopicHub = {
     var status = 'NOT STARTED';
     var statusClass = 'badge-new';
     if (best !== null) {
-      status = best >= 80 ? 'COMPLETED' : 'IN PROGRESS';
-      statusClass = best >= 80 ? 'badge-done' : 'badge-progress';
+      status = best >= 100 ? 'COMPLETED' : 'IN PROGRESS';
+      statusClass = best >= 100 ? 'badge-done' : 'badge-progress';
     }
-    var dotColor = best === null ? 'var(--text-muted)' : (best >= 80 ? 'var(--success)' : 'var(--warning)');
+    var dotColor = best === null ? 'var(--text-muted)' : (best >= 100 ? 'var(--success)' : 'var(--warning)');
 
     var statsHtml = best !== null
-      ? 'Best: <strong style=\"color:' + (best >= 80 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '\">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
+      ? 'Best: <strong style=\"color:' + (best >= 100 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '\">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
       : '';
 
     var noteIdx = NOTES[folder.id] ? NOTES[folder.id].indexOf(note) : -1;
