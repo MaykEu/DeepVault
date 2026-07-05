@@ -93,7 +93,77 @@ const TopicHub = {
           }
         }
 
+        // Build nested groups (support Physics/Collision Detection → Physics > Collision Detection)
+        var nestedGroups = {};
+        var flatGroups = {};
         for (var sg in subGroups) {
+          var slashIdx = sg.indexOf('/');
+          if (slashIdx > 0) {
+            var parent = sg.substring(0, slashIdx);
+            var child = sg.substring(slashIdx + 1);
+            if (!nestedGroups[parent]) nestedGroups[parent] = {};
+            nestedGroups[parent][child] = subGroups[sg];
+          } else {
+            flatGroups[sg] = subGroups[sg];
+          }
+        }
+
+        // Render nested groups first
+        for (var ng in nestedGroups) {
+          var children = nestedGroups[ng];
+          var totalVisible = 0;
+          for (var cg in children) {
+            totalVisible += children[cg].filter(function(x) { return activeSet[x]; }).length;
+          }
+          if (totalVisible === 0) continue;
+          
+          var ngKey = folder.id + '|nest|' + ng;
+          var isCollapsed = this.collapsed[ngKey];
+          if (isCollapsed === undefined) isCollapsed = true;
+          
+          html += '<div class=\"folder-group\">' +
+            '<div class=\"folder-group-header\" onclick=\"TopicHub.toggleGroup(\'' + folder.id + '\',\'nest|' + ng + '\')\">' +
+              '<span class=\"folder-group-caret\">' + (isCollapsed ? '\u25B6' : '\u25BC') + '</span>' +
+              '<span class=\"folder-group-icon\">\u{1F4C1}</span>' +
+              '<span class=\"folder-group-name\">' + ng + '</span>' +
+              '<span class=\"folder-group-count\">' + totalVisible + ' notes</span>' +
+            '</div>';
+          
+          if (!isCollapsed) {
+            html += '<div class=\"folder-group-body\">';
+            for (var cg in children) {
+              var visibleNotes = children[cg].filter(function(x) { return activeSet[x]; });
+              if (visibleNotes.length === 0) continue;
+              var cgKey = folder.id + '|nest|' + ng + '|' + cg;
+              var cgCollapsed = this.collapsed[cgKey];
+              if (cgCollapsed === undefined) cgCollapsed = true;
+              
+              html += '<div class=\"folder-group folder-group-child\">' +
+                '<div class=\"folder-group-header folder-group-subheader\" onclick=\"event.stopPropagation(); TopicHub.toggleGroup(\'' + folder.id + '\',\'nest|' + ng + '|' + cg + '\')\">' +
+                  '<span class=\"folder-group-caret\">' + (cgCollapsed ? '\u25B6' : '\u25BC') + '</span>' +
+                  '<span class=\"folder-group-icon\">\u{1F4C4}</span>' +
+                  '<span class=\"folder-group-name\">' + cg + '</span>' +
+                  '<span class=\"folder-group-count\">' + visibleNotes.length + ' notes</span>' +
+                '</div>';
+              
+              if (!cgCollapsed) {
+                html += '<div class=\"folder-group-body\">';
+                for (var ci = 0; ci < children[cg].length; ci++) {
+                  if (activeSet[children[cg][ci]]) {
+                    html += TopicHub.noteCard(children[cg][ci], folder, quizNotes);
+                  }
+                }
+                html += '</div>';
+              }
+              html += '</div>';
+            }
+            html += '</div>';
+          }
+          html += '</div>';
+        }
+
+        // Then render flat groups (original behavior)
+        for (var sg in flatGroups) {
           var visibleNotes = subGroups[sg].filter(function(x) { return activeSet[x]; });
           if (visibleNotes.length === 0) continue;
           var isCollapsed = this.collapsed[folder.id + '|' + sg];
