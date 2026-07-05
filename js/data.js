@@ -12,10 +12,10 @@ const FOLDER_GROUPS = {
     'Concurrency': ['01 — Processes & Threads', '02 — The OS Scheduler', '03 — SMT, Affinity & Thread Pools', '04 — Data Races & Mutexes', '05 — Deadlock, Livelock & Starvation', '06 — Atomics & Memory Ordering', '07 — Synchronization Patterns', '08 — Lock-Free Programming', '09 — Practical Concurrency', '10 — Quick Reference', 'Condition Variables & Semaphores', 'Deadlock — The Four Conditions', 'Scheduling — MLFQ & Proportional Share'],
     'Hardware/RAM & Virtual Memory': ['01 — DRAM Cells & Memory Physics', '02 — Page Tables & TLB', '03 — Page Faults, mmap & Swap', '04 — Huge Pages, NUMA & Boot Process'],
     'Hardware/Storage': ['01 — HDD Mechanics', '02 — NAND Flash & SSDs', '03 — NVMe, SATA & PCIe', '04 — Filesystems & Page Cache'],
-    'System Software': ['02 — Compiler Pipeline', '03 — Linking & Executables', '04 — Syscalls & Kernel'],
     'System Software/Function Calls': ['01 — Hardware Mechanics', '02 — Calling Conventions', '03 — Edge Cases & Security'],
     '': [],
-    'Hardware/Core': ['01 — Bits, Bytes & Number Systems', '02 — Negative Numbers & Endianness', '03 — Assembly Language', '04 — CPU Architecture', '05 — Memory Hierarchy', '06 — Memory Allocation', '07 — Virtual Memory — The Full Picture', '08 — RAID', '09 — DMA & Bus Mastering', '10 — Networking — TCP, UDP & Sockets', '11 — Boot Process — BIOS, UEFI & Bootloader', '12 — GPU Architecture', '13 — Interrupts & Exceptions', '14 — Virtualization & Containers', '15 — Kernel Modules & Drivers', '16 — Hardware Security']
+    'Hardware/Core': ['01 — Bits, Bytes & Number Systems', '02 — Negative Numbers & Endianness', '03 — Assembly Language', '04 — CPU Architecture', '05 — Memory Hierarchy', '06 — Memory Allocation', '07 — Virtual Memory — The Full Picture', '08 — RAID', '09 — DMA & Bus Mastering', '10 — Networking — TCP, UDP & Sockets', '11 — Boot Process — BIOS, UEFI & Bootloader', '12 — GPU Architecture', '13 — Interrupts & Exceptions', '14 — Virtualization & Containers', '15 — Kernel Modules & Drivers', '16 — Hardware Security'],
+    'System Software/Core': ['02 — Compiler Pipeline', '03 — Linking & Executables', '04 — Syscalls & Kernel']
   },
   'cpp-fundamentals': {
     '01 — Primer': ['01 — Variables, Types & Memory', '02 — Control Flow', '03 — Functions & The Call Stack', '04 — Arrays, Vectors & Loops', '05 — Pointers & References', '06 — Compiling & Running Programs'],

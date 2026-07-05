@@ -27,11 +27,6 @@
       "03 \u2014 NVMe, SATA & PCIe",
       "04 \u2014 Filesystems & Page Cache"
     ],
-    "System Software": [
-      "02 \u2014 Compiler Pipeline",
-      "03 \u2014 Linking & Executables",
-      "04 \u2014 Syscalls & Kernel"
-    ],
     "System Software/Function Calls": [
       "01 \u2014 Hardware Mechanics",
       "02 \u2014 Calling Conventions",
@@ -55,6 +50,11 @@
       "14 \u2014 Virtualization & Containers",
       "15 \u2014 Kernel Modules & Drivers",
       "16 \u2014 Hardware Security"
+    ],
+    "System Software/Core": [
+      "02 \u2014 Compiler Pipeline",
+      "03 \u2014 Linking & Executables",
+      "04 \u2014 Syscalls & Kernel"
     ]
   },
   "cpp-fundamentals": {
