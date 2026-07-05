@@ -74,7 +74,9 @@ const TopicHub = {
         } else {
           var lst = tab === 'quizzes' ? studyList : guideList;
           for (var j = 0; j < lst.length; j++) {
-            html += this.noteCard(lst[j], folder, quizNotes);
+            var jIdx = j + 1;
+            var card = this.noteCard(lst[j], folder, quizNotes);
+            html += !quizNotes || quizNotes.indexOf(lst[j]) === -1 ? card : card.replace('<div class="note-name">', '<div class="note-name">' + String(jIdx).padStart(2,'0') + '. ');
           }
         }
         html += '</div>';
@@ -228,8 +230,7 @@ const TopicHub = {
       : '';
 
     var isGuide = quizNotes.indexOf(note) === -1;
-    var noteIdx = !isGuide && NOTES[folder.id] ? NOTES[folder.id].indexOf(note) : -1;
-    var prefix = !isGuide && noteIdx >= 0 ? String(noteIdx + 1).padStart(2, '0') + '. ' : '';
+    var prefix = ''; // Numbering is set per-group in render()
 
     var card = '<div class=\"note-card\">' +
       '<span class=\"note-dot\" style=\"background:' + dotColor + '\"></span>' +
