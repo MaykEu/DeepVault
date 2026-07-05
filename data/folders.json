@@ -54,7 +54,9 @@
       "01 \u2014 Hardware Mechanics",
       "02 \u2014 Calling Conventions",
       "03 \u2014 Edge Cases & Security"
-    ]
+    ],
+    "": [],
+    "Hardware/Core": []
   },
   "cpp-fundamentals": {
     "01 \u2014 Primer": [

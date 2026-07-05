@@ -87,8 +87,17 @@ const TopicHub = {
           subGroups[gk] = groups[gk];
         }
 
+        // Remove root notes already covered by nested parent groups
+        var coveredRoots = {};
+        for (var ng2 in nestedGroups) {
+          for (var cg2 in nestedGroups[ng2]) {
+            for (var ci2 = 0; ci2 < nestedGroups[ng2][cg2].length; ci2++) {
+              coveredRoots[nestedGroups[ng2][cg2][ci2]] = true;
+            }
+          }
+        }
         for (var ri = 0; ri < rootNotes.length; ri++) {
-          if (activeSet[rootNotes[ri]]) {
+          if (activeSet[rootNotes[ri]] && !coveredRoots[rootNotes[ri]]) {
             html += this.noteCard(rootNotes[ri], folder, quizNotes);
           }
         }
@@ -103,6 +112,7 @@ const TopicHub = {
             var child = sg.substring(slashIdx + 1);
             if (!nestedGroups[parent]) nestedGroups[parent] = {};
             nestedGroups[parent][child] = subGroups[sg];
+
           } else {
             flatGroups[sg] = subGroups[sg];
           }

@@ -14,7 +14,9 @@ const FOLDER_GROUPS = {
     'Hardware/RAM & Virtual Memory': ['01 — DRAM Cells & Memory Physics', '02 — Page Tables & TLB', '03 — Page Faults, mmap & Swap', '04 — Huge Pages, NUMA & Boot Process'],
     'Hardware/Storage': ['01 — HDD Mechanics', '02 — NAND Flash & SSDs', '03 — NVMe, SATA & PCIe', '04 — Filesystems & Page Cache'],
     'System Software': ['02 — Compiler Pipeline', '03 — Linking & Executables', '04 — Syscalls & Kernel'],
-    'System Software/Function Calls': ['01 — Hardware Mechanics', '02 — Calling Conventions', '03 — Edge Cases & Security']
+    'System Software/Function Calls': ['01 — Hardware Mechanics', '02 — Calling Conventions', '03 — Edge Cases & Security'],
+    '': [],
+    'Hardware/Core': []
   },
   'cpp-fundamentals': {
     '01 — Primer': ['01 — Variables, Types & Memory', '02 — Control Flow', '03 — Functions & The Call Stack', '04 — Arrays, Vectors & Loops', '05 — Pointers & References', '06 — Compiling & Running Programs'],
