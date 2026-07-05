@@ -85,7 +85,8 @@ const QuizEngine = {
     if (this.isMC(q)) {
       html += '<div class="options-group">';
       const selected = s.answers[s.currentIndex];
-      const correctIdx = q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer);
+      // Always use string lookup after option shuffle
+      const correctIdx = q.options.indexOf(q.correctAnswer);
       for (let i = 0; i < q.options.length; i++) {
         let cls = 'option-label';
         if (s.submitted) {
@@ -148,7 +149,8 @@ const QuizEngine = {
     
     if (this.isMC(q)) {
       if (s.answers[s.currentIndex] === undefined) return;
-      const correctIdx = q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer);
+      // Always use string lookup after option shuffle
+      const correctIdx = q.options.indexOf(q.correctAnswer);
       const correct = s.answers[s.currentIndex] === correctIdx;
       s.answers[s.currentIndex + '_correct'] = correct;
       s.answers[s.currentIndex + '_given'] = q.options[s.answers[s.currentIndex]];
@@ -193,7 +195,7 @@ const QuizEngine = {
         questionText: q.question,
         userAnswer: isMC ? (q.options[s.answers[i]] || '') : (s.answers[i] || ''),
         correct: s.answers[i + '_correct'] || false,
-        correctAnswer: isMC ? q.options[q.correctIndex !== undefined ? q.correctIndex : q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || ''),
+        correctAnswer: isMC ? q.options[q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || ''),
       });
     }
 
