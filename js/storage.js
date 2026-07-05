@@ -166,8 +166,8 @@ var Storage = {
     if (idx >= 0) bm.splice(idx, 1);
     else bm.push([fid, nn]);
     var d = this.getAll(); d.bookmarks = bm; this.save(d);
-    return idx < 0; // true = now bookmarked
     if (this.getGistToken()) this.syncToGist();
+    return idx < 0; // true = now bookmarked
   },
   isBookmarked: function(fid, nn) {
     return (this.getAll().bookmarks || []).some(function(b) { return b[0] === fid && b[1] === nn; });

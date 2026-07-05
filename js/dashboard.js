@@ -28,8 +28,8 @@ const Dashboard = {
         '<div class="folder-icon">' + folder.icon + '</div>' +
         '<div class="folder-name">' + folder.name + '</div>' +
         '<div class="folder-meta">' +
-            stats.totalNotes + ' notes' +
-            ' · ' + (QUIZ_NOTES[folder.id] ? QUIZ_NOTES[folder.id].length : 0) + ' quizzes' +
+            stats.totalNotes + ' notes'
+            + ' · ' + stats.totalQuizzes + ' attempts'
             (stats.completedNotes > 0 ? ' · ' + stats.completedNotes + ' completed' : '') +
         '</div>' +
         '<div class="folder-progress"><div class="folder-progress-fill' + pctClass + '" style="width:' + pct + '%"></div></div>' +

@@ -160,7 +160,7 @@ const QuizEngine = {
       const answer = el.value.trim();
       s.answers[s.currentIndex] = answer;
       const ansLower = answer.replace(/\s/g,'').toLowerCase();
-      const corrLower = q.correctAnswer.replace(/\s/g,'').toLowerCase();
+      const corrLower = String(q.correctAnswer || '').replace(/\s/g,'').toLowerCase();
       // Exact match or acceptable answers
       var correct = ansLower === corrLower
         || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.replace(/\s/g,'').toLowerCase() === ansLower; }));
