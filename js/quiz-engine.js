@@ -189,7 +189,7 @@ const QuizEngine = {
       if (Storage.getGistToken()) Storage.syncToGist();
     }
     // Store result so history back-button can return to summary
-    sessionStorage.setItem('dv_last_result', JSON.stringify({
+    sessionStorage.setItem('dv_last_result_' + s.folderId + '_' + s.noteName, JSON.stringify({
       folderId: s.folderId, noteName: s.noteName,
       correctCount: correctCount, total: s.questions.length,
       pct: Math.round((correctCount / s.questions.length) * 100),

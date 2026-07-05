@@ -21,7 +21,7 @@ const router = {
     } else if (parts.length === 4 && parts[0] === 'folder' && parts[2] === 'note') {
       QuizEngine.render(main, decodeURIComponent(parts[1]), decodeURIComponent(parts[3]));
     } else if (parts.length === 5 && parts[4] === 'summary') {
-      var r = JSON.parse(sessionStorage.getItem('dv_last_result') || '{}');
+      var r = JSON.parse(sessionStorage.getItem('dv_last_result_' + decodeURIComponent(parts[1]) + '_' + decodeURIComponent(parts[3])) || '{}');
       Summary.render(main, {folderId: decodeURIComponent(parts[1]), noteName: decodeURIComponent(parts[3]),
         answers: [], questions: [], total: r.total || 0, correctCount: r.correctCount || 0,
         wrongCount: (r.total||0) - (r.correctCount||0), elapsed: r.elapsed || 0, isReview: false});
