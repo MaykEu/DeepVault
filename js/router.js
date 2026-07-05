@@ -7,7 +7,7 @@ const router = {
   },
   route: function() {
     var hash = window.location.hash.slice(1) || '/';
-    var parts = hash.split('/').filter(Boolean);
+    var parts = hash.split('?')[0].split('/').filter(Boolean);
     var main = document.getElementById('app-main');
 
     if (parts.length === 0) {
