@@ -100,7 +100,7 @@ const TopicHub = {
         }
         for (var ri = 0; ri < rootNotes.length; ri++) {
           if (activeSet[rootNotes[ri]] && !coveredRoots[rootNotes[ri]]) {
-            html += this.noteCard(rootNotes[ri], folder, quizNotes);
+            html += this.noteCard(rootNotes[ri], folder, quizNotes, ri);
           }
         }
 
@@ -162,7 +162,7 @@ const TopicHub = {
                 html += '<div class=\"folder-group-body\">';
                 for (var ci = 0; ci < children[cg].length; ci++) {
                   if (activeSet[children[cg][ci]]) {
-                    html += TopicHub.noteCard(children[cg][ci], folder, quizNotes);
+                    html += TopicHub.noteCard(children[cg][ci], folder, quizNotes, ci);
                   }
                 }
                 html += '</div>';
@@ -191,7 +191,7 @@ const TopicHub = {
             html += '<div class=\"folder-group-body\">';
             for (var gi = 0; gi < subGroups[sg].length; gi++) {
               if (activeSet[subGroups[sg][gi]]) {
-                html += this.noteCard(subGroups[sg][gi], folder, quizNotes);
+                html += this.noteCard(subGroups[sg][gi], folder, quizNotes, gi);
               }
             }
             html += '</div>';
@@ -210,7 +210,7 @@ const TopicHub = {
     container.innerHTML = html;
   },
 
-  noteCard: function(note, folder, quizNotes) {
+  noteCard: function(note, folder, quizNotes, gIdx) {
     var best = Storage.getBestScore(folder.id, note);
     var count = Storage.getAttemptCount(folder.id, note);
     var hasQuiz = quizNotes.indexOf(note) !== -1;
@@ -230,7 +230,16 @@ const TopicHub = {
       : '';
 
     var isGuide = quizNotes.indexOf(note) === -1;
-    var prefix = ''; // Numbering is set per-group in render()
+    var isGuide = quizNotes.indexOf(note) === -1;
+    // Numbering: find position within the current active group
+    var prefix = '';
+    if (!isGuide && typeof gIdx === 'number' && gIdx >= 0) {
+      prefix = String(gIdx + 1).padStart(2, '0') + '. ';
+    } else if (!isGuide) {
+      var all = NOTES[folder.id] || [];
+      var noteIdx = all.indexOf(note);
+      if (noteIdx >= 0) prefix = String(noteIdx + 1).padStart(2, '0') + '. ';
+    }
 
     var card = '<div class=\"note-card\">' +
       '<span class=\"note-dot\" style=\"background:' + dotColor + '\"></span>' +
