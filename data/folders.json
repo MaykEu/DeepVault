@@ -1,181 +1,183 @@
 {
   "computer-systems": {
     "Concurrency": [
-      "01 \u2014 Processes & Threads",
-      "02 \u2014 The OS Scheduler",
-      "03 \u2014 SMT, Affinity & Thread Pools",
-      "04 \u2014 Data Races & Mutexes",
-      "05 \u2014 Deadlock, Livelock & Starvation",
-      "06 \u2014 Atomics & Memory Ordering",
-      "07 \u2014 Synchronization Patterns",
-      "08 \u2014 Lock-Free Programming",
-      "09 \u2014 Practical Concurrency",
-      "10 \u2014 Quick Reference",
+      "01 — Processes & Threads",
+      "02 — The OS Scheduler",
+      "03 — SMT, Affinity & Thread Pools",
+      "04 — Data Races & Mutexes",
+      "05 — Deadlock, Livelock & Starvation",
+      "06 — Atomics & Memory Ordering",
+      "07 — Synchronization Patterns",
+      "08 — Lock-Free Programming",
+      "09 — Practical Concurrency",
+      "10 — Quick Reference",
       "Condition Variables & Semaphores",
-      "Deadlock \u2014 The Four Conditions",
-      "Scheduling \u2014 MLFQ & Proportional Share"
+      "Deadlock — The Four Conditions",
+      "Scheduling — MLFQ & Proportional Share"
     ],
     "Hardware/RAM & Virtual Memory": [
-      "01 \u2014 DRAM Cells & Memory Physics",
-      "02 \u2014 Page Tables & TLB",
-      "03 \u2014 Page Faults, mmap & Swap",
-      "04 \u2014 Huge Pages, NUMA & Boot Process"
+      "01 — DRAM Cells & Memory Physics",
+      "02 — Page Tables & TLB",
+      "03 — Page Faults, mmap & Swap",
+      "04 — Huge Pages, NUMA & Boot Process"
     ],
     "Hardware/Storage": [
-      "01 \u2014 HDD Mechanics",
-      "02 \u2014 NAND Flash & SSDs",
-      "03 \u2014 NVMe, SATA & PCIe",
-      "04 \u2014 Filesystems & Page Cache"
+      "01 — HDD Mechanics",
+      "02 — NAND Flash & SSDs",
+      "03 — NVMe, SATA & PCIe",
+      "04 — Filesystems & Page Cache"
     ],
     "System Software/Function Calls": [
-      "01 \u2014 Hardware Mechanics",
-      "02 \u2014 Calling Conventions",
-      "03 \u2014 Edge Cases & Security"
+      "01 — Hardware Mechanics",
+      "02 — Calling Conventions",
+      "03 — Edge Cases & Security"
     ],
     "": [],
     "Hardware/Core": [
-      "01 \u2014 Bits, Bytes & Number Systems",
-      "02 \u2014 Negative Numbers & Endianness",
-      "03 \u2014 Assembly Language",
-      "04 \u2014 CPU Architecture",
-      "05 \u2014 Memory Hierarchy",
-      "06 \u2014 Memory Allocation",
-      "07 \u2014 Virtual Memory \u2014 The Full Picture",
-      "08 \u2014 RAID",
-      "09 \u2014 DMA & Bus Mastering",
-      "10 \u2014 Networking \u2014 TCP, UDP & Sockets",
-      "11 \u2014 Boot Process \u2014 BIOS, UEFI & Bootloader",
-      "12 \u2014 GPU Architecture",
-      "13 \u2014 Interrupts & Exceptions",
-      "14 \u2014 Virtualization & Containers",
-      "15 \u2014 Kernel Modules & Drivers",
-      "16 \u2014 Hardware Security"
+      "01 — Bits, Bytes & Number Systems",
+      "02 — Negative Numbers & Endianness",
+      "03 — Assembly Language",
+      "04 — CPU Architecture",
+      "05 — Memory Hierarchy",
+      "06 — Memory Allocation",
+      "07 — Virtual Memory — The Full Picture",
+      "08 — RAID",
+      "09 — DMA & Bus Mastering",
+      "10 — Networking — TCP, UDP & Sockets",
+      "11 — Boot Process — BIOS, UEFI & Bootloader",
+      "12 — GPU Architecture",
+      "13 — Interrupts & Exceptions",
+      "14 — Virtualization & Containers",
+      "15 — Kernel Modules & Drivers",
+      "16 — Hardware Security"
     ],
     "System Software/Core": [
-      "02 \u2014 Compiler Pipeline",
-      "03 \u2014 Linking & Executables",
-      "04 \u2014 Syscalls & Kernel"
+      "02 — Compiler Pipeline",
+      "03 — Linking & Executables",
+      "04 — Syscalls & Kernel"
     ]
   },
   "cpp-fundamentals": {
-    "01 \u2014 Primer": [
-      "01 \u2014 Variables, Types & Memory",
-      "02 \u2014 Control Flow",
-      "03 \u2014 Functions & The Call Stack",
-      "04 \u2014 Arrays, Vectors & Loops",
-      "05 \u2014 Pointers & References",
-      "06 \u2014 Compiling & Running Programs"
+    "01 — Primer": [
+      "01 — Variables, Types & Memory",
+      "02 — Control Flow",
+      "03 — Functions & The Call Stack",
+      "04 — Arrays, Vectors & Loops",
+      "05 — Pointers & References",
+      "06 — Compiling & Running Programs"
     ],
-    "02 \u2014 Syntax & Types": [
-      "01 \u2014 Enums & enum class",
-      "02 \u2014 References",
-      "03 \u2014 static in C++",
-      "04 \u2014 Structured Bindings",
-      "05 \u2014 Type Deduction",
-      "06 \u2014 Explicit & Implicit Conversion",
-      "07 \u2014 var Correctness",
-      "08 \u2014 Preprocessor & Macros",
-      "09 \u2014 String Types & string_view",
-      "10 \u2014 std format (C++20)"
+    "02 — Syntax & Types": [
+      "01 — Enums & enum class",
+      "02 — References",
+      "03 — static in C++",
+      "04 — Structured Bindings",
+      "05 — Type Deduction",
+      "06 — Explicit & Implicit Conversion",
+      "07 — var Correctness",
+      "08 — Preprocessor & Macros",
+      "09 — String Types & string_view",
+      "10 — std format (C++20)",
+      "07 — const Correctness"
     ],
-    "03 \u2014 Memory": [
-      "01 \u2014 Stack vs Heap",
-      "02 \u2014 Object Memory Layout",
-      "03 \u2014 Smart Pointers & Ownership",
-      "04 \u2014 RAII & The Rule of Five",
-      "05 \u2014 std array & C Arrays",
-      "06 \u2014 std vector & Container Internals",
-      "07 \u2014 std map & unordered_map",
-      "08 \u2014 Iterators & Algorithms",
-      "09 \u2014 std span (C++20)",
-      "10 \u2014 std filesystem",
-      "11 \u2014 std deque, set & Container Adaptors",
-      "12 \u2014 std pmr (C++17)"
+    "03 — Memory": [
+      "01 — Stack vs Heap",
+      "02 — Object Memory Layout",
+      "03 — Smart Pointers & Ownership",
+      "04 — RAII & The Rule of Five",
+      "05 — std array & C Arrays",
+      "06 — std vector & Container Internals",
+      "07 — std map & unordered_map",
+      "08 — Iterators & Algorithms",
+      "09 — std span (C++20)",
+      "10 — std filesystem",
+      "11 — std deque, set & Container Adaptors",
+      "12 — std pmr (C++17)"
     ],
-    "04 \u2014 OOP & Generics": [
-      "01 \u2014 Inheritance & Virtual Functions",
-      "02 \u2014 Lambdas & Function Objects",
-      "03 \u2014 C++ Casting & RTTI",
-      "04 \u2014 Operator Overloading",
-      "05 \u2014 Templates & Concepts"
+    "04 — OOP & Generics": [
+      "01 — Inheritance & Virtual Functions",
+      "02 — Lambdas & Function Objects",
+      "03 — C++ Casting & RTTI",
+      "04 — Operator Overloading",
+      "05 — Templates & Concepts"
     ],
-    "05 \u2014 Modern C++": [
-      "01 \u2014 Move Semantics & Perfect Forwarding",
-      "02 \u2014 constexpr, consteval & constinit",
-      "03 \u2014 noexcept & Move Semantics",
-      "04 \u2014 std variant, optional & any",
-      "05 \u2014 Coroutines (C++20)",
-      "06 \u2014 std ranges (C++20)"
+    "05 — Modern C++": [
+      "01 — Move Semantics & Perfect Forwarding",
+      "02 — constexpr, consteval & constinit",
+      "03 — noexcept & Move Semantics",
+      "04 — std variant, optional & any",
+      "05 — Coroutines (C++20)",
+      "06 — std ranges (C++20)"
     ],
-    "06 \u2014 Bridge": [
-      "01 \u2014 C++ vs UE",
-      "02 \u2014 From Source to Running",
-      "03 \u2014 Modules (C++20)",
-      "04 \u2014 Exceptions & Error Handling",
-      "05 \u2014 CMake & Build Systems"
+    "06 — Bridge": [
+      "01 — C++ vs UE",
+      "02 — From Source to Running",
+      "03 — Modules (C++20)",
+      "04 — Exceptions & Error Handling",
+      "05 — CMake & Build Systems"
     ]
   },
   "game-math": {
     "": [
       "Quaternions & 3D Rotations",
       "Matrices & Coordinate Systems",
-      "Trigonometry & Vectors"
+      "Trigonometry & Vectors",
+      "From Trigonometry to 3D Transformations"
     ],
     "Animation/Curves & Interpolation": [
-      "01 \u2014 Interpolation, Bezier & Splines",
-      "02 \u2014 Slerp & Kinematics"
+      "01 — Interpolation, Bezier & Splines",
+      "02 — Slerp & Kinematics"
     ],
     "Animation/Skeletal Animation": [
-      "01 \u2014 Skeletal Animation"
+      "01 — Skeletal Animation"
     ],
     "Audio & Networking": [
-      "01 \u2014 Frequency Domain & FFT",
-      "02 \u2014 Spatial Audio",
-      "03 \u2014 Network Interpolation"
+      "01 — Frequency Domain & FFT",
+      "02 — Spatial Audio",
+      "03 — Network Interpolation"
     ],
     "Geometric Algebra": [
-      "01 \u2014 Multivectors, Products & Rotors",
-      "02 \u2014 PGA & Applications"
+      "01 — Multivectors, Products & Rotors",
+      "02 — PGA & Applications"
     ],
     "Navigation": [
-      "01 \u2014 A Star & Pathfinding",
-      "02 \u2014 Steering Behaviors",
-      "03 \u2014 Navmesh Generation"
+      "01 — A Star & Pathfinding",
+      "02 — Steering Behaviors",
+      "03 — Navmesh Generation"
     ],
     "Physics/Collision Detection": [
-      "01 \u2014 AABB and Sphere",
-      "02 \u2014 Ray Casting",
-      "03 \u2014 Separating Axis Theorem",
-      "04 \u2014 GJK Algorithm"
+      "01 — AABB and Sphere",
+      "02 — Ray Casting",
+      "03 — Separating Axis Theorem",
+      "04 — GJK Algorithm"
     ],
     "Physics/Simulation": [
-      "01 \u2014 Rigid Body Dynamics",
-      "02 \u2014 Numerical Integration",
-      "03 \u2014 Constraints & Contact",
-      "04 \u2014 Continuous Collision Detection"
+      "01 — Rigid Body Dynamics",
+      "02 — Numerical Integration",
+      "03 — Constraints & Contact",
+      "04 — Continuous Collision Detection"
     ],
     "Procedural": [
-      "01 \u2014 Noise Generation",
-      "02 \u2014 Sampling & Placement",
-      "03 \u2014 L-Systems & Marching Cubes",
-      "04 \u2014 Probability & Randomness",
-      "05 \u2014 Voxels & Octrees"
+      "01 — Noise Generation",
+      "02 — Sampling & Placement",
+      "03 — L-Systems & Marching Cubes",
+      "04 — Probability & Randomness",
+      "05 — Voxels & Octrees"
     ],
     "Rendering": [
-      "01 \u2014 Projection & Clip Space",
-      "02 \u2014 Barycentric Coordinates",
-      "03 \u2014 BRDF & Lighting Models",
-      "04 \u2014 Spherical Harmonics",
-      "05 \u2014 Monte Carlo & Path Tracing",
-      "06 \u2014 Color Spaces & HDR",
-      "07 \u2014 Signed Distance Fields"
+      "01 — Projection & Clip Space",
+      "02 — Barycentric Coordinates",
+      "03 — BRDF & Lighting Models",
+      "04 — Spherical Harmonics",
+      "05 — Monte Carlo & Path Tracing",
+      "06 — Color Spaces & HDR",
+      "07 — Signed Distance Fields"
     ],
     "UE Math": [
       "Collision & Intersection Math",
       "Curves, Ranges & Random",
-      "FMath \u2014 Interpolation & Utility",
+      "FMath — Interpolation & Utility",
       "FTransform & FMatrix",
-      "FVector, FRotator, FQuat \u2014 The Core Types"
+      "FVector, FRotator, FQuat — The Core Types"
     ]
   },
   "ue-core": {
@@ -189,12 +191,13 @@
       "UE Enums & Flags",
       "UE Inheritance & UObject System",
       "UE Templates & T-Containers",
-      "UHT, Macros & Reflection"
+      "UHT, Macros & Reflection",
+      "From UCLASS to Running Object — The UE Core Pipeline"
     ],
     "Casting": [
-      "01 \u2014 Cast Internals & Variants",
-      "02 \u2014 Interface Casting & References",
-      "03 \u2014 When to Use & Pitfalls"
+      "01 — Cast Internals & Variants",
+      "02 — Interface Casting & References",
+      "03 — When to Use & Pitfalls"
     ]
   },
   "ue-networking": {
@@ -204,14 +207,15 @@
       "Network Roles",
       "PushModel & Dirty Marking",
       "RPCs in Unreal Engine",
-      "RepNotifies & OnRep"
+      "RepNotifies & OnRep",
+      "From Input to Replication — The Networking Pipeline"
     ]
   },
   "big-o": {
     "": [
-      "04 \u2014 Sorting Algorithms",
-      "05 \u2014 Graph Algorithms",
-      "06 \u2014 Dynamic Programming",
+      "04 — Sorting Algorithms",
+      "05 — Graph Algorithms",
+      "06 — Dynamic Programming",
       "Amortized Analysis & Real Profiling Data",
       "Applied Examples - Raw C++ vs Unreal Engine",
       "The Big O Complexity Spectrum"
