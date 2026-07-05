@@ -171,7 +171,7 @@ const QuizEngine = {
   finish() {
     const s = this.state;
     if (!s.elapsed) s.elapsed = Math.round((Date.now() - s.startTime) / 1000);
-    const correctCount = s.answers.filter((_, i) => i % 2 === 0 && s.answers[i + '_correct'] === true).length;
+    const correctCount = s.answers.filter((_, i) => s.answers[i + '_correct'] === true).length;
     const answerLog = [];
     for (let i = 0; i < s.questions.length; i++) {
       const q = s.questions[i];
