@@ -98,6 +98,8 @@ const Dashboard = {
     }
     status += '<div id="sync-status" style="margin-top:0.5rem;font-size:0.8rem;"></div>';
     status += '</div>';
+    var old = document.getElementById('sync-panel'); if (old) old.remove();
+    status = status.replace('<div style="', '<div id="sync-panel" style="');
     var tb = document.querySelector('.toolbar');
     if (tb) tb.insertAdjacentHTML('afterend', status);
   },
