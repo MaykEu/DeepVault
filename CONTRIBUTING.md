@@ -15,7 +15,7 @@ python build.py          ← Combines sources → js/data.js (validates first)
 index.html               ← Double-click to launch
 ```
 
-- The vault is the **source of truth** — all educational content lives there
+- The vault at `Obsidian/Game Development/` is the **source of truth** — all educational content lives there
 - `python build.py` combines `data/*.json` into `js/data.js` — validates quizzes before building
 - Write quizzes to `data/quizzes.json`, then run `python build.py` to rebuild
 - Users who clone the repo get the compiled `data.js` — they don't need a vault or Python
@@ -66,7 +66,7 @@ Find a note that needs quizzes, read the note content, and add questions to `dat
 
 ### 2. Add New Notes
 
-Write `.md` files in your Obsidian vault folder, then run `python build.py`.
+Write `.md` files in the vault at `Obsidian/Game Development/`, then run `python convert.py` to sync to `data/notes.json` and `python build.py` to rebuild.
 
 **Note format:**
 ```markdown

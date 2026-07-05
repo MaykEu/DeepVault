@@ -1,1 +1,11 @@
 /Obsidian/Game Development/
+__pycache__/
+*.pyc
+*.pyo
+*.bak
+quizzes_backup.json
+_quiz_batch*.json
+*.swp
+*~
+.DS_Store
+Thumbs.db

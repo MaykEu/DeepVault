@@ -47,10 +47,12 @@ data/               ← 4 independent JSON source files
 build.py            ← Combines sources → js/data.js (validates first)
 quiz-cli.py         ← Safe quiz management (add, verify, backup)
 test.js             ← Smoke tests (syntax, CSS, quiz format)
-convert.py          ← Legacy — replaced by build.py + python convert.py
+convert.py          ← Vault → data/*.json converter
 index.html          ← Double-click to launch
+favicon.svg         ← Site icon
 css/                ← base.css + layout.css + components.css
 js/                 ← 13 vanilla JS files + generated data.js
+Obsidian/           ← Bundled Obsidian vault (source of truth for all content)
 SKILL.md            ← Full AI contributor reference
 ```
 

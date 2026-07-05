@@ -64,7 +64,7 @@ convert.py          ← Vault → data/*.json converter
 js/data.js          ← GENERATED — never edit manually
 ```
 
-**VAULT FIRST — ALWAYS.** Every content change MUST happen in the vault `.md` file FIRST, then sync to data.js.
+**VAULT FIRST — ALWAYS.** Every content change MUST happen in the vault `.md` file FIRST, then sync to data.js. The vault is bundled in this repo at `Obsidian/Game Development/` — this is the canonical source of truth for all note content, quizzes, and learning paths. Never create or edit content directly in `data/notes.json` — always write the `.md` file in the vault first, then rebuild.
 
 ## Sub-Agent Non-Stop Pattern
 
