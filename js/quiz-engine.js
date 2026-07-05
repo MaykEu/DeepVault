@@ -28,6 +28,10 @@ const QuizEngine = {
       questions = reviewQuestions;
     } else {
       questions = this.shuffle([...data.questions]).slice(0, 8);
+    // Shuffle options for each MC question to avoid length bias
+    for (var qi = 0; qi < questions.length; qi++) {
+      if (questions[qi].options) questions[qi].options = this.shuffle([...questions[qi].options]);
+    }
     }
 
     this.state = {
@@ -153,8 +157,17 @@ const QuizEngine = {
       if (!el || !el.value.trim()) return;
       const answer = el.value.trim();
       s.answers[s.currentIndex] = answer;
-      const correct = answer.toLowerCase() === q.correctAnswer.toLowerCase()
-                       || (q.acceptableAnswers && q.acceptableAnswers.some(a => a.toLowerCase() === answer.toLowerCase()));
+      const ansLower = answer.toLowerCase();
+      const corrLower = q.correctAnswer.toLowerCase();
+      // Exact match or acceptable answers
+      var correct = ansLower === corrLower
+        || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.toLowerCase() === ansLower; }));
+      // Keyword match: user input contains most key words from correct answer
+      if (!correct && corrLower.length > 10) {
+        var keywords = corrLower.split(/[\s,;—\-]+/).filter(function(w) { return w.length > 2; });
+        var matched = keywords.filter(function(w) { return ansLower.indexOf(w) >= 0; });
+        correct = matched.length >= Math.ceil(keywords.length * 0.6);
+      }
       s.answers[s.currentIndex + '_correct'] = correct;
       s.answers[s.currentIndex + '_given'] = answer;
     }
