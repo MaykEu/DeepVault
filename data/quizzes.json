@@ -8181,6 +8181,28 @@
             "raid 1"
           ],
           "explanation": "RAID 1 mirrors all data across two or more disks. Every write goes to all mirrors. Capacity = disk_size (for 2-disk mirror). Can survive N-1 disk failures. Simplest redundancy."
+        },
+        {
+          "question": "What is the minimum number of disks for RAID 6?",
+          "options": [
+            "2",
+            "4 — need at least 2 data disks + 2 parity disks for dual-parity protection",
+            "3",
+            "1"
+          ],
+          "correctAnswer": "4 — need at least 2 data disks + 2 parity disks for dual-parity protection",
+          "explanation": "RAID 6 uses dual parity (P+Q). Can survive 2 simultaneous disk failures. Minimum 4 disks. Capacity = (N-2) × disk_size. Write penalty: must update both parity blocks."
+        },
+        {
+          "question": "What is the RAID write hole?",
+          "options": [
+            "A physical defect",
+            "When a crash occurs between data write and parity update — inconsistent state after reboot. ZFS and some hardware RAID use copy-on-write to avoid this.",
+            "A performance bug",
+            "A security vulnerability"
+          ],
+          "correctAnswer": "When a crash occurs between data write and parity update — inconsistent state after reboot. ZFS and some hardware RAID use copy-on-write to avoid this.",
+          "explanation": "RAID 5 write = write data to one disk + update parity on another. If power fails between these, data and parity are inconsistent. Battery-backed cache or CoW prevents this."
         }
       ]
     },
@@ -8342,6 +8364,28 @@
           ],
           "correctAnswer": "Load the OS kernel into memory",
           "explanation": "The bootloader (GRUB, Windows Boot Manager) loads the kernel image from disk into memory, sets up initial CPU state (protected/long mode), and jumps to the kernel's entry point. The kernel then takes over."
+        },
+        {
+          "question": "What is the difference between MBR and GPT partitioning?",
+          "options": [
+            "No difference",
+            "MBR: legacy, max 2TB disk, 4 primary partitions. GPT: modern, max 9.4ZB, 128 partitions, CRC checksum, backup header.",
+            "GPT is slower",
+            "MBR is for SSDs only"
+          ],
+          "correctAnswer": "MBR: legacy, max 2TB disk, 4 primary partitions. GPT: modern, max 9.4ZB, 128 partitions, CRC checksum, backup header.",
+          "explanation": "MBR (Master Boot Record) dates from 1983. GPT (GUID Partition Table) is part of UEFI spec. GPT stores backup partition table at end of disk for recovery."
+        },
+        {
+          "question": "What does the bootloader load before the OS kernel?",
+          "options": [
+            "Nothing",
+            "The initramfs/initrd — a temporary root filesystem with drivers needed to mount the real root (e.g., NVMe driver, LUKS encryption keys)",
+            "The desktop environment",
+            "The web browser"
+          ],
+          "correctAnswer": "The initramfs/initrd — a temporary root filesystem with drivers needed to mount the real root (e.g., NVMe driver, LUKS encryption keys)",
+          "explanation": "initramfs = compressed cpio archive loaded by bootloader. Contains kernel modules for disk controller, filesystem, encryption. Kernel mounts initramfs as root, loads modules, pivots to real root."
         }
       ]
     },
@@ -8388,6 +8432,28 @@
           ],
           "correctAnswer": "GPUs are designed for throughput over latency",
           "explanation": "CPUs optimize for single-thread latency (branch prediction, OoO execution, large caches). GPUs optimize for throughput: hide memory latency by switching between thousands of threads. A GPU 'core' is simpler than a CPU core."
+        },
+        {
+          "question": "What is an NVIDIA warp?",
+          "options": [
+            "A rendering technique",
+            "A group of 32 threads executing in lockstep on one SM — same instruction, different data",
+            "A memory unit",
+            "A type of shader"
+          ],
+          "correctAnswer": "A group of 32 threads executing in lockstep on one SM — same instruction, different data",
+          "explanation": "Warp = GPU's scheduling unit. 32 threads share one instruction fetch. Branch divergence within a warp serializes both paths. AMD equivalent: wavefront (64 threads)."
+        },
+        {
+          "question": "Why can't GPU threads diverge freely like CPU threads?",
+          "options": [
+            "They can",
+            "SIMT architecture — 32 threads share one instruction decoder. If half take branch A and half branch B, both execute serially while the other half is masked. Divergence costs performance.",
+            "GPU threads are slower",
+            "GPU threads share registers"
+          ],
+          "correctAnswer": "SIMT architecture — 32 threads share one instruction decoder. If half take branch A and half branch B, both execute serially while the other half is masked. Divergence costs performance.",
+          "explanation": "GPU warps execute SIMT (Single Instruction Multiple Threads). All 32 threads must agree on which instruction to execute. Divergent threads = serialized execution = wasted hardware."
         }
       ]
     },
@@ -8970,6 +9036,28 @@
           ],
           "correctAnswer": "Reconstruct irradiance: dot the SH coefficients with the basis functions evaluated at the surface normal direction",
           "explanation": "At runtime: evaluate Y_lm(normal) → dot with stored coefficients → get irradiance in that direction. 9 dot products per pixel."
+        },
+        {
+          "question": "What is the convolution property that makes SH efficient for diffuse lighting?",
+          "options": [
+            "Nothing special",
+            "Convolution of the light probe with a Lambertian BRDF in SH space is just scaling the coefficients — a dot product at runtime",
+            "It's faster to render",
+            "It uses GPU hardware"
+          ],
+          "correctAnswer": "Convolution of the light probe with a Lambertian BRDF in SH space is just scaling the coefficients — a dot product at runtime",
+          "explanation": "SH convolution theorem: the SH coefficients of the convolution are the product of the coefficients of each function (times a diagonal matrix). This makes irradiance computation extremely cheap."
+        },
+        {
+          "question": "How are SH light probes baked in Unreal Engine?",
+          "options": [
+            "Manually placed",
+            "Lightmass or GPU Lightmass samples the scene from probe positions, projects the incoming radiance onto SH basis functions, and stores the coefficients",
+            "At runtime during gameplay",
+            "They're hand-authored"
+          ],
+          "correctAnswer": "Lightmass or GPU Lightmass samples the scene from probe positions, projects the incoming radiance onto SH basis functions, and stores the coefficients",
+          "explanation": "UE5: Place Lightmass Importance Volumes. Lightmass traces rays from probe positions to sample scene radiance. Projects onto 3rd-order SH (9 coefficients). Stored per-probe. Interpolated at runtime."
         }
       ]
     },
@@ -9016,6 +9104,28 @@
             "rendering equation"
           ],
           "explanation": "Kajiya 1986. L_o = emitted + reflected. Reflected = integral over hemisphere of BRDF × incoming radiance × cosine of incident angle. Path tracing solves this recursively."
+        },
+        {
+          "question": "What is the difference between path tracing and ray tracing?",
+          "options": [
+            "Same",
+            "Ray tracing: single ray → intersection query. Path tracing: recursive ray bounces through the scene, accumulating light at each bounce following the rendering equation.",
+            "Path tracing is faster",
+            "Ray tracing is deprecated"
+          ],
+          "correctAnswer": "Ray tracing: single ray → intersection query. Path tracing: recursive ray bounces through the scene, accumulating light at each bounce following the rendering equation.",
+          "explanation": "Ray trace = TraceRay() → hit result. Path trace = TraceRay() → shade → spawn more rays recursively → accumulate result. Path tracing solves the rendering equation; ray tracing is the building block."
+        },
+        {
+          "question": "What is the typical number of samples per pixel for a clean path-traced image?",
+          "options": [
+            "1",
+            "1-16 for real-time (denoised), 100-1000+ for offline quality (no denoiser). Denoising (OptiX, DLSS RR) dramatically reduces required samples.",
+            "10,000 minimum",
+            "Always 1"
+          ],
+          "correctAnswer": "1-16 for real-time (denoised), 100-1000+ for offline quality (no denoiser). Denoising (OptiX, DLSS RR) dramatically reduces required samples.",
+          "explanation": "Without denoising: hundreds to thousands of SPP. With temporal accumulation + DLSS Ray Reconstruction: 1-4 SPP can produce clean images. UE Lumen uses ~4 SPP with denoising."
         }
       ]
     },
@@ -9053,6 +9163,28 @@
           ],
           "correctAnswer": "Academy Color Encoding System — industry-standard HDR→display transform with cinematic color response and desaturation of brights",
           "explanation": "ACES is the film industry standard. Maps HDR scene radiance to display colors with realistic highlight roll-off and color accuracy. Used in UE5 by default."
+        },
+        {
+          "question": "What is the visible color gamut of sRGB vs Rec.2020?",
+          "options": [
+            "Same",
+            "sRGB: ~35% of visible colors (narrow). Rec.2020: ~75% (wide gamut). HDR displays use Rec.2020 or DCI-P3 (~50%).",
+            "Rec.2020 is smaller",
+            "sRGB is wider"
+          ],
+          "correctAnswer": "sRGB: ~35% of visible colors (narrow). Rec.2020: ~75% (wide gamut). HDR displays use Rec.2020 or DCI-P3 (~50%).",
+          "explanation": "sRGB is adequate for SDR but clips saturated colors. DCI-P3 captures more reds/greens. Rec.2020 captures most visible colors. UE5 supports HDR output with wide gamut."
+        },
+        {
+          "question": "What does UE's eye adaptation (auto-exposure) do?",
+          "options": [
+            "Nothing",
+            "Simulates human eye adaptation — brightens dark areas and darkens bright areas over time. Uses histogram of scene luminance.",
+            "Film grain",
+            "Bloom"
+          ],
+          "correctAnswer": "Simulates human eye adaptation — brightens dark areas and darkens bright areas over time. Uses histogram of scene luminance.",
+          "explanation": "Eye adaptation: measure scene average luminance, compute exposure value, interpolate over time (~2-5 second adaptation). Moving from dark cave to bright outdoors → smooth brightness transition."
         }
       ]
     },
@@ -9090,6 +9222,28 @@
           ],
           "correctAnswer": "Blends two SDFs smoothly — creates organic connection between shapes without sharp edges",
           "explanation": "smin(a, b, k) = -log(exp(-k·a) + exp(-k·b))/k. Blends the minimum of two SDFs. k controls blend radius. Creates metaball-like merging."
+        },
+        {
+          "question": "What is the SDF representation of a sphere?",
+          "options": [
+            "A texture",
+            "f(p) = distance(p, center) - radius. Negative inside, zero on surface, positive outside.",
+            "A mesh",
+            "A function call"
+          ],
+          "correctAnswer": "f(p) = distance(p, center) - radius. Negative inside, zero on surface, positive outside.",
+          "explanation": "Sphere SDF: |p - C| - R. Box SDF: max(|p-C| - 0.5*Size). Simple primitives combine via min (union), max (intersection), -f (subtract) to build complex shapes."
+        },
+        {
+          "question": "How does UE use distance fields for GPU particles?",
+          "options": [
+            "They don't",
+            "Distance field collision: particles query the global distance field for collision response — cheaper than per-particle mesh collision",
+            "For rendering only",
+            "For audio"
+          ],
+          "correctAnswer": "Distance field collision: particles query the global distance field for collision response — cheaper than per-particle mesh collision",
+          "explanation": "UE generates a Global Distance Field for static geometry. GPU particles sample the distance field to collide with the world. Much cheaper than mesh-vs-mesh collision for thousands of particles."
         }
       ]
     },
@@ -9138,6 +9292,28 @@
           ],
           "correctAnswer": "|A||B|cos(θ) — projection of A onto B. Zero when perpendicular.",
           "explanation": "A·B > 0: acute angle. = 0: perpendicular. < 0: obtuse. Used for: view direction test (DotProduct(Forward, ToTarget)), lighting (N·L)."
+        },
+        {
+          "question": "What does FVector::Normalize() do?",
+          "options": [
+            "Makes the vector zero",
+            "Scales the vector to unit length (magnitude = 1) while preserving direction",
+            "Rotates the vector",
+            "Projects onto another vector"
+          ],
+          "correctAnswer": "Scales the vector to unit length (magnitude = 1) while preserving direction",
+          "explanation": "Normalize() returns vector/length. FVector::GetSafeNormal() returns unit vector or zero vector if input is degenerate. Normalization is not free — sqrt is expensive."
+        },
+        {
+          "question": "What is the quaternion double-cover problem?",
+          "options": [
+            "Memory overhead",
+            "Q and -Q represent the SAME rotation. Before SLERP, check dot product — if negative, negate one to take the shorter arc on the hypersphere.",
+            "Speed issue",
+            "Precision issue"
+          ],
+          "correctAnswer": "Q and -Q represent the SAME rotation. Before SLERP, check dot product — if negative, negate one to take the shorter arc on the hypersphere.",
+          "explanation": "Quaternions double-cover SO(3). q and -q produce identical 3D rotations. Without correction, SLERP might interpolate the long way around (359° rotation instead of 1°)."
         }
       ]
     },
@@ -9175,6 +9351,39 @@
           ],
           "correctAnswer": "FTransform is the decomposed storage; FMatrix is the 4x4 computation-ready form. Convert with ToMatrixWithScale()",
           "explanation": "FTransform for storage (no redundancy, no shear). FMatrix for GPU (shaders need 4x4). Convert at CPU→GPU boundary."
+        },
+        {
+          "question": "What is TransformPosition vs TransformVector?",
+          "options": [
+            "Same",
+            "TransformPosition applies translation (for points). TransformVector ignores translation (for directions/normals). Both apply rotation and scale.",
+            "Position is faster",
+            "Vector is deprecated"
+          ],
+          "correctAnswer": "TransformPosition applies translation (for points). TransformVector ignores translation (for directions/normals). Both apply rotation and scale.",
+          "explanation": "FTransform::TransformPosition(Pos): T * R * S * Pos (includes translation). TransformVector(Vec): R * S * Vec (no translation — vectors can't be translated, they're directions)."
+        },
+        {
+          "question": "What does FTransform::GetRelativeTransform do?",
+          "options": [
+            "Nothing",
+            "Converts a world-space transform to be relative to another transform — GetRelativeTransform(Parent, Child) = Parent⁻¹ * Child",
+            "Rotates",
+            "Scales"
+          ],
+          "correctAnswer": "Converts a world-space transform to be relative to another transform — GetRelativeTransform(Parent, Child) = Parent⁻¹ * Child",
+          "explanation": "Relative transform: transform child into parent's local space. Parent.Inverse() * Child. Used for: getting a weapon's transform relative to the character's hand."
+        },
+        {
+          "question": "Why is FTransform preferred over FMatrix for object transforms?",
+          "options": [
+            "It's faster to render",
+            "FTransform enforces valid decomposition (no shear, uniform scale or separate axes). FMatrix can accumulate numerical error and non-rigid deformations.",
+            "FMatrix is deprecated",
+            "FTransform uses less memory"
+          ],
+          "correctAnswer": "FTransform enforces valid decomposition (no shear, uniform scale or separate axes). FMatrix can accumulate numerical error and non-rigid deformations.",
+          "explanation": "FTransform stores (Rotation, Translation, Scale) separately. Re-normalize quaternion to prevent drift. FMatrix is general 4×4 — error accumulates in all 16 entries, can introduce skew/shear."
         }
       ]
     },
@@ -9212,6 +9421,28 @@
           ],
           "correctAnswer": "Radians — all UE math uses radians internally",
           "explanation": "UE's FMath trig functions take radians. FMath::DegreesToRadians() and RadiansToDegrees() convert. FRotator stores degrees for editor display only."
+        },
+        {
+          "question": "What does FMath::FInterpConstantTo do?",
+          "options": [
+            "Lerp",
+            "Constant-speed movement toward target — moves by fixed amount per second, stops at target",
+            "Easing",
+            "Rotation"
+          ],
+          "correctAnswer": "Constant-speed movement toward target — moves by fixed amount per second, stops at target",
+          "explanation": "FInterpConstantTo(Current, Target, DeltaTime, Speed) moves toward target at constant rate. Unlike FInterpTo (exponential), this moves linearly and stops exactly at target."
+        },
+        {
+          "question": "What does FMath::FindDeltaAngle return?",
+          "options": [
+            "An absolute angle",
+            "The shortest signed angular distance between two angles in degrees — e.g., -5° vs 355° returns -10°",
+            "A vector",
+            "A quaternion"
+          ],
+          "correctAnswer": "The shortest signed angular distance between two angles in degrees — e.g., -5° vs 355° returns -10°",
+          "explanation": "FindDeltaAngle(-5, 355) = -10 (degrees). Handles wrap-around at ±180°. Used for: smoothly rotating toward target, camera look-at interpolation."
         }
       ]
     },
@@ -9238,6 +9469,39 @@
           ],
           "correctAnswer": "Projecting one vector onto another — used for closest point, separation axis tests, and distance to plane",
           "explanation": "Dot product measures how parallel two vectors are. a·b = |a||b|cos(θ). Essential for: point-to-line projection, plane distance, SAT overlap testing."
+        },
+        {
+          "question": "What is the difference between a ray cast and a sweep in UE?",
+          "options": [
+            "Same",
+            "Ray cast: infinitely thin line query. Sweep: moves a shape (sphere, box, capsule) along a path, detecting overlaps. Sweep is more expensive but catches thin geometry.",
+            "Sweep is faster",
+            "Ray cast is deprecated"
+          ],
+          "correctAnswer": "Ray cast: infinitely thin line query. Sweep: moves a shape (sphere, box, capsule) along a path, detecting overlaps. Sweep is more expensive but catches thin geometry.",
+          "explanation": "LineTraceSingle = ray cast (thin). SweepSingleByChannel = sweep with shape. Sweep prevents tunneling through small gaps. Use ray for bullets/projectiles; use sweep for character movement."
+        },
+        {
+          "question": "What does FMath::LineBoxIntersection compute?",
+          "options": [
+            "Box volume",
+            "Whether a line segment intersects an axis-aligned box — slab method: compute t_entry/t_exit per axis, check overlap",
+            "Box surface area",
+            "Box center"
+          ],
+          "correctAnswer": "Whether a line segment intersects an axis-aligned box — slab method: compute t_entry/t_exit per axis, check overlap",
+          "explanation": "Slab method: for each axis, compute t_near=(min-O)/D, t_far=(max-O)/D. t_enter = max(t_nears), t_exit = min(t_fars). Hit if t_enter ≤ t_exit. Handles parallel rays (D=0)."
+        },
+        {
+          "question": "What is a convex hull used for in collision detection?",
+          "options": [
+            "Rendering",
+            "Approximating complex shapes with a tight-fitting convex polyhedron — GJK/EPA can collide any convex shape efficiently",
+            "Texture mapping",
+            "Animation"
+          ],
+          "correctAnswer": "Approximating complex shapes with a tight-fitting convex polyhedron — GJK/EPA can collide any convex shape efficiently",
+          "explanation": "Convex hull = shrink-wrap around mesh vertices. Simplifies collision geometry while maintaining tight bounds. GJK algorithm handles any convex shape. Generated offline or at runtime."
         }
       ]
     },
@@ -9264,6 +9528,39 @@
           ],
           "correctAnswer": "Returns a random float in [Min, Max]",
           "explanation": "FMath::RandRange(Min, Max) uses FRandomStream internally. RandRange with ints → integer in [Min, Max]. Seed with FRandomStream for deterministic randomness."
+        },
+        {
+          "question": "What is an FRuntimeFloatCurve?",
+          "options": [
+            "A compile-time curve",
+            "An optimized curve structure for runtime evaluation — stores pre-baked lookup from FRichCurve for fast access without keyframe iteration",
+            "A Blueprint curve",
+            "A material curve"
+          ],
+          "correctAnswer": "An optimized curve structure for runtime evaluation — stores pre-baked lookup from FRichCurve for fast access without keyframe iteration",
+          "explanation": "FRichCurve = editor-friendly with keyframes and tangents. FRuntimeFloatCurve = bakes to uniform samples for O(1) runtime evaluation. Used for gameplay curves that need fast evaluation."
+        },
+        {
+          "question": "What does FRandomStream provide that FMath::Rand doesn't?",
+          "options": [
+            "Nothing",
+            "Deterministic, seedable random sequence — same seed always produces the same sequence. Essential for procedural generation that needs to be reproducible.",
+            "Faster random",
+            "Crypto-safe random"
+          ],
+          "correctAnswer": "Deterministic, seedable random sequence — same seed always produces the same sequence. Essential for procedural generation that needs to be reproducible.",
+          "explanation": "FRandomStream(Seed) creates a reproducible RNG. FMath::Rand() uses a global RNG — non-deterministic between runs. Use FRandomStream for procedural content that must be consistent across sessions."
+        },
+        {
+          "question": "What is FMath::SRand() for?",
+          "options": [
+            "Random floats only",
+            "Seeds the global RNG — sets the seed for subsequent FMath::Rand() calls. Useful for testing with reproducible randomness.",
+            "Nothing",
+            "String randomization"
+          ],
+          "correctAnswer": "Seeds the global RNG — sets the seed for subsequent FMath::Rand() calls. Useful for testing with reproducible randomness.",
+          "explanation": "SRand(Seed) seeds UE's global RNG. All subsequent FMath::Rand() calls produce deterministic sequence for that seed. Use for: test reproducibility, network-synced random events."
         }
       ]
     },
@@ -9537,6 +9834,39 @@
           ],
           "correctAnswer": "Generates a compile-time bitmask for fast Cast<T> checks — one bit per class in the hierarchy",
           "explanation": "DECLARE_CASTCLASS_FLAGS(T) creates TCastFlags_V<T> for O(1) cast checking. Used by Cast<T>(). Without it, Cast falls back to IsA<T>() which is slower."
+        },
+        {
+          "question": "What does DECLARE_CASTCLASS_FLAGS do?",
+          "options": [
+            "Nothing",
+            "Generates a compile-time bitmask (TCastFlags_V<T>) for O(1) type checking per class",
+            "Creates a Blueprint class",
+            "Marks a class as abstract"
+          ],
+          "correctAnswer": "Generates a compile-time bitmask (TCastFlags_V<T>) for O(1) type checking per class",
+          "explanation": "Each UCLASS gets a unique bit in the cast flags mask. Cast<T> checks if the object's class has that bit set — one integer AND operation."
+        },
+        {
+          "question": "What happens if you use Cast<T> on an object pending kill?",
+          "options": [
+            "Returns nullptr",
+            "Still succeeds — pending kill objects retain class flags but IsValid() returns false. Always check IsValid after Cast.",
+            "Crashes",
+            "Returns the object"
+          ],
+          "correctAnswer": "Still succeeds — pending kill objects retain class flags but IsValid() returns false. Always check IsValid after Cast.",
+          "explanation": "Pending kill objects pass IsA()/Cast() but are about to be destroyed. Use IsValid(Obj) which checks both nullptr and pending kill state."
+        },
+        {
+          "question": "How does Cast<T> compare to dynamic_cast in terms of performance?",
+          "options": [
+            "Same speed",
+            "Cast<T> is ~10x faster — one integer AND vs dynamic_cast's vtable walk + type_info comparison",
+            "Cast<T> is slower",
+            "dynamic_cast doesn't exist in UE"
+          ],
+          "correctAnswer": "Cast<T> is ~10x faster — one integer AND vs dynamic_cast's vtable walk + type_info comparison",
+          "explanation": "dynamic_cast walks the class hierarchy and compares type_info objects. UE's Cast<T> uses static class flags generated at compile time — a single integer bitmask check."
         }
       ]
     },
@@ -9574,6 +9904,39 @@
           ],
           "correctAnswer": "UE disables RTTI — dynamic_cast doesn't exist. Use Cast<T> instead.",
           "explanation": "UE builds with /GR- (no RTTI). dynamic_cast, typeid don't exist. Cast<T> uses static class flags generated by UHT — faster and works without RTTI."
+        },
+        {
+          "question": "Why should you avoid Cast<T> in performance-critical loops?",
+          "options": [
+            "It crashes in loops",
+            "Even 5-cycle Cast overhead adds up on thousands of iterations. Cast once and cache the typed pointer.",
+            "It leaks memory",
+            "It's not thread-safe"
+          ],
+          "correctAnswer": "Even 5-cycle Cast overhead adds up on thousands of iterations. Cast once and cache the typed pointer.",
+          "explanation": "Pattern: TArray<AActor*> AllActors; for (auto* A : AllActors) { if (auto* PC = Cast<APlayerController>(A)) Process(PC); }. Better: prefilter into TArray<APlayerController*>."
+        },
+        {
+          "question": "What is the difference between Interface Cast and regular Cast?",
+          "options": [
+            "Same operation",
+            "Interface Cast uses GetInterfaceAddress() to handle the UObject-to-interface pointer offset. Regular Cast checks class hierarchy.",
+            "Interface Cast is slower",
+            "Regular Cast fails for interfaces"
+          ],
+          "correctAnswer": "Interface Cast uses GetInterfaceAddress() to handle the UObject-to-interface pointer offset. Regular Cast checks class hierarchy.",
+          "explanation": "Interfaces in UE don't participate in the class hierarchy the same way. Cast<IInterface> uses GetInterfaceAddress() to find the correct vtable offset."
+        },
+        {
+          "question": "When does Cast<T> fail silently vs crash?",
+          "options": [
+            "Never crashes",
+            "Cast returns nullptr on failure. CastChecked asserts on failure. Use CastChecked when the type MUST be correct and nullptr indicates a logic bug.",
+            "Always crashes",
+            "Returns a default object"
+          ],
+          "correctAnswer": "Cast returns nullptr on failure. CastChecked asserts on failure. Use CastChecked when the type MUST be correct and nullptr indicates a logic bug.",
+          "explanation": "Cast<T> → nullptr (graceful). CastChecked<T> → assert crash (fail-fast). Choose based on whether the cast should ALWAYS succeed."
         }
       ]
     },
@@ -9611,6 +9974,28 @@
           ],
           "correctAnswer": "Range-for or iterator-based — TSet supports begin()/end(). Order is arbitrary (hash order).",
           "explanation": "TSet is a range: 'for (auto& Item : MySet)'. Order is implementation-defined (hash bucket order). Use TSortedSet or sort separately if order matters."
+        },
+        {
+          "question": "What is the difference between TSet and TArray for duplicate prevention?",
+          "options": [
+            "Same",
+            "TSet enforces uniqueness inherently — inserting a duplicate has no effect. TArray requires manual checking. TSet::Add returns index of existing element if duplicate.",
+            "TArray is better",
+            "TSet is deprecated"
+          ],
+          "correctAnswer": "TSet enforces uniqueness inherently — inserting a duplicate has no effect. TArray requires manual checking. TSet::Add returns index of existing element if duplicate.",
+          "explanation": "TSet::Add returns FSetElementId (index) and bool (whether new element was added). Use TSet for: unique player IDs, processed item tracking, any 'have I seen this before' check."
+        },
+        {
+          "question": "How does TSet handle iteration order?",
+          "options": [
+            "Sorted order",
+            "Hash bucket order — elements appear in arbitrary order based on hash values. Use TSortedSet or sort separately for ordered iteration.",
+            "Insertion order",
+            "Random order"
+          ],
+          "correctAnswer": "Hash bucket order — elements appear in arbitrary order based on hash values. Use TSortedSet or sort separately for ordered iteration.",
+          "explanation": "TSet iteration order is implementation-defined (sparse array hash bucket order). NOT insertion order, NOT sorted. If you need predictable order, use TArray or collect and sort."
         }
       ]
     },
@@ -9638,6 +10023,39 @@
           ],
           "correctAnswer": "Enables bitwise operations (|, &, ^) on enum class values — creates a strongly-typed bitfield",
           "explanation": "ENUM_CLASS_FLAGS(EMyFlags) overloads | & ^ for the enum class type. Used for: collision channels, gameplay tags, permission flags. Compile-time type-safe."
+        },
+        {
+          "question": "What does UENUM(BlueprintType) do?",
+          "options": [
+            "Nothing",
+            "Makes an enum available for Blueprint variables, function parameters, and return types",
+            "Marks a class as abstract",
+            "Creates a C++ enum"
+          ],
+          "correctAnswer": "Makes an enum available for Blueprint variables, function parameters, and return types",
+          "explanation": "BlueprintType specifier on UENUM exposes the enum to the Blueprint editor. Without it, the enum exists in C++ only. With it, designers can use it in Blueprint graphs."
+        },
+        {
+          "question": "What does EnumHasAnyFlags do?",
+          "options": [
+            "Toggles a flag",
+            "Checks if a flag value has ANY of the specified bits set — used for multi-select flags like collision responses",
+            "Creates a new flag",
+            "Converts to string"
+          ],
+          "correctAnswer": "Checks if a flag value has ANY of the specified bits set — used for multi-select flags like collision responses",
+          "explanation": "EnumHasAnyFlags(Value, Flag) = (Value & Flag) != 0. EnumHasAllFlags checks ALL bits. Used for: collision channel queries, gameplay tag containers, permission checks."
+        },
+        {
+          "question": "Why use ENUM_CLASS_FLAGS instead of just int?",
+          "options": [
+            "It's faster",
+            "Type safety — the compiler prevents accidentally mixing flag types or passing integers where a specific flag type is expected. Self-documenting.",
+            "It's smaller",
+            "It's required"
+          ],
+          "correctAnswer": "Type safety — the compiler prevents accidentally mixing flag types or passing integers where a specific flag type is expected. Self-documenting.",
+          "explanation": "ENUM_CLASS_FLAGS generates operator|, &, ^ for the specific enum type. You can't accidentally pass ECollisionChannelFlags to a function expecting EObjectFlags. Compile-time checking."
         }
       ]
     },
@@ -9664,6 +10082,39 @@
           ],
           "correctAnswer": "TArray supports UPROPERTY serialization, replication, and Blueprint access. Similar performance, different API.",
           "explanation": "Both are dynamic arrays with exponential growth. TArray adds: UPROPERTY (GC/replication/BP), Slack parameter on growth, and Emplace instead of emplace_back."
+        },
+        {
+          "question": "What is the naming convention for UE template types?",
+          "options": [
+            "F prefix",
+            "T prefix — TArray, TMap, TSet, TSharedPtr, TUniquePtr, TWeakObjectPtr",
+            "U prefix",
+            "A prefix"
+          ],
+          "correctAnswer": "T prefix — TArray, TMap, TSet, TSharedPtr, TUniquePtr, TWeakObjectPtr",
+          "explanation": "UE naming: T = template container. F = regular struct. U = UObject. A = AActor. I = interface. E = enum. S = Slate widget. Consistent naming makes code self-documenting."
+        },
+        {
+          "question": "Can TArray be used with garbage-collected UObject pointers?",
+          "options": [
+            "No",
+            "Yes but raw TArray<UObject*> doesn't prevent GC. Use TArray<TObjectPtr<UObject>> or UPROPERTY on the array.",
+            "Only in Blueprints",
+            "Only TMap can"
+          ],
+          "correctAnswer": "Yes but raw TArray<UObject*> doesn't prevent GC. Use TArray<TObjectPtr<UObject>> or UPROPERTY on the array.",
+          "explanation": "UE GC doesn't traverse raw TArray members. If the array isn't UPROPERTY(), the UObjects inside can be garbage collected → dangling pointers. Use TObjectPtr or UPROPERTY()."
+        },
+        {
+          "question": "What is TArrayView?",
+          "options": [
+            "A copy of the array",
+            "A non-owning view into a subset of a TArray — pointer + count. Like std::span. Zero allocation, zero copy.",
+            "A heap-allocated array",
+            "A sorted array"
+          ],
+          "correctAnswer": "A non-owning view into a subset of a TArray — pointer + count. Like std::span. Zero allocation, zero copy.",
+          "explanation": "TArrayView<T> = lightweight borrowed reference. Pass array slices to functions without copying. Cannot outlive the source array. Similar to std::span<T> in C++20."
         }
       ]
     },
@@ -9701,6 +10152,39 @@
           ],
           "correctAnswer": "Hierarchical tags for categorizing abilities, effects, and blocking interactions (e.g., 'Ability.Magic.Fire')",
           "explanation": "FGameplayTag = hierarchical string identifier. Used for: ability tags (what an ability IS), cancel tags (what cancels it), block tags (what prevents it). O(1) comparison via FName index."
+        },
+        {
+          "question": "What is a GameplayEffect in GAS?",
+          "options": [
+            "A visual effect",
+            "A data-driven modifier that changes attributes over time — instant, duration, or infinite. Handles stacking, prediction, and replication.",
+            "A sound effect",
+            "An animation"
+          ],
+          "correctAnswer": "A data-driven modifier that changes attributes over time — instant, duration, or infinite. Handles stacking, prediction, and replication.",
+          "explanation": "GameplayEffect: Instant (one-shot damage), Duration (temporary buff), Infinite (permanent until removed). Modifies UAttributeSet values with modifiers, executes GameplayCues for visual feedback."
+        },
+        {
+          "question": "What is an AbilityTask in GAS?",
+          "options": [
+            "A performance monitor",
+            "An async task that runs during ability execution — e.g., PlayMontageAndWait, WaitTargetData. Ticks independently and completes asynchronously.",
+            "A cooldown timer",
+            "A debugger"
+          ],
+          "correctAnswer": "An async task that runs during ability execution — e.g., PlayMontageAndWait, WaitTargetData. Ticks independently and completes asynchronously.",
+          "explanation": "AbilityTask = async operation within an ability. WaitTargetData: wait for player to select target. PlayMontageAndWait: play animation, complete when animation finishes. Tick while ability is active."
+        },
+        {
+          "question": "How does GAS replicate GameplayTags?",
+          "options": [
+            "They don't replicate",
+            "GameplayTags are replicated as FNames (interned string indices) — O(1) comparison and minimal bandwidth.",
+            "As strings",
+            "Via RPC"
+          ],
+          "correctAnswer": "GameplayTags are replicated as FNames (interned string indices) — O(1) comparison and minimal bandwidth.",
+          "explanation": "FGameplayTag stores an FName (4-byte index into global name table). Replication sends the index, not the string. Efficient bandwidth usage for tag-heavy GAS networking."
         }
       ]
     },
@@ -9738,6 +10222,39 @@
           ],
           "correctAnswer": "Dynamically assigns replication priority — important objects (player pawn) get more bandwidth than less important ones (ambient props)",
           "explanation": "Prioritization: player pawn = highest priority (frequent updates). Distant enemies = lower priority (less frequent). Under bandwidth pressure, low-priority objects are throttled first."
+        },
+        {
+          "question": "What is spatial filtering in Iris?",
+          "options": [
+            "A rendering technique",
+            "Only replicating actors that are close enough to a connection — distance-based culling to save bandwidth",
+            "An audio filter",
+            "A physics optimization"
+          ],
+          "correctAnswer": "Only replicating actors that are close enough to a connection — distance-based culling to save bandwidth",
+          "explanation": "Iris spatial filter: each connection has a relevant area. Actors outside this area are not replicated to that connection. Configurable cull distance and grid-based spatial queries."
+        },
+        {
+          "question": "How does Iris prioritize which actors get bandwidth first?",
+          "options": [
+            "FIFO order",
+            "Dynamic priority: more 'important' actors (player's own pawn, enemies in view) get higher priority and more frequent updates",
+            "Random",
+            "Alphabetical"
+          ],
+          "correctAnswer": "Dynamic priority: more 'important' actors (player's own pawn, enemies in view) get higher priority and more frequent updates",
+          "explanation": "Priority system: local pawn = highest priority, visible enemies = medium, distant ambient actors = low. Under bandwidth pressure, low-priority actors are throttled first."
+        },
+        {
+          "question": "What is the key difference between Iris and legacy UE replication?",
+          "options": [
+            "No difference",
+            "Legacy: per-Actor channels (one per replicated Actor, O(actors)). Iris: data streams decoupled from Actor count — filters, prioritization, and bandwidth management are stream-level.",
+            "Iris uses TCP",
+            "Iris is deprecated"
+          ],
+          "correctAnswer": "Legacy: per-Actor channels (one per replicated Actor, O(actors)). Iris: data streams decoupled from Actor count — filters, prioritization, and bandwidth management are stream-level.",
+          "explanation": "Iris decouples replication from Actor lifecycle. Data streams aggregate replication data; filtering and prioritization happen per-stream, not per-actor. Scales to larger worlds."
         }
       ]
     },
@@ -9764,6 +10281,39 @@
           ],
           "correctAnswer": "Mark the UPROPERTY with Replicated and the class with PushModel; call MARK_PROPERTY_DIRTY_FROM_NAME when the value changes",
           "explanation": "Opt-in: set bPushModel = true on the class. Use MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PropertyName) when modifying. Only dirty properties are considered for replication."
+        },
+        {
+          "question": "What is the performance benefit of PushModel?",
+          "options": [
+            "No benefit",
+            "Avoids per-tick property comparison for all replicated properties — only dirty-marked properties are checked",
+            "Faster serialization",
+            "More bandwidth"
+          ],
+          "correctAnswer": "Avoids per-tick property comparison for all replicated properties — only dirty-marked properties are checked",
+          "explanation": "Without PushModel: compare every replicated property every tick. With PushModel: only properties explicitly marked dirty via MARK_PROPERTY_DIRTY are considered for replication."
+        },
+        {
+          "question": "How do you mark a property as dirty with PushModel?",
+          "options": [
+            "Call a global function",
+            "MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PropertyName) — type-safe macro using compile-time property name",
+            "Set a flag on the object",
+            "It's automatic"
+          ],
+          "correctAnswer": "MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PropertyName) — type-safe macro using compile-time property name",
+          "explanation": "UE5 PushModel macro: MARK_PROPERTY_DIRTY_FROM_NAME(UMyClass, Health). Uses compile-time name lookup for type safety. The property must be marked Replicated and the class must enable PushModel."
+        },
+        {
+          "question": "What does bPushModel enable on a UCLASS?",
+          "options": [
+            "Nothing",
+            "Opts the class into PushModel replication — required before MARK_PROPERTY_DIRTY works",
+            "Enables Blueprint replication",
+            "Makes the class networkable"
+          ],
+          "correctAnswer": "Opts the class into PushModel replication — required before MARK_PROPERTY_DIRTY works",
+          "explanation": "Set bPushModel = true in the UCLASS declaration. Without this, even if individual properties have Replicated, PushModel dirty marking is ignored."
         }
       ]
     },
@@ -9790,6 +10340,39 @@
           ],
           "correctAnswer": "When the range of values is small and known — O(n+k) beats O(n log n) for small k",
           "explanation": "Counting sort: O(n+k) where k = value range. No comparisons. For k << n log n, it's faster. Used for: sorting player scores (0-1000), pixel luminance, character frequencies."
+        },
+        {
+          "question": "What sort does std::sort use internally?",
+          "options": [
+            "Bubble sort",
+            "Introsort — begins with quicksort, switches to heapsort if recursion depth too high. Guaranteed O(n log n).",
+            "Merge sort",
+            "Insertion sort"
+          ],
+          "correctAnswer": "Introsort — begins with quicksort, switches to heapsort if recursion depth too high. Guaranteed O(n log n).",
+          "explanation": "Introsort = quicksort with depth limit. If partitioning repeatedly picks bad pivots (depth > 2*log₂n), switches to heapsort for the remaining subarray. Best of both worlds."
+        },
+        {
+          "question": "What algorithm does std::stable_sort use?",
+          "options": [
+            "Quicksort",
+            "Merge sort — requires O(n) extra memory but preserves element order for equal keys",
+            "Heapsort",
+            "Insertion sort"
+          ],
+          "correctAnswer": "Merge sort — requires O(n) extra memory but preserves element order for equal keys",
+          "explanation": "std::stable_sort guarantees stability: equal elements maintain relative order. Uses merge sort (O(n log n), O(n) extra memory). Use when secondary sort keys matter."
+        },
+        {
+          "question": "When is insertion sort faster than O(n log n) algorithms?",
+          "options": [
+            "Never",
+            "On very small arrays (n<~16) — the constant factor is so small that it beats quicksort's overhead. std::sort switches to insertion sort for small subarrays.",
+            "Always",
+            "Only for strings"
+          ],
+          "correctAnswer": "On very small arrays (n<~16) — the constant factor is so small that it beats quicksort's overhead. std::sort switches to insertion sort for small subarrays.",
+          "explanation": "Insertion sort: O(n²) asymptotic but minimal overhead. For n<16, cache-friendly sequential writes beat quicksort's recursive overhead. Hybrid sorts use this."
         }
       ]
     },
@@ -9816,6 +10399,39 @@
           ],
           "correctAnswer": "Shortest path in terms of edge count — level-order traversal",
           "explanation": "BFS = queue-based traversal. Visits nodes in increasing distance from source. Guarantees shortest path by edge count on unweighted graphs. O(V+E)."
+        },
+        {
+          "question": "What is a topological sort?",
+          "options": [
+            "A sorting algorithm for numbers",
+            "Linear ordering of DAG vertices where every edge goes left-to-right — used for build dependency ordering, animation blending graphs",
+            "A shortest path algorithm",
+            "A search algorithm"
+          ],
+          "correctAnswer": "Linear ordering of DAG vertices where every edge goes left-to-right — used for build dependency ordering, animation blending graphs",
+          "explanation": "Topological sort: output order where all dependencies come before dependents. O(V+E) via DFS or Kahn's algorithm. Fails on cycles. Used for: build systems, animation node graphs."
+        },
+        {
+          "question": "What is the minimum spanning tree problem?",
+          "options": [
+            "Finding the longest path",
+            "Connecting all vertices with minimum total edge weight — Prim's (dense graphs) or Kruskal's (sparse graphs)",
+            "Finding all cycles",
+            "Finding articulation points"
+          ],
+          "correctAnswer": "Connecting all vertices with minimum total edge weight — Prim's (dense graphs) or Kruskal's (sparse graphs)",
+          "explanation": "MST: connect all nodes with minimum total cost. Prim: O(E log V), good for dense. Kruskal: O(E log E), good for sparse. Applications: network layout, dungeon connectivity."
+        },
+        {
+          "question": "What does Floyd-Warshall compute?",
+          "options": [
+            "Single-source shortest path",
+            "All-pairs shortest paths — O(V³) DP algorithm that works with negative edges (no negative cycles)",
+            "Minimum spanning tree",
+            "Topological order"
+          ],
+          "correctAnswer": "All-pairs shortest paths — O(V³) DP algorithm that works with negative edges (no negative cycles)",
+          "explanation": "Floyd-Warshall: for each k, relax all (i,j) paths via k. dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j]). O(V³) but simpler than V×Dijkstra for dense graphs."
         }
       ]
     },
@@ -9842,6 +10458,39 @@
           ],
           "correctAnswer": "Knapsack problem — maximize value with limited weight capacity. Used for: ability loadout selection, loot optimization with inventory weight limit.",
           "explanation": "0/1 Knapsack: each item taken or not. O(n·W) DP. Unbounded: unlimited copies. Used in games for character builds, resource allocation, procedural loot."
+        },
+        {
+          "question": "What is memoization in DP?",
+          "options": [
+            "A logging technique",
+            "Caching results of expensive function calls — if the same input recurs, return cached result instead of recomputing",
+            "A sorting method",
+            "A graph algorithm"
+          ],
+          "correctAnswer": "Caching results of expensive function calls — if the same input recurs, return cached result instead of recomputing",
+          "explanation": "Top-down DP: recursive function + hash map/array cache. Before computing f(n), check if result exists. If so, return cached. Converts exponential recursion to polynomial."
+        },
+        {
+          "question": "What is the difference between memoization and tabulation?",
+          "options": [
+            "No difference",
+            "Memoization: top-down (recursive + cache). Tabulation: bottom-up (iteratively fill table). Same complexity, different approach.",
+            "Memoization is faster",
+            "Tabulation uses more memory"
+          ],
+          "correctAnswer": "Memoization: top-down (recursive + cache). Tabulation: bottom-up (iteratively fill table). Same complexity, different approach.",
+          "explanation": "Memoization = lazy, only computes needed states. Tabulation = eager, computes all states in order. Tabulation avoids recursion overhead but may compute unnecessary states."
+        },
+        {
+          "question": "What is the longest common subsequence problem?",
+          "options": [
+            "Finding the longest substring",
+            "Finding the longest sequence that appears in both strings, not necessarily contiguous — O(nm) DP. Used for diff algorithms.",
+            "Finding all common characters",
+            "A sorting problem"
+          ],
+          "correctAnswer": "Finding the longest sequence that appears in both strings, not necessarily contiguous — O(nm) DP. Used for diff algorithms.",
+          "explanation": "LCS: dp[i][j] = LCS of A[0..i] and B[0..j]. If A[i]==B[j]: 1+dp[i-1][j-1]. Else: max(dp[i-1][j], dp[i][j-1]). Foundation of diff, merge, version control."
         }
       ]
     },
@@ -9868,6 +10517,39 @@
           ],
           "correctAnswer": "Cache misses, branch mispredictions, memory latency — real performance differs from asymptotic analysis. O(n log n) with 10× cache misses can be slower than O(n²) with perfect cache.",
           "explanation": "Big O ignores constants. Reality: cache effects dominate at scale. Linear scan of sorted array (O(n)) often beats binary search (O(log n)) for small N due to prefetching. Profile, don't assume."
+        },
+        {
+          "question": "What is the amortized cost of std::vector::push_back?",
+          "options": [
+            "O(n)",
+            "O(1) amortized — individual pushes may be O(n) (reallocation), but averaged over N pushes it's O(1)",
+            "O(log n)",
+            "O(n²)"
+          ],
+          "correctAnswer": "O(1) amortized — individual pushes may be O(n) (reallocation), but averaged over N pushes it's O(1)",
+          "explanation": "N pushes cost O(N) total (geometric series of reallocation costs). Amortized per push = O(1). Reallocation happens rarely (1/N frequency, O(N) cost each → O(1) per operation)."
+        },
+        {
+          "question": "Why does cache matter more than Big O in practice?",
+          "options": [
+            "It doesn't",
+            "A linear scan of a contiguous array (O(n)) can beat a binary search (O(log n)) for small n because the linear scan streams through cache while binary search jumps randomly",
+            "Cache doesn't affect algorithms",
+            "Big O always wins"
+          ],
+          "correctAnswer": "A linear scan of a contiguous array (O(n)) can beat a binary search (O(log n)) for small n because the linear scan streams through cache while binary search jumps randomly",
+          "explanation": "Binary search: random memory access, 1 cache miss per probe. Linear scan: sequential access, hardware prefetcher loads ahead. For n<~256, linear scan often wins due to cache effects."
+        },
+        {
+          "question": "What does perf (Linux) or VTune (Intel) measure that Big O analysis misses?",
+          "options": [
+            "Algorithm correctness",
+            "Cache misses, branch mispredictions, CPU cycles, IPC — real hardware counters revealing where time is actually spent",
+            "Memory usage",
+            "Line count"
+          ],
+          "correctAnswer": "Cache misses, branch mispredictions, CPU cycles, IPC — real hardware counters revealing where time is actually spent",
+          "explanation": "Big O counts operations. Reality: an L3 cache miss costs ~200 cycles — enough to execute 400 instructions. A 'cheap' operation with a cache miss is 400× more expensive than Big O suggests."
         }
       ]
     },
@@ -9894,6 +10576,39 @@
           ],
           "correctAnswer": "Both O(1) hash lookup. TMap uses sparse array (better iteration/cache) vs std's node-based chaining (pointer chasing). TMap iteration is significantly faster.",
           "explanation": "Both O(1) average. TMap: keys/values in contiguous sparse array → cache-friendly iteration. std::unordered_map: separately allocated nodes → pointer-chasing on iteration. TMap wins on traversal speed."
+        },
+        {
+          "question": "Why is TArray iteration faster than std::vector iteration?",
+          "options": [
+            "It's not",
+            "TArray stores elements inline with the allocator pointer, improving cache locality. std::vector stores allocator separately.",
+            "TArray uses SIMD",
+            "TArray is in a different memory region"
+          ],
+          "correctAnswer": "TArray stores elements inline with the allocator pointer, improving cache locality. std::vector stores allocator separately.",
+          "explanation": "TArray layout: [Data*, Count, Max]. std::vector: [Begin*, End*, CapacityEnd*]. The TArray layout groups the control block with the element pointer — fewer indirections during iteration."
+        },
+        {
+          "question": "What is the performance difference between TMap::Find and std::unordered_map::find?",
+          "options": [
+            "Identical",
+            "Both O(1). TMap uses sparse array (contiguous storage) for cache-friendly iteration. std uses node-based chaining (pointer chasing). TMap iteration is ~2-3x faster.",
+            "TMap is slower",
+            "std is always better"
+          ],
+          "correctAnswer": "Both O(1). TMap uses sparse array (contiguous storage) for cache-friendly iteration. std uses node-based chaining (pointer chasing). TMap iteration is ~2-3x faster.",
+          "explanation": "Same asymptotic complexity. Different memory layout: TMap's sparse array stores hash, key, value contiguously → cache-friendly. std::unordered_map allocates separate nodes → random memory access on iteration."
+        },
+        {
+          "question": "What pattern makes TSet the right choice over TArray for membership tests?",
+          "options": [
+            "No pattern",
+            "When you repeatedly check 'is X in this collection' — TSet::Contains is O(1) vs TArray::Contains O(n). For large collections, TSet is dramatically faster.",
+            "When you need ordering",
+            "For small collections only"
+          ],
+          "correctAnswer": "When you repeatedly check 'is X in this collection' — TSet::Contains is O(1) vs TArray::Contains O(n). For large collections, TSet is dramatically faster.",
+          "explanation": "Use TSet for: unique element requirement, membership testing. TArray for: ordered data, indexed access. Hybrid: use TSet for existence check, TArray for ordered iteration."
         }
       ]
     },
@@ -9909,6 +10624,50 @@
           ],
           "correctAnswer": "Legacy: per-Actor channels (one channel per replicated Actor). Iris: data streams (filtered, prioritized, bandwidth-managed) that decouple replication from Actor lifecycle.",
           "explanation": "Legacy replication opens a channel per Actor (expensive). Iris uses data streams that can be filtered per connection, prioritized dynamically, and managed for bandwidth efficiency."
+        },
+        {
+          "question": "What does Iris replace in UE's networking stack?",
+          "options": [
+            "Nothing",
+            "The legacy actor channel replication — replaces per-actor channels with data streams and filtering",
+            "The rendering pipeline",
+            "The physics engine"
+          ],
+          "correctAnswer": "The legacy actor channel replication — replaces per-actor channels with data streams and filtering",
+          "explanation": "Iris is UE5's next-gen replication. It replaces the old system where each replicated Actor opened a channel. Iris uses data streams with per-connection filtering and prioritization."
+        },
+        {
+          "question": "What is an Iris data stream?",
+          "options": [
+            "A video stream",
+            "A logical grouping of replicated data — can span multiple actors. Filtered and prioritized per connection.",
+            "A network protocol",
+            "A debugging tool"
+          ],
+          "correctAnswer": "A logical grouping of replicated data — can span multiple actors. Filtered and prioritized per connection.",
+          "explanation": "Data streams aggregate replication data across objects. Different streams can have different filters and priorities. Enables fine-grained control over what each connection receives."
+        },
+        {
+          "question": "How does Iris handle bandwidth allocation?",
+          "options": [
+            "Equal shares to all",
+            "Dynamic bandwidth management — high-priority streams get more bandwidth, low-priority streams throttled. Configurable per-stream.",
+            "TCP-like congestion control",
+            "No management"
+          ],
+          "correctAnswer": "Dynamic bandwidth management — high-priority streams get more bandwidth, low-priority streams throttled. Configurable per-stream.",
+          "explanation": "Iris monitors available bandwidth and allocates it proportionally based on stream priority. Critical streams (player state) get guaranteed bandwidth; non-critical streams yield under pressure."
+        },
+        {
+          "question": "What is a replication filter in Iris?",
+          "options": [
+            "A Bloom filter",
+            "A rule deciding whether a data stream's content is relevant to a specific connection — spatial, frequency, or custom logic",
+            "An anti-aliasing filter",
+            "A data compressor"
+          ],
+          "correctAnswer": "A rule deciding whether a data stream's content is relevant to a specific connection — spatial, frequency, or custom logic",
+          "explanation": "Filters: spatial (distance-based culling), grid (world-cell relevance), and custom (game-specific logic). Filters run per connection to determine what data to send."
         }
       ]
     },
