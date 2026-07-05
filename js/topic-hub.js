@@ -147,8 +147,9 @@ const TopicHub = {
       ? 'Best: <strong style=\"color:' + (best >= 100 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '\">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
       : '';
 
-    var noteIdx = NOTES[folder.id] ? NOTES[folder.id].indexOf(note) : -1;
-    var prefix = noteIdx >= 0 ? String(noteIdx + 1).padStart(2, '0') + '. ' : '';
+    var isGuide = quizNotes.indexOf(note) === -1;
+    var noteIdx = !isGuide && NOTES[folder.id] ? NOTES[folder.id].indexOf(note) : -1;
+    var prefix = !isGuide && noteIdx >= 0 ? String(noteIdx + 1).padStart(2, '0') + '. ' : '';
 
     var card = '<div class=\"note-card\">' +
       '<span class=\"note-dot\" style=\"background:' + dotColor + '\"></span>' +
