@@ -9,7 +9,7 @@ Usage: python convert.py
 
 import json, os, re, subprocess, sys
 
-VAULT = r"C:\Users\sofia\Documents\Obsidian\Game Development"
+VAULT = r"D:\User\Desktop\DeepVault\Obsidian\Game Development"
 OUTPUT_DIR = r"D:\User\Desktop\DeepVault\data"
 OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"  # Legacy — build.py generates this
 
@@ -44,8 +44,40 @@ def main():
     
     # Preserve existing quizzes and DeepVault Guide
     old_quizzes = {}
-    for m in re.finditer(r"QUIZ_DATA\['([^']+)'\]\s*=\s*(\{[\s\S]*?\n\});", old):
-        old_quizzes[m.group(1)] = m.group(2)
+    # Proper brace-counting extraction (regex fails on nested JSON)
+    quiz_pat = re.compile(r"QUIZ_DATA\['([^']+)'\]\s*=\s*")
+    pos = 0
+    while True:
+        m = quiz_pat.search(old, pos)
+        if not m:
+            break
+        name = m.group(1)
+        start = m.end()
+        if start >= len(old) or old[start] != '{':
+            pos = start
+            continue
+        # Count braces to find matching closing }
+        brace_count = 0
+        in_string = False
+        i = start
+        while i < len(old):
+            c = old[i]
+            if c == '\\':
+                i += 1
+            elif c == '"' and not in_string:
+                in_string = True
+            elif c == '"' and in_string:
+                in_string = False
+            elif not in_string:
+                if c == '{':
+                    brace_count += 1
+                elif c == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        break
+            i += 1
+        old_quizzes[name] = old[start:i+1]
+        pos = i + 1
     
     # Read DeepVault Guide from static file (never from previous build — avoids corruption)
     old_guide = ''
@@ -96,13 +128,25 @@ def main():
             flat.extend(group[s])
         notes_flat[fid] = flat
     
-    # Reference notes
+    # Reference notes (check vault root AND subfolders)
     reference = {}
-    for _, _, vfolder, _, _ in FOLDER_MAP:
-        for ref_name, ref_file in [('Glossary', 'Glossary.md'), ('Learning Path', 'Learning Path.md')]:
+    for ref_name, ref_file in [('Glossary', 'Glossary.md'), ('Learning Path', 'Learning Path.md')]:
+        # Check vault root first
+        p = os.path.join(VAULT, ref_file)
+        if os.path.exists(p):
+            reference[ref_name] = read_note(p)
+            continue
+        # Then check subfolders
+        for _, _, vfolder, _, _ in FOLDER_MAP:
             p = os.path.join(VAULT, vfolder, ref_file)
             if os.path.exists(p) and ref_name not in reference:
                 reference[ref_name] = read_note(p)
+    
+    # DeepVault Guide — loaded from static file
+    guide_file = r"D:\User\Desktop\DeepVault\guide-content.txt"
+    if os.path.exists(guide_file):
+        with open(guide_file, 'r', encoding='utf-8') as f:
+            reference['DeepVault Guide'] = f.read()
     
     # Quiz data: preserve only quizzes for existing notes
     quizzes = {}
@@ -204,24 +248,8 @@ def main():
     os.remove(tmp)
     
     
-    # Preserve existing quizzes
-    try:
-        with open(OUTPUT, 'r', encoding='utf-8') as f:
-            old = f.read()
-        qn = old.find('const QUIZ_NOTES = {')
-        qd = old.find('const QUIZ_DATA = {')
-        ref = old.find('const REFERENCE')
-        if qn > 0 and qn < (ref if ref > 0 else len(old)):
-            quiz_block = old[qn:ref if ref > 0 else len(old)]
-            # Strip trailing whitespace/newlines
-            quiz_block = quiz_block.rstrip()
-            if quiz_block:
-                # Insert before REFERENCE
-                ref_pos = output.find('const REFERENCE')
-                if ref_pos > 0:
-                    output = output[:ref_pos] + quiz_block + '\n\n' + output[ref_pos:]
-    except:
-        pass
+    # QUIZ_NOTES + QUIZ_DATA are already generated above from old data.js
+    # No need for additional quiz block insertion (which can duplicate NOTES_CONTENT)
     # Write data files
     import json as json2
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -253,7 +281,7 @@ def main():
     
     # Build folders.json
     with open(os.path.join(OUTPUT_DIR, 'folders.json'), 'w', encoding='utf-8') as f:
-        json2.dump(folder_groups, f, indent=2)
+        json2.dump(groups, f, indent=2)
     
     # Build reference.json
     ref_out = {}

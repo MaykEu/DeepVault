@@ -9,7 +9,7 @@ Every folder on the dashboard contains **Learn** notes and **Quiz** exercises:
 | Mode | What It Does |
 |---|---|
 | **Learn** | The full vault note, rendered exactly as it appears in Obsidian. Read, scroll the right-side table of contents, click wiki links to jump between notes. |
-| **Quiz** | 5-10 randomized questions per note — multiple choice and text input. Instant feedback. Scores saved locally on your device. |
+| **Quiz** | Randomized questions per note — multiple choice and text input. Instant feedback. Scores saved locally on your device. |
 
 ### Tracking Your Progress
 
@@ -27,14 +27,20 @@ The folder header shows your overall completion percentage. Quiz scores and atte
 
 **Bookmark notes** you want to return to — click the ☆ star on any note card in the Study tab. Bookmarked notes appear under the ⭐ Bookmarks tab for quick access.
 
-- Click ☆ to bookmark → turns to ⭐ (gold)  
+- Click ☆ to bookmark → turns to ⭐ (gold)
 - Click ⭐ to remove bookmark
 - Switch to the Bookmarks tab to see only your bookmarked notes
 - Bookmarks are included in Export/Import — they travel with your progress
 
+### Tips
+
 **Wiki links** like [[04 — CPU Architecture]] connect notes to each other. Click any link to jump to that note's Learn page.
 
 **Recent notes** appear on the dashboard below your folders — quick jump back to what you were studying.
+
+**Search** for any note by title using the search bar at the top of every page.
+
+**Toggle theme** with the 🌙 / ☀️ button for dark or light mode.
 
 ---
 
@@ -46,7 +52,7 @@ This vault is designed to be read in order. Each note builds on the ones before 
 
 Without understanding the hardware, C++ is just magic words. Start with the physical reality.
 
-Covering: bits and bytes → assembly → CPU → memory hierarchy → virtual memory → storage → DMA → networking → boot process → GPU → interrupts → system software → concurrency. Over 50 notes from transistor to thread pool.
+Covering: bits and bytes → assembly → CPU → memory hierarchy → virtual memory → storage → DMA → networking → boot process → GPU → interrupts → system software → concurrency. From transistor to thread pool.
 
 Start with [[01 — Bits, Bytes & Number Systems]] and follow the [[Learning Path — Computer Systems|Computer Systems Learning Path]].
 
@@ -54,7 +60,7 @@ Start with [[01 — Bits, Bytes & Number Systems]] and follow the [[Learning Pat
 
 Once you understand the hardware, learn the language that runs on it.
 
-45 notes across 6 phases: Primer (absolute beginner) → Syntax & Types → Memory → OOP & Generics → Modern C++ → Engine Bridge. Every note has exercises.
+Six phases: Primer (absolute beginner) → Syntax & Types → Memory → OOP & Generics → Modern C++ → Engine Bridge. Every note has exercises.
 
 Start with [[01 — Primer/00 — Primer Overview|C++ Primer]] and follow the [[Learning Path — C++ Fundamentals|C++ Learning Path]].
 
@@ -62,7 +68,7 @@ Start with [[01 — Primer/00 — Primer Overview|C++ Primer]] and follow the [[
 
 The mathematics that make 3D worlds possible.
 
-41 notes across 10 subfolders: Trigonometry → Matrices → Quaternions → Collision Detection → Physics Simulation → Animation → Navigation → Rendering → Procedural Generation → Audio & Networking → Geometric Algebra → UE Bridge. Framework-agnostic (pure C++ structs, not UE-specific).
+Covering: Trigonometry → Matrices → Quaternions → Collision Detection → Physics Simulation → Animation → Navigation → Rendering → Procedural Generation → Audio & Networking → Geometric Algebra → UE Bridge. Framework-agnostic (pure C++ structs, not UE-specific).
 
 Start with [[From Trigonometry to 3D Transformations]] and follow the [[Learning Path — Game Math|Game Math Learning Path]].
 
@@ -70,7 +76,7 @@ Start with [[From Trigonometry to 3D Transformations]] and follow the [[Learning
 
 How UE turns C++ into a game engine.
 
-14 notes: UHT & Macros → Pointer Ecosystem → String Types → Casting → Containers → Templates → Move Semantics.
+Covering: UHT & Macros → Pointer Ecosystem → String Types → Casting → Containers → Templates → Move Semantics.
 
 Start with [[UHT, Macros & Reflection]] and follow the [[Learning Path — Unreal Engine Core|UE Core Learning Path]].
 
@@ -78,13 +84,15 @@ Start with [[UHT, Macros & Reflection]] and follow the [[Learning Path — Unrea
 
 Multiplayer from the hardware up.
 
-7 notes: Network Roles → RPCs → RepNotifies → PushModel → Iris Replication → Iris Filtering → GAS Networking.
+Covering: Network Roles → RPCs → RepNotifies → PushModel → Iris Replication → Iris Filtering → GAS Networking.
 
 Start with [[Network Roles]] and follow the [[Learning Path — Unreal Engine Networking|UE Networking Learning Path]].
 
 ### Layer 6 — Big O & Algorithms
 
-6 notes: Complexity classes → Amortized analysis → Applied examples → Sorting algorithms → Graph algorithms → Dynamic programming.
+Algorithm analysis for game developers.
+
+Covering: Complexity classes → Amortized analysis → Applied examples → Sorting algorithms → Graph algorithms → Dynamic programming.
 
 Start with [[The Big O Complexity Spectrum]] and follow the [[Learning Path — Algorithms & Complexity|Algorithms Learning Path]].
 
@@ -99,7 +107,11 @@ Start with [[The Big O Complexity Spectrum]] and follow the [[Learning Path — 
 
 ---
 
-DeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code. 
+DeepVault is built for Mayk's vault. All notes are source-verified against UE 5.8 engine code.
+
+### Running Locally
+
+Double-click `index.html` to launch. Everything stays on your device — no internet required after first load.
 
 ### Moving Between Devices
 
@@ -120,8 +132,4 @@ Sync your progress across all devices with a free GitHub token. Click **☁️ S
 3. Progress auto-saves to a private GitHub Gist after every quiz and bookmark
 4. On another device, paste the same token — all progress auto-loads
 
-Your data stays in YOUR GitHub account — private, encrypted, invisible to anyone else.
-
----
-
-Double-click index.html to launch. Everything stays on your device.
+Your data stays in YOUR GitHub account — private and invisible to anyone else.
