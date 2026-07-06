@@ -56,7 +56,7 @@ if errors > 0:
 # Build FOLDERS from FOLDER_GROUPS
 folder_list = [
     ("computer-systems", "Computer Systems", "Computer Systems", "🖥", "#58a6ff"),
-    ("cpp-fundamentals", "C++ Fundamentals", "C++ Fundamentals", "📝", "#7ee787"),
+    ("cpp-fundamentals", "C++", "C++", "📝", "#7ee787"),
     ("game-math", "Game Math", "Game Math", "📐", "#d2a8ff"),
     ("ue-core", "Unreal Engine Core", "UE Core", "🎮", "#ff7b72"),
     ("ue-networking", "Unreal Engine Networking", "UE Networking", "🌐", "#ffa657"),

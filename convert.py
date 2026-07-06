@@ -15,7 +15,7 @@ OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"  # Legacy — build.py generate
 
 FOLDER_MAP = [
     ('computer-systems', 'Computer Systems', 'Computer Systems', '\U0001F5A5\uFE0F', '#58a6ff'),
-    ('cpp-fundamentals', 'C++ Fundamentals', 'C++ Fundamentals', '\u2699\uFE0F', '#f0883e'),
+    ('cpp-fundamentals', 'C++', 'C++', '⚙️', '#f0883e'),
     ('game-math', 'Game Math', 'Game Math', '\U0001F3AE', '#3fb950'),
     ('ue-core', 'Unreal Engine Core', 'UE Core', '\U0001F527', '#bc8cff'),
     ('ue-networking', 'Unreal Engine Networking', 'UE Networking', '\U0001F310', '#f85149'),

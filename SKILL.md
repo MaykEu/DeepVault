@@ -62,7 +62,7 @@ js/data.js          ← GENERATED — never edit manually
 
 ## Current Stats (updated 2026-07-06)
 
-- 182 notes across 6 categories (Computer Systems, C++ Fundamentals, Game Math, UE Core, UE Networking, Big O)
+- 182 notes across 6 categories (Computer Systems, C++, Game Math, UE Core, UE Networking, Big O)
 - 168 quizzes, 1,052 questions
 - 6 projects (2 CS, 2 C++, 2 Math)
 - Computer Systems: 60/60 non-project notes fully quizzed
