@@ -37,7 +37,7 @@ const TopicHub = {
     // Folder header
     html += '<div class=\"folder-header\">' +
       '<div class=\"folder-header-top\">' +
-        '<span class=\"folder-header-icon\">' + folder.icon + '</span>' +
+        '<span class="folder-header-icon">' + (FOLDER_ICONS[folder.id] || folder.icon) + '</span>' +
         '<div class=\"folder-header-meta\">' +
           '<h2 class=\"folder-header-title\">' + folder.name + '</h2>' +
           '<span class=\"folder-header-stats\">' + notes.length + ' modules \u00b7 ' + stats.completedNotes + ' with attempts</span>' +

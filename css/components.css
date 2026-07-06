@@ -33,6 +33,10 @@
   padding: 0.15em 0.5em; border-radius: 3px;
   letter-spacing: 0.03em;
 }
+.folder-card-badge-soon {
+  background: #d2991d; color: #0d1117;
+  top: 0.5rem;
+}
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 0.3em; }
