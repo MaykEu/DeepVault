@@ -42,6 +42,10 @@ The folder header shows your overall completion percentage. Quiz scores and atte
 
 **Toggle theme** with the 🌙 / ☀️ button for dark or light mode.
 
+### WIP Categories
+
+Categories that are still under development show an amber ● dot badge on dashboard cards. Hover or long-press for "Work in progress" — these categories have fewer notes but are actively growing. Currently: Unreal Engine Core (14 notes), UE Networking (7 notes), Big O & Algorithms (6 notes).
+
 ---
 
 ## Master Study Order
