@@ -81,9 +81,23 @@ def cmd_add(args):
     fg_start, fg_end = find_section_bounds(data, "FOLDER_GROUPS")
     note_to_folder = {}
     if fg_start:
-        for m in re.finditer(r"'([^']+)':\s*\{([^}]+)\}", data[fg_start:fg_end]):
+        # Extract each folder's block with proper brace counting (was: [^}]+ regex — fails on any nesting)
+        fg_raw = data[fg_start:fg_end]
+        pos = 0
+        while True:
+            m = re.search(r"'([^']+)':\s*\{", fg_raw[pos:])
+            if not m: break
             fid = m.group(1)
-            for nm in re.finditer(r"'([^']+)':\s*\[(.*?)\]", m.group(2)):
+            block_start = pos + m.end()
+            depth = 1
+            i = block_start
+            while i < len(fg_raw) and depth > 0:
+                if fg_raw[i] == '{': depth += 1
+                elif fg_raw[i] == '}': depth -= 1
+                i += 1
+            block = fg_raw[block_start:i-1]  # content inside { ... }
+            pos = i
+            for nm in re.finditer(r"'([^']+)':\s*\[(.*?)\]", block):
                 for n in re.findall(r"'([^']+)'", nm.group(2)):
                     note_to_folder[n] = fid
     

@@ -1,5 +1,9 @@
 {
   "computer-systems": {
+    "": [
+      "CPU Simulator \u2014 Capstone",
+      "Memory Allocator \u2014 Capstone"
+    ],
     "Concurrency": [
       "00 \u2014 Concurrency Overview",
       "01 \u2014 Processes & Threads",
@@ -12,6 +16,7 @@
       "08 \u2014 Lock-Free Programming",
       "09 \u2014 Practical Concurrency",
       "10 \u2014 Quick Reference",
+      "Concurrency \u2014 Chapter Summary",
       "Condition Variables & Semaphores",
       "Deadlock \u2014 The Four Conditions",
       "Scheduling \u2014 MLFQ & Proportional Share",
@@ -33,32 +38,45 @@
       "13 \u2014 Interrupts & Exceptions",
       "14 \u2014 Virtualization & Containers",
       "15 \u2014 Kernel Modules & Drivers",
-      "16 \u2014 Hardware Security"
+      "16 \u2014 Hardware Security",
+      "Hardware \u2014 Chapter Summary"
+    ],
+    "Hardware/Networking": [
+      "00 \u2014 The Internet Stack",
+      "01 \u2014 IP, Subnets & Routing",
+      "02 \u2014 TCP Deep Dive",
+      "03 \u2014 UDP & Game Protocols",
+      "04 \u2014 DNS, TLS & HTTPS",
+      "05 \u2014 Game Networking Architecture"
     ],
     "Hardware/RAM & Virtual Memory": [
       "00 \u2014 RAM & Virtual Memory Overview",
       "01 \u2014 DRAM Cells & Memory Physics",
       "02 \u2014 Page Tables & TLB",
       "03 \u2014 Page Faults, mmap & Swap",
-      "04 \u2014 Huge Pages, NUMA & Boot Process"
+      "04 \u2014 Huge Pages, NUMA & Boot Process",
+      "RAM & VM \u2014 Chapter Summary"
     ],
     "Hardware/Storage": [
       "00 \u2014 Storage Overview",
       "01 \u2014 HDD Mechanics",
       "02 \u2014 NAND Flash & SSDs",
       "03 \u2014 NVMe, SATA & PCIe",
-      "04 \u2014 Filesystems & Page Cache"
+      "04 \u2014 Filesystems & Page Cache",
+      "Storage \u2014 Chapter Summary"
     ],
     "System Software": [
       "02 \u2014 Compiler Pipeline",
       "03 \u2014 Linking & Executables",
-      "04 \u2014 Syscalls & Kernel"
+      "04 \u2014 Syscalls & Kernel",
+      "System Software \u2014 Chapter Summary"
     ],
     "System Software/Function Calls": [
       "00 \u2014 Function Calls Overview",
       "01 \u2014 Hardware Mechanics",
       "02 \u2014 Calling Conventions",
-      "03 \u2014 Edge Cases & Security"
+      "03 \u2014 Edge Cases & Security",
+      "Function Calls \u2014 Chapter Summary"
     ]
   },
   "cpp-fundamentals": {
@@ -125,47 +143,7 @@
     "": [
       "Matrices & Coordinate Systems",
       "Quaternions & 3D Rotations",
-      "Trigonometry & Vectors",
-      "00 \u2014 Curves Overview",
-      "01 \u2014 Interpolation, Bezier & Splines",
-      "02 \u2014 Slerp & Kinematics",
-      "01 \u2014 Skeletal Animation",
-      "01 \u2014 Frequency Domain & FFT",
-      "02 \u2014 Spatial Audio",
-      "03 \u2014 Network Interpolation",
-      "00 \u2014 Geometric Algebra Overview",
-      "01 \u2014 Multivectors, Products & Rotors",
-      "02 \u2014 PGA & Applications",
-      "01 \u2014 A Star & Pathfinding",
-      "02 \u2014 Steering Behaviors",
-      "03 \u2014 Navmesh Generation",
-      "00 \u2014 Collision Detection Overview",
-      "01 \u2014 AABB and Sphere",
-      "02 \u2014 Ray Casting",
-      "03 \u2014 Separating Axis Theorem",
-      "04 \u2014 GJK Algorithm",
-      "01 \u2014 Rigid Body Dynamics",
-      "02 \u2014 Numerical Integration",
-      "03 \u2014 Constraints & Contact",
-      "04 \u2014 Continuous Collision Detection",
-      "01 \u2014 Noise Generation",
-      "02 \u2014 Sampling & Placement",
-      "03 \u2014 L-Systems & Marching Cubes",
-      "04 \u2014 Probability & Randomness",
-      "05 \u2014 Voxels & Octrees",
-      "00 \u2014 Rendering",
-      "01 \u2014 Projection & Clip Space",
-      "02 \u2014 Barycentric Coordinates",
-      "03 \u2014 BRDF & Lighting Models",
-      "04 \u2014 Spherical Harmonics",
-      "05 \u2014 Monte Carlo & Path Tracing",
-      "06 \u2014 Color Spaces & HDR",
-      "07 \u2014 Signed Distance Fields",
-      "Collision & Intersection Math",
-      "Curves, Ranges & Random",
-      "FMath \u2014 Interpolation & Utility",
-      "FTransform & FMatrix",
-      "FVector, FRotator, FQuat \u2014 The Core Types"
+      "Trigonometry & Vectors"
     ],
     "Animation/Curves & Interpolation": [
       "00 \u2014 Curves Overview",
@@ -239,11 +217,7 @@
       "UE Enums & Flags",
       "UE Inheritance & UObject System",
       "UE Templates & T-Containers",
-      "UHT, Macros & Reflection",
-      "00 \u2014 Casting Overview",
-      "01 \u2014 Cast Internals & Variants",
-      "02 \u2014 Interface Casting & References",
-      "03 \u2014 When to Use & Pitfalls"
+      "UHT, Macros & Reflection"
     ],
     "Casting": [
       "00 \u2014 Casting Overview",

@@ -25,8 +25,8 @@ Everything stays on your device — no accounts, no servers, no tracking.
 
 | Feature | Description |
 |---|---|
-| 📚 **Learn** | Full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
-| 🎯 **Quiz** | hundreds of quiz questions — multiple choice and text input with instant feedback |
+| 📚 **Learn** | 178 notes across 6 categories — full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
+|| 🎯 **Quiz** | 1,078 quiz questions across 170 notes — multiple choice and text input with instant feedback |
 | 📊 **Progress** | Track quiz scores per note and folder. Sync across devices with a free GitHub token |
 | 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
 | 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |

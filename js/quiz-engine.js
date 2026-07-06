@@ -1,5 +1,6 @@
 const QuizEngine = {
   state: null,
+  questionsPerQuiz: 15,  // draw N from shuffled pool; if pool < N, show all
 
   render(container, folderId, noteName) {
     const data = QUIZ_DATA[noteName];
@@ -9,15 +10,26 @@ const QuizEngine = {
     }
     const best = Storage.getBestScore(folderId, noteName);
     const count = Storage.getAttemptCount(folderId, noteName);
+    const poolSize = data.questions.length;
+    const perQuiz = Math.min(this.questionsPerQuiz, poolSize);
     container.innerHTML = `
       <h2 class="page-title">📄 ${noteName}</h2>
-      <p style="color:var(--text-secondary);margin-bottom:1.5rem;">${data.questions.length} questions · ${count} previous attempt${count!==1?'s':''}${best!==null?` · Best: ${best}%`:''}</p>
+      <p style="color:var(--text-secondary);margin-bottom:1.5rem;">${poolSize} questions in pool · ${perQuiz} per quiz · ${count} previous attempt${count!==1?'s':''}${best!==null?` · Best: ${best}%`:''}</p>
       <button class="btn btn-primary" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}/note/${encodeURIComponent(noteName)}/quiz')">Start Quiz</button>
       ${count > 0 ? `<button class="btn btn-outline btn-sm" style="margin-left:0.5rem;" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}/note/${encodeURIComponent(noteName)}/history')">📊 History</button>` : ''}
     `;
   },
 
   isMC(q) { return q.options && q.options.length > 0; },
+
+  findCorrectIndex(q) {
+    // Robust match: try exact first, then normalized fallback
+    let idx = q.options.indexOf(q.correctAnswer);
+    if (idx >= 0) return idx;
+    const norm = s => (s || '').trim().toLowerCase();
+    const target = norm(q.correctAnswer);
+    return q.options.findIndex(o => norm(o) === target);
+  },
 
   start(container, folderId, noteName, reviewQuestions) {
     const data = QUIZ_DATA[noteName];
@@ -27,7 +39,8 @@ const QuizEngine = {
     if (reviewQuestions && reviewQuestions.length > 0) {
       questions = reviewQuestions;
     } else {
-      questions = this.shuffle([...data.questions]).slice(0, 8);
+      const drawCount = Math.min(this.questionsPerQuiz, data.questions.length);
+      questions = this.shuffle([...data.questions]).slice(0, drawCount);
     // Shuffle options for each MC question to avoid length bias
     for (var qi = 0; qi < questions.length; qi++) {
       if (questions[qi].options) questions[qi].options = this.shuffle([...questions[qi].options]);
@@ -85,8 +98,8 @@ const QuizEngine = {
     if (this.isMC(q)) {
       html += '<div class="options-group">';
       const selected = s.answers[s.currentIndex];
-      // Always use string lookup after option shuffle
-      const correctIdx = q.options.indexOf(q.correctAnswer);
+      // Use robust matching after option shuffle
+      const correctIdx = this.findCorrectIndex(q);
       for (let i = 0; i < q.options.length; i++) {
         let cls = 'option-label';
         if (s.submitted) {
@@ -116,7 +129,7 @@ const QuizEngine = {
 
     if (s.submitted) {
       const isCorrect = s.answers[s.currentIndex + '_correct'];
-      const correctAns = this.isMC(q) ? q.options[q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || '');
+      const correctAns = this.isMC(q) ? q.options[this.findCorrectIndex(q)] : (q.correctAnswer || '');
       html += `
         <div class="feedback ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}">
           ${isCorrect ? '✅ Correct!' : '❌ Incorrect'}
@@ -149,8 +162,8 @@ const QuizEngine = {
     
     if (this.isMC(q)) {
       if (s.answers[s.currentIndex] === undefined) return;
-      // Always use string lookup after option shuffle
-      const correctIdx = q.options.indexOf(q.correctAnswer);
+      // Use robust matching after option shuffle
+      const correctIdx = this.findCorrectIndex(q);
       const correct = s.answers[s.currentIndex] === correctIdx;
       s.answers[s.currentIndex + '_correct'] = correct;
       s.answers[s.currentIndex + '_given'] = q.options[s.answers[s.currentIndex]];
@@ -195,7 +208,7 @@ const QuizEngine = {
         questionText: q.question,
         userAnswer: isMC ? (q.options[s.answers[i]] || '') : (s.answers[i] || ''),
         correct: s.answers[i + '_correct'] || false,
-        correctAnswer: isMC ? q.options[q.options.indexOf(q.correctAnswer)] : (q.correctAnswer || ''),
+        correctAnswer: isMC ? q.options[this.findCorrectIndex(q)] : (q.correctAnswer || ''),
       });
     }
 

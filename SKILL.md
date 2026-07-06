@@ -79,6 +79,13 @@ When instructing an AI to create quizzes, these MUST be in the prompt:
 3. INSERT AFTER WRITING: Write to `data/quizzes.json`, run `build.py` to regenerate `js/data.js`.
 4. NON-STOP: "DO NOT PAUSE or ask to continue."
 5. VERIFY: After every batch, run quiz-cli.py verify. Fix errors before next batch.
+6. UPDATE QUIZ_NOTES: After adding to `quizzes`, MUST rebuild the `quiz_notes` dict in `data/quizzes.json` — maps folder_id → [note names with quizzes]. Without this, quizzes won't appear in the Study tab. Use: cross-reference `data/notes.json` folder assignments with quiz names.
+
+## Current Stats (updated 2025-07-06)
+
+- 178 notes across 6 categories (Computer Systems, C++ Fundamentals, Game Math, UE Core, UE Networking, Big O)
+- 170 quizzes, 1,078 questions
+- Computer Systems: 62/62 fully quizzed
 
 ## Table Rendering — Empty First Column Bug
 

@@ -1,0 +1,1047 @@
+[
+  {
+    "noteName": "CPU Simulator — Capstone",
+    "questions": [
+      {
+        "question": "In the CPU simulator project, how many bits wide is the fixed instruction encoding?",
+        "options": [
+          "16 bits",
+          "32 bits",
+          "64 bits",
+          "48 bits"
+        ],
+        "correctAnswer": "32 bits",
+        "explanation": "The project specifies a 32-bit fixed instruction encoding: 6-bit opcode + three 5-bit register fields + 11-bit immediate. Fixed-width encoding simplifies instruction fetch and decode in the pipeline."
+      },
+      {
+        "question": "What are the three types of pipeline hazards that the CPU simulator must handle?",
+        "options": [
+          "Structural hazards, thermal hazards, power hazards",
+          "RAW data hazards, control hazards, and structural hazards",
+          "Cache hazards, TLB hazards, and bus hazards               ",
+          "Interrupt hazards, exception hazards, and DMA hazards"
+        ],
+        "correctAnswer": "RAW data hazards, control hazards, and structural hazards",
+        "explanation": "The project focuses on: RAW (Read After Write) data hazards solved via forwarding/stalling, control hazards from branches solved via prediction + flushing, and structural hazards (resource conflicts). The note specifically details RAW hazards and control hazards with flushing logic."
+      },
+      {
+        "question": "What forwarding technique does the CPU simulator use to handle RAW data hazards?",
+        "options": [
+          "Insert NOP bubbles until the result is written to the register file",
+          "Route the ALU result directly from EX/MEM or MEM/WB pipeline registers back to the EX stage",
+          "Re-execute the dependent instruction after the first one completes",
+          "Use a separate fast bus for hazard resolution                                               "
+        ],
+        "correctAnswer": "Route the ALU result directly from EX/MEM or MEM/WB pipeline registers back to the EX stage",
+        "explanation": "Forwarding (bypassing) routes the computed ALU result from a later pipeline register (EX/MEM or MEM/WB) directly into the ALU inputs of the EX stage, bypassing the register file write. This eliminates the need to stall for most RAW hazards."
+      },
+      {
+        "question": "In the L1 data cache design, what write policy is specified?",
+        "options": [
+          "Write-through + no-write-allocate",
+          "Write-back + write-allocate",
+          "Write-through + write-allocate",
+          "Write-back + no-write-allocate"
+        ],
+        "correctAnswer": "Write-back + write-allocate",
+        "explanation": "The project specifies write-back + write-allocate for both L1 D-Cache and L2 Unified Cache. Write-back means writes only update the cache until eviction; write-allocate means a write miss triggers a cache line fill before the write."
+      },
+      {
+        "question": "What is the formula for Average Memory Access Time (AMAT) used in the cache phase?",
+        "options": [
+          "hit_rate + miss_rate × miss_penalty",
+          "hit_time + miss_rate × miss_penalty",
+          "miss_time + hit_rate × hit_penalty",
+          "access_time × (1 + miss_rate)"
+        ],
+        "correctAnswer": "hit_time + miss_rate × miss_penalty",
+        "explanation": "AMAT = hit_time + miss_rate × miss_penalty. This is the fundamental cache performance equation. Hit time is the access latency on a cache hit; miss penalty is the additional time to fetch from the next level of the memory hierarchy."
+      },
+      {
+        "question": "A 2-bit saturating branch predictor has what four states?",
+        "options": [
+          "00 (Weak), 01 (Medium), 10 (Strong), 11 (Max)                                          ",
+          "00 (Strongly Not Taken), 01 (Weakly Not Taken), 10 (Weakly Taken), 11 (Strongly Taken)",
+          "00 (Not Taken), 01 (Maybe), 10 (Likely), 11 (Taken)",
+          "00 (Idle), 01 (Learning), 10 (Predicting), 11 (Confident)"
+        ],
+        "correctAnswer": "00 (Strongly Not Taken), 01 (Weakly Not Taken), 10 (Weakly Taken), 11 (Strongly Taken)",
+        "explanation": "The bimodal predictor uses 2-bit saturating counters: 00 = Strongly Not Taken, 01 = Weakly Not Taken, 10 = Weakly Taken, 11 = Strongly Taken. On a taken outcome, the counter increments toward 11; on not-taken, it decrements toward 00. Two bits provide hysteresis."
+      },
+      {
+        "question": "How does the GShare branch predictor compute its table index?",
+        "options": [
+          "PC_lower_bits XOR local_history",
+          "PC_lower_bits XOR global_history",
+          "PC_upper_bits AND global_history",
+          "PC_lower_bits + global_history"
+        ],
+        "correctAnswer": "PC_lower_bits XOR global_history",
+        "explanation": "GShare XORs the low bits of the PC with a global history register (GHR) to index the pattern history table. The global history is a shift register of the last N branch outcomes. XOR-ing correlates branch behavior across different PCs."
+      },
+      {
+        "question": "What happens when a branch is mispredicted in the CPU simulator?",
+        "options": [
+          "The pipeline continues with the wrong path but corrects later",
+          "The pipeline is flushed (IF and ID stages invalidated), flush counter incremented, and the correct PC is loaded",
+          "The branch predictor is disabled for that instruction",
+          "The incorrect results are committed but rolled back                                                             "
+        ],
+        "correctAnswer": "The pipeline is flushed (IF and ID stages invalidated), flush counter incremented, and the correct PC is loaded",
+        "explanation": "On misprediction, the pipeline registers between IF/ID are flushed (invalidated), the flush counter is incremented, and the correct PC is loaded for re-fetch. The misprediction penalty is 5-20 cycles (configurable), representing the pipeline depth wasted on wrong-path instructions."
+      },
+      {
+        "question": "Which benchmark tests pointer chasing and is designed to be cache-unfriendly?",
+        "options": [
+          "matmul",
+          "quicksort",
+          "bubblesort",
+          "linkedlist"
+        ],
+        "correctAnswer": "linkedlist",
+        "explanation": "The `linkedlist` benchmark involves pointer chasing — each node points to the next at a random memory location. This defeats spatial prefetching and causes frequent cache misses, making it the most cache-unfriendly benchmark in the suite."
+      },
+      {
+        "question": "What is the L1 instruction cache size and associativity in the CPU simulator?",
+        "options": [
+          "16 KB, 2-way set associative",
+          "32 KB, 4-way set associative",
+          "64 KB, 8-way set associative",
+          "32 KB, 8-way set associative"
+        ],
+        "correctAnswer": "32 KB, 4-way set associative",
+        "explanation": "L1 I-Cache: 32 KB, 4-way set associative, 64-byte lines, LRU replacement, read-only. L1 D-Cache: 32 KB, 8-way set associative. L2 Unified: 256 KB, 16-way set associative, inclusive of L1."
+      },
+      {
+        "question": "What does the Tournament branch predictor use to select between bimodal and GShare?",
+        "options": [
+          "A static priority table                                                                   ",
+          "A chooser table of 2-bit counters that tracks which predictor was correct for each branch",
+          "A random selection algorithm",
+          "The global history register value"
+        ],
+        "correctAnswer": "A chooser table of 2-bit counters that tracks which predictor was correct for each branch",
+        "explanation": "The tournament predictor (Alpha 21264 style) uses a chooser table of 2-bit saturating counters indexed by PC. The chooser increments if bimodal was correct, decrements if GShare was correct. This dynamically selects the best predictor per branch pattern."
+      },
+      {
+        "question": "Explain what happens in the pipeline when an ADD instruction writes to R1 and the very next SUB instruction reads from R1. Describe the RAW hazard and how forwarding resolves it without stalling.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "RAW",
+          "forwarding",
+          "bypassing",
+          "EX/MEM",
+          "MEM/WB",
+          "ALU",
+          "pipeline register",
+          "data hazard"
+        ],
+        "explanation": "ADD R1, R2, R3 computes R2+R3 in the EX stage. The result is stored in the EX/MEM pipeline register. The next cycle, SUB R4, R1, R5 enters EX and needs R1. Without forwarding, SUB would read the stale value from the register file (ADD hasn't reached WB yet). With forwarding: a multiplexer detects that R1's value is available in EX/MEM (or MEM/WB) and routes it directly to the ALU input, bypassing the register file. No stall is needed — SUB executes with the correct value one cycle after ADD."
+      },
+      {
+        "question": "Your CPU simulator runs a matrix multiply benchmark. Row-major access achieves 99% L1 cache hit rate; column-major access achieves 60%. Explain why, using cache line size and spatial locality concepts from the cache design.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "row-major",
+          "column-major",
+          "cache line",
+          "spatial locality",
+          "stride",
+          "64 bytes",
+          "prefetch"
+        ],
+        "explanation": "A 64-byte cache line holds 8 doubles (8 bytes each). Row-major: consecutive elements in a row are adjacent in memory — one cache miss loads 7 subsequent hits (spatial locality). Column-major: consecutive elements are separated by a full row (stride = row_width × 8 bytes). Each access touches a different cache line, defeating spatial locality and prefetching. The 60% hit rate on column-major means most accesses miss and must go to L2 or memory."
+      }
+    ]
+  },
+  {
+    "noteName": "Memory Allocator — Capstone",
+    "questions": [
+      {
+        "question": "In Phase 1 of the memory allocator project, what search strategy does the first-fit free list use?",
+        "options": [
+          "Binary search on sorted free blocks                                                ",
+          "Linear scan from the head of the free list, returning the first block large enough",
+          "Best-fit: scan all blocks and pick the smallest sufficient one",
+          "Next-fit: start searching from the last allocation point"
+        ],
+        "correctAnswer": "Linear scan from the head of the free list, returning the first block large enough",
+        "explanation": "First-fit walks the singly-linked free list from the head and returns the first block with size >= requested. It's simple and has good cache behavior (blocks near the head are recently freed), but can accumulate small unusable fragments at the front."
+      },
+      {
+        "question": "What does coalescing do when a block is freed in the memory allocator?",
+        "options": [
+          "Splits the block into smaller chunks                                               ",
+          "Merges adjacent free blocks into one larger block to reduce external fragmentation",
+          "Moves the block to the front of the free list",
+          "Zeroes out the block's memory for security"
+        ],
+        "correctAnswer": "Merges adjacent free blocks into one larger block to reduce external fragmentation",
+        "explanation": "Coalescing merges adjacent free blocks: if the next block (or previous block, with boundary tags) is free, they're combined into one larger block. This prevents external fragmentation where enough total free memory exists but no single block is large enough."
+      },
+      {
+        "question": "What is the 'embedded free list' technique used in slab allocation?",
+        "options": [
+          "A separate linked list stored in the slab header",
+          "Unused slots store a pointer to the next free slot in their own user-data space — zero per-slot overhead",
+          "A bitmap tracking which slots are free",
+          "A hash table for fast slot lookup                                                                        "
+        ],
+        "correctAnswer": "Unused slots store a pointer to the next free slot in their own user-data space — zero per-slot overhead",
+        "explanation": "In slab allocation, free slots contain a pointer to the next free slot embedded in the slot's data area. Since the slot is unallocated, its data space is unused — storing the free-list pointer there costs zero extra memory. This is the classic slab allocator trick from the Solaris kernel."
+      },
+      {
+        "question": "What is the FAST PATH in a thread-local cache allocation?",
+        "options": [
+          "Locking the global heap and searching all free lists",
+          "Popping a free item directly from the thread's per-size-class free list without any global lock",
+          "Requesting a new slab from the OS via mmap                                                      ",
+          "Checking if the requested size exceeds the thread cache capacity"
+        ],
+        "correctAnswer": "Popping a free item directly from the thread's per-size-class free list without any global lock",
+        "explanation": "The fast path: if the thread cache has a free item in the requested size class, it pops and returns it immediately — no global lock, no system call, just a linked-list pop. Only when the thread cache is empty does the slow path (global heap refill) activate."
+      },
+      {
+        "question": "How does `MAP_HUGETLB` improve TLB efficiency for the allocator?",
+        "options": [
+          "It encrypts the page table entries                                                           ",
+          "A single 2 MB huge page covers 512 standard 4 KB pages — reducing TLB entries needed by 512×",
+          "It disables the TLB entirely for faster access",
+          "It stores page translations in L1 cache instead of the TLB"
+        ],
+        "correctAnswer": "A single 2 MB huge page covers 512 standard 4 KB pages — reducing TLB entries needed by 512×",
+        "explanation": "2 MB huge page = 512 × 4 KB pages. One TLB entry maps 2 MB instead of 4 KB. For a 1 GB heap, that's 512 TLB entries instead of 262,144 — a 512× reduction. The L1 D-TLB (64 entries) can cover 128 MB with huge pages vs 256 KB with standard pages."
+      },
+      {
+        "question": "What does `mlock()` prevent in the memory allocator?",
+        "options": [
+          "The OS from swapping or paging out the locked memory to disk",
+          "Other threads from reading the locked memory",
+          "The kernel from remapping virtual addresses                  ",
+          "The hardware prefetcher from speculatively loading"
+        ],
+        "correctAnswer": "The OS from swapping or paging out the locked memory to disk",
+        "explanation": "`mlock()` pins pages in physical RAM, preventing the page reclamation daemon (kswapd) from swapping them. This is critical for latency-sensitive buffers (audio ring buffer, physics state) where a major page fault would cause a noticeable hitch. The locked page set must fit within `RLIMIT_MEMLOCK`."
+      },
+      {
+        "question": "What does the memory tagging feature (canary) in Phase 5 detect?",
+        "options": [
+          "Memory leaks from unfreed allocations",
+          "Double frees and buffer overflows by checking a known value embedded in the allocation header",
+          "NUMA misplacement of allocations                                                              ",
+          "Cache line false sharing between threads"
+        ],
+        "correctAnswer": "Double frees and buffer overflows by checking a known value embedded in the allocation header",
+        "explanation": "A canary (e.g., 0xDEADBEEF) is embedded in the allocation header. On `my_free()`, the allocator verifies the canary is intact. If corrupted, it indicates either a buffer overflow (wrote past the allocation) or a double free (attempting to free already-free memory). The header also stores file/line for debugging."
+      },
+      {
+        "question": "What is the refill batch size tradeoff in thread-local caches?",
+        "options": [
+          "Large batch: faster but uses more code space                                                                                ",
+          "Small batch: frequent global heap access causing lock contention; large batch: threads hoard memory that other threads need",
+          "Batch size affects the cache line alignment only",
+          "There is no tradeoff — bigger batches are always better"
+        ],
+        "correctAnswer": "Small batch: frequent global heap access causing lock contention; large batch: threads hoard memory that other threads need",
+        "explanation": "Typical batch size: 32-128 items. Too small → threads frequently lock the global heap (contention). Too large → thread A hoards slabs that thread B needs (memory imbalance). The optimal batch size balances lock amortization against memory utilization."
+      },
+      {
+        "question": "Which Phase of the memory allocator project introduces slab allocation for fixed-size objects?",
+        "options": [
+          "Phase 1 (Free List)             ",
+          "Phase 2 (Segregated Free Lists)",
+          "Phase 3 (Thread-Local Caches)",
+          "Phase 4 (Huge Pages & mlock)"
+        ],
+        "correctAnswer": "Phase 2 (Segregated Free Lists)",
+        "explanation": "Phase 2 introduces segregated size classes (8, 16, 32, 64, 128, 256, 512, 1024 bytes) with slab allocation. Each slab is a 64 KB page subdivided into fixed-size slots, using an embedded free list. This gives O(1) alloc/free and eliminates internal fragmentation within each size class."
+      },
+      {
+        "question": "What is the purpose of `madvise(arena, ARENA_SIZE, MADV_HUGEPAGE)` when `MAP_HUGETLB` fails?",
+        "options": [
+          "It disables huge pages for the allocation",
+          "It requests the kernel's Transparent Huge Pages (THP) to opportunistically promote 4 KB pages to 2 MB",
+          "It locks the pages in physical memory                                                                 ",
+          "It moves the allocation to the local NUMA node"
+        ],
+        "correctAnswer": "It requests the kernel's Transparent Huge Pages (THP) to opportunistically promote 4 KB pages to 2 MB",
+        "explanation": "THP is a fallback when explicit huge pages fail. `MADV_HUGEPAGE` advises the kernel to use khugepaged (the THP daemon) to promote contiguous 4 KB pages into 2 MB huge pages. The promotion has ~2 ms scan latency but doesn't require explicit huge page pool reservation."
+      },
+      {
+        "question": "How does the memory allocator handle `realloc` efficiently?",
+        "options": [
+          "Always allocates a new block, copies data, and frees the old one",
+          "Checks if the next block is free; if so, merges them in-place; otherwise falls back to allocate-copy-free",
+          "Realloc is not supported — only malloc and free                                                           ",
+          "Zeroes the extended region and returns the same pointer"
+        ],
+        "correctAnswer": "Checks if the next block is free; if so, merges them in-place; otherwise falls back to allocate-copy-free",
+        "explanation": "The efficient `realloc` path: if the block can be extended by merging with the adjacent free block, do it in-place (O(1), no copy). Otherwise, `malloc(new_size)` + `memcpy` old contents + `free(old)`. The in-place extension avoids expensive copies for growing allocations."
+      },
+      {
+        "question": "Walk through the allocation flow for `my_alloc(64)` when the thread cache is empty: from the user call to returning a pointer. Describe the fast path, refill from global heap, and slab interaction.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "thread cache",
+          "size class",
+          "refill",
+          "global heap",
+          "slab",
+          "batch",
+          "lock",
+          "fast path"
+        ],
+        "explanation": "1. `my_alloc(64)` rounds up to the 64-byte size class. 2. Check thread-local cache's 64-byte free list: empty (slow path). 3. Acquire global heap lock for the 64-byte size class. 4. Transfer batch_size (e.g., 32-128) free slots from the global slab's embedded free list to the thread cache's free list. 5. Release global lock. 6. Pop one slot from the (now populated) thread cache and return it. 7. Next `my_alloc(64)` calls hit the fast path (no global lock) until the thread cache runs dry."
+      },
+      {
+        "question": "Explain why the benchmark comparison table in Phase 5 matters. What would you expect your allocator to beat `glibc malloc` on for a game workload, and where might `glibc` still win?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "benchmark",
+          "glibc",
+          "malloc",
+          "jemalloc",
+          "mimalloc",
+          "game",
+          "thread",
+          "contention"
+        ],
+        "explanation": "Your allocator should win on: (1) fixed-size allocation throughput — segregated size classes + thread caches avoid global locks; (2) producer-consumer patterns — per-thread caches reduce contention; (3) memory usage (RSS) — slab allocation has zero per-slot overhead. glibc might still win on: (1) random free order — its bins handle arbitrary free patterns; (2) realloc-heavy workloads — years of optimization; (3) very large allocations — it can directly use mmap with less overhead than a custom large-object path."
+      }
+    ]
+  },
+  {
+    "noteName": "Concurrency — Chapter Summary",
+    "questions": [
+      {
+        "question": "According to the Concurrency Ladder, at which level do most game engines operate?",
+        "options": [
+          "Level 1: Single-threaded                                                                ",
+          "Level 3-4: Job system + mutexes for shared resources + atomics for performance counters",
+          "Level 5: Full lock-free data structures",
+          "Level 6: NUMA-aware full parallelization"
+        ],
+        "correctAnswer": "Level 3-4: Job system + mutexes for shared resources + atomics for performance counters",
+        "explanation": "Most game engines operate at Level 3-4: a job system for fire-and-forget parallel tasks, mutexes protecting shared resources, and atomics for performance-critical counters and flags. Level 5-6 adds complexity that's rarely justified for the marginal speedup."
+      },
+      {
+        "question": "What are the four necessary conditions for deadlock?",
+        "options": [
+          "Locking, waiting, sleeping, waking",
+          "Mutual exclusion, hold and wait, no preemption, circular wait",
+          "Acquire, release, timeout, retry                              ",
+          "Ownership, exclusivity, blocking, recursion"
+        ],
+        "correctAnswer": "Mutual exclusion, hold and wait, no preemption, circular wait",
+        "explanation": "All four Coffman conditions must hold simultaneously for deadlock: (1) mutual exclusion (resources can't be shared), (2) hold and wait (threads hold resources while waiting for more), (3) no preemption (resources can't be forcibly taken), (4) circular wait (cycle in the wait-for graph). Break any one to prevent deadlock."
+      },
+      {
+        "question": "What is the approximate cost of a contended mutex lock?",
+        "options": [
+          "~25 ns (fast path — atomic CAS)",
+          "~5 µs (futex syscall — thread blocks and context switches)",
+          "~1 cycle (same as a regular load)",
+          "~100 µs (disk I/O overhead)                                "
+        ],
+        "correctAnswer": "~5 µs (futex syscall — thread blocks and context switches)",
+        "explanation": "Contended mutex: ~5 µs — the thread calls `FUTEX_WAIT`, enters the kernel sleep queue, and a context switch to another thread occurs. Uncontended (fast path): ~25 ns — a single atomic CAS. The 200× difference shows why contention is so expensive."
+      },
+      {
+        "question": "What is Amdahl's Law formula?",
+        "options": [
+          "S = 1 / (N + (1-N)/S)       ",
+          "speedup = 1 / (S + (1-S)/N)",
+          "speedup = N × (1 - S)",
+          "speedup = S × N + (1-S)"
+        ],
+        "correctAnswer": "speedup = 1 / (S + (1-S)/N)",
+        "explanation": "Amdahl's Law: speedup = 1 / (S + (1-S)/N), where S is the serial fraction and N is the number of processors. Even with infinite cores, maximum speedup is 1/S. A program with 5% serial code cannot exceed 20× speedup no matter how many cores you add."
+      },
+      {
+        "question": "What does `std::lock` do to avoid deadlock when acquiring multiple mutexes?",
+        "options": [
+          "Locks all mutexes in alphabetical order",
+          "Uses a try-and-backoff algorithm to acquire all mutexes simultaneously",
+          "Acquires mutexes one at a time with a global timeout",
+          "Raises thread priority before locking                                  "
+        ],
+        "correctAnswer": "Uses a try-and-backoff algorithm to acquire all mutexes simultaneously",
+        "explanation": "`std::lock(m1, m2, ...)` uses a deadlock-free algorithm: try to lock all mutexes with `try_lock`. If any fails, unlock all acquired ones, and retry. This breaks the 'hold and wait' condition. `std::scoped_lock` is the RAII wrapper that calls `std::lock`."
+      },
+      {
+        "question": "What execution units do SMT (Hyper-Threading) logical threads share on a physical core?",
+        "options": [
+          "Only the L1 data cache                                                               ",
+          "Execution units (ALUs, FPUs) and caches — only the architectural state is duplicated",
+          "Nothing is shared — each logical core is fully independent",
+          "Only the branch predictor"
+        ],
+        "correctAnswer": "Execution units (ALUs, FPUs) and caches — only the architectural state is duplicated",
+        "explanation": "SMT duplicates architectural state (register files, APIC IDs) but shares execution units and caches between two logical threads on the same physical core. This yields only 15-30% throughput improvement for typical workloads, not 100%, because the threads compete for shared compute resources."
+      },
+      {
+        "question": "What is the ABA problem in lock-free programming?",
+        "options": [
+          "A value changes from A to B to A between read and CAS — the CAS succeeds but the structure may be corrupted",
+          "The atomic operation always returns the same value",
+          "Two threads get stuck in an infinite CAS loop",
+          "The memory ordering is too weak                                                                             "
+        ],
+        "correctAnswer": "A value changes from A to B to A between read and CAS — the CAS succeeds but the structure may be corrupted",
+        "explanation": "Thread 1 reads pointer A, is preempted. Thread 2 frees A, allocates a new object (also at address A), changes the structure. Thread 1 resumes, CAS succeeds (still A!), but the pointer's meaning has changed — leading to corruption. Solutions: tagged pointers (version counter in upper bits) or hazard pointers."
+      },
+      {
+        "question": "In the game engine concurrency model, what is the rule about shared mutable state?",
+        "options": [
+          "All state should be shared for maximum parallelism                                                   ",
+          "Shared mutable state is the enemy — minimize it; use lock-free queues to communicate between threads",
+          "Shared state should always be protected by a single global lock",
+          "Mutable state should never be shared — all data must be immutable"
+        ],
+        "correctAnswer": "Shared mutable state is the enemy — minimize it; use lock-free queues to communicate between threads",
+        "explanation": "The game thread updates game state; worker threads process data independently; lock-free queues (SPSC/MPMC) communicate results. Minimizing shared mutable state reduces lock contention, false sharing, and the surface area for data races. This is the core philosophy behind job-system architectures."
+      },
+      {
+        "question": "Using Amdahl's Law, explain why adding more cores eventually provides diminishing returns. Calculate the maximum speedup for a game loop that is 80% parallelizable.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "Amdahl",
+          "speedup",
+          "serial",
+          "parallel",
+          "diminishing",
+          "80%",
+          "5x"
+        ],
+        "explanation": "With S = 0.20 (20% serial): maximum speedup = 1/0.20 = 5×, regardless of core count. With 4 cores: speedup = 1/(0.20 + 0.80/4) = 1/0.40 = 2.5×. With 16 cores: 1/(0.20 + 0.80/16) = 1/0.25 = 4×. Adding cores from 4→16 only gains 1.5× more speedup because the 20% serial portion dominates. This is why engines focus on reducing the serial fraction rather than just adding threads."
+      },
+      {
+        "question": "Describe the false sharing problem from the Concurrency Summary. Why does padding with `alignas(64)` fix it, and what's the performance difference?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "false sharing",
+          "cache line",
+          "alignas",
+          "padding",
+          "64 bytes",
+          "MESI",
+          "invalidate"
+        ],
+        "explanation": "Two threads updating adjacent variables on the same 64-byte cache line cause constant MESI invalidations — each write invalidates the other core's cache line. Performance drops 50-200 cycles per access instead of 1 cycle. `alignas(64)` places each variable on its own cache line, so writes don't interfere. The performance difference can be 50-100× between the false-sharing case and the properly-padded case."
+      }
+    ]
+  },
+  {
+    "noteName": "Hardware — Chapter Summary",
+    "questions": [
+      {
+        "question": "According to the Hardware Stack table, which Note covers 'the defining performance constraint'?",
+        "options": [
+          "01 — Transistors & Logic Gates",
+          "05 — Memory Hierarchy",
+          "04 — CPU Architecture",
+          "07 — VM Full Picture"
+        ],
+        "correctAnswer": "05 — Memory Hierarchy",
+        "explanation": "Note 05 — Memory Hierarchy is described as covering caches, locality, and 'the memory wall — the defining performance constraint.' The memory wall refers to the 300-cycle DRAM access gap that dominates modern CPU performance."
+      },
+      {
+        "question": "Which latency hides the fact that the CPU can execute 400+ instructions during one DRAM access?",
+        "options": [
+          "The OS scheduler switching threads during the wait                               ",
+          "Caches, prefetchers, TLBs, branch predictors — all are latency-hiding mechanisms",
+          "Hyper-Threading executing another thread's instructions",
+          "The CPU enters a low-power state until the data arrives"
+        ],
+        "correctAnswer": "Caches, prefetchers, TLBs, branch predictors — all are latency-hiding mechanisms",
+        "explanation": "Every level of the memory hierarchy (L1/L2/L3 caches, hardware prefetchers, TLBs, branch predictors) exists to hide the next level's latency. The CPU can execute 400+ instructions while waiting for one DRAM access — all these mechanisms work to keep the pipeline fed with useful work during that wait."
+      },
+      {
+        "question": "According to the Hardware Stack, what is the key insight at the 'Physics' layer?",
+        "options": [
+          "Voltage determines switching speed",
+          "NAND gates are universal — every computation ultimately reduces to them",
+          "Transistors must be cooled to function",
+          "Quantum effects dominate at 5nm                                         "
+        ],
+        "correctAnswer": "NAND gates are universal — every computation ultimately reduces to them",
+        "explanation": "Note 01 — Transistors & Logic Gates: the key insight is that NAND gates are functionally complete — any boolean function can be built from NAND gates alone. Every computation in your CPU, from addition to branch prediction, decomposes into NAND gate networks at the transistor level."
+      },
+      {
+        "question": "How many CPU cycles does an HDD seek cost at 3 GHz?",
+        "options": [
+          "~150,000 cycles",
+          "~3,000,000 cycles",
+          "~30,000,000 cycles",
+          "~300 cycles        "
+        ],
+        "correctAnswer": "~30,000,000 cycles",
+        "explanation": "HDD seek: ~10 ms. At 3 GHz (0.33 ns/cycle): 10,000,000 ns ÷ 0.33 ns = ~30,000,000 cycles. Compare: L1 hit = 3 cycles, DRAM access = 300 cycles. The 100,000× gap from L1 to HDD is why storage I/O is the ultimate performance killer."
+      },
+      {
+        "question": "What is the second 'Big Idea' from the Hardware Summary?",
+        "options": [
+          "Faster hardware is always better                                                                      ",
+          "Everything is an abstraction over physics — understanding the layer below tells you what can go wrong",
+          "Moore's Law guarantees performance improvements",
+          "The OS is the most important layer"
+        ],
+        "correctAnswer": "Everything is an abstraction over physics — understanding the layer below tells you what can go wrong",
+        "explanation": "The summary lists five examples: virtual memory abstracts DRAM + disk, filesystems abstract NAND pages, TCP abstracts IP packets, threads abstract CPU cores, GPU draw calls abstract SIMT threads. Understanding the layer below reveals failure modes and measurement points."
+      },
+      {
+        "question": "Which Hardware note covers Spectre, Meltdown, and Rowhammer vulnerabilities?",
+        "options": [
+          "13 — Interrupts & Exceptions",
+          "16 — Hardware Security",
+          "14 — Virtualization & Containers",
+          "04 — CPU Architecture"
+        ],
+        "correctAnswer": "16 — Hardware Security",
+        "explanation": "Note 16 — Hardware Security covers speculative execution attacks (Spectre, Meltdown) and DRAM disturbance attacks (Rowhammer). The key insight: 'the hardware itself is the attack surface' — these vulnerabilities exploit the microarchitecture, not software bugs."
+      },
+      {
+        "question": "According to the summary, what does the OS kernel (ring 0) virtualize?",
+        "options": [
+          "Only the filesystem                                                            ",
+          "The CPU (threads), memory (page tables + swap), and I/O (drivers + interrupts)",
+          "Only network access",
+          "The compiler and linker"
+        ],
+        "correctAnswer": "The CPU (threads), memory (page tables + swap), and I/O (drivers + interrupts)",
+        "explanation": "The kernel virtualizes: CPU → threads (preemptive scheduling), Memory → page tables + swap (virtual address spaces), I/O → drivers + interrupts (uniform file/device interface). User-space (ring 3) builds on these abstractions via syscalls."
+      },
+      {
+        "question": "What does the 'Two Big Ideas' section identify as the purpose of every level of the memory hierarchy?",
+        "options": [
+          "To increase total storage capacity",
+          "To hide the next level's latency",
+          "To reduce manufacturing costs",
+          "To simplify the programming model"
+        ],
+        "correctAnswer": "To hide the next level's latency",
+        "explanation": "The summary explicitly states: 'Every level of the memory hierarchy exists to hide the next level's latency. Caches, prefetchers, TLBs, branch predictors — all of them are latency-hiding mechanisms.' Latency, not capacity or cost, is the driving design force."
+      },
+      {
+        "question": "The Hardware Summary lists latency numbers from L1 cache (1 ns) to HDD seek (10 ms). Explain why this 10-million-to-1 ratio defines how game engines must design their data access patterns.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "latency",
+          "cache",
+          "hierarchy",
+          "L1",
+          "HDD",
+          "memory wall",
+          "data-oriented",
+          "cache-friendly"
+        ],
+        "explanation": "The 10,000,000:1 ratio means accessing data from the wrong level of the hierarchy is catastrophic. Game engines respond with: data-oriented design (store hot data contiguously for cache line utilization), LOD systems (reduce data resolution at distance rather than loading all), texture streaming (load only visible mip levels), and pool allocators (keep game objects in slabs for TLB/cache locality). If a game loop randomly accesses HDD-backing storage, one 10 ms seek blows a 16.67 ms frame budget. Every performance optimization is ultimately about keeping data as high in the hierarchy as possible."
+      },
+      {
+        "question": "The Hardware Stack spans from transistors to GPU architecture. Pick two non-adjacent layers and explain how a problem at one layer manifests at the other. Use a concrete example.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "transistor",
+          "GPU",
+          "layer",
+          "manifest",
+          "cache",
+          "DRAM",
+          "assembly",
+          "Spectre"
+        ],
+        "explanation": "Example: Transistors (Layer 1) → CPU Architecture (Layer 4). DRAM cells use capacitors that leak charge (transistor-level physics). This requires refresh cycles (tREFI ≈ 7.8 µs). During refresh, the DRAM bank is unavailable, adding latency variability to every memory access. The CPU's out-of-order engine (Layer 4) must handle this by keeping a deep instruction window to find independent work during DRAM stalls. Rowhammer (Layer 1 to Layer 16): repeated DRAM row activations cause bit flips in adjacent rows due to capacitive coupling — a physics-level effect exploitable as a security vulnerability (Layer 16)."
+      }
+    ]
+  },
+  {
+    "noteName": "RAM & VM — Chapter Summary",
+    "questions": [
+      {
+        "question": "What are the Five Pillars of RAM & Virtual Memory as listed in the summary?",
+        "options": [
+          "Speed, Capacity, Cost, Power, Reliability",
+          "Physics, Translation, Demand, Scale, Big Picture",
+          "Allocation, Deallocation, Fragmentation, Coalescing, Pooling",
+          "Fetch, Decode, Execute, Memory, Write-back"
+        ],
+        "correctAnswer": "Physics, Translation, Demand, Scale, Big Picture",
+        "explanation": "The five pillars: Physics (01 — DRAM Cells: 1T1C, refresh, row hammer), Translation (02 — Page Tables & TLB: 4-level paging, TLB caching), Demand (03 — Page Faults & mmap: lazy allocation, COW, swap), Scale (04 — Huge Pages & NUMA: 2MB/1GB pages, multi-socket), Big Picture (00 — Overview: the memory wall, traps)."
+      },
+      {
+        "question": "How many TLB entries are in the L1 data TLB, and what address range do they cover with standard 4 KB pages?",
+        "options": [
+          "32 entries covering 128 KB",
+          "64 entries covering 256 KB",
+          "128 entries covering 512 KB",
+          "1536 entries covering 6 MB"
+        ],
+        "correctAnswer": "64 entries covering 256 KB",
+        "explanation": "L1 D-TLB: 64 entries × 4 KB = 256 KB coverage. This is the 'pointer maze' trap: with 10,000 unique_ptr objects scattered across pages, you need 10,000 TLB entries but only have 64 — resulting in a 99.4% TLB miss rate. The L2 STLB (1536 entries) covers 6 MB."
+      },
+      {
+        "question": "What is the 'First-Touch NUMA Trap'?",
+        "options": [
+          "The first thread to access a page determines its NUMA node — if the allocating thread is on a different socket than the workers, all accesses are remote",
+          "The first memory access is always the slowest                                                                                                            ",
+          "NUMA requires touching each page before allocation",
+          "The OS allocates all memory on NUMA node 0 first"
+        ],
+        "correctAnswer": "The first thread to access a page determines its NUMA node — if the allocating thread is on a different socket than the workers, all accesses are remote",
+        "explanation": "Linux's default memory policy is first-touch: the physical page is allocated from the NUMA node of the first thread that writes to it. If the main thread (Socket 0) allocates and initializes data, but worker threads (Socket 1) process it, all accesses are remote (150-250 ns vs 100 ns local). Fix: have Socket 1 workers touch the data first."
+      },
+      {
+        "question": "When does swap thrashing begin according to the RAM & VM Summary?",
+        "options": [
+          "When swap space exceeds RAM size                                                     ",
+          "When the working set exceeds physical RAM and every frame triggers major page faults",
+          "When swap is on an HDD instead of SSD",
+          "When the system has less than 4 GB of RAM"
+        ],
+        "correctAnswer": "When the working set exceeds physical RAM and every frame triggers major page faults",
+        "explanation": "Thrashing: working set > physical RAM → every frame triggers major page faults (reading pages from swap). The game doesn't just slow down — it effectively stops. `mlock` can pin critical buffers, but over-locking starves the rest of the system."
+      },
+      {
+        "question": "What is the cost ratio between a minor page fault and a major page fault to HDD?",
+        "options": [
+          "10×     ",
+          "1,000×",
+          "10,000×",
+          "100×"
+        ],
+        "correctAnswer": "10,000×",
+        "explanation": "Minor fault: ~1 µs (page already in RAM, just wire up PTE). Major fault to HDD: ~10 ms (seek + rotational latency + read). Ratio: 10,000 µs ÷ 1 µs = 10,000×. This is why `mlock` and pre-faulting strategies are critical for latency-sensitive applications."
+      },
+      {
+        "question": "In the memory wall diagram, how many CPU cycles does a TLB miss plus page walk cost?",
+        "options": [
+          "~40-50 cycles     ",
+          "~300-350 cycles",
+          "~500-1,500 cycles",
+          "~3,000 cycles"
+        ],
+        "correctAnswer": "~500-1,500 cycles",
+        "explanation": "A TLB miss triggers a hardware page walk through 4 levels of page tables (PML4→PDPT→PD→PT), requiring 4 dependent memory reads. Each read may hit in cache (fast, ~50 ns total) or miss to DRAM (slow, ~400 ns total). The page walk cost varies based on cache behavior."
+      },
+      {
+        "question": "What does the summary identify as the 'Three Deadly Patterns' for memory performance?",
+        "options": [
+          "Double-free, use-after-free, and memory leaks               ",
+          "The Pointer Maze, First-Touch NUMA Trap, and Swap Thrashing",
+          "Cache misses, TLB misses, and branch mispredictions",
+          "Stack overflow, heap fragmentation, and dangling pointers"
+        ],
+        "correctAnswer": "The Pointer Maze, First-Touch NUMA Trap, and Swap Thrashing",
+        "explanation": "Three deadly patterns: (1) Pointer Maze — scattered allocations causing TLB thrashing; (2) First-Touch NUMA Trap — allocating on wrong socket causing remote access penalties; (3) Swap Thrashing — working set exceeding RAM causing constant major faults."
+      },
+      {
+        "question": "How are DRAM cells physically organized?",
+        "options": [
+          "As a stack of magnetic platters                                          ",
+          "As 1T1C cells (one transistor, one trench capacitor) in rows and columns",
+          "As flip-flops made of 6 transistors each",
+          "As floating-gate MOSFETs in NAND strings"
+        ],
+        "correctAnswer": "As 1T1C cells (one transistor, one trench capacitor) in rows and columns",
+        "explanation": "DRAM uses 1T1C cells: one access transistor and one trench capacitor per bit. Reads are destructive (sense amplifier detects voltage, then writes back). Charge leaks through the transistor junction, requiring periodic refresh at tREFI ≈ 7.8 µs per row. SRAM (6T flip-flops) is faster but ~100× larger per bit."
+      },
+      {
+        "question": "Explain the Pointer Maze pattern. Why does `std::vector<std::unique_ptr<Enemy>>` with 10,000 enemies cause TLB thrashing, while `std::vector<Enemy>` fixes it? Include TLB entry calculations.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "pointer maze",
+          "unique_ptr",
+          "TLB",
+          "contiguous",
+          "page",
+          "64 entries",
+          "256 KB"
+        ],
+        "explanation": "Pointer Maze: 10,000 `unique_ptr<Enemy>` where each Enemy is `new`'d individually. Each allocation may land in a different 4 KB page → 10,000 pages → need 10,000 TLB entries. L1 D-TLB has only 64 entries → 99.4% miss rate. Contiguous `vector<Enemy>`: 10,000 enemies × ~40 bytes each ≈ 400 KB → fits in ~98 pages. 98 TLB entries needed, L2 STLB (1536 entries) handles it comfortably. Even if some spill from L1 D-TLB, the L2 STLB covers the working set."
+      },
+      {
+        "question": "The Memory Wall diagram shows DRAM access at ~350 cycles. Walk through what happens at the hardware level during those 350 cycles: from the CPU issuing a load to the data arriving in a register.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "DRAM",
+          "row",
+          "column",
+          "CAS",
+          "RAS",
+          "sense amplifier",
+          "precharge",
+          "activate",
+          "burst"
+        ],
+        "explanation": "1. CPU issues load → MMU translates VA→PA (TLB lookup, hopefully hit). 2. Memory controller decodes PA → channel, rank, bank, row, column. 3. If different row open: PRECHARGE (close current row, ~15 ns) → ACTIVATE (open new row, sense amplifiers read entire row into row buffer, ~15 ns). 4. CAS (Column Address Strobe): select column from row buffer, ~15 ns. 5. Data burst transferred over memory bus (8 transfers for 64-byte cache line). 6. Data travels through memory controller → interconnect → L3 cache → L2 → L1 → CPU register. Total: ~100 ns = 350 cycles at 3.5 GHz. Most time is spent in analog DRAM operations (precharge, activation, sensing)."
+      }
+    ]
+  },
+  {
+    "noteName": "Storage — Chapter Summary",
+    "questions": [
+      {
+        "question": "What is the sequential-to-random I/O performance ratio for HDDs vs SSDs?",
+        "options": [
+          "~250:1 for HDDs, ~2:1 for SSDs",
+          "~10:1 for HDDs, ~5:1 for SSDs",
+          "~1000:1 for HDDs, ~10:1 for SSDs",
+          "~50:1 for HDDs, ~1:1 for SSDs"
+        ],
+        "correctAnswer": "~250:1 for HDDs, ~2:1 for SSDs",
+        "explanation": "HDDs: sequential ~250 MB/s vs random ~1.5 MB/s = ~250:1 ratio (dominated by seek + rotational latency). SSDs: sequential ~14 GB/s (Gen5) vs random ~6 GB/s (1.5M IOPS × 4 KB) = ~2:1 ratio. This ~2:1 ratio is why SSDs revolutionized computing — random access became practical."
+      },
+      {
+        "question": "What is Trap 2 in the Storage Summary: 'Small Random Writes Kill SSDs'?",
+        "options": [
+          "SSDs physically break from too many writes",
+          "Writing one 4 KB page can trigger reading a 256-page block, erasing it (2-10 ms), then reprogramming — write amplification up to 256×",
+          "SSDs slow down after 1000 writes                                                                                                      ",
+          "Random writes cause the SSD controller to crash"
+        ],
+        "correctAnswer": "Writing one 4 KB page can trigger reading a 256-page block, erasing it (2-10 ms), then reprogramming — write amplification up to 256×",
+        "explanation": "NAND flash: pages (4-16 KB) are the read/write unit; blocks (256+ pages) are the erase unit. A small random write to a full block: read entire block, erase block (2-10 ms), reprogram block with old data + new page. This is why SSDs use the FTL, garbage collection, and over-provisioning to minimize write amplification."
+      },
+      {
+        "question": "What does the page cache do when `write(fd, data, 4096)` is called?",
+        "options": [
+          "Immediately writes the data to the physical storage device",
+          "Copies data into a page cache page and marks it dirty — actual disk I/O happens later via writeback or explicit fsync()",
+          "Compresses the data before storing                                                                                      ",
+          "Encrypts the data before sending to the storage driver"
+        ],
+        "correctAnswer": "Copies data into a page cache page and marks it dirty — actual disk I/O happens later via writeback or explicit fsync()",
+        "explanation": "`write()` copies user data to a page cache page (in RAM) and marks it dirty. The data is NOT on disk yet. The kernel's writeback threads (`flush_work`) eventually write dirty pages to disk, or `fsync()` forces immediate writeback. A power loss before writeback means the data is lost."
+      },
+      {
+        "question": "According to the I/O gap table, what is the sequential read speed of a Gen5 NVMe SSD?",
+        "options": [
+          "~550 MB/s",
+          "~2 TB/s",
+          "~14 GB/s",
+          "~50 GB/s"
+        ],
+        "correctAnswer": "~14 GB/s",
+        "explanation": "The I/O Gap table lists: L1 Cache ~2 TB/s, RAM (DDR5) ~50 GB/s, NVMe SSD (Gen5) ~14 GB/s, SATA SSD ~550 MB/s, HDD ~250 MB/s. Gen5 NVMe (PCIe 5.0 ×4) achieves ~14 GB/s sequential — still ~3.5× slower than DDR5 RAM."
+      },
+      {
+        "question": "What `posix_fadvise()` flag would prevent a 50 GB texture streaming scan from polluting the page cache?",
+        "options": [
+          "POSIX_FADV_NORMAL",
+          "POSIX_FADV_SEQUENTIAL",
+          "POSIX_FADV_DONTNEED",
+          "POSIX_FADV_WILLNEED"
+        ],
+        "correctAnswer": "POSIX_FADV_DONTNEED",
+        "explanation": "Exercise 4 asks about preventing page cache pollution. `POSIX_FADV_DONTNEED` advises the kernel that the data won't be accessed again soon, allowing the kernel to evict those pages from the page cache after the read. Without it, a 50 GB scan would evict all other useful cached data."
+      },
+      {
+        "question": "Why is `mmap` not always faster than `read()` for file I/O?",
+        "options": [
+          "mmap uses more CPU                                                                                                                 ",
+          "Page faults from random access through mmap'd files still trigger I/O — at 10 ms per HDD seek, that's only 100 random pages/second",
+          "mmap bypasses the page cache",
+          "mmap requires kernel mode for every access"
+        ],
+        "correctAnswer": "Page faults from random access through mmap'd files still trigger I/O — at 10 ms per HDD seek, that's only 100 random pages/second",
+        "explanation": "Trap 3: `mmap` avoids the `read()` syscall overhead, but page faults are still I/O. Random access through an `mmap`'d file on HDD triggers one major page fault per new page — at 10 ms each, that's 100 pages/second (400 KB/s). Sequential access lets the kernel's readahead hide latency by pre-loading upcoming pages."
+      },
+      {
+        "question": "What do `dirty_ratio` and `dirty_background_ratio` control in Linux?",
+        "options": [
+          "The percentage of CPU time spent on I/O",
+          "When the kernel forces writeback of dirty page cache pages — `dirty_ratio` triggers blocking writeback, `dirty_background_ratio` triggers background writeback",
+          "The ratio of reads to writes on a storage device",
+          "The balance between SSD and HDD usage                                                                                                                          "
+        ],
+        "correctAnswer": "When the kernel forces writeback of dirty page cache pages — `dirty_ratio` triggers blocking writeback, `dirty_background_ratio` triggers background writeback",
+        "explanation": "`dirty_background_ratio`: when dirty pages exceed this % of RAM, background writeback begins (non-blocking). `dirty_ratio`: when dirty pages exceed this higher %, `write()` calls block until writeback reduces the dirty count. `dirty_expire_centisecs` controls how long dirty data can sit before forced writeback."
+      },
+      {
+        "question": "What is the write-ahead logging approach recommended for a save-game system that must not lose more than 5 seconds of progress?",
+        "options": [
+          "Write the entire save file every 5 seconds with fsync",
+          "Write changes to a journal first, fsync the journal, then periodically update the main file — the journal ensures crash recovery",
+          "Use a database instead of a file                                                                                                 ",
+          "Write to two separate files on different drives"
+        ],
+        "correctAnswer": "Write changes to a journal first, fsync the journal, then periodically update the main file — the journal ensures crash recovery",
+        "explanation": "Exercise 5: a write-ahead log (journal) records changes before applying them to the main save file. `fsync` on the journal (small, fast) guarantees the changes are durable. If a crash occurs, replay the journal on next load. The main file can be updated less frequently (e.g., every checkpoint), reducing `fsync` overhead on the large 10 MB file."
+      },
+      {
+        "question": "Explain the difference between `fflush()`, `fclose()`, and `fsync()`. If a game calls `fwrite()` + `fclose()` on a save file and the power fails, where is the data? What extra call ensures it survives?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "fflush",
+          "fclose",
+          "fsync",
+          "page cache",
+          "stdio buffer",
+          "power loss",
+          "durable"
+        ],
+        "explanation": "`fwrite()` → data in stdio userspace buffer. `fflush()` → moves data from stdio buffer to kernel page cache (still in RAM). `fclose()` → calls `fflush()` + closes the file descriptor, but does NOT `fsync()`. Data is in the page cache (RAM) — power loss means data is gone. Only `fsync()` forces the kernel to write dirty pages to the storage device and waits for the device to confirm the write. The pattern: `write()` + `fsync()` + rename of temp file is the correct durable save approach."
+      },
+      {
+        "question": "A game streams a 500 MB audio file via `read()` with 16 GB RAM and `dirty_ratio = 20`. Calculate how much dirty page cache can accumulate before `write()` blocks, and how long the kernel spends flushing at 3 GB/s SSD write speed.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "dirty_ratio",
+          "page cache",
+          "writeback",
+          "3.2 GB",
+          "1.07 seconds",
+          "flush"
+        ],
+        "explanation": "`dirty_ratio = 20` means when 20% of RAM is dirty pages, `write()` blocks. 20% of 16 GB = 3.2 GB of dirty pages. The streaming is reading (audio playback), not writing, so `dirty_ratio` doesn't directly affect reads. But if the system is also writing (save, logs), once dirty pages reach 3.2 GB, all `write()` calls block until the kernel flushes. At 3 GB/s SSD write speed, flushing 3.2 GB takes ~1.07 seconds — during which the application is stalled on any `write()` call. This is why write-intensive applications must manage dirty ratios."
+      }
+    ]
+  },
+  {
+    "noteName": "System Software — Chapter Summary",
+    "questions": [
+      {
+        "question": "What are the Three Phases of the source code to running process journey?",
+        "options": [
+          "Write, Build, Deploy",
+          "Compile, Link, Run",
+          "Parse, Optimize, Execute",
+          "Preprocess, Assemble, Load"
+        ],
+        "correctAnswer": "Compile, Link, Run",
+        "explanation": "The three phases: (1) Compile: C++ → IR → optimization passes → assembly → .o object file. (2) Link: symbol resolution, relocation, PLT/GOT for dynamic libraries. (3) Run: kernel ELF loader maps segments, sets up stack/heap, jumps to `_start` which eventually calls `main()`."
+      },
+      {
+        "question": "What is the vDSO trick and why is `clock_gettime` so fast?",
+        "options": [
+          "It caches the time in L1 cache",
+          "The kernel maps read-only code + a shared time data page into every process — the 'syscall' is just a memory read with no ring transition",
+          "It uses a dedicated hardware timer register",
+          "It runs at real-time priority                                                                                                             "
+        ],
+        "correctAnswer": "The kernel maps read-only code + a shared time data page into every process — the 'syscall' is just a memory read with no ring transition",
+        "explanation": "vDSO (`linux-vdso.so.1`) maps kernel-provided code into user space. For `clock_gettime`, the kernel updates a shared page (`vvar`) with time data using a seq-lock protocol. The 'syscall' is just a memory read (~20 ns) with no ring transition (~70 cycles saved)."
+      },
+      {
+        "question": "What does the linker's PLT/GOT mechanism enable for dynamic libraries?",
+        "options": [
+          "Static linking of all symbols at compile time",
+          "Lazy binding — function addresses are resolved on first call via `_dl_runtime_resolve`, not at load time",
+          "Inlining of library functions into the executable",
+          "Preloading of all library code at startup                                                                "
+        ],
+        "correctAnswer": "Lazy binding — function addresses are resolved on first call via `_dl_runtime_resolve`, not at load time",
+        "explanation": "PLT (Procedure Linkage Table) + GOT (Global Offset Table): on first call to a dynamic function, the PLT stub calls `_dl_runtime_resolve` which finds the symbol, patches the GOT entry, and jumps to the function. Subsequent calls go directly through the patched GOT — zero resolution overhead."
+      },
+      {
+        "question": "What is the kernel's ELF loader (`load_elf_binary`) responsible for at process startup?",
+        "options": [
+          "Compiling the source code                                                                                              ",
+          "Reading program headers, mapping segments into memory (text=RX, data=RW), setting up stack/heap, and jumping to _start",
+          "Optimizing the machine code",
+          "Resolving dynamic library symbols"
+        ],
+        "correctAnswer": "Reading program headers, mapping segments into memory (text=RX, data=RW), setting up stack/heap, and jumping to _start",
+        "explanation": "The ELF loader in `fs/binfmt_elf.c`: maps PT_LOAD segments via `elf_map()`, sets up the initial stack with argc/argv/envp/auxv, creates the initial brk heap, and transfers control to `e_entry` (typically `_start` in crt1.o). The dynamic linker resolves shared library symbols."
+      },
+      {
+        "question": "How many CPU cycles does the x86-64 `syscall` instruction approximately cost?",
+        "options": [
+          "~1 cycle",
+          "~20 cycles",
+          "~70 cycles",
+          "~500 cycles"
+        ],
+        "correctAnswer": "~70 cycles",
+        "explanation": "The `syscall` instruction (via LSTAR MSR) costs ~70 cycles — it switches to ring 0, saves RIP/RFLAGS, and jumps to the kernel's syscall handler. The legacy `int 0x80` is much slower. The total syscall overhead (instruction + handler entry/exit) is ~1 µs for a trivial syscall like `getpid()`."
+      },
+      {
+        "question": "In the compiler pipeline, what stage converts the AST to LLVM IR / GIMPLE?",
+        "options": [
+          "Preprocessor",
+          "Lexer                             ",
+          "Semantic analysis / IR generation",
+          "Assembler"
+        ],
+        "correctAnswer": "Semantic analysis / IR generation",
+        "explanation": "After the parser builds the AST, semantic analysis performs type checking and overload resolution, then IR generation lowers the AST to an intermediate representation (LLVM IR for Clang, GIMPLE for GCC). Optimization passes then transform the IR before code generation produces target assembly."
+      },
+      {
+        "question": "What is the purpose of relocation entries (e.g., R_X86_64_PC32) in object files?",
+        "options": [
+          "To move the .text section to a different address",
+          "To mark addresses that can't be known until link/load time — the linker patches them with the final address",
+          "To encrypt symbol addresses                                                                                 ",
+          "To compress the object file"
+        ],
+        "correctAnswer": "To mark addresses that can't be known until link/load time — the linker patches them with the final address",
+        "explanation": "Relocation entries tell the linker: 'at this offset in the code, there's a reference to symbol X — patch it with X's final address plus this addend.' R_X86_64_PC32 is PC-relative: the patched value = S + A - P (symbol + addend - PC). This enables position-independent code."
+      },
+      {
+        "question": "What does `_start` do before calling `main()`?",
+        "options": [
+          "Initializes global variables to zero",
+          "Calls `__libc_start_main` which initializes libc, processes argv/envp, calls global constructors (.init_array), then calls main()",
+          "Sets up the stack canary                                                                                                          ",
+          "Performs Just-In-Time compilation of hot functions"
+        ],
+        "correctAnswer": "Calls `__libc_start_main` which initializes libc, processes argv/envp, calls global constructors (.init_array), then calls main()",
+        "explanation": "`_start` (in crt1.o) is the real entry point. It sets up argc/argv on the stack and calls `__libc_start_main`, which: initializes libc internals, sets up the environment, runs global constructors (functions in `.init_array` section), and finally calls `main(argc, argv, envp)`. After `main` returns, it calls `exit()`."
+      },
+      {
+        "question": "Trace the full compilation of `int add(int a, int b) { return a + b; }` from C++ source to the `call` instruction that invokes it. Name every stage and the key transformation at each.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "preprocessor",
+          "lexer",
+          "parser",
+          "AST",
+          "IR",
+          "optimization",
+          "code generation",
+          "assembler",
+          "object file"
+        ],
+        "explanation": "1. Preprocessor: expands #include, #define (trivial for this function). 2. Lexer: text → tokens (int, add, (, int, a, ...). 3. Parser: tokens → AST (FunctionDecl with body ReturnStmt containing BinaryOp +). 4. Semantic analysis: type checking, resolves `a` and `b` to int parameters. 5. IR generation (LLVM IR): `define i32 @add(i32 %a, i32 %b) { %sum = add i32 %a, %b; ret i32 %sum }`. 6. Optimization: at -O2, the function is trivial enough to inline at call sites. 7. Code generation (x86-64): `leal (%rdi,%rsi), %eax; ret`. 8. Assembler: assembly → bytes in .text section of .o file. 9. Linker: resolves `add` symbol, produces final executable."
+      },
+      {
+        "question": "Write `getpid()` in a tight loop vs `clock_gettime()` — the former does a real syscall (~70 cycles + ~1 µs), the latter uses vDSO (~20 ns). Explain why vDSO is faster at the hardware level (ring transitions, privilege checks, TLB behavior).",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "vDSO",
+          "syscall",
+          "ring transition",
+          "ring 0",
+          "ring 3",
+          "LSTAR",
+          "SWAPGS",
+          "seq-lock"
+        ],
+        "explanation": "`syscall` instruction: switches from ring 3 to ring 0 → saves RIP/RFLAGS to RCX/R11 → loads new RIP from LSTAR MSR → kernel saves all registers via SAVE_REGS → executes syscall handler → restores registers → `sysretq` back to ring 3. Each ring transition flushes the TLB (partially, mitigated by PCID) and changes privilege level. vDSO: runs in ring 3 (user mode). `clock_gettime` reads a value from the `vvar` page (mapped read-only) protected by a seq-lock: read sequence counter → read time data → re-read sequence counter (if changed, retry). No ring transition, no privilege check, no TLB flush — just a few memory reads."
+      }
+    ]
+  },
+  {
+    "noteName": "Function Calls — Chapter Summary",
+    "questions": [
+      {
+        "question": "What is the approximate cost of a virtual function call through a vtable vs a non-virtual call?",
+        "options": [
+          "Same cost — both are direct calls                                                                                                ",
+          "Virtual call costs ~15-20 extra cycles: load vtable pointer → load function pointer → indirect call → possible branch mispredict",
+          "Virtual calls are 10× slower than non-virtual",
+          "Virtual calls have no extra cost on modern CPUs"
+        ],
+        "correctAnswer": "Virtual call costs ~15-20 extra cycles: load vtable pointer → load function pointer → indirect call → possible branch mispredict",
+        "explanation": "A non-virtual call: `call known_address`. A virtual call: `mov rax, [rdi]` (load vtable pointer from object) → `call [rax + offset]` (indirect call through vtable). Two dependent loads before the branch target is known. If the branch predictor mispredicts the target (common with polymorphic calls), add ~15-20 cycles pipeline flush penalty."
+      },
+      {
+        "question": "On System V AMD64, which registers hold the first four integer arguments?",
+        "options": [
+          "rax, rbx, rcx, rdx",
+          "rdi, rsi, rdx, rcx",
+          "r8, r9, r10, r11",
+          "rcx, rdx, r8, r9"
+        ],
+        "correctAnswer": "rdi, rsi, rdx, rcx",
+        "explanation": "System V AMD64 (Linux/macOS): first 6 integer args in rdi, rsi, rdx, rcx, r8, r9. Microsoft x64: first 4 in rcx, rdx, r8, r9. This difference is why Linux and Windows binaries are not ABI-compatible — the same function call compiles to different register assignments."
+      },
+      {
+        "question": "What is a stack canary and how does it detect buffer overflows?",
+        "options": [
+          "A compiler flag that warns about large stack frames",
+          "A random value placed between local variables and the saved return address — checked before `ret`; if corrupted, the overflow is detected",
+          "A hardware register that tracks stack bounds",
+          "A kernel feature that monitors stack growth                                                                                               "
+        ],
+        "correctAnswer": "A random value placed between local variables and the saved return address — checked before `ret`; if corrupted, the overflow is detected",
+        "explanation": "Stack canary (`-fstack-protector`): a random value is placed between local buffers and the saved return address. Before the function returns, the canary is checked. If a buffer overflow wrote past the buffer, the canary is corrupted → the program aborts instead of returning to attacker-controlled address. The canary value is randomized per process (from /dev/urandom or AT_RANDOM)."
+      },
+      {
+        "question": "What does Intel CET (Control-flow Enforcement Technology) protect against?",
+        "options": [
+          "Cache timing attacks",
+          "ROP/JOP attacks — a hardware shadow stack ensures `ret` pops the same address that the corresponding `call` pushed",
+          "SQL injection                                                                                                      ",
+          "Integer overflow bugs"
+        ],
+        "correctAnswer": "ROP/JOP attacks — a hardware shadow stack ensures `ret` pops the same address that the corresponding `call` pushed",
+        "explanation": "CET adds a hardware shadow stack: every `call` pushes the return address to both the regular stack AND the shadow stack. `ret` pops from both and compares them — if they differ, a #CP (Control Protection) exception is raised. This prevents Return-Oriented Programming (ROP) attacks that overwrite return addresses."
+      },
+      {
+        "question": "What is the calling convention mismatch trap described in the summary?",
+        "options": [
+          "Compiling with the wrong optimization level",
+          "If a Windows DLL expects `stdcall` but you declare it as `cdecl`, the stack pointer is wrong after the call returns — causing corruption or crash",
+          "Using too many function arguments                                                                                                                 ",
+          "Calling a function from the wrong thread"
+        ],
+        "correctAnswer": "If a Windows DLL expects `stdcall` but you declare it as `cdecl`, the stack pointer is wrong after the call returns — causing corruption or crash",
+        "explanation": "`stdcall`: callee cleans the stack (`ret N`). `cdecl`: caller cleans the stack (`add rsp, N`). If you mismatch: both the caller AND callee try to clean (stack underflow) or NEITHER cleans (stack overflow). Either way, RSP is wrong after the call — the next `ret` pops garbage."
+      },
+      {
+        "question": "What does ASLR (Address Space Layout Randomization) randomize?",
+        "options": [
+          "Only the stack address                                                                   ",
+          "Code, data, stack, heap, and library base addresses — attackers can't hardcode addresses",
+          "The instruction execution order",
+          "The register allocation"
+        ],
+        "correctAnswer": "Code, data, stack, heap, and library base addresses — attackers can't hardcode addresses",
+        "explanation": "ASLR randomizes the base addresses of the executable, libraries, stack, and heap at each process launch. This means even if an attacker discovers a vulnerability, they can't hardcode the address of their payload or a useful gadget — they must first leak an address via an information disclosure."
+      },
+      {
+        "question": "What is the red zone in System V AMD64 ABI?",
+        "options": [
+          "A security boundary in the kernel                                                                      ",
+          "128 bytes below RSP that leaf functions can use without adjusting RSP — signal handlers won't touch it",
+          "A memory region reserved for debugging",
+          "The area between the stack and heap"
+        ],
+        "correctAnswer": "128 bytes below RSP that leaf functions can use without adjusting RSP — signal handlers won't touch it",
+        "explanation": "System V's red zone: 128 bytes below the current stack pointer reserved for the current function. Leaf functions (functions that don't call other functions) can use this space without `sub rsp, N` — saving a few instructions. Signal handlers are required to skip the red zone when delivering signals. Microsoft x64 does NOT have a red zone."
+      },
+      {
+        "question": "What does `-fcf-protection` enable in GCC/Clang?",
+        "options": [
+          "Stack canaries for all functions",
+          "Intel CET (shadow stack + indirect branch tracking)",
+          "Address sanitizer (ASan)                            ",
+          "Control flow graph visualization"
+        ],
+        "correctAnswer": "Intel CET (shadow stack + indirect branch tracking)",
+        "explanation": "`-fcf-protection=full` enables both CET features: `-fcf-protection=branch` (ENDBRANCH instructions for indirect branch tracking) and `-fcf-protection=return` (shadow stack for return address integrity). This requires a CPU with CET support (Intel Tiger Lake+)."
+      },
+      {
+        "question": "Draw the stack frame layout for `int foo(int a, int b, int c) { int d = a + b; return d + c; }` on System V AMD64 at -O0. Label: return address, saved RBP, local `d`, and where parameters `a`, `b`, `c` are. Include offsets from RBP.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "stack frame",
+          "RBP",
+          "return address",
+          "saved RBP",
+          "local",
+          "parameter",
+          "offset",
+          "rbp-4"
+        ],
+        "explanation": "Stack layout (high to low address): [c] at RBP+16 (3rd arg, passed in RDX, spilled to stack at -O0), [b] at RBP+12 (from RSI), [a] at RBP+8 (from RDI), [return address] at RBP+8 (caller's, before push rbp — actually at RBP+8 after prologue), [saved RBP] at RBP+0 (old frame pointer), [d] at RBP-4 (local int). Note: at -O0, register args are spilled to the stack for debugging. At -O2, `d` is optimized out, args stay in registers, and the function may be inlined entirely."
+      },
+      {
+        "question": "Compare the Microsoft x64 and System V AMD64 calling conventions for a function with 8 integer parameters. Where do parameters 7 and 8 go in each convention, and why does this prevent cross-OS binary compatibility?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "Microsoft x64",
+          "System V",
+          "calling convention",
+          "stack",
+          "register",
+          "shadow space",
+          "red zone",
+          "ABI"
+        ],
+        "explanation": "System V: params 1-6 in RDI, RSI, RDX, RCX, R8, R9. Params 7-8 go on the stack (right-to-left, caller cleanup). Red zone: 128 bytes below RSP usable by leaf functions. Microsoft x64: params 1-4 in RCX, RDX, R8, R9. Params 5-8 (and 7-8) go on the stack. Shadow space: 32 bytes reserved below return address. The different register assignments mean the same C++ function compiles to different assembly. A .so compiled for Linux (System V) expects args in RDI/RSI; a .dll compiled for Windows (MS x64) passes them in RCX/RDX — they're binary-incompatible even on the same x86-64 hardware."
+      }
+    ]
+  }
+]

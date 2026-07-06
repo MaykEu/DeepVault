@@ -1,0 +1,1797 @@
+[
+  {
+    "noteName": "00 — The Internet Stack",
+    "questions": [
+      {
+        "question": "In the OSI model, which layer is responsible for routing packets between networks using IP addresses?",
+        "options": [
+          "Data Link (Layer 2)",
+          "Network (Layer 3)",
+          "Transport (Layer 4)",
+          "Session (Layer 5)"
+        ],
+        "correctAnswer": "Network (Layer 3)",
+        "explanation": "The Network layer (Layer 3) handles logical addressing and routing. IP (Internet Protocol) operates at this layer, determining how packets travel from source to destination across multiple networks. The Data Link layer (Layer 2) uses MAC addresses for local delivery, not inter-network routing."
+      },
+      {
+        "question": "What is the minimal TCP packet overhead in bytes (Ethernet + IP + TCP headers)?",
+        "options": [
+          "34 bytes",
+          "54 bytes",
+          "74 bytes",
+          "44 bytes"
+        ],
+        "correctAnswer": "54 bytes",
+        "explanation": "Minimal overhead: 14 bytes Ethernet header + 20 bytes IP header + 20 bytes TCP header = 54 bytes total. For a 20-byte game update, that's 270% overhead — which is why games batch updates into larger packets."
+      },
+      {
+        "question": "Which TCP/IP model layer combines OSI layers 5-7 (Session, Presentation, Application)?",
+        "options": [
+          "Transport   ",
+          "Internet ",
+          "Application",
+          "Link "
+        ],
+        "correctAnswer": "Application",
+        "explanation": "The TCP/IP model's Application layer maps to OSI layers 5-7. It handles protocols like HTTP, DNS, TLS, and SSH — everything above the transport layer. The TCP/IP model has only 4 layers vs OSI's 7."
+      },
+      {
+        "question": "During encapsulation, what does TLS add to a packet traveling down the stack?",
+        "options": [
+          "Source and destination ports      ",
+          "A record header, MAC, and padding",
+          "IP routing information ",
+          "MAC addresses "
+        ],
+        "correctAnswer": "A record header, MAC, and padding",
+        "explanation": "TLS adds a record header (~5 bytes), an authentication tag (MAC), and padding to the application data. This encrypts the payload so intermediate routers can't read the content, though they can still see the TCP/IP headers."
+      },
+      {
+        "question": "Under the kernel's network stack, which subsystem handles firewall rules and NAT?",
+        "options": [
+          "Socket layer ",
+          "Netfilter (iptables/nftables)",
+          "Device driver ",
+          "Transport layer               "
+        ],
+        "correctAnswer": "Netfilter (iptables/nftables)",
+        "explanation": "Netfilter sits between the Network and Link layers in the kernel stack, processing firewall rules (iptables/nftables) and NAT. Packets pass through chains like PREROUTING, FORWARD, and POSTROUTING before reaching the device driver."
+      },
+      {
+        "question": "What kernel structure contains a socket's send/receive buffers and protocol state?",
+        "options": [
+          "struct file",
+          "struct sock",
+          "struct inode",
+          "struct task_struct"
+        ],
+        "correctAnswer": "struct sock",
+        "explanation": "The kernel maintains a `struct sock` for each socket, containing send/receive buffers (sk_buff queues), protocol state (TCP control block with seq/ack numbers, congestion window), and a pointer to the protocol handler."
+      },
+      {
+        "question": "Why does a 100-byte game message become 154 bytes on the wire with TCP?",
+        "options": [
+          "20 IP + 20 TCP + 14 Ethernet headers are added",
+          "TLS encryption doubles the payload size        ",
+          "UDP adds 54 bytes of padding ",
+          "The NIC adds a 54-byte checksum "
+        ],
+        "correctAnswer": "20 IP + 20 TCP + 14 Ethernet headers are added",
+        "explanation": "Each layer adds its own header during encapsulation: IP adds 20 bytes, TCP adds 20 bytes, and Ethernet adds 14 bytes, totaling 54 bytes of overhead on top of the 100-byte payload."
+      },
+      {
+        "question": "What does `SO_RCVBUF` / `SO_SNDBUF` control in the socket API?",
+        "options": [
+          "The encryption key lengthaltaltaltalt ",
+          "The buffer sizes affecting throughput via bandwidth-delay product",
+          "The number of allowed connectionsaltalt (standard) ",
+          "The IP version (v4 vs v6)altaltaltalt . — as specified            "
+        ],
+        "correctAnswer": "The buffer sizes affecting throughput via bandwidth-delay product",
+        "explanation": "These socket options control the kernel's send and receive buffer sizes, directly affecting maximum throughput. If the buffer is smaller than the bandwidth-delay product (BDP), the sender can't fill the pipe."
+      },
+      {
+        "question": "On the receive path, what mechanism does the NIC use to notify the kernel of incoming packets?",
+        "options": [
+          "Polling via a timer interrupt every 1 ms",
+          "NIC RX interrupt → NAPI polling (net_rx_action)",
+          "The CPU continuously reads the NIC's registers (standard)",
+          "A DMA transfer directly to user space"
+        ],
+        "correctAnswer": "NIC RX interrupt → NAPI polling (net_rx_action)",
+        "explanation": "Modern Linux uses NAPI (New API): the NIC raises an RX interrupt, the kernel disables further RX interrupts and switches to polling mode via `net_rx_action`. This reduces interrupt overhead under high packet rates."
+      },
+      {
+        "question": "Which socket type constant is used to create a UDP socket?",
+        "options": [
+          "SOCK_STREAM",
+          "SOCK_RAW",
+          "SOCK_DGRAM",
+          "SOCK_SEQPACKET"
+        ],
+        "correctAnswer": "SOCK_DGRAM",
+        "explanation": "`SOCK_DGRAM` creates a datagram (UDP) socket — connectionless, unordered, unreliable. `SOCK_STREAM` creates a TCP socket. `SOCK_RAW` gives direct IP packet access."
+      },
+      {
+        "question": "What is the bandwidth-delay product used for in networking?",
+        "options": [
+          "Calculating the maximum number of connections (standard)     ",
+          "Determining the required buffer size to fully utilize a link",
+          "Measuring packet loss rate ",
+          "Computing the encryption overhead . — as specified "
+        ],
+        "correctAnswer": "Determining the required buffer size to fully utilize a link",
+        "explanation": "BDP = bandwidth × RTT. It's the amount of data 'in flight' needed to keep the pipe full. If your socket buffer is smaller than BDP, throughput is limited by the buffer, not the link speed."
+      },
+      {
+        "question": "In the TCP/IP model, what OSI layers does the Link layer combine?",
+        "options": [
+          "Layers 1-2 (Physical + Data Link)",
+          "Layers 3-4 (Network + Transport)",
+          "Layers 5-7 (Session + Presentation + Application)",
+          "Layers 2-3 (Data Link + Network)"
+        ],
+        "correctAnswer": "Layers 1-2 (Physical + Data Link)",
+        "explanation": "The TCP/IP Link layer merges OSI layers 1 and 2 — the Physical layer (bits on wire) and Data Link layer (frames, MAC addresses). It covers Ethernet, Wi-Fi (802.11), and PPP."
+      },
+      {
+        "question": "Explain why batching 70 small 20-byte game updates into one 1400-byte packet is more efficient than sending them individually. Include the math for header overhead.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "overhead",
+          "54 bytes",
+          "efficiency",
+          "batch",
+          "header"
+        ],
+        "explanation": "Individual: 70 × (20 data + 54 headers) = 70 × 74 = 5,180 bytes on the wire. Batched: 1 × (1400 data + 54 headers) = 1,454 bytes. Savings: ~72%. Each individual packet incurs the full 54-byte overhead regardless of payload size, so batching amortizes the headers across more data."
+      },
+      {
+        "question": "Trace the path of a `sendto()` call from user space to the physical wire, naming each kernel layer the data passes through.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "socket layer",
+          "transport",
+          "network",
+          "netfilter",
+          "link",
+          "device driver",
+          "DMA",
+          "NIC"
+        ],
+        "explanation": "User space: sendto() syscall → Socket layer (find socket, check permissions) → Transport layer (TCP/UDP: segment data, manage state) → Network layer (IP: add header, route lookup, fragment if needed) → Netfilter (firewall rules, NAT) → Link layer (ARP lookup, add Ethernet header) → Device driver (DMA to NIC TX ring buffer) → Hardware (NIC → PHY → cable)."
+      }
+    ]
+  },
+  {
+    "noteName": "01 — IP, Subnets & Routing",
+    "questions": [
+      {
+        "question": "How many bits are in an IPv4 address?",
+        "options": [
+          "64 bits",
+          "32 bits",
+          "128 bits",
+          "16 bits"
+        ],
+        "correctAnswer": "32 bits",
+        "explanation": "IPv4 uses 32-bit addresses (e.g., 142.250.80.46), giving ~4.3 billion possible addresses. IPv6 uses 128 bits. The 32-bit limit is why we ran out of IPv4 addresses in 2011."
+      },
+      {
+        "question": "A /24 CIDR network has how many usable host addresses?",
+        "options": [
+          "256",
+          "254",
+          "255",
+          "128"
+        ],
+        "correctAnswer": "254",
+        "explanation": "A /24 network has 2^(32-24) = 2^8 = 256 addresses total. Subtract 2: the network address (.0) and broadcast address (.255) are reserved, leaving 254 usable host addresses."
+      },
+      {
+        "question": "Which IP range is reserved for private home networks (RFC 1918)?",
+        "options": [
+          "10.0.0.0/8",
+          "172.16.0.0/12",
+          "192.168.0.0/16 (standard)",
+          "All of the above"
+        ],
+        "correctAnswer": "All of the above",
+        "explanation": "All three are private ranges: 10.0.0.0/8 (enterprise), 172.16.0.0/12 (medium), and 192.168.0.0/16 (home). None are routable on the public internet — they require NAT to reach external hosts."
+      },
+      {
+        "question": "What does a home router's NAT table map?",
+        "options": [
+          "MAC addresses to IP addressesalt (standard) ",
+          "Internal (IP:port) to external (IP:port) mappings",
+          "Domain names to IP addressesalt . — as specified  ",
+          "Process IDs to network sockets "
+        ],
+        "correctAnswer": "Internal (IP:port) to external (IP:port) mappings",
+        "explanation": "The NAT table maps internal (private IP:port) to external (public IP:port) pairs, along with the destination. This allows the router to correctly forward response packets back to the originating internal device."
+      },
+      {
+        "question": "How do routers select which path to forward a packet when multiple routing table entries match?",
+        "options": [
+          "Random selection",
+          "Shortest metric wins",
+          "Longest prefix match wins",
+          "First entry in the table wins"
+        ],
+        "correctAnswer": "Longest prefix match wins",
+        "explanation": "Routers use Longest Prefix Match (LPM): the entry with the most specific (longest) prefix that matches the destination is chosen. For example, a /24 match beats a /16 match, which beats the default route 0.0.0.0/0."
+      },
+      {
+        "question": "Why can't you host a game server behind NAT without port forwarding?",
+        "options": [
+          "NAT blocks all incoming connections by default (standard)       ",
+          "There's no NAT table entry for unsolicited incoming connections",
+          "NAT encrypts all trafficaltaltaltaltalt ",
+          "ISPs block game portsaltaltaltaltaltalt . — as specified "
+        ],
+        "correctAnswer": "There's no NAT table entry for unsolicited incoming connections",
+        "explanation": "NAT creates table entries only for outbound connections. An incoming connection from the internet has no matching entry, so the router drops it. Port forwarding adds a DNAT rule to the PREROUTING chain, mapping an external port to an internal IP:port."
+      },
+      {
+        "question": "What happens when a packet's TTL reaches 0?",
+        "options": [
+          "The packet is forwarded with a warning ",
+          "The router drops it and sends ICMP 'Time Exceeded' back",
+          "The packet is queued for later delivery (standard)      ",
+          "The TTL is reset to 64 — see docs . — as specified"
+        ],
+        "correctAnswer": "The router drops it and sends ICMP 'Time Exceeded' back",
+        "explanation": "TTL prevents infinite routing loops. Each router decrements TTL by 1. When it hits 0, the router drops the packet and sends an ICMP Time Exceeded message to the source. `traceroute` exploits this by sending packets with incrementing TTL values."
+      },
+      {
+        "question": "What protocol do ISPs use to exchange routing information globally?",
+        "options": [
+          "OSPF",
+          "RIP",
+          "BGP",
+          "ICMP"
+        ],
+        "correctAnswer": "BGP",
+        "explanation": "BGP (Border Gateway Protocol, RFC 4271) is the path-vector protocol used between Autonomous Systems (ASes) to exchange routing information. The global BGP table contains ~900,000 routes. OSPF and RIP are interior gateway protocols used within a single organization."
+      },
+      {
+        "question": "How does IPv6 simplify the IP header compared to IPv4?",
+        "options": [
+          "Fixed 40-byte header with no checksum and no fragmentation in routers",
+          "Variable length header with built-in encryptionalt                    ",
+          "Uses 64-bit addresses with simplified routingaltalt",
+          "Eliminates all headers for faster processingaltalt "
+        ],
+        "correctAnswer": "Fixed 40-byte header with no checksum and no fragmentation in routers",
+        "explanation": "IPv6 (RFC 8200) uses a fixed 40-byte header: no header checksum (delegated to upper/lower layers), no fragmentation in routers (path MTU discovery required), and extension headers for optional features. This simplifies router processing compared to IPv4's 20-60 byte variable header."
+      },
+      {
+        "question": "What does CIDR notation `192.168.1.0/24` mean?",
+        "options": [
+          "Network 192.168.1.0 with 24 hostsaltaltaltalt ",
+          "The first 24 bits are the network prefix, leaving 8 bits for hosts",
+          "A network with 24 subnetsaltaltaltaltaltalt ",
+          "24-bit addressing modealtaltaltaltaltaltalt . — as specified       "
+        ],
+        "correctAnswer": "The first 24 bits are the network prefix, leaving 8 bits for hosts",
+        "explanation": "CIDR /24 means the subnet mask is 255.255.255.0 — the first 24 bits identify the network, and the remaining 8 bits identify hosts within that network (256 addresses, 254 usable)."
+      },
+      {
+        "question": "What is SLAAC in IPv6?",
+        "options": [
+          "A security protocol for encrypting packetsaltaltaltalt                      ",
+          "Stateless Address Auto-Configuration — devices generate their own addresses",
+          "A routing algorithmaltaltaltaltaltaltaltaltaltalt ",
+          "A NAT replacementaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Stateless Address Auto-Configuration — devices generate their own addresses",
+        "explanation": "SLAAC (RFC 4862) allows IPv6 devices to auto-configure their addresses using Router Advertisement messages without needing a DHCP server. The device combines the network prefix from the router with its own interface identifier."
+      },
+      {
+        "question": "Which private IP range uses the /12 prefix?",
+        "options": [
+          "10.0.0.0/8",
+          "172.16.0.0/12",
+          "192.168.0.0/16",
+          "169.254.0.0/16"
+        ],
+        "correctAnswer": "172.16.0.0/12",
+        "explanation": "172.16.0.0/12 covers 172.16.0.0 through 172.31.255.255 — the medium-sized private range. 10.0.0.0/8 is enterprise, 192.168.0.0/16 is home. 169.254.0.0/16 is link-local (APIPA), not private."
+      },
+      {
+        "question": "How does the kernel's routing table implement longest-prefix-match lookups efficiently?",
+        "options": [
+          "Linear scan of all routesalt ",
+          "Radix tree (fib_trie) indexed by prefix length",
+          "Hash table with IP as keyalt . — as specified  ",
+          "Binary search on sorted routes (standard) "
+        ],
+        "correctAnswer": "Radix tree (fib_trie) indexed by prefix length",
+        "explanation": "Linux uses a radix tree (`fib_trie`) for the Forwarding Information Base. LPM lookups are O(key_length) = O(32) for IPv4 — each bit of the destination address is traversed down the trie until the longest matching prefix is found."
+      },
+      {
+        "question": "Explain how NAT (specifically NAPT) enables 20 devices on a 192.168.1.0/24 network to share a single public IP. What information does the NAT table store?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "NAT",
+          "port",
+          "translation",
+          "NAPT",
+          "table",
+          "192.168",
+          "public IP"
+        ],
+        "explanation": "NAPT (Network Address and Port Translation) rewrites both the source IP and source port. When 192.168.1.5:54321 sends to google.com:443, the router rewrites the source to its public IP with a new port (e.g., 203.0.113.10:60001). The NAT table stores the mapping {internal IP:port → external port, destination}. When the response arrives at 203.0.113.10:60001, the router looks up the mapping and forwards to 192.168.1.5:54321. Port numbers provide the multiplexing — up to 65,535 simultaneous connections per destination."
+      },
+      {
+        "question": "A packet from your PC to 142.250.80.46 traverses your routing table. The table has entries: 192.168.1.0/24 via eth0, 10.0.0.0/8 via 192.168.1.254, and 0.0.0.0/0 via 203.0.113.1. Which route is selected and why?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "default",
+          "0.0.0.0",
+          "longest prefix",
+          "match",
+          "142",
+          "192",
+          "10"
+        ],
+        "explanation": "The default route 0.0.0.0/0 is selected. Check: 142.250.80.46 does NOT match 192.168.1.0/24 (142 ≠ 192). It does NOT match 10.0.0.0/8 (142 ≠ 10). The default route 0.0.0.0/0 matches everything (prefix length 0), so the packet is forwarded to gateway 203.0.113.1. This is longest prefix match — the only prefix that matches is the default."
+      }
+    ]
+  },
+  {
+    "noteName": "02 — TCP Deep Dive",
+    "questions": [
+      {
+        "question": "What state does a TCP connection enter after receiving a FIN and before fully closing, and why does it exist?",
+        "options": [
+          "CLOSE_WAIT — to buffer remaining dataaltaltaltaltaltaltaltalt                           ",
+          "TIME_WAIT — to prevent delayed duplicate segments from interfering with new connections",
+          "FIN_WAIT1 — to wait for the other side's FINaltaltaltaltaltalt",
+          "LAST_ACK — to send the final acknowledgmentaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "TIME_WAIT — to prevent delayed duplicate segments from interfering with new connections",
+        "explanation": "TIME_WAIT lasts 2×MSL (typically 60-120 seconds). It ensures any delayed duplicate segments from the old connection have expired before the same (IP, port) pair is reused. This is why servers need `SO_REUSEADDR` to immediately rebind a port after closing."
+      },
+      {
+        "question": "What triggers TCP Fast Retransmit?",
+        "options": [
+          "A single duplicate ACK",
+          "An RTO timer expiration",
+          "Three duplicate ACKs",
+          "A SACK block indicating a gap"
+        ],
+        "correctAnswer": "Three duplicate ACKs",
+        "explanation": "When the sender receives 3 duplicate ACKs (same ACK number repeated), it assumes the next expected segment was lost and retransmits immediately — without waiting for the RTO timer. This is much faster than waiting for a timeout."
+      },
+      {
+        "question": "How does BBR (Bottleneck Bandwidth and Round-trip) differ fundamentally from loss-based congestion control like CUBIC?",
+        "options": [
+          "BBR uses larger packetsaltaltaltaltaltaltaltaltaltalt ",
+          "BBR models the pipe by measuring bandwidth and RTT instead of reacting to packet loss",
+          "BBR retransmits more aggressivelyaltaltaltaltaltaltaltalt (standard) ",
+          "BBR uses a smaller congestion windowaltaltaltaltaltaltalt . — as specified            "
+        ],
+        "correctAnswer": "BBR models the pipe by measuring bandwidth and RTT instead of reacting to packet loss",
+        "explanation": "BBR doesn't require packet loss to slow down — it detects queue buildup from increasing RTT (bufferbloat). By operating at the optimal point (full bandwidth, minimal queue), BBR can achieve 10-100× better throughput than CUBIC on paths with excessive router buffering."
+      },
+      {
+        "question": "What is the Jacobson/Karels algorithm used for in TCP?",
+        "options": [
+          "Encrypting the payloadaltaltaltalt ",
+          "Computing the Retransmission Timeout (RTO) from RTT samples",
+          "Selecting the optimal MSSaltaltalt ",
+          "Managing the receive windowaltaltalt                        "
+        ],
+        "correctAnswer": "Computing the Retransmission Timeout (RTO) from RTT samples",
+        "explanation": "The algorithm computes SRTT (smoothed RTT) and RTTVAR (RTT variance): SRTT = (1-α)×SRTT + α×RTT_sample (α=1/8), RTTVAR = (1-β)×RTTVAR + β×|SRTT - RTT_sample| (β=1/4), RTO = SRTT + max(G, 4×RTTVAR). This adapts the timeout to network conditions."
+      },
+      {
+        "question": "What problem does Nagle's algorithm combined with Delayed ACK cause for interactive applications?",
+        "options": [
+          "Excessive bandwidth usage (standard)       ",
+          "A 200 ms stall on small consecutive writes",
+          "Packet reordering . — as specified ",
+          "Connection drops "
+        ],
+        "correctAnswer": "A 200 ms stall on small consecutive writes",
+        "explanation": "Nagle's algorithm waits for ACK before sending small segments. Delayed ACK waits up to 40 ms before sending ACK. Together: sender waits for ACK, receiver waits to send ACK — creating a stall. `TCP_NODELAY` disables Nagle's algorithm for immediate sends."
+      },
+      {
+        "question": "What is Head-of-Line (HOL) blocking in TCP?",
+        "options": [
+          "The first packet in a connection is always the slowestaltalt                        ",
+          "When one lost segment blocks delivery of all subsequent segments to the application",
+          "When the sender's buffer is fullaltaltaltaltaltaltaltalt ",
+          "When the receiver advertises a zero windowaltaltaltaltalt "
+        ],
+        "correctAnswer": "When one lost segment blocks delivery of all subsequent segments to the application",
+        "explanation": "TCP delivers data in-order. If segment #5 is lost, segments #6-10 sit in the kernel's out-of-order queue until #5 is retransmitted and arrives. This is why HTTP/3 uses QUIC (UDP-based) — multiplexed streams so a lost packet on one stream doesn't block others."
+      },
+      {
+        "question": "What is the purpose of Selective Acknowledgment (SACK) in TCP?",
+        "options": [
+          "To acknowledge every packet individuallyaltaltaltaltaltaltaltalt                            ",
+          "To report non-contiguous blocks of received data so only missing segments are retransmitted",
+          "To negotiate the maximum segment sizealtaltaltaltaltaltaltalt ",
+          "To compress the acknowledgment streamaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "To report non-contiguous blocks of received data so only missing segments are retransmitted",
+        "explanation": "Without SACK (Go-Back-N), a single lost segment causes retransmission of everything after it. With SACK (RFC 2018), the receiver can say 'I got bytes 1000-1499 and 2000-2499, missing 1500-1999' — only the gap is retransmitted."
+      },
+      {
+        "question": "In TCP Slow Start, how does the congestion window (cwnd) grow?",
+        "options": [
+          "Linearly by 1 MSS per RTT",
+          "Exponentially — cwnd doubles every RTT",
+          "It stays fixed at the initial value",
+          "It grows based on available buffer space"
+        ],
+        "correctAnswer": "Exponentially — cwnd doubles every RTT",
+        "explanation": "In Slow Start, cwnd starts at ~10 MSS (initcwnd) and doubles every RTT. This exponential growth continues until cwnd reaches the slow-start threshold (ssthresh), at which point the connection switches to Congestion Avoidance mode (linear growth: cwnd += 1 MSS per RTT)."
+      },
+      {
+        "question": "What TCP socket option disables Nagle's algorithm for real-time applications?",
+        "options": [
+          "SO_KEEPALIVE",
+          "TCP_QUICKACK",
+          "TCP_NODELAY",
+          "SO_RCVBUF"
+        ],
+        "correctAnswer": "TCP_NODELAY",
+        "explanation": "`setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one))` disables Nagle's algorithm. `TCP_QUICKACK` disables delayed ACK on the receiver side. Both are essential for sub-millisecond game networking."
+      },
+      {
+        "question": "The CUBIC congestion control algorithm uses what type of function for window growth?",
+        "options": [
+          "Linear functionalt ",
+          "Exponential function (standard) ",
+          "Cubic function: W(t) = C(t - K)³ + W_max",
+          "Logarithmic function . — as specified    "
+        ],
+        "correctAnswer": "Cubic function: W(t) = C(t - K)³ + W_max",
+        "explanation": "CUBIC uses a cubic function where K = ³√(W_max × β / C). This makes it more aggressive on high-bandwidth-delay-product paths than traditional Reno, which only increases cwnd by 1 MSS per RTT in congestion avoidance."
+      },
+      {
+        "question": "What happens when a TCP sender receives 3 duplicate ACKs?",
+        "options": [
+          "It closes the connectionaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It performs Fast Retransmit — retransmits the missing segment immediately without waiting for RTO",
+          "It halves the congestion window and enters Slow Startaltaltaltaltaltalt                           ",
+          "It sends a RST packetaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "It performs Fast Retransmit — retransmits the missing segment immediately without waiting for RTO",
+        "explanation": "Three duplicate ACKs trigger Fast Retransmit: the missing segment is retransmitted immediately, cwnd is halved, and the connection enters Fast Recovery (not Slow Start). This avoids the costly RTO wait while still reducing send rate."
+      },
+      {
+        "question": "In the TCP state machine, what transitions a connection from LISTEN to SYN_RCVD?",
+        "options": [
+          "Sending a SYN",
+          "Receiving a SYN",
+          "Receiving a SYN+ACK",
+          "Sending an ACK"
+        ],
+        "correctAnswer": "Receiving a SYN",
+        "explanation": "A passive open (server) starts in LISTEN. Upon receiving a SYN from a client, it transitions to SYN_RCVD and sends a SYN+ACK. Once the client's ACK is received, it moves to ESTABLISHED. The client goes CLOSED → SYN_SENT (active open) → ESTABLISHED (on SYN+ACK)."
+      },
+      {
+        "question": "Explain the difference between TCP Reno/CUBIC and BBR congestion control. Why does BBR perform better on paths with bufferbloat?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "BBR",
+          "bufferbloat",
+          "loss-based",
+          "model",
+          "RTT",
+          "queue",
+          "CUBIC",
+          "Reno"
+        ],
+        "explanation": "Reno/CUBIC are loss-based: they increase cwnd until packet loss occurs, then back off. On a bufferbloated path (router with large buffers), they keep filling the buffer until it overflows, creating high latency. BBR models the pipe by continuously measuring bottleneck bandwidth and RTT. It detects queue buildup from increasing RTT (not from loss) and slows down BEFORE the buffer overflows — operating at the optimal point of full bandwidth with minimal queue."
+      },
+      {
+        "question": "Describe what happens with Head-of-Line blocking when you send three independent data streams (positions, chat, file transfer) over a single TCP connection. How does QUIC solve this?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "HOL",
+          "head-of-line",
+          "QUIC",
+          "stream",
+          "multiplex",
+          "UDP",
+          "block"
+        ],
+        "explanation": "TCP delivers all bytes in order. If the file transfer stream's packet is lost, ALL subsequent packets — including position updates and chat — sit in the kernel's out-of-order queue until the file transfer packet is retransmitted. QUIC (HTTP/3) runs over UDP and multiplexes independent streams: each stream has its own sequencing. A lost packet on the file transfer stream only blocks that stream — position updates and chat on other streams continue to be delivered immediately."
+      }
+    ]
+  },
+  {
+    "noteName": "03 — UDP & Game Protocols",
+    "questions": [
+      {
+        "question": "What is the size of a UDP header?",
+        "options": [
+          "20 bytes",
+          "8 bytes",
+          "14 bytes",
+          "4 bytes"
+        ],
+        "correctAnswer": "8 bytes",
+        "explanation": "UDP (RFC 768) has an 8-byte header: source port (2), dest port (2), length (2), and checksum (2, optional for IPv4). Compare to TCP's 20-60 byte header. This minimal overhead is one reason games prefer UDP."
+      },
+      {
+        "question": "Why do games prefer UDP over TCP for position updates?",
+        "options": [
+          "UDP is more securealtaltaltaltaltaltaltaltaltaltaltalt ",
+          "Old position data is useless — a retransmitted position from 50ms ago is misleading",
+          "UDP has better encryptionaltaltaltaltaltaltaltaltaltalt                             ",
+          "UDP guarantees lower latencyaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Old position data is useless — a retransmitted position from 50ms ago is misleading",
+        "explanation": "If a packet with PlayerPosition(x=100) is lost, the player is now at x=105. A late retransmission arriving after the next update would cause the player to snap backward. Games just send the next update instead. UDP also avoids TCP's in-order delivery requirement and head-of-line blocking."
+      },
+      {
+        "question": "What is Forward Error Correction (FEC) in game networking?",
+        "options": [
+          "Detecting errors and requesting retransmissionaltaltaltalt (standard) ",
+          "Sending extra parity packets so lost data can be reconstructed without retransmission",
+          "Encrypting packets to prevent tamperingaltaltaltaltalt ",
+          "Compressing data before transmissionaltaltaltaltaltalt . — as specified               "
+        ],
+        "correctAnswer": "Sending extra parity packets so lost data can be reconstructed without retransmission",
+        "explanation": "FEC sends redundant parity data (e.g., XOR of data packets). If one data packet is lost, the receiver can XOR the remaining data + parity to reconstruct it. Benefit: zero latency on recovery — no waiting for retransmission. Cost: extra bandwidth."
+      },
+      {
+        "question": "Which custom reliability pattern uses sequence numbers, flags (RELIABLE/UNRELIABLE/ORDERED), and ACKs on top of UDP?",
+        "options": [
+          "Pattern 1: Sequence Numbers + ACK",
+          "Pattern 2: Sliding Window         ",
+          "Pattern 3: FEC ",
+          "None — UDP can't have ACKs"
+        ],
+        "correctAnswer": "Pattern 1: Sequence Numbers + ACK",
+        "explanation": "This pattern assigns sequence numbers per packet with flags: RELIABLE packets require ACKs and are retransmitted on timeout; UNRELIABLE packets are sent once and forgotten; ORDERED packets are delivered in sequence-number order. The receiver sends ACK packets back for reliable packets."
+      },
+      {
+        "question": "What game protocol does Minecraft Bedrock use for networking?",
+        "options": [
+          "RakNet",
+          "ENet",
+          "Steam Datagram Relay",
+          "UE Replication"
+        ],
+        "correctAnswer": "ENet",
+        "explanation": "ENet provides channels with configurable reliability and ordering (unreliable sequenced for position, reliable sequenced for RPCs, unreliable unsequenced for debug stats), plus fragmentation for messages exceeding MTU."
+      },
+      {
+        "question": "What is the key advantage of a custom reliability layer over plain TCP?",
+        "options": [
+          "It's always fasteraltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Different data types get different guarantees on the same socket — reliable for RPCs, unreliable for position updates",
+          "It uses less CPUaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It automatically handles NAT traversalaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                   "
+        ],
+        "correctAnswer": "Different data types get different guarantees on the same socket — reliable for RPCs, unreliable for position updates",
+        "explanation": "A single UDP socket can carry both reliable RPCs (with ACKs/retransmission) and unreliable position updates (fire-and-forget) by demultiplexing on a per-packet flag. TCP treats all data identically — in-order, reliable — which is wrong for game state that becomes stale."
+      },
+      {
+        "question": "What networking library does Valve use for Dota 2 and CS2 that provides encrypted relay routing?",
+        "options": [
+          "ENet ",
+          "RakNet (standard)    ",
+          "Steam Datagram Relay",
+          "QUIC "
+        ],
+        "correctAnswer": "Steam Datagram Relay",
+        "explanation": "Valve's Steam Datagram Relay (SDR) provides encrypted UDP relay routing around internet congestion, DDoS protection, and NAT traversal. It's part of the Steamworks networking API."
+      },
+      {
+        "question": "In a sliding window protocol over UDP, what is the benefit over stop-and-wait?",
+        "options": [
+          "Lower CPU usagealtaltaltaltaltaltaltaltalt ",
+          "Higher throughput — multiple packets in flight before waiting for ACKs",
+          "Better encryptionaltaltaltaltaltaltaltaltalt                           ",
+          "Smaller header overheadaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Higher throughput — multiple packets in flight before waiting for ACKs",
+        "explanation": "Stop-and-wait (send one, wait for ACK) wastes bandwidth — the pipe is empty during the RTT. A sliding window sends up to N packets before waiting, keeping the pipe full. The window size should be ≥ bandwidth-delay product for maximum throughput."
+      },
+      {
+        "question": "What is the Iris replication system in Unreal Engine 5.2+?",
+        "options": [
+          "A rendering pipelinealtaltaltaltaltaltaltaltaltalt ",
+          "A next-gen replication system with per-property conditions and delta compression",
+          "A physics simulation systemaltaltaltaltaltaltaltaltalt (standard) ",
+          "A memory allocatoraltaltaltaltaltaltaltaltaltaltalt . — as specified             "
+        ],
+        "correctAnswer": "A next-gen replication system with per-property conditions and delta compression",
+        "explanation": "Iris introduces per-property replication conditions, delta compression, and network emulation profiles. It replaces/supplements the traditional UNetDriver/UActorChannel model. UE5's classic replication uses Reliable/Unreliable property classification with per-actor relevancy and priority-based bandwidth allocation."
+      },
+      {
+        "question": "Why does TCP's congestion control fight against game networking?",
+        "options": [
+          "It prioritizes game traffic incorrectlyaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt per RFC 9293 .                        ",
+          "It reduces sending rate on packet loss, but packet loss is normal in games (Wi-Fi, congestion) — TCP would throttle into unplayability",
+          "It encrypts data unnecessarilyaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It doesn't support IPv6altaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "It reduces sending rate on packet loss, but packet loss is normal in games (Wi-Fi, congestion) — TCP would throttle into unplayability",
+        "explanation": "TCP interprets packet loss as congestion and halves the congestion window. In games, packet loss is often caused by Wi-Fi interference or transient congestion — not persistent overload. TCP's response would progressively throttle the game's send rate, while UDP just keeps sending at the application's chosen rate."
+      },
+      {
+        "question": "What does XOR-based FEC with a 4:1 ratio mean?",
+        "options": [
+          "4 data packets + 1 parity = 5 total. Any 4 of 5 can reconstruct the original data",
+          "1 data packet + 4 parity = redundancyaltaltaltaltalt (standard) ",
+          "4 retransmissions per packetaltaltaltaltaltaltalt . — as specified per reference  ",
+          "Data compressed to 1/4 sizealtaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "4 data packets + 1 parity = 5 total. Any 4 of 5 can reconstruct the original data",
+        "explanation": "For every K=4 data packets, generate N-K=1 parity packet using XOR. If any single packet is lost, the remaining 3 data + 1 parity can reconstruct it: D2 = D1 XOR D3 XOR D4 XOR Parity. Bandwidth overhead: 25% (1 extra per 4 data). Recovery: zero added latency."
+      },
+      {
+        "question": "Compare the latency vs. reliability tradeoff between TCP, a custom reliable-UDP layer for RPCs, and raw UDP for position updates. When would you use each?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "TCP",
+          "reliability",
+          "latency",
+          "RPC",
+          "position",
+          "retransmit",
+          "custom",
+          "RUDP"
+        ],
+        "explanation": "TCP: highest latency (retransmits + in-order delivery + HOL blocking + congestion control), best for web/file/chat where correctness matters more than latency. Custom RUDP for RPCs: medium latency (reliability only for marked packets, no HOL blocking for unrelated streams), ideal for game events like spell casts. Raw UDP for position updates: zero overhead (no ACKs, no retransmits, no ordering guarantee), best for rapidly-changing state where stale data is worse than no data. The key insight: a single UDP socket can carry all three by demultiplexing on per-packet flags."
+      },
+      {
+        "question": "Explain how NAT punchthrough (STUN + hole punching) enables two players behind different NATs to establish a peer-to-peer UDP connection. Why might it still fail?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "STUN",
+          "NAT",
+          "hole punch",
+          "symmetric",
+          "cone",
+          "peer-to-peer"
+        ],
+        "explanation": "STUN: each client contacts a public STUN server which reflects back the client's public IP:port as seen by the server. The clients exchange these addresses via a signaling server, then each sends a UDP packet to the other's public address. The first outgoing packet creates a NAT table entry, 'punching a hole' for the response. This works with full-cone and restricted-cone NATs. It fails with symmetric NATs because the NAT assigns a different port mapping for each destination, so the port learned from STUN (used for the STUN server) is not the port used for the peer."
+      }
+    ]
+  },
+  {
+    "noteName": "04 — DNS, TLS & HTTPS",
+    "questions": [
+      {
+        "question": "What DNS record type maps a domain name to an IPv6 address?",
+        "options": [
+          "A record",
+          "AAAA record",
+          "CNAME record",
+          "MX record"
+        ],
+        "correctAnswer": "AAAA record",
+        "explanation": "AAAA (quad-A) records map hostnames to IPv6 addresses (e.g., google.com → 2607:f8b0:4005:808::200e). A records map to IPv4. CNAME creates aliases. MX specifies mail servers."
+      },
+      {
+        "question": "How many round-trips does a TLS 1.3 handshake require before application data can flow?",
+        "options": [
+          "2 RTT",
+          "1 RTT",
+          "3 RTT",
+          "0 RTT (no handshake)"
+        ],
+        "correctAnswer": "1 RTT",
+        "explanation": "TLS 1.3 (RFC 8446) completes in 1-RTT: ClientHello (with key_share) → ServerHello (with key_share, certificate, Finished) → Client Finished → encrypted data. TLS 1.2 required 2 RTT. 0-RTT is possible for returning visitors using pre-shared keys."
+      },
+      {
+        "question": "What is the full DNS resolution sequence (cold cache) for www.google.com?",
+        "options": [
+          "Ask Google's nameserver directly                    ",
+          "Root → .com TLD → google.com authoritative → answer",
+          "ISP cache → Google's server ",
+          "Browser cache → OS cache → answer"
+        ],
+        "correctAnswer": "Root → .com TLD → google.com authoritative → answer",
+        "explanation": "A cold DNS lookup walks the hierarchy: (1) resolver asks a root server 'who handles .com?' → gets TLD server address; (2) asks .com TLD 'who handles google.com?' → gets authoritative nameservers; (3) asks ns1.google.com 'what's www.google.com?' → gets the A record. Each step is an RTT."
+      },
+      {
+        "question": "Which DNS record type is critical for games to advertise non-standard server ports?",
+        "options": [
+          "A record",
+          "CNAME record",
+          "SRV record",
+          "TXT record"
+        ],
+        "correctAnswer": "SRV record",
+        "explanation": "SRV (Service) records specify host and port for services (e.g., `_minecraft._tcp.example.com → server:25565`). Without SRV records, clients can only connect to default ports (e.g., 25565 for Minecraft). SRV enables running game servers on any port."
+      },
+      {
+        "question": "What key exchange method does TLS 1.3 mandate for forward secrecy?",
+        "options": [
+          "RSA key transportaltaltalt                      ",
+          "Static Diffie-Hellmanaltalt",
+          "ECDHE (Elliptic Curve Diffie-Hellman Ephemeral)",
+          "Pre-shared keys onlyaltalt "
+        ],
+        "correctAnswer": "ECDHE (Elliptic Curve Diffie-Hellman Ephemeral)",
+        "explanation": "TLS 1.3 mandates ECDHE for forward secrecy — even if the server's private key is later compromised, past sessions can't be decrypted because the ephemeral key pair is discarded after each session. RSA key transport (used in older TLS) does not provide forward secrecy."
+      },
+      {
+        "question": "How many total RTTs before the first byte of content arrives for HTTPS (HTTP over TLS 1.3 over TCP)?",
+        "options": [
+          "2 RTTs (TCP + TLS)                ",
+          "3-4 RTTs (DNS + TCP + TLS + HTTP)",
+          "1 RTT (TLS only) ",
+          "5-6 RTTs "
+        ],
+        "correctAnswer": "3-4 RTTs (DNS + TCP + TLS + HTTP)",
+        "explanation": "DNS: 1 RTT (if not cached) → TCP 3-way handshake: 1 RTT → TLS 1.3 handshake: 1 RTT → HTTP GET/response: 1 RTT. Total: 3-4 RTTs. On a 100 ms RTT link, that's 300-400 ms before the page starts loading."
+      },
+      {
+        "question": "How does Certificate Transparency prevent rogue CA attacks?",
+        "options": [
+          "By encrypting all certificatesaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "By requiring CAs to publicly log every certificate they issue, with browsers checking Signed Certificate Timestamps (SCTs)",
+          "By limiting certificate lifetime to 30 daysaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt (standard)                        ",
+          "By using quantum-resistant algorithmsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "By requiring CAs to publicly log every certificate they issue, with browsers checking Signed Certificate Timestamps (SCTs)",
+        "explanation": "Since 2018, CAs must submit every issued certificate to public CT logs. These logs are append-only and cryptographically verifiable. Browsers require SCTs (proof of logging) and reject certificates without them. This prevents a rogue CA from secretly issuing a certificate for google.com."
+      },
+      {
+        "question": "What is DTLS and when is it used in games?",
+        "options": [
+          "A faster version of TCPaltaltaltaltaltaltalt ",
+          "Datagram TLS — TLS adapted for UDP, handling packet loss and reordering",
+          "A DNS security extensionaltaltaltaltaltaltalt ",
+          "A game-specific compression protocolaltaltaltalt                        "
+        ],
+        "correctAnswer": "Datagram TLS — TLS adapted for UDP, handling packet loss and reordering",
+        "explanation": "DTLS (Datagram TLS) adapts TLS for unreliable transport. It handles packet loss during the handshake (retransmission timers), reordering (explicit sequence numbers in records), and fragmentation to avoid IP fragmentation. Games use it for encrypted UDP connections."
+      },
+      {
+        "question": "What does a CNAME DNS record do?",
+        "options": [
+          "Maps a name to an IPv4 addressaltaltaltalt                       ",
+          "Creates an alias — one domain name points to another domain name",
+          "Specifies a mail serveraltaltaltaltalt ",
+          "Provides arbitrary text dataaltaltaltalt "
+        ],
+        "correctAnswer": "Creates an alias — one domain name points to another domain name",
+        "explanation": "CNAME (Canonical Name) creates an alias: e.g., www.google.com → google.com. The resolver then looks up the target (google.com) for its A/AAAA records. CNAME cannot coexist with other records at the same name (except DNSSEC records)."
+      },
+      {
+        "question": "In the certificate chain validation, what happens if an intermediate CA certificate is missing from the server's response?",
+        "options": [
+          "The browser uses a default intermediatealtaltalt ",
+          "Validation fails — the client can't build the chain to a trusted root",
+          "The connection falls back to HTTPaltaltaltalt ",
+          "The browser downloads it from the CA automatically (standard)         "
+        ],
+        "correctAnswer": "Validation fails — the client can't build the chain to a trusted root",
+        "explanation": "The server should send its certificate AND all intermediate CA certificates. If an intermediate is missing (a common misconfiguration), the client can't build the chain from the server cert → intermediate → trusted root CA. Some clients attempt AIA fetching (Authority Information Access) to download the missing intermediate, but this adds latency and may fail."
+      },
+      {
+        "question": "How does DNS over HTTPS (DoH) improve privacy compared to traditional DNS?",
+        "options": [
+          "It compresses DNS responsesaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It encrypts DNS queries inside HTTPS, preventing ISPs from eavesdropping on which sites you visit",
+          "It speeds up DNS resolutionaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It eliminates the need for root serversaltaltaltaltaltaltaltaltaltalt                             "
+        ],
+        "correctAnswer": "It encrypts DNS queries inside HTTPS, preventing ISPs from eavesdropping on which sites you visit",
+        "explanation": "Traditional DNS (UDP port 53) sends queries in plaintext — anyone on the network path can see which domains you're resolving. DoH (RFC 8484) tunnels DNS queries over HTTPS, encrypting them alongside regular web traffic. DoT (DNS over TLS, RFC 7858) provides similar encryption on a dedicated port."
+      },
+      {
+        "question": "What does the HKDF (HMAC-based Key Derivation Function) do in TLS 1.3?",
+        "options": [
+          "Compresses the handshake messages ",
+          "Derives session keys from the ECDHE shared secret",
+          "Validates the certificate chain ",
+          "Encrypts the server name indication (SNI)         "
+        ],
+        "correctAnswer": "Derives session keys from the ECDHE shared secret",
+        "explanation": "HKDF takes the ECDHE shared secret (from the key exchange) and derives the actual symmetric encryption keys, IVs, and MAC keys used for the session. It uses HMAC as the underlying PRF (pseudorandom function), ensuring cryptographic separation of keys."
+      },
+      {
+        "question": "Walk through the full HTTPS connection to google.com, from typing the URL to receiving the first byte of content. List every round-trip and what happens in each.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "DNS",
+          "TCP",
+          "TLS",
+          "handshake",
+          "certificate",
+          "HTTP",
+          "RTT",
+          "SYN",
+          "ClientHello"
+        ],
+        "explanation": "1. DNS (1 RTT if cold): resolve google.com to IP. 2. TCP (1 RTT): 3-way handshake (SYN → SYN+ACK → ACK). 3. TLS 1.3 (1 RTT): ClientHello (ciphers, key_share) → ServerHello (cipher, key_share, certificate, Finished) → Client Finished. After this, the shared secret is derived and encryption begins. 4. HTTP (1 RTT): GET / → response with HTML. Total: 3-4 RTTs. DNS may be cached (0 RTT). QUIC/HTTP3 merges transport + TLS into 0-1 RTT for returning visitors."
+      },
+      {
+        "question": "Explain how the certificate chain of trust works from root CA to server certificate. What does the browser verify at each level?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "root CA",
+          "intermediate",
+          "signature",
+          "chain",
+          "trust",
+          "verify",
+          "expiration",
+          "SAN"
+        ],
+        "explanation": "Root CA certificates are pre-installed in the OS/browser trust store. The root CA signs an intermediate CA certificate. The intermediate CA signs the server's certificate. The browser verifies: (1) each signature in the chain is valid (the child certificate's signature matches the parent's public key), (2) no certificate is expired, (3) the server certificate's Subject Alternative Name (SAN) matches the requested hostname, (4) no certificate is revoked (checked via CRL or OCSP). The root is trusted implicitly — if any link in the chain fails, the connection is rejected."
+      }
+    ]
+  },
+  {
+    "noteName": "05 — Game Networking Architecture",
+    "questions": [
+      {
+        "question": "What is the primary disadvantage of a listen server architecture?",
+        "options": [
+          "High server costsaltaltaltaltaltaltaltaltaltaltalt ",
+          "Host advantage — 0 ms ping for the host, and the game ends when the host leaves",
+          "All players have equal latencyaltaltaltaltaltaltaltalt (standard) ",
+          "Requires complex NAT traversalaltaltaltaltaltaltaltalt . — as specified         "
+        ],
+        "correctAnswer": "Host advantage — 0 ms ping for the host, and the game ends when the host leaves",
+        "explanation": "In a listen server, one player is both client and server. The host has zero latency, can cheat trivially, and if they leave, the game ends for everyone. The host's machine also runs both the game rendering and server simulation simultaneously."
+      },
+      {
+        "question": "In the authoritative server model, who decides whether Player A hit Player B?",
+        "options": [
+          "Player A's clientaltaltalt ",
+          "Player B's clientaltaltalt ",
+          "The server — it's the authority on all game state",
+          "Both clients must agreealtalt                     "
+        ],
+        "correctAnswer": "The server — it's the authority on all game state",
+        "explanation": "The server runs the full simulation and is the single source of truth. Clients send inputs; the server simulates, checks collisions, applies damage, and sends the result back. The client never decides 'I hit the enemy' — the server determines that and the client trusts the server's verdict."
+      },
+      {
+        "question": "What is client-side prediction?",
+        "options": [
+          "The server predicts what the client will doaltaltaltaltaltaltaltalt (standard) ",
+          "The client immediately applies input locally, then corrects when the server response arrives",
+          "Predicting network latency for all playersaltaltaltaltaltaltaltalt . — as specified          ",
+          "The client predicts other players' movementsaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "The client immediately applies input locally, then corrects when the server response arrives",
+        "explanation": "Without prediction, a movement input takes a full RTT (e.g., 100 ms) to show feedback — the player feels like they're dragging through mud. With prediction, the client moves the character immediately (predicted position), and when the server's authoritative position arrives, the client reconciles (corrects if different)."
+      },
+      {
+        "question": "What is lag compensation in a first-person shooter?",
+        "options": [
+          "Adding artificial latency to all playersaltaltalt (standard) ",
+          "The server rewinds time to check what the shooter saw when they fired",
+          "Compensating the server for bandwidth costsaltalt ",
+          "Reducing tick rate for high-ping playersaltaltalt . — as specified    "
+        ],
+        "correctAnswer": "The server rewinds time to check what the shooter saw when they fired",
+        "explanation": "At server time T, when Player A fires, the server rewinds to T - A_ping and checks if Player B was at A's crosshair position at that past moment. This implements 'favor the shooter' — if the shooter hit on their screen, it counts, even if B has moved since on the server."
+      },
+      {
+        "question": "What is interpolation used for in game networking?",
+        "options": [
+          "Predicting the player's own movementaltaltalt (standard) ",
+          "Smoothly moving other players between their last two known positions",
+          "Compensating for packet lossaltaltaltaltalt ",
+          "Calculating server tick ratealtaltaltaltalt . — as specified         "
+        ],
+        "correctAnswer": "Smoothly moving other players between their last two known positions",
+        "explanation": "Server sends position updates at 20-60 Hz. Between updates, the client interpolates — smoothly moving the other player from their last known position toward the new one over the inter-update interval. Without interpolation, other players would teleport between updates."
+      },
+      {
+        "question": "What is the fundamental principle of cheat prevention in game networking?",
+        "options": [
+          "Encrypt all game trafficaltaltaltaltalt ",
+          "Never trust the client — the client runs on the enemy's hardware",
+          "Use dedicated servers onlyaltaltaltaltalt . — as specified       ",
+          "Require anti-cheat software on the clientalt (standard) "
+        ],
+        "correctAnswer": "Never trust the client — the client runs on the enemy's hardware",
+        "explanation": "Any game logic running on the client can be modified by a cheater. The server must validate everything: hits (server-side hit detection), movement speed (validate deltas), visibility (don't send enemy positions until they're visible), and packet integrity (encrypt + sign)."
+      },
+      {
+        "question": "What is a typical server tick rate for a game like Fortnite?",
+        "options": [
+          "120 Hz",
+          "60 Hz",
+          "30 Hz",
+          "10 Hz"
+        ],
+        "correctAnswer": "30 Hz",
+        "explanation": "Fortnite uses 30 Hz server tick rate with dynamic update rates. Higher rates (60 Hz) give smoother gameplay but cost more CPU and bandwidth. Each tick at 30 Hz is ~33 ms. Server tick rate controls how often the server simulates the game world."
+      },
+      {
+        "question": "How does UE's `CharacterMovementComponent` handle client-side prediction?",
+        "options": [
+          "It doesn't — all movement is server-sidealtaltaltaltaltaltalt (standard) ",
+          "It predicts movement locally and reconciles via `ClientUpdatePositionAfterServerUpdate`",
+          "It uses UDP multicast for predictionaltaltaltaltaltaltaltalt ",
+          "It predicts only for the host playeraltaltaltaltaltaltaltalt . — as specified           "
+        ],
+        "correctAnswer": "It predicts movement locally and reconciles via `ClientUpdatePositionAfterServerUpdate`",
+        "explanation": "UE's CMC simulates pending inputs immediately on the client (prediction). When the server acknowledgment arrives, `ClientUpdatePositionAfterServerUpdate` triggers reconciliation: compare predicted vs authoritative positions, re-simulate unacknowledged inputs from the correction point, and smooth the visual correction."
+      },
+      {
+        "question": "What is extrapolation (dead reckoning) used for?",
+        "options": [
+          "Smoothing between known positionsaltaltalt (standard) ",
+          "Predicting position from velocity when a packet is delayed or dropped",
+          "Measuring network latencyaltaltaltaltalt ",
+          "Compensating for server tick ratealtaltalt . — as specified           "
+        ],
+        "correctAnswer": "Predicting position from velocity when a packet is delayed or dropped",
+        "explanation": "When a position update is delayed/dropped, the client extrapolates: new_pos = last_known_pos + velocity × dt. When the actual update arrives, the client corrects (snap or smooth). This keeps movement looking continuous even with packet loss."
+      },
+      {
+        "question": "In a P2P architecture with N players, how many direct connections exist?",
+        "options": [
+          "N connections",
+          "N×(N-1) connections",
+          "N×(N-1)/2 connections",
+          "2N connections"
+        ],
+        "correctAnswer": "N×(N-1) connections",
+        "explanation": "In a fully connected P2P mesh, every player connects to every other player. With 4 players, that's 4×3 = 12 connections. This scales poorly — each player must send updates to N-1 others, and all peers must agree on game state, making cheating trivial."
+      },
+      {
+        "question": "How does the server prevent wallhacks?",
+        "options": [
+          "By encrypting all position dataaltaltaltaltaltaltaltaltaltaltaltalt . — as specified per reference  ",
+          "By not sending enemy positions until they're visible to the player (relevancy + visibility culling)",
+          "By requiring client-side anti-cheataltaltaltaltaltaltaltaltaltaltalt (standard) ",
+          "By reducing tick ratealtaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "By not sending enemy positions until they're visible to the player (relevancy + visibility culling)",
+        "explanation": "The server performs visibility checks and only replicates enemy actors that are actually visible to the player. If an enemy is behind a wall, their position is never sent to that client — so even a hacked client can't display them. This is implemented through UE's relevancy system and visibility culling."
+      },
+      {
+        "question": "What happens visually when client-side prediction disagrees with the server's authoritative state?",
+        "options": [
+          "The client disconnectsaltaltaltalt ",
+          "The client snaps to the server's position (reconciliation)",
+          "The client's version winsaltaltaltalt (standard) ",
+          "Both versions are averagedaltaltalt . — as specified       "
+        ],
+        "correctAnswer": "The client snaps to the server's position (reconciliation)",
+        "explanation": "When the server response arrives with a position different from what the client predicted, the client must reconcile. The correction can be an immediate snap (noticeable but accurate) or a smooth interpolation toward the correct position (less jarring but takes time). After correcting, the client re-simulates any pending inputs from the correction point forward."
+      },
+      {
+        "question": "Compare dedicated server vs. listen server vs. P2P architectures for a competitive FPS. Consider: latency fairness, cheat resistance, cost, and persistence.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "dedicated",
+          "listen",
+          "P2P",
+          "latency",
+          "cheat",
+          "cost",
+          "fairness",
+          "competitive"
+        ],
+        "explanation": "Dedicated server: all players have network latency (fair), server validates everything (best cheat resistance), costs money to run cloud VMs, world persists when players leave. Listen server: host has 0 ms advantage (unfair), host can cheat easily, free, game ends when host leaves. P2P: low latency for nearby peers, all peers must agree on state (trivial to cheat — any peer can claim a hit), free, fragile (NAT traversal issues). Competitive FPS always uses dedicated servers."
+      },
+      {
+        "question": "Explain how lag compensation works when Player A (60ms ping) shoots Player B (100ms ping) at server time T=1000ms. What position of B is checked?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "lag compensation",
+          "rewind",
+          "ping",
+          "shooter",
+          "A_ping",
+          "crosshair",
+          "favor the shooter"
+        ],
+        "explanation": "The server rewinds to T - A_ping = 940ms and checks if B was at the crosshair position A saw at that moment. B's position at T=940 is used, not B's current position at T=1000. If A's crosshair was on B at T=940, it's a hit — even though B has moved since. This implements 'favor the shooter': if you hit on your screen, it counts. The tradeoff: B might feel they were behind cover, but from A's perspective, they weren't."
+      }
+    ]
+  },
+  {
+    "noteName": "00 — RAM & Virtual Memory Overview",
+    "questions": [
+      {
+        "question": "At 5 GHz CPU clock speed, approximately how many clock cycles does a DDR5 DRAM access take?",
+        "options": [
+          "4-5 cycles ",
+          "40-120 cycles  ",
+          "400-500 cycles",
+          "1-2 cycles "
+        ],
+        "correctAnswer": "400-500 cycles",
+        "explanation": "DDR5 RAM access takes 80-100 ns. At 5 GHz (0.2 ns per cycle): 80÷0.2 = 400 cycles, 100÷0.2 = 500 cycles. The CPU could have executed 1,600-4,000 instructions in that time. This gap is called the memory wall."
+      },
+      {
+        "question": "Why is SRAM (used in CPU caches) faster but more expensive than DRAM?",
+        "options": [
+          "SRAM uses 6 transistors per bit vs DRAM's 1 transistor + 1 capacitor — ~100× more silicon area",
+          "SRAM requires liquid coolingaltaltaltaltaltaltaltaltaltaltalt ",
+          "SRAM uses quantum effectsaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "SRAM must be refreshed constantlyaltaltaltaltaltaltaltaltaltalt                                "
+        ],
+        "correctAnswer": "SRAM uses 6 transistors per bit vs DRAM's 1 transistor + 1 capacitor — ~100× more silicon area",
+        "explanation": "SRAM stores bits in a stable flip-flop (6 transistors) with no refresh needed — fast but large. DRAM uses a tiny capacitor (1T1C) that leaks charge, requiring periodic refresh at tREFI intervals (7.8 µs per row). The area difference is ~100×, which is why your CPU has 64 KB L1 but your motherboard has 64 GB RAM."
+      },
+      {
+        "question": "How many levels are in a 48-bit virtual address page table walk on x86-64?",
+        "options": [
+          "2 levelsalt (standard) ",
+          "3 levelsalt ",
+          "4 levels (PML4 → PDPT → PD → PT)",
+          "5 levelsalt . — as specified     "
+        ],
+        "correctAnswer": "4 levels (PML4 → PDPT → PD → PT)",
+        "explanation": "x86-64 uses a 4-level hierarchical page table for 48-bit addresses: PML4 (Page Map Level 4), PDPT (Page Directory Pointer Table), PD (Page Directory), PT (Page Table). Each level uses 9 bits of the address. The final PTE maps a 4 KB page. A TLB miss triggers a 4-dependent-memory-reference hardware page walk."
+      },
+      {
+        "question": "What is the difference between a minor and major page fault?",
+        "options": [
+          "Minor: page in page cache (~1 µs); Major: must read from disk (~50 µs SSD, ~10 ms HDD)",
+          "Minor: from RAM; Major: from L3 cachealtaltaltaltaltaltalt ",
+          "Minor: user-space; Major: kernel-spacealtaltaltaltaltaltalt (standard) ",
+          "Minor: read fault; Major: write faultaltaltaltaltaltaltalt . — as specified            "
+        ],
+        "correctAnswer": "Minor: page in page cache (~1 µs); Major: must read from disk (~50 µs SSD, ~10 ms HDD)",
+        "explanation": "A minor fault occurs when the PTE is not present but the page is already in the page cache — the kernel just wires up the PTE (~1 µs). A major fault requires reading from the backing store (file I/O or swap), costing ~50 µs (NVMe) to ~10 ms (HDD). An invalid fault (SIGSEGV) means the access has no valid mapping."
+      },
+      {
+        "question": "What does `mmap()` actually do at the time of the call?",
+        "options": [
+          "Reads the entire file into RAMaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                       ",
+          "Creates a VMA (vm_area_struct) — virtual mapping only, physical allocation deferred to first page fault (demand paging)",
+          "Copies the file to swapaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Allocates physical pages immediatelyaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Creates a VMA (vm_area_struct) — virtual mapping only, physical allocation deferred to first page fault (demand paging)",
+        "explanation": "`mmap()` establishes a virtual memory area in the process's `mm_struct` but does NOT allocate physical pages. Physical allocation is demand-paged: the first access triggers a page fault, the kernel reads from the file (or allocates anonymous memory), and maps the physical frame. This is why mmap of a 10 GB file returns instantly."
+      },
+      {
+        "question": "What size are standard and 'huge' pages on x86-64?",
+        "options": [
+          "Standard 4 KB; Huge 2 MB (PMD) or 1 GB (PUD)",
+          "Standard 64 KB; Huge 256 KB (standard) ",
+          "Standard 1 MB; Huge 16 MB ",
+          "Standard 8 KB; Huge 32 KB . — as specified   "
+        ],
+        "correctAnswer": "Standard 4 KB; Huge 2 MB (PMD) or 1 GB (PUD)",
+        "explanation": "Standard pages are 4 KB (PT level). Huge pages are 2 MB (PMD_SIZE, 512× larger) or 1 GB (PUD_SIZE). Huge pages reduce TLB miss rate by covering more address space per TLB entry, at the cost of internal fragmentation and compaction overhead (`khugepaged` for THP)."
+      },
+      {
+        "question": "How many entries does a typical L1 data TLB have, and what happens on a TLB miss?",
+        "options": [
+          "64 entries; triggers a hardware page walk (4 dependent memory references, ~50-400 ns)",
+          "512 entries; triggers a software interruptaltaltaltaltalt                             ",
+          "16 entries; page fault occursaltaltaltaltaltaltaltaltalt ",
+          "1024 entries; caches are flushedaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "64 entries; triggers a hardware page walk (4 dependent memory references, ~50-400 ns)",
+        "explanation": "The L1 D-TLB has 64 fully-associative entries for 1-cycle lookups. On a miss, the hardware page walker traverses the 4-level page table (PML4→PDPT→PD→PT), requiring 4 dependent memory reads. The L2 STLB (1,536 Intel / 3,072 AMD Zen 4 entries, 8-12 cycles) is checked first."
+      },
+      {
+        "question": "Why does swapping to an HDD cost 25-50 MILLION CPU cycles?",
+        "options": [
+          "HDD seek + rotational latency takes 5-10 ms, at 5 GHz that's 25-50 million cycles",
+          "The CPU must poll the HDD continuouslyaltaltaltaltalt ",
+          "The kernel runs a compression algorithmaltaltaltaltalt (standard) ",
+          "The page table must be rebuilt entirelyaltaltaltaltalt . — as specified           "
+        ],
+        "correctAnswer": "HDD seek + rotational latency takes 5-10 ms, at 5 GHz that's 25-50 million cycles",
+        "explanation": "HDD access: ~5-10 ms. At 5 GHz (0.2 ns/cycle): 5ms ÷ 0.2ns = 25 million cycles; 10ms ÷ 0.2ns = 50 million cycles. Compare to NVMe SSD at 50-100 µs = 250,000-500,000 cycles. This is why swap to HDD feels like the system froze."
+      },
+      {
+        "question": "What does NUMA (Non-Uniform Memory Access) mean on a multi-socket server?",
+        "options": [
+          "All memory is equally fast from any CPUaltaltaltalt ",
+          "Memory attached to a remote socket takes longer to access than local memory",
+          "Memory is uniformly distributed across all CPUsaltalt                       ",
+          "Only one CPU can access memory at a timealtaltaltalt "
+        ],
+        "correctAnswer": "Memory attached to a remote socket takes longer to access than local memory",
+        "explanation": "In NUMA, each CPU socket has its own memory controller and local DRAM. Accessing local memory is fast; accessing memory on another socket's controller goes through an inter-socket link (UPI/Infinity Fabric), adding latency. The kernel's `mempolicy` (MPOL_BIND, MPOL_PREFERRED) controls page allocation across nodes."
+      },
+      {
+        "question": "What are the hardware components involved in a TLB?",
+        "options": [
+          "A small SRAM array on the CPU die",
+          "A register file in the ALU",
+          "A section of DRAM reserved for translations",
+          "A lookup table stored in L3 cache"
+        ],
+        "correctAnswer": "A small SRAM array on the CPU die",
+        "explanation": "The TLB (Translation Lookaside Buffer) is a small, fully-associative content-addressable memory (CAM) built from SRAM on the CPU die. It caches recent VA→PA translations. The L1 D-TLB has ~64 entries with 1-cycle lookup; the L2 STLB has 1,536-3,072 entries with 8-12 cycle lookup."
+      },
+      {
+        "question": "Why does the 'Pointer Maze' (array of pointers to individually allocated objects) cause TLB thrashing?",
+        "options": [
+          "Each object may be in a different 4 KB page, requiring a new TLB entry for every few objects",
+          "Pointers use more memory than valuesaltaltaltaltaltaltaltaltalt                              ",
+          "The allocator can't handle many small allocationsaltaltaltaltalt",
+          "The CPU can't prefetch through pointersaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Each object may be in a different 4 KB page, requiring a new TLB entry for every few objects",
+        "explanation": "With a 64-entry L1 D-TLB and individually allocated objects scattered across pages, you thrash after touching ~256 KB of objects (64 entries × 4 KB). A contiguous array allocates objects in fewer pages, so one TLB entry covers many objects — dramatically reducing TLB miss rate."
+      },
+      {
+        "question": "Explain demand paging: what happens between calling `mmap()` on a 10 GB file and the first access to a byte in that mapping? Walk through the page fault path.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "mmap",
+          "demand paging",
+          "VMA",
+          "page fault",
+          "minor",
+          "major",
+          "page cache",
+          "PTE"
+        ],
+        "explanation": "mmap() creates a VMA (vm_area_struct) in the process's mm_struct — a virtual address range is reserved, but NO physical pages are allocated. On first access: MMU detects no valid PTE → page fault exception. Kernel's fault handler checks: is this a valid VMA? Is the page in the page cache (minor fault, ~1 µs to wire up PTE)? If not (major fault), kernel reads 4 KB from the file into a physical page (~100 µs NVMe), maps it via the PTE, and returns. The fault-around optimization reads ~16 pages in a batch to amortize I/O."
+      },
+      {
+        "question": "Calculate the TLB reach of the L1 D-TLB with both standard 4 KB pages and 2 MB huge pages. Then explain why huge pages help for large in-memory data structures.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "TLB reach",
+          "64",
+          "4 KB",
+          "2 MB",
+          "256 KB",
+          "128 MB",
+          "huge pages"
+        ],
+        "explanation": "L1 D-TLB: 64 entries × 4 KB = 256 KB reach with standard pages. With 2 MB huge pages: 64 × 2 MB = 128 MB reach. A data structure larger than 256 KB (e.g., a 500 MB particle array) would thrash the TLB under standard pages — every few KB requires a new TLB entry. Huge pages extend reach by 512×, so the entire working set stays mapped in the TLB. Cost: internal fragmentation (a 10 KB allocation wastes 2 MB - 10 KB = 2,038 KB of physical memory)."
+      }
+    ]
+  },
+  {
+    "noteName": "00 — Storage Overview",
+    "questions": [
+      {
+        "question": "How much slower is an HDD access compared to a RAM access (approximate ratio)?",
+        "options": [
+          "10× slower ",
+          "1,000× slower   ",
+          "100,000× slower",
+          "10× faster "
+        ],
+        "correctAnswer": "100,000× slower",
+        "explanation": "RAM access: ~100 ns. HDD access: ~10,000,000 ns (10 ms). Ratio: 10,000,000 ÷ 100 = 100,000×. Even the fastest NVMe SSD at ~50,000 ns is still 500× slower than RAM. This is the I/O gap."
+      },
+      {
+        "question": "What is the fundamental physical unit of NAND flash storage?",
+        "options": [
+          "A spinning magnetic platteraltaltaltalt                       ",
+          "A floating-gate MOSFET that stores charge in an isolated gate",
+          "A phase-change materialaltaltaltaltalt ",
+          "A memristoraltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "A floating-gate MOSFET that stores charge in an isolated gate",
+        "explanation": "NAND flash cells are floating-gate transistors. Charge is trapped in the floating gate (surrounded by insulating oxide) to represent data. Reading requires sensing whether the transistor conducts — this takes ~50 µs, imposing a physical latency floor that DRAM doesn't have."
+      },
+      {
+        "question": "Why can't NAND flash pages be overwritten in place?",
+        "options": [
+          "The controller firmware prevents italtaltaltaltalt ",
+          "Pages must be erased (whole block at a time) before they can be reprogrammed",
+          "Overwriting would corrupt adjacent pagesaltaltaltalt                         ",
+          "The filesystem prevents italtaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Pages must be erased (whole block at a time) before they can be reprogrammed",
+        "explanation": "NAND pages (4-16 KB) are the read/program unit, but erase operates on entire blocks (512-4,096 pages). To 'overwrite' a page, the FTL (Flash Translation Layer) writes the new data to a fresh page and marks the old page as invalid. Garbage collection later erases entire blocks by copying valid pages elsewhere."
+      },
+      {
+        "question": "What is the write amplification problem on SSDs?",
+        "options": [
+          "SSDs slow down when fullaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Due to out-of-place writes, garbage collection, and metadata, the SSD writes 3-10× more data to NAND than the user requested",
+          "Writing uses more power than readingaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "The SSD duplicates all writes for redundancyaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                    "
+        ],
+        "correctAnswer": "Due to out-of-place writes, garbage collection, and metadata, the SSD writes 3-10× more data to NAND than the user requested",
+        "explanation": "Write amplification factor (WAF) = NAND writes ÷ host writes. Out-of-place writes (always writing to new pages), garbage collection (copying valid pages before erasing blocks), and filesystem metadata all contribute. A WAF of 3-10× means writing 400 MB could wear 1.2-4 GB of NAND."
+      },
+      {
+        "question": "What does `fsync()` guarantee that `fflush()` does not?",
+        "options": [
+          "Data is in the stdio bufferaltaltalt (standard) ",
+          "Data is in the page cachealtaltalt . — as specified      ",
+          "Data has been written to stable storage media (the disk)",
+          "The file is closedaltaltaltaltalt "
+        ],
+        "correctAnswer": "Data has been written to stable storage media (the disk)",
+        "explanation": "`fflush()` (stdio) only flushes the userspace buffer to the kernel's page cache. `fclose()` calls `fflush()` but NOT `fsync()`. `fsync()` forces the kernel to write dirty pages from the page cache to the storage device and waits for the device to confirm the write. Only `fsync()` guarantees the data survives a crash."
+      },
+      {
+        "question": "What advantage does NVMe have over SATA for SSDs?",
+        "options": [
+          "NVMe is cheaperaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "NVMe provides 65,536 parallel I/O queues vs SATA's single queue of 32 commands, plus PCIe bandwidth",
+          "NVMe uses less poweraltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "NVMe supports larger capacitiesaltaltaltaltaltaltaltaltaltaltaltalt                                 "
+        ],
+        "correctAnswer": "NVMe provides 65,536 parallel I/O queues vs SATA's single queue of 32 commands, plus PCIe bandwidth",
+        "explanation": "SATA III (AHCI): 6 Gbps, single queue × 32 commands. NVMe over PCIe: 1-4 lanes (PCIe 3.0/4.0/5.0 at 1/2/4 GB/s per lane), 65,536 queues with streamlined command submission via doorbell registers and MSI-X interrupts. NVMe was designed for flash, not adapted from HDD-era interfaces."
+      },
+      {
+        "question": "What is the sequential-to-random I/O performance ratio?",
+        "options": [
+          "~2:1 for both HDD and SSD (standard)",
+          "~750:1 for HDD, ~2:1 for SSD",
+          "~10:1 for both",
+          "~1:1 (same performance)"
+        ],
+        "correctAnswer": "~750:1 for HDD, ~2:1 for SSD",
+        "explanation": "HDD random access incurs seek time (arm movement, ~9 ms) + rotational latency (~4 ms) for each I/O. Sequential access eliminates seeks. SSD random access has only command overhead + NAND read latency (~50 µs), with parallelism across NAND dies keeping random performance high."
+      },
+      {
+        "question": "What is the 'small-file catastrophe' in storage?",
+        "options": [
+          "Running out of inodesaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Writing many small files causes massive filesystem metadata overhead — 6-10 operations per file, plus journaling and write amplification",
+          "Files become too fragmented to readaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                       ",
+          "The OS runs out of file descriptorsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Writing many small files causes massive filesystem metadata overhead — 6-10 operations per file, plus journaling and write amplification",
+        "explanation": "Each small file requires: allocate inode, write inode, allocate data block, write data block, add directory entry, journal all the above = 6-10 writes per file. 100,000 small files × 6-10 ops = 600,000-1,000,000 writes, plus 3-10× SSD write amplification. The solution: pack into a database or archive file with sequential writes."
+      },
+      {
+        "question": "What is journaling in a filesystem?",
+        "options": [
+          "Logging all file accesses for security auditingaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt (standard) ",
+          "Write-ahead logging — metadata changes are written to a journal before the actual filesystem structures, enabling crash recovery",
+          "Compressing files for storagealtaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Recording timestamps of all modificationsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt . — as specified per reference      "
+        ],
+        "correctAnswer": "Write-ahead logging — metadata changes are written to a journal before the actual filesystem structures, enabling crash recovery",
+        "explanation": "Journaling (used by ext4, NTFS) writes intended changes to a circular journal first. After the journal write is confirmed, the actual filesystem structures are updated. If a crash occurs mid-update, the journal is replayed on next mount, restoring consistency. This prevents filesystem corruption from power loss."
+      },
+      {
+        "question": "What is the page cache?",
+        "options": [
+          "A hardware cache on the SSD controlleraltaltaltaltaltaltalt . — as specified             ",
+          "A kernel-maintained cache of disk pages in unused RAM, serving read/write hits from DRAM",
+          "A user-space buffer managed by the applicationaltaltaltaltalt (standard) ",
+          "A CPU cache for disk I/Oaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "A kernel-maintained cache of disk pages in unused RAM, serving read/write hits from DRAM",
+        "explanation": "The page cache (`struct address_space` with xarray/radix tree in Linux) intercepts `read()`/`write()`. Read hits are served from DRAM at RAM speed (100,000× faster than HDD). Writes dirty the cache pages and are written back later (writeback). `fsync()` forces writeback to stable media."
+      },
+      {
+        "question": "Why does the note recommend an append-only write pattern?",
+        "options": [
+          "It's simpler to implementaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "It eliminates both HDD mechanical latency and SSD write amplification by always extending into pre-erased pages",
+          "It uses less disk spacealtaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt . — as specified per reference          ",
+          "It's required by POSIX standardsaltaltaltaltaltaltaltaltaltaltaltaltaltalt (standard) "
+        ],
+        "correctAnswer": "It eliminates both HDD mechanical latency and SSD write amplification by always extending into pre-erased pages",
+        "explanation": "Append-only writes are always sequential — no HDD seeks. On SSDs, appending writes to pre-erased pages avoids the read-modify-write cycle of in-place updates and minimizes garbage collection, achieving near-hardware-bandwidth throughput with minimal write amplification."
+      },
+      {
+        "question": "What does the Flash Translation Layer (FTL) do in an SSD?",
+        "options": [
+          "Encrypts data on the flash chipsaltaltaltaltaltaltaltaltalt ",
+          "Maintains an LBA→PBA indirection table and performs garbage collection and wear leveling",
+          "Compresses data before storingaltaltaltaltaltaltaltaltaltalt ",
+          "Translates between SATA and NVMe protocolsaltaltaltaltaltaltalt                          "
+        ],
+        "correctAnswer": "Maintains an LBA→PBA indirection table and performs garbage collection and wear leveling",
+        "explanation": "The FTL maps Logical Block Addresses (what the OS sees) to Physical Block Addresses (actual NAND location). Since pages can't be overwritten in place, the FTL always writes to new pages and updates the mapping. Garbage collection copies valid pages from fragmented blocks before erasing. Wear leveling distributes writes across all blocks to prevent premature wear-out."
+      },
+      {
+        "question": "Trace the path of `fwrite(data, 1, 4096, f)` from the application to the physical NAND flash on an SSD. Name each layer and buffer the data passes through.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "fwrite",
+          "stdio",
+          "page cache",
+          "block layer",
+          "FTL",
+          "NAND",
+          "fsync",
+          "fflush"
+        ],
+        "explanation": "1. fwrite() copies data to the stdio userspace buffer. 2. fflush() copies from stdio buffer to kernel page cache (dirty page). 3. The data sits in page cache — NOT on disk yet. 4. fsync() triggers writeback: dirty page → block layer → I/O scheduler → NVMe driver (submits command via doorbell register). 5. SSD controller's FTL receives the write: maps LBA→free PBA, writes data to a fresh NAND page, updates the mapping table. 6. The old page (if any) is marked invalid. Garbage collection will later erase its block. Without fsync(), steps 4-6 may happen seconds later or never if power fails."
+      },
+      {
+        "question": "Explain why reading a 10 GB file via mmap with random access is catastrophically slow on an HDD, but sequential access achieves near full disk bandwidth. Include the page fault implications.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "mmap",
+          "random",
+          "sequential",
+          "seek",
+          "page fault",
+          "read-ahead",
+          "HDD",
+          "bandwidth"
+        ],
+        "explanation": "Random access on HDD: each access to a new page triggers a major page fault (page not in page cache → read from HDD). Each HDD random read costs ~12 ms (seek + rotational latency). At 100 random accesses/second × 4 KB = 400 KB/s — the 10 GB file would take ~7 hours. Sequential access: the OS detects the pattern and performs read-ahead (pre-loads upcoming pages). After the initial seek, data streams at ~150-250 MB/s. Total time: ~40-70 seconds. The page fault overhead per page (~10 ms HDD) dominates random access, while sequential access amortizes seeks across many consecutive pages."
+      }
+    ]
+  },
+  {
+    "noteName": "00 — Concurrency Overview",
+    "questions": [
+      {
+        "question": "At the hardware level, what CPU instruction does a mutex fast path use?",
+        "options": [
+          "MOV          ",
+          "LOCK CMPXCHG",
+          "ADD ",
+          "JMP"
+        ],
+        "correctAnswer": "LOCK CMPXCHG",
+        "explanation": "On the fast path (no contention), acquiring a mutex uses a single `LOCK CMPXCHG` (compare-and-swap) instruction on a 32-bit futex word. This takes ~20 cycles with no kernel involvement. The `LOCK` prefix ensures the operation is atomic across all cores by asserting a cache lock via the MESI protocol."
+      },
+      {
+        "question": "What kernel primitive underlies `std::mutex` for the slow (contended) path?",
+        "options": [
+          "spinlockalt                     ",
+          "futex (FUTEX_WAIT / FUTEX_WAKE)",
+          "semaphorealt",
+          "signalalt "
+        ],
+        "correctAnswer": "futex (FUTEX_WAIT / FUTEX_WAKE)",
+        "explanation": "When a mutex is already locked, the thread calls `FUTEX_WAIT` — the kernel puts it on a sleep queue and context-switches away. When the mutex is unlocked, `FUTEX_WAKE` wakes one waiting thread. Futex = 'fast userspace mutex' — the fast path avoids the kernel entirely."
+      },
+      {
+        "question": "What causes false sharing at the hardware level?",
+        "options": [
+          "Two threads accessing different memory addresses on the same 64-byte cache line cause MESI invalidations",
+          "Two threads accessing the same variablealtaltaltaltaltaltaltaltaltalt . — as specified per reference     ",
+          "Using too many mutexesaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "The OS scheduler placing threads on the same corealtaltaltaltaltaltaltalt (standard) "
+        ],
+        "correctAnswer": "Two threads accessing different memory addresses on the same 64-byte cache line cause MESI invalidations",
+        "explanation": "The MESI cache coherence protocol operates on cache line granularity (64 bytes). If Thread A writes to variable X and Thread B writes to variable Y on the same cache line, each write invalidates the other core's cache line — causing a ping-pong of invalidations and reloads. Performance drops 50-100×."
+      },
+      {
+        "question": "What CPU instruction implements an atomic increment?",
+        "options": [
+          "INC",
+          "LOCK XADD",
+          "LOCK CMPXCHG",
+          "MFENCE"
+        ],
+        "correctAnswer": "LOCK XADD",
+        "explanation": "`LOCK XADD` atomically reads, adds, and writes the result — the cache line is locked for the duration (~15-30 cycles). Without the LOCK prefix, two cores could read the same value, each add 1, and write back — losing one increment (data race)."
+      },
+      {
+        "question": "On ARM architecture, what primitive is used instead of CAS for atomic operations?",
+        "options": [
+          "LOCK CMPXCHGaltalt                      ",
+          "LL/SC (Load-Linked / Store-Conditional)",
+          "MFENCE + XADDaltalt",
+          "SWP (swap)altalt "
+        ],
+        "correctAnswer": "LL/SC (Load-Linked / Store-Conditional)",
+        "explanation": "ARM uses `ldaxr` (load-linked with acquire ordering) and `stlxr` (store-conditional with release ordering). The store-conditional fails if any other core touched the monitored address between the load and store. `std::atomic` abstracts the difference between x86 CAS and ARM LL/SC."
+      },
+      {
+        "question": "What is the key advantage of a spinlock over a mutex for very short critical sections?",
+        "options": [
+          "Lower power consumptionaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "No syscall overhead — busy-waits via LOCK CMPXCHG in a loop, faster than context-switch for < ~1,000 cycle sections",
+          "Automatic deadlock detectionaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                     ",
+          "Priority inheritancealtaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "No syscall overhead — busy-waits via LOCK CMPXCHG in a loop, faster than context-switch for < ~1,000 cycle sections",
+        "explanation": "For critical sections shorter than ~1,000 cycles, a spinlock's busy-wait is faster than the context switch + syscall overhead of a contended mutex (~1-10 µs). But spinlocks burn CPU and power while waiting, so they're only appropriate when the lock is expected to be held very briefly."
+      },
+      {
+        "question": "What is a data race?",
+        "options": [
+          "Two threads running on different coresaltaltaltaltaltaltalt . — as specified per reference   ",
+          "Two threads accessing the same memory without synchronization, where at least one is a write",
+          "A race condition in the scheduleraltaltaltaltaltaltaltaltalt (standard) ",
+          "A deadlock between two mutexesaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Two threads accessing the same memory without synchronization, where at least one is a write",
+        "explanation": "A data race is undefined behavior in C++. It occurs when two threads access the same memory location concurrently, at least one access is a write, and there's no synchronization (mutex, atomic, etc.) between them. At the hardware level, this is two cores' load-modify-store sequences interleaving on the same cache line."
+      },
+      {
+        "question": "What is a CAS loop?",
+        "options": [
+          "A loop that compares two valuesaltaltaltaltaltaltalt . — as specified per reference  ",
+          "Repeatedly trying LOCK CMPXCHG until it succeeds — the universal lock-free primitive",
+          "A loop protected by a condition variablealtaltaltaltalt (standard) ",
+          "A kernel scheduling loopaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Repeatedly trying LOCK CMPXCHG until it succeeds — the universal lock-free primitive",
+        "explanation": "CAS (Compare-And-Swap) loop: read current value, compute desired new value, atomically swap if current hasn't changed. If another thread modified it between read and swap, the CAS fails → retry. This is the building block for lock-free data structures. ABA problem: value changed from A→B→A between read and CAS — tagged pointers prevent this."
+      },
+      {
+        "question": "What do memory ordering constraints (relaxed, acquire, release, seq_cst) control?",
+        "options": [
+          "The order files are written to diskaltaltaltaltaltaltaltaltaltaltalt                                ",
+          "How the CPU's store buffer and cache coherence allow memory operations to be reordered across cores",
+          "The scheduling priority of threadsaltaltaltaltaltaltaltaltaltaltalt ",
+          "The order mutexes are acquiredaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "How the CPU's store buffer and cache coherence allow memory operations to be reordered across cores",
+        "explanation": "CPUs reorder memory operations for performance (store buffers, out-of-order execution). Memory ordering constraints control this: acquire prevents later reads/writes from moving before the acquire; release prevents earlier reads/writes from moving after the release; seq_cst provides total global order; relaxed allows any reordering."
+      },
+      {
+        "question": "Why does a condition variable require a predicate loop on wake?",
+        "options": [
+          "Spurious wakeups — the thread can wake up without a notification, so it must re-check the condition",
+          "The mutex may be re-locked by another threadaltaltaltaltaltaltaltalt (standard) ",
+          "The OS requires italtaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "To prevent deadlocksaltaltaltaltaltaltaltaltaltaltaltaltaltalt . — as specified per reference       "
+        ],
+        "correctAnswer": "Spurious wakeups — the thread can wake up without a notification, so it must re-check the condition",
+        "explanation": "POSIX allows spurious wakeups: `pthread_cond_wait` can return even without `pthread_cond_signal`. The correct pattern is a while-loop: `while (!condition) cond.wait(lock);`. This also handles the case where another thread grabbed the resource between wake and lock acquisition."
+      },
+      {
+        "question": "What does the `LOCK` prefix do on x86 at the hardware level?",
+        "options": [
+          "Disables interruptsaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                  ",
+          "Asserts a bus lock (or cache lock via MESI) for the instruction's duration, ensuring atomicity",
+          "Flushes the TLBaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Increases the CPU clock speedaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Asserts a bus lock (or cache lock via MESI) for the instruction's duration, ensuring atomicity",
+        "explanation": "The `LOCK` prefix makes a read-modify-write instruction atomic. On modern CPUs, it typically uses a cache lock (locking the cache line in Modified/Exclusive state via MESI) rather than a full bus lock, which is cheaper. Other cores cannot access that cache line for the instruction's duration."
+      },
+      {
+        "question": "Explain the difference between a mutex (slow path) and a spinlock. At what critical section duration does one become preferable over the other? Use the cycle counts from the note.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "mutex",
+          "spinlock",
+          "context switch",
+          "futex",
+          "busy-wait",
+          "cycles",
+          "syscall",
+          "critical section"
+        ],
+        "explanation": "Mutex slow path (contended): FUTEX_WAIT syscall → sleep queue → context switch (~1-10 µs) → wake on FUTEX_WAKE → context switch back. Spinlock: busy-waits via LOCK CMPXCHG in a loop (~15-30 cycles per attempt), no sleep. Break-even: when critical section duration > context switch overhead (~1,000+ cycles), mutex wins (saves CPU). When critical section < ~1,000 cycles, spinlock wins (avoids syscall). At 3 GHz, 1,000 cycles ≈ 333 ns. For a 50 µs critical section, mutex is clearly better — the spinlock would waste 50 µs of CPU burning power."
+      },
+      {
+        "question": "Describe the false sharing problem: two threads increment adjacent integers on the same cache line. Why does this cause 50-100× slowdown, and how do you fix it?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "false sharing",
+          "cache line",
+          "MESI",
+          "invalidate",
+          "alignas",
+          "padding",
+          "64-byte"
+        ],
+        "explanation": "Thread A on Core 0 writes to counterA → Core 0's cache line enters Modified state. Thread B on Core 1 writes to counterB (same 64-byte cache line) → Core 1 must invalidate Core 0's line first → Core 0's next write must invalidate Core 1's line. This MESI ping-pong forces constant cache line transfers between cores. Each write incurs ~100+ cycles (bus traffic + invalidation) instead of ~1 cycle (L1 hit). Fix: pad variables to separate cache lines: `alignas(64) int counterA; alignas(64) int counterB;`. Each variable now lives on its own cache line — writes don't interfere."
+      }
+    ]
+  },
+  {
+    "noteName": "00 — Function Calls Overview",
+    "questions": [
+      {
+        "question": "What does the x86-64 `call` instruction do atomically?",
+        "options": [
+          "Jumps to the target addressaltaltaltaltaltalt ",
+          "Pushes RIP onto the stack, decrements RSP by 8, then jumps to the target",
+          "Copies the function's code to the call sitealtalt                        ",
+          "Saves all registers to the stackaltaltaltaltalt "
+        ],
+        "correctAnswer": "Pushes RIP onto the stack, decrements RSP by 8, then jumps to the target",
+        "explanation": "`call` atomically performs: `[RSP-8] = RIP_after_call; RSP -= 8; RIP = target`. This saves the return address (address of the instruction after `call`) on the stack. `ret` reverses this: `RIP = [RSP]; RSP += 8`."
+      },
+      {
+        "question": "What is the purpose of RBP (Base Pointer) in a stack frame?",
+        "options": [
+          "It stores the function's return valuealtaltalt                        ",
+          "It provides a stable anchor — locals at [RBP-N], arguments at [RBP+N]",
+          "It tracks the stack size limitaltaltaltaltalt ",
+          "It points to the heapaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "It provides a stable anchor — locals at [RBP-N], arguments at [RBP+N]",
+        "explanation": "RBP is set by the prologue (`push rbp; mov rbp, rsp`) to create a stable reference point. Locals are accessed at negative offsets from RBP; saved return address and arguments are at positive offsets. RBP is optional at `-O2` — the compiler can track offsets from RSP directly."
+      },
+      {
+        "question": "Why must RSP be a multiple of 16 at the point of a `call` instruction?",
+        "options": [
+          "The stack won't fit in cache otherwise ",
+          "SSE instructions like `movaps` fault on misaligned addresses",
+          "The kernel enforces it — see docs ",
+          "It's a convention with no hardware requirement               "
+        ],
+        "correctAnswer": "SSE instructions like `movaps` fault on misaligned addresses",
+        "explanation": "SSE `movaps` (move aligned packed single-precision) requires 16-byte alignment — it generates a general protection fault (#GP) on misaligned addresses. `call` pushes 8 bytes (return address), so the callee's prologue typically `sub rsp, 8+N` to realign before using SSE instructions."
+      },
+      {
+        "question": "What is the 'Shadow Space' on Windows x64?",
+        "options": [
+          "A hidden area for malwarealtaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "32 bytes reserved below the return address for register argument spill — even if the function takes no args",
+          "A debug-only memory regionaltaltaltaltaltaltaltaltaltaltaltaltaltalt (standard) ",
+          "Space for the red zonealtaltaltaltaltaltaltaltaltaltaltaltaltaltalt . — as specified per reference          "
+        ],
+        "correctAnswer": "32 bytes reserved below the return address for register argument spill — even if the function takes no args",
+        "explanation": "Microsoft x64 calling convention requires 32 bytes of shadow space (home space) below the return address, reserved for the callee to spill its 4 register arguments (RCX, RDX, R8, R9) if needed. This space exists regardless of whether the callee uses it."
+      },
+      {
+        "question": "What is the 'Red Zone' in System V AMD64 ABI?",
+        "options": [
+          "A memory region for kernel usealtaltaltalt (standard) ",
+          "128 bytes below RSP that leaf functions can use without adjusting RSP",
+          "A restricted area for securityaltaltaltalt ",
+          "A zone where interrupts are disabledaltalt . — as specified           "
+        ],
+        "correctAnswer": "128 bytes below RSP that leaf functions can use without adjusting RSP",
+        "explanation": "In System V AMD64 (Linux/macOS), the 128-byte red zone below RSP is reserved for the current function. Leaf functions (functions that don't call other functions) can use this space without `sub rsp, N` — signal handlers won't touch it. Windows x64 does NOT have a red zone."
+      },
+      {
+        "question": "How does a buffer overflow exploit work at the stack level?",
+        "options": [
+          "The program runs out of memoryaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Writing past a local array overwrites saved RBP, then the return address — `ret` jumps to attacker-controlled RIP",
+          "The stack grows into the heapaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "The CPU executes the overflowed data directlyaltaltaltaltaltaltaltaltaltaltaltalt                                 "
+        ],
+        "correctAnswer": "Writing past a local array overwrites saved RBP, then the return address — `ret` jumps to attacker-controlled RIP",
+        "explanation": "The stack layout (from low to high): local variables → saved RBP → return address → arguments. Writing past a local buffer overwrites saved RBP, then the return address. When the function executes `ret`, it pops the attacker-controlled value into RIP — redirecting execution to the attacker's code."
+      },
+      {
+        "question": "What are the System V AMD64 register argument passing order for the first 6 integer arguments?",
+        "options": [
+          "RAX, RBX, RCX, RDX, RSI, RDI",
+          "RDI, RSI, RDX, RCX, R8, R9",
+          "RCX, RDX, R8, R9, stack, stack",
+          "R8, R9, R10, R11, R12, R13"
+        ],
+        "correctAnswer": "RDI, RSI, RDX, RCX, R8, R9",
+        "explanation": "System V AMD64 passes args in RDI, RSI, RDX, RCX, R8, R9 (first 6). Microsoft x64 uses RCX, RDX, R8, R9 (first 4, rest on stack). Return value in RAX for both."
+      },
+      {
+        "question": "What does the function prologue `push rbp; mov rbp, rsp; sub rsp, N` accomplish?",
+        "options": [
+          "Saves the old frame pointer, sets up new frame pointer, allocates N bytes for local variables",
+          "Initializes the function's global variablesaltaltaltaltaltaltalt                              ",
+          "Sets up exception handlingaltaltaltaltaltaltaltaltaltaltalt ",
+          "Checks for stack overflowaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Saves the old frame pointer, sets up new frame pointer, allocates N bytes for local variables",
+        "explanation": "`push rbp` saves the caller's frame pointer. `mov rbp, rsp` sets the new frame pointer. `sub rsp, N` allocates stack space for local variables (stack grows down). The epilogue `leave` (= `mov rsp, rbp; pop rbp`) + `ret` undoes this."
+      },
+      {
+        "question": "How does stack overflow detection work?",
+        "options": [
+          "The compiler checks array sizesaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Guard pages are placed below the stack — when RSP crosses into them, a page fault triggers SIGSEGV",
+          "The kernel monitors stack pointer valuealtaltaltaltaltaltaltaltaltalt                              ",
+          "A watchdog timer checks every secondaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Guard pages are placed below the stack — when RSP crosses into them, a page fault triggers SIGSEGV",
+        "explanation": "The kernel places inaccessible guard pages below the stack's committed region. When the stack grows into a guard page, a page fault occurs → the kernel either expands the stack (within limits) or delivers SIGSEGV. This is how infinite recursion is detected: each call frame pushes the stack pointer into the guard region."
+      },
+      {
+        "question": "What does function inlining eliminate?",
+        "options": [
+          "The function's return valuealtaltaltaltaltalt ",
+          "All call/ret hardware — the function body is copied to the call site",
+          "The function's local variablesaltaltaltaltalt . — as specified       ",
+          "Stack alignment requirementsaltaltaltaltaltalt (standard) "
+        ],
+        "correctAnswer": "All call/ret hardware — the function body is copied to the call site",
+        "explanation": "Inlining copies the callee's body into the caller, eliminating the `call` (push RIP + jump) and `ret` (pop RIP + jump) instructions, plus the prologue/epilogue. Benefits: no branch overhead, better instruction cache locality, enables further optimizations (constant propagation, dead code elimination). Costs: code size increases (I-cache pressure)."
+      },
+      {
+        "question": "What does `varargs` (variable arguments) require on System V AMD64?",
+        "options": [
+          "All arguments go on the stack ",
+          "AL register counts how many XMM (floating-point) registers are used",
+          "A special calling convention with no registers (standard) ",
+          "Arguments must be passed by pointer . — as specified per reference  "
+        ],
+        "correctAnswer": "AL register counts how many XMM (floating-point) registers are used",
+        "explanation": "For varargs functions in System V, AL is set to the number of floating-point arguments passed in XMM registers (0-8), so the callee knows which XMM registers contain valid arguments. Microsoft x64 reads varargs from the shadow space upward on the stack."
+      },
+      {
+        "question": "Trace the complete stack frame lifecycle for a function `int add(int a, int b)` that returns a+b. Show the stack state at each step (call, prologue, computation, epilogue, ret) for System V AMD64.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "call",
+          "prologue",
+          "push rbp",
+          "mov rbp",
+          "sub rsp",
+          "leave",
+          "ret",
+          "RIP",
+          "RSP",
+          "RBP"
+        ],
+        "explanation": "1. Before call: caller puts a in RDI, b in RSI. 2. `call add`: pushes return address (RIP_after_call) onto stack, RSP -= 8, jumps to add. 3. Prologue: `push rbp` (save caller's RBP, RSP -= 8), `mov rbp, rsp` (anchor), `sub rsp, N` (local space). 4. Computation: `mov eax, edi; add eax, esi` (result in EAX). 5. Epilogue: `leave` (= `mov rsp, rbp; pop rbp` — restores caller's RBP and RSP). 6. `ret`: pops return address into RIP (RSP += 8), execution continues in caller. Frame is destroyed — RSP back to pre-call value."
+      },
+      {
+        "question": "Explain the difference between the Microsoft x64 and System V AMD64 calling conventions. Cover: argument registers, shadow space vs red zone, and stack alignment requirements.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "Microsoft",
+          "System V",
+          "calling convention",
+          "RCX",
+          "RDI",
+          "shadow space",
+          "red zone",
+          "alignment"
+        ],
+        "explanation": "Argument registers: Microsoft uses RCX, RDX, R8, R9 (first 4 args, rest on stack). System V uses RDI, RSI, RDX, RCX, R8, R9 (first 6 args in registers). Shadow space: Microsoft reserves 32 bytes below return address for register spill (always present). Red zone: System V provides 128 bytes below RSP usable by leaf functions without adjustment (Microsoft has no red zone — any use below RSP risks corruption by interrupts). Stack alignment: both require RSP multiple of 16 at `call`. Return value: both use RAX."
+      }
+    ]
+  },
+  {
+    "noteName": "Threads & Processes — Overview",
+    "questions": [
+      {
+        "question": "What is the key difference between a process and a thread?",
+        "options": [
+          "Processes are faster than threadsaltaltaltaltaltaltaltaltaltaltaltalt                              ",
+          "A process has its own virtual address space; threads share the same address space within a process",
+          "Threads can't use the networkaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Processes can't have multiple threadsaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "A process has its own virtual address space; threads share the same address space within a process",
+        "explanation": "A process has its own MMU page tables (rooted at CR3), file descriptors, and credentials. Threads within a process share the same address space, file descriptors, and heap, but each has its own stack and register context. This sharing is why threads are lighter-weight but also why they need synchronization."
+      },
+      {
+        "question": "What is the approximate cost of a context switch between threads in the same process?",
+        "options": [
+          "~1 nanosecond",
+          "~1-5 microseconds",
+          "~1 millisecond",
+          "~100 milliseconds"
+        ],
+        "correctAnswer": "~1-5 microseconds",
+        "explanation": "Same-process context switch: save current thread's GPRs + optionally FPU state (XSAVE), scheduler selects next thread, restore its register state, IRETQ. Direct cost: 1-5 µs. Cross-process switch adds CR3 reload (TLB flush, mitigated by PCID) → 3-10 µs. Indirect cost: cache warmup of 5-100 µs."
+      },
+      {
+        "question": "Why does `std::thread::hardware_concurrency()` not give linear speedup for CPU-bound work?",
+        "options": [
+          "The function returns the wrong numberaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "SMT threads share execution units and memory bandwidth — only 15-30% throughput improvement per logical thread",
+          "The OS limits the number of active threadsaltaltaltaltaltaltaltaltaltaltaltaltalt                              ",
+          "std::thread has high overheadaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "SMT threads share execution units and memory bandwidth — only 15-30% throughput improvement per logical thread",
+        "explanation": "`hardware_concurrency()` returns the number of logical cores (e.g., 16 on 8-core with HT). SMT (Hyper-Threading) duplicates architectural state but shares execution units (ALUs, FPUs) and caches. Two threads on the same physical core compete for these resources, yielding only 15-30% combined improvement. Plus, the OS has other threads that also need CPU time."
+      },
+      {
+        "question": "What is CPU affinity and why is it used in game engines?",
+        "options": [
+          "A security feature to prevent cheatingaltaltaltaltaltaltaltaltaltalt (standard) ",
+          "Constraining threads to specific cores to preserve cache warmth — avoids cache-cold migrations",
+          "A power-saving featurealtaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "A way to combine multiple CPUs into onealtaltaltaltaltaltaltaltalt . — as specified            "
+        ],
+        "correctAnswer": "Constraining threads to specific cores to preserve cache warmth — avoids cache-cold migrations",
+        "explanation": "CPU affinity (`sched_setaffinity`/`SetThreadAffinityMask`) pins a thread to specific cores. When the scheduler migrates a thread, its working set is cold (not in the new core's L1/L2 cache). Pinning latency-critical threads (audio, render) preserves cache warmth and avoids the 5-100 µs cache reload penalty."
+      },
+      {
+        "question": "What is a thread pool and why is it used?",
+        "options": [
+          "A collection of idle threads waiting for work — amortizes thread creation costs (~10-50 µs) by reusing workers",
+          "A memory pool for thread stacksaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "A kernel feature for grouping threadsaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                ",
+          "A debugging toolaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "A collection of idle threads waiting for work — amortizes thread creation costs (~10-50 µs) by reusing workers",
+        "explanation": "Thread creation involves stack allocation, TCB initialization, and scheduler registration (~10-50 µs). A thread pool keeps long-lived workers ready, distributing tasks via work-stealing deques (lock-free Chase-Lev or bounded MPMC). This avoids the creation/destruction overhead for every small task."
+      },
+      {
+        "question": "What is the danger of a real-time priority thread (SCHED_FIFO / THREAD_PRIORITY_TIME_CRITICAL)?",
+        "options": [
+          "It uses more poweraltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "If it never yields, it can freeze the entire system — the scheduler cannot preempt it for lower-priority threads",
+          "It can't access the networkaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                   ",
+          "It's slower than normal threadsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "If it never yields, it can freeze the entire system — the scheduler cannot preempt it for lower-priority threads",
+        "explanation": "Real-time threads have fixed priorities and immediately preempt all lower-priority threads. A SCHED_FIFO thread that enters an infinite loop will never be preempted — the desktop, mouse cursor, terminal, and even kernel helper threads may starve. Game engines use real-time priority for audio/render threads but with extreme care."
+      },
+      {
+        "question": "What is the lock contention trap with fine-grained locking?",
+        "options": [
+          "Too many locks cause deadlocksaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Many threads contending for a brief critical section spend most time blocked and context-switching — single-threaded performance can be faster",
+          "Locks use too much memoryaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "The scheduler ignores locked threadsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt on x86 .                                "
+        ],
+        "correctAnswer": "Many threads contending for a brief critical section spend most time blocked and context-switching — single-threaded performance can be faster",
+        "explanation": "If 8 threads contend for a mutex protecting a 1 ns increment: 7 threads are blocked at any moment, each lock handoff requires a context switch, and actual throughput may be ~20% of single-thread performance. Solutions: atomics for simple counters, partition data so threads don't contend, or batch work to minimize critical section frequency."
+      },
+      {
+        "question": "How does the Linux CFS (Completely Fair Scheduler) work?",
+        "options": [
+          "Fixed time slices for all threadsaltaltaltaltaltaltaltaltalt ",
+          "Uses vruntime-weighted red-black tree — the thread with the lowest vruntime runs next",
+          "Round-robin with fixed prioritiesaltaltaltaltaltaltaltaltalt . — as specified         ",
+          "First-come, first-servedaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Uses vruntime-weighted red-black tree — the thread with the lowest vruntime runs next",
+        "explanation": "CFS maintains a red-black tree ordered by vruntime (virtual runtime — actual runtime weighted by priority). The leftmost node (lowest vruntime) runs next. Target latency: 6 ms period (all runnable threads get a slice within this window). Minimum granularity: 0.75 ms (prevents excessive context switching with many threads)."
+      },
+      {
+        "question": "What are green threads (user-space threads / fibers)?",
+        "options": [
+          "Threads that use less poweraltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Threads multiplexed onto OS threads cooperatively — switching costs ~10-30 ns with no kernel involvement",
+          "Threads with green priority levelaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Environmentally friendly compute threadsaltaltaltaltaltaltaltaltaltaltaltalt                             "
+        ],
+        "correctAnswer": "Threads multiplexed onto OS threads cooperatively — switching costs ~10-30 ns with no kernel involvement",
+        "explanation": "Green threads switch cooperatively via stack pointer swap + callee-saved register save/restore — just ~10-30 ns vs 1-5 µs for kernel context switch. The tradeoff: if one green thread blocks on I/O, ALL green threads on that OS thread are stuck (head-of-line blocking). They require non-blocking I/O (epoll, IOCP) to be practical."
+      },
+      {
+        "question": "What does the `task_struct` (Linux) or `ETHREAD` (Windows) contain for a thread?",
+        "options": [
+          "Only the thread IDaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Saved register context (GPRs, RIP, RSP, RFLAGS, FS/GS base, FPU/SIMD state), stack pointers, scheduling info",
+          "The thread's entire heapaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                  ",
+          "Just the thread priorityaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt"
+        ],
+        "correctAnswer": "Saved register context (GPRs, RIP, RSP, RFLAGS, FS/GS base, FPU/SIMD state), stack pointers, scheduling info",
+        "explanation": "The thread control block stores everything needed to suspend and resume execution: general-purpose registers, instruction pointer, stack pointer, flags, segment bases (FS for thread-local storage), and optionally FPU/SIMD state (lazily saved via CR0.TS on x86). It also holds scheduling metadata (priority, vruntime, affinity mask)."
+      },
+      {
+        "question": "What is the purpose of work-stealing in thread pools?",
+        "options": [
+          "Preventing idle threads — if a thread's local queue is empty, it steals work from another thread's queue",
+          "Balancing the OS scheduleraltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Distributing memory allocationsaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                ",
+          "Monitoring thread healthaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "Preventing idle threads — if a thread's local queue is empty, it steals work from another thread's queue",
+        "explanation": "In a work-stealing scheduler, each worker thread has its own deque. New tasks are pushed to the local deque. When a thread finishes its work, it steals from the back of another thread's deque (lock-free via CAS). This balances load dynamically without a central dispatcher and minimizes contention (local push/pop, remote steal)."
+      },
+      {
+        "question": "What priority inversion problem can occur with real-time threads and mutexes?",
+        "options": [
+          "The mutex can't be locked by real-time threadsaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt                                    ",
+          "A low-priority thread holding a mutex blocks a high-priority real-time thread — the scheduler can't boost the low-priority thread",
+          "Real-time threads ignore mutexesaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt ",
+          "Mutexes slow down real-time threads too muchaltaltaltaltaltaltaltaltaltaltaltaltaltaltaltalt "
+        ],
+        "correctAnswer": "A low-priority thread holding a mutex blocks a high-priority real-time thread — the scheduler can't boost the low-priority thread",
+        "explanation": "Priority inversion: a low-priority thread holds a mutex that a high-priority real-time thread needs. The low-priority thread can't run because medium-priority threads are running (and the real-time thread is blocked). The real-time thread is effectively stuck at the low thread's priority. Solutions: priority inheritance (the mutex holder temporarily inherits the waiter's priority) or avoiding shared locks between priority levels."
+      },
+      {
+        "question": "Explain the three traps described in the note: the `hardware_concurrency()` trap, the lock contention trap, and the false sharing trap. For each, describe the expected vs. actual performance and the fix.",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "hardware_concurrency",
+          "lock contention",
+          "false sharing",
+          "trap",
+          "SMT",
+          "mutex",
+          "cache line",
+          "speedup"
+        ],
+        "explanation": "1. hardware_concurrency() trap: spawning 16 threads on an 8-core HT CPU expects 16× speedup but gets ~8-12×. SMT threads share execution units (FPU, memory bandwidth). The OS also has other threads competing. Fix: benchmark to find optimal thread count, consider physical cores only. 2. Lock contention trap: 8 threads contending for a mutex around a 1 ns increment. Expected: 8× throughput. Actual: ~0.2× single-thread (7 threads blocked, constant context switches). Fix: use atomics for counters, partition data, batch work outside critical sections. 3. False sharing trap: two threads updating adjacent ints on the same 64-byte cache line. Expected: near-linear scaling. Actual: 50-100× slower due to MESI ping-pong. Fix: `alignas(64)` to place variables on separate cache lines."
+      },
+      {
+        "question": "Compare green threads (fibers) to OS threads. What makes green threads faster to switch, and what is their fatal limitation?",
+        "correctAnswer": "",
+        "acceptableAnswers": [
+          "green threads",
+          "fibers",
+          "context switch",
+          "cooperative",
+          "blocking I/O",
+          "OS threads",
+          "kernel"
+        ],
+        "explanation": "Green threads switch cooperatively in user space: save callee-saved registers + swap stack pointer (~10-30 ns). OS threads require a kernel context switch: timer interrupt → save all registers → scheduler → restore registers → IRETQ (~1-5 µs, 100-500× slower). The fatal limitation: if one green thread blocks on I/O (e.g., `read()`), all green threads on that OS thread are stuck — the kernel can't distinguish them. OS threads can block independently because the kernel scheduler runs another thread. Green threads require all I/O to be non-blocking (epoll/IOCP) and CPU work to yield periodically."
+      }
+    ]
+  }
+]
