@@ -376,17 +376,17 @@
   padding: 1rem 1.1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--text-muted);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius);
   text-decoration: none; cursor: pointer;
-  transition: border-left-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .lp-card:hover {
-  border-left-color: var(--accent);
-  box-shadow: 0 0 12px rgba(88,166,255,0.06);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
   text-decoration: none; color: inherit;
 }
-.lp-card-icon { font-size: 1.3rem; line-height: 1; }
+.lp-card-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--card-accent, var(--accent)); }
+.lp-card-icon svg { display: block; }
 .lp-card-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
 .lp-card-meta { font-size: 0.73rem; color: var(--text-muted); }
 

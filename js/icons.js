@@ -10,3 +10,29 @@ const FOLDER_ICONS = {
   "_glossary": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/></svg>',
   "_learning-path": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="12 2 22 12 12 22 2 12"/><circle cx="12" cy="12" r="3"/></svg>',
 };
+
+// Build Learning Path grid HTML — dynamic icons + colors
+function buildLPGrid() {
+  var ids = ['computer-systems','cpp-fundamentals','game-math','ue-core','ue-networking','big-o'];
+  var meta = {
+    'computer-systems':'Hardware → OS → Concurrency',
+    'cpp-fundamentals':'Variables → OOP → Modern C++',
+    'game-math':'Trig → Collision → Rendering → Physics',
+    'ue-core':'UHT → Casting → Containers → Pointers',
+    'ue-networking':'Roles → RPCs → Replication → Iris',
+    'big-o':'Big O → Sorting → Graphs → DP'
+  };
+  var html = '<div class="lp-grid">';
+  for (var i = 0; i < ids.length; i++) {
+    var id = ids[i];
+    var f = FOLDERS.find(function(x) { return x.id === id; });
+    var icon = FOLDER_ICONS[id] || f.icon;
+    html += '<a class="lp-card" href="javascript:void(0)" style="--card-accent:' + f.color + '" onclick="sessionStorage.setItem(\'dv_fresh_start\',\'1\');router.navigate(\'#/reference/' + encodeURIComponent('Learning Path \u2014 ' + f.name) + '\')">' +
+      '<div class="lp-card-icon">' + icon + '</div>' +
+      '<div class="lp-card-name">' + f.name + '</div>' +
+      '<div class="lp-card-meta">' + meta[id] + '</div>' +
+    '</a>';
+  }
+  html += '</div>';
+  return html;
+}
