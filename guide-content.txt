@@ -62,7 +62,7 @@ Once you understand the hardware, learn the language that runs on it.
 
 Six phases: Primer (absolute beginner) → Syntax & Types → Memory → OOP & Generics → Modern C++ → Engine Bridge. Every note has exercises.
 
-Start with [[01 — Primer/00 — Primer Overview|C++ Primer]] and follow the [[Learning Path — C++|C++ Learning Path]].
+Start with [[01 — Primer/01 — Variables, Types & Memory|Variables, Types & Memory]] and follow the [[Learning Path — C++|C++ Learning Path]].
 
 ### Layer 3 — Game Math
 

@@ -81,7 +81,6 @@
   },
   "cpp-fundamentals": {
     "01 \u2014 Primer": [
-      "00 \u2014 Primer Overview",
       "01 \u2014 Variables, Types & Memory",
       "02 \u2014 Control Flow",
       "03 \u2014 Functions & The Call Stack",

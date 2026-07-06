@@ -12402,6 +12402,120 @@
           "explanation": "System V: params 1-6 in RDI, RSI, RDX, RCX, R8, R9. Params 7-8 go on the stack (right-to-left, caller cleanup). Red zone: 128 bytes below RSP usable by leaf functions. Microsoft x64: params 1-4 in RCX, RDX, R8, R9. Params 5-8 (and 7-8) go on the stack. Shadow space: 32 bytes reserved below return address. The different register assignments mean the same C++ function compiles to different assembly. A .so compiled for Linux (System V) expects args in RDI/RSI; a .dll compiled for Windows (MS x64) passes them in RCX/RDX — they're binary-incompatible even on the same x86-64 hardware."
         }
       ]
+    },
+    "07 — const Correctness": {
+      "questions": [
+        {
+          "question": "What does 'const int* p' mean?",
+          "options": [
+            "Pointer to a constant integer — you cannot modify the integer through p",
+            "Constant pointer to an integer — you cannot change where p points",
+            "Both the pointer and the integer are constant",
+            "The pointer is constant but the integer is mutable"
+          ],
+          "correctAnswer": "Pointer to a constant integer — you cannot modify the integer through p",
+          "explanation": "Read right-to-left: p is a pointer to an int that is const. The pointer itself can be reassigned to point elsewhere; only the pointed-to value is protected."
+        },
+        {
+          "question": "Which of these correctly declares a const pointer to a mutable int?",
+          "options": [
+            "const int* p",
+            "int* const p",
+            "const int* const p",
+            "int const* p"
+          ],
+          "correctAnswer": "int* const p",
+          "explanation": "int* const p reads right-to-left as 'p is a const pointer to int.' The pointer cannot be reassigned, but the int it points to can be modified."
+        },
+        {
+          "question": "What happens if you mark a member function as const?",
+          "options": [
+            "The function cannot modify any member variables except those marked mutable",
+            "The function cannot be called on non-const objects",
+            "The function returns a const value",
+            "The function is evaluated at compile time"
+          ],
+          "correctAnswer": "The function cannot modify any member variables except those marked mutable",
+          "explanation": "A const member function has an implicit 'const T* this' parameter. The compiler prevents modification of non-mutable members, enforced at compile time with zero runtime overhead."
+        },
+        {
+          "question": "Why does 'const' on a pointer member NOT protect the pointed-to data?",
+          "options": [
+            "const only applies to the pointer itself (int* const), not to what it points to",
+            "const is ignored for pointer members",
+            "Pointers are always mutable regardless of const",
+            "The compiler cannot track pointer ownership through const"
+          ],
+          "correctAnswer": "const only applies to the pointer itself (int* const), not to what it points to",
+          "explanation": "const is shallow — it protects the top-level members only. A const method on a class with int* data prevents you from changing data (the pointer), but *data (the pointed-to value) is unprotected."
+        },
+        {
+          "question": "When should you pass a function parameter by 'const T&' instead of by value?",
+          "options": [
+            "When the object is large and you only need to read it — avoids an expensive copy",
+            "When you need to modify the original object",
+            "Always — const T& is always faster than pass-by-value",
+            "Only for primitive types like int and float"
+          ],
+          "correctAnswer": "When the object is large and you only need to read it — avoids an expensive copy",
+          "explanation": "Pass by const reference avoids copying the object (no constructor/destructor overhead) while preventing accidental modification. For small types (int, pointers), pass by value is often faster because it avoids indirection."
+        },
+        {
+          "question": "What is 'mutable' used for in a const member function?",
+          "options": [
+            "To allow specific member variables to be modified even in const methods — used for caching, mutexes, and debug counters",
+            "To make the entire object modifiable despite const",
+            "To convert a const reference to a non-const reference",
+            "To bypass all const restrictions in the class"
+          ],
+          "correctAnswer": "To allow specific member variables to be modified even in const methods — used for caching, mutexes, and debug counters",
+          "explanation": "mutable enables logical constness: the object's observable state doesn't change, but internal bookkeeping (cache invalidation, mutex locking, access counters) can be updated. Use sparingly — it's not for circumventing const correctness."
+        },
+        {
+          "question": "What is the difference between top-level const and low-level const?",
+          "options": [
+            "Top-level const applies to the variable itself and is ignored when copying; low-level const applies to what's pointed/referred to and must match",
+            "Top-level const means 'const at the top of the file'; low-level means 'const inside functions'",
+            "There is no difference — const always means the same thing",
+            "Top-level const is a C++17 feature; low-level const is pre-C++17"
+          ],
+          "correctAnswer": "Top-level const applies to the variable itself and is ignored when copying; low-level const applies to what's pointed/referred to and must match",
+          "explanation": "int* const p has top-level const (p is const) — when copying p, the const is stripped. const int* p has low-level const (the int is const) — when assigning to another pointer, this const must be preserved. You can add low-level const but never remove it."
+        },
+        {
+          "question": "What does 'const_cast' do and when should you use it?",
+          "options": [
+            "Removes const from a reference/pointer — only for interop with legacy APIs that don't modify, never for modifying genuinely const objects",
+            "Adds const to any variable at compile time",
+            "Converts between const and constexpr",
+            "Safely removes const from any variable"
+          ],
+          "correctAnswer": "Removes const from a reference/pointer — only for interop with legacy APIs that don't modify, never for modifying genuinely const objects",
+          "explanation": "const_cast is for edge cases: calling C APIs that take char* but don't modify, or passing const data to old libraries missing const annotations. Using const_cast to modify a variable declared const is undefined behavior."
+        },
+        {
+          "question": "Which is true about 'const' and return types?",
+          "options": [
+            "Returning 'const int' by value is pointless (caller gets a copy); returning 'const std::string&' is useful (caller can read without copying or modifying)",
+            "Always return const from functions to prevent modification",
+            "Never return const references — they dangle when the function exits",
+            "const return types prevent copy elision"
+          ],
+          "correctAnswer": "Returning 'const int' by value is pointless (caller gets a copy); returning 'const std::string&' is useful (caller can read without copying or modifying)",
+          "explanation": "Top-level const on a return-by-value is meaningless since the caller receives a copy. Const references returned from member functions give read-only access to internal data without exposing it to modification."
+        },
+        {
+          "question": "What's the difference between 'const' and 'constexpr'?",
+          "options": [
+            "const means 'won't change after initialization' (runtime OK); constexpr means 'must be known at compile time'",
+            "They are synonyms — constexpr was added in C++11 as an alias",
+            "const is for variables; constexpr is only for functions",
+            "constexpr is weaker than const — constexpr values can change at runtime"
+          ],
+          "correctAnswer": "const means 'won't change after initialization' (runtime OK); constexpr means 'must be known at compile time'",
+          "explanation": "const int x = GetRuntimeValue() is valid — the value is fixed after initialization but unknown at compile time. constexpr int y = 42 is evaluated entirely at compile time. All constexpr variables are implicitly const."
+        }
+      ]
     }
   },
   "quiz_notes": {
@@ -12502,6 +12616,7 @@
       "06 — Explicit & Implicit Conversion",
       "06 — std ranges (C++20)",
       "06 — std vector & Container Internals",
+      "07 — const Correctness",
       "07 — std map & unordered_map",
       "08 — Iterators & Algorithms",
       "08 — Preprocessor & Macros",
