@@ -15,7 +15,7 @@ const TopicHub = {
       var n = notes[i];
       if (projectNotes.indexOf(n) !== -1) {
         projectList.push(n);
-      } else if (quizNotes.indexOf(n) !== -1) {
+      } else if (quizNotes.indexOf(n) !== -1 || n.indexOf('Overview') !== -1 || n.indexOf('Chapter Summary') !== -1) {
         studyList.push(n);
       } else {
         guideList.push(n);
@@ -40,7 +40,7 @@ const TopicHub = {
         '<span class="folder-header-icon">' + (FOLDER_ICONS[folder.id] || folder.icon) + '</span>' +
         '<div class=\"folder-header-meta\">' +
           '<h2 class=\"folder-header-title\">' + folder.name + '</h2>' +
-          '<span class=\"folder-header-stats\">' + notes.length + ' modules \u00b7 ' + stats.completedNotes + ' with attempts</span>' +
+          '<span class=\"folder-header-stats\">' + quizNotes.length + ' graded modules \u00b7 ' + stats.completedNotes + ' completed</span>' +
         '</div>' +
       '</div>' +
       '<div class=\"folder-header-progress\">' +
@@ -261,20 +261,28 @@ const TopicHub = {
     var hasLearn = NOTES_CONTENT && NOTES_CONTENT[note];
     var isBookmarked = Storage.isBookmarked(folder.id, note);
 
-    var status = 'NOT STARTED';
-    var statusClass = 'badge-new';
-    if (best !== null) {
+    var status = '';
+    var statusClass = '';
+    var dotColor = 'var(--text-muted)';
+    if (!hasQuiz) {
+      // No quiz — no progress badge, neutral dot
+      dotColor = 'var(--text-muted)';
+    } else if (best === null) {
+      status = 'NOT STARTED';
+      statusClass = 'badge-new';
+    } else {
       status = best >= 100 ? 'COMPLETED' : 'IN PROGRESS';
       statusClass = best >= 100 ? 'badge-done' : 'badge-progress';
+      dotColor = best >= 100 ? 'var(--success)' : 'var(--warning)';
     }
-    var dotColor = best === null ? 'var(--text-muted)' : (best >= 100 ? 'var(--success)' : 'var(--warning)');
 
     var statsHtml = best !== null
       ? 'Best: <strong style=\"color:' + (best >= 100 ? 'var(--success)' : best >= 50 ? 'var(--warning)' : 'var(--danger)') + '\">' + best + '%</strong> \u00b7 ' + count + ' attempt' + (count !== 1 ? 's' : '')
       : '';
 
     var isGuide = quizNotes.indexOf(note) === -1;
-    var isGuide = quizNotes.indexOf(note) === -1;
+    // Overviews and chapter summaries appear in Study tab even without quizzes
+    if (isGuide && (note.indexOf('Overview') !== -1 || note.indexOf('Chapter Summary') !== -1)) isGuide = false;
     // Numbering: find position within the current active group
     var prefix = '';
     if (!isGuide && typeof gIdx === 'number' && gIdx >= 0) {
@@ -290,7 +298,7 @@ const TopicHub = {
       '<div class=\"note-info\">' +
         '<div class=\"note-name\">' + prefix + note.replace(/^\d+ \u2014 /,'') + '</div>' +
         (statsHtml ? '<div class=\"note-stats\">' + statsHtml + '</div>' : '') +
-        '<span class=\"note-badge ' + statusClass + '\">' + status + '</span>' +
+        (status ? '<span class=\"note-badge ' + statusClass + '\">' + status + '</span>' : '') +
       '</div>' +
       // Bookmark star
       '<span class=\"bookmark-star' + (isBookmarked ? ' active' : '') + '\" onclick=\"event.stopPropagation();Storage.toggleBookmark(\'' + folder.id + '\',\'' + note + '\');TopicHub.render(document.getElementById(\'app-main\'),FOLDERS.find(function(f){return f.id===\'' + folder.id + '\'}))\" title=\"' + (isBookmarked ? 'Remove bookmark' : 'Bookmark') + '\">' + (isBookmarked ? '\u2B50' : '\u2606') + '</span>';

@@ -46,10 +46,8 @@ var Storage = {
     }
     var completedNotes = 0;
     for (var n in best) { if (best[n] >= 100) completedNotes++; }
-    var totalNotes = 0;
-    for (var k in NOTES_CONTENT) {
-      if (NOTES_CONTENT[k].folder === folderId) totalNotes++;
-    }
+    var quizNotes = QUIZ_NOTES[folderId] || [];
+    var totalNotes = quizNotes.length;
     return { totalQuizzes: totalQuizzes, completedNotes: completedNotes, totalNotes: totalNotes };
   },
 
