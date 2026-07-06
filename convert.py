@@ -128,19 +128,22 @@ def main():
             flat.extend(group[s])
         notes_flat[fid] = flat
     
-    # Reference notes (check vault root AND subfolders)
+    # Reference notes
     reference = {}
-    for ref_name, ref_file in [('Glossary', 'Glossary.md'), ('Learning Path', 'Learning Path.md')]:
-        # Check vault root first
-        p = os.path.join(VAULT, ref_file)
+    
+    # Glossary — check vault root first, then subfolders
+    for _, _, vfolder, _, _ in FOLDER_MAP:
+        p = os.path.join(VAULT, vfolder, 'Glossary.md')
         if os.path.exists(p):
+            reference['Glossary'] = read_note(p)
+            break  # One glossary is enough
+    
+    # Learning Paths — one per category folder
+    for _, dname, vfolder, _, _ in FOLDER_MAP:
+        p = os.path.join(VAULT, vfolder, 'Learning Path.md')
+        if os.path.exists(p):
+            ref_name = f"Learning Path \u2014 {dname}"
             reference[ref_name] = read_note(p)
-            continue
-        # Then check subfolders
-        for _, _, vfolder, _, _ in FOLDER_MAP:
-            p = os.path.join(VAULT, vfolder, ref_file)
-            if os.path.exists(p) and ref_name not in reference:
-                reference[ref_name] = read_note(p)
     
     # DeepVault Guide — loaded from static file
     guide_file = r"D:\User\Desktop\DeepVault\guide-content.txt"
