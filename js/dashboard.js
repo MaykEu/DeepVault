@@ -65,8 +65,8 @@ const Dashboard = {
     html += '<h3 style="margin-top:2rem;margin-bottom:0.75rem;color:var(--text-secondary);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;">\u{1F4DA} Reference</h3>';
     html += '<div class="dashboard">';
     var refs = [
-      { id: 'Glossary', name: 'Glossary', icon: '\u{1F4D6}', desc: 'Quick definitions for every acronym' },
-      { id: 'Learning Path', name: 'Learning Path', icon: '\u{1F9ED}', desc: 'Recommended reading order' },
+      { id: 'Glossary', name: 'Glossary', icon: FOLDER_ICONS._glossary, desc: 'Quick definitions for every acronym' },
+      { id: 'Learning Path', name: 'Learning Path', icon: FOLDER_ICONS['_learning-path'], desc: 'Recommended reading order' },
     ];
     for (var rr = 0; rr < refs.length; rr++) {
       var ref = refs[rr];
