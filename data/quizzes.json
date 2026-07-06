@@ -12516,6 +12516,488 @@
           "explanation": "const int x = GetRuntimeValue() is valid — the value is fixed after initialization but unknown at compile time. constexpr int y = 42 is evaluated entirely at compile time. All constexpr variables are implicitly const."
         }
       ]
+    },
+    "11 — Initialization Rules": {
+      "questions": [
+        {
+          "question": "What does 'Widget w();' declare in C++?",
+          "options": [
+            "A default-constructed Widget named w",
+            "A function named w returning Widget",
+            "A pointer to a Widget constructor",
+            "A syntax error"
+          ],
+          "correctAnswer": "A function named w returning Widget",
+          "explanation": "This is the most vexing parse — the compiler prefers to interpret ambiguous syntax as a function declaration. 'Widget w();' declares a function w that takes no arguments and returns Widget."
+        },
+        {
+          "question": "What's the difference between default initialization and value initialization for built-in types?",
+          "options": [
+            "Default init is zero; value init is garbage",
+            "Default init is garbage; value init is zero",
+            "Both are garbage",
+            "Both are zero"
+          ],
+          "correctAnswer": "Default init is garbage; value init is zero",
+          "explanation": "int x; (default) leaves x with an indeterminate value — reading it is UB. int x{}; (value) zero-initializes. For class types, both call the default constructor."
+        },
+        {
+          "question": "When a class has both a regular constructor and an initializer_list constructor, which does 'Widget{1, 2}' call?",
+          "options": [
+            "The regular constructor",
+            "The initializer_list constructor — it wins aggressively",
+            "Both — it's ambiguous",
+            "Neither — it's a syntax error"
+          ],
+          "correctAnswer": "The initializer_list constructor — it wins aggressively",
+          "explanation": "List-initialization prefers initializer_list constructors. This is the 'initializer_list ambush' — even if the regular constructor is a perfect match, the initializer_list version wins."
+        },
+        {
+          "question": "In C++17, what type does 'auto x{1}' deduce to?",
+          "options": [
+            "std::initializer_list<int>",
+            "int",
+            "int&",
+            "int&&"
+          ],
+          "correctAnswer": "int",
+          "explanation": "C++17 changed the rules (N3922). In C++11, auto x{1} deduced to initializer_list<int>. In C++17, it deduces to int. auto x = {1} still deduces to initializer_list<int> in both standards."
+        },
+        {
+          "question": "How do you fix the most vexing parse 'Widget w(Timer(100))'?",
+          "options": [
+            "Widget w{Timer{100}} — brace init can't be a function declaration",
+            "Widget w = Timer(100)",
+            "extern Widget w",
+            "You can't — it's always a function declaration"
+          ],
+          "correctAnswer": "Widget w{Timer{100}} — brace init can't be a function declaration",
+          "explanation": "Brace-init syntax cannot be interpreted as a function declaration. Widget w{Timer{100}} unambiguously constructs a Widget from a Timer."
+        },
+        {
+          "question": "Which initialization syntax prevents narrowing conversions?",
+          "options": [
+            "Direct init: Widget w(3.14)",
+            "Copy init: Widget w = 3.14",
+            "List init: Widget w{3.14}",
+            "Default init: Widget w"
+          ],
+          "correctAnswer": "List init: Widget w{3.14}",
+          "explanation": "List-initialization forbids narrowing conversions at compile time. If Widget's constructor takes int, Widget{3.14} is a compile error. Direct init Widget(3.14) silently truncates."
+        },
+        {
+          "question": "What is an aggregate in C++17?",
+          "options": [
+            "Any class with public members",
+            "A class/struct with no user-provided constructors, no virtual functions, and no private/protected non-static members",
+            "Any class that inherits from std::aggregate",
+            "A class with only data members and no functions"
+          ],
+          "correctAnswer": "A class/struct with no user-provided constructors, no virtual functions, and no private/protected non-static members",
+          "explanation": "Aggregates can be initialized with brace-init in order: Point{1.0, 2.0, 3.0}. C++17 tightened the rules (user-provided ctors disqualify); C++20 loosened them again (defaulted ctors are OK)."
+        },
+        {
+          "question": "Why does 'std::vector<int> v{10}' create a vector of ONE element (10), not ten zeroes?",
+          "options": [
+            "Because vector's initializer_list constructor wins over the size constructor",
+            "Because 10 is not a valid size",
+            "Because vector always creates single-element vectors from braces",
+            "Because the size constructor requires parentheses"
+          ],
+          "correctAnswer": "Because vector's initializer_list constructor wins over the size constructor",
+          "explanation": "vector{10} calls initializer_list<int>({10}) — one element. vector(10) calls the size constructor — ten zeroed elements. The initializer_list constructor wins so aggressively it can surprise even experienced developers."
+        },
+        {
+          "question": "What is value initialization vs default initialization for std::vector<int>?",
+          "options": [
+            "Both create empty vectors — they're the same for class types with default constructors",
+            "Value init creates a zeroed vector; default init is garbage",
+            "Value init creates 1 element; default init is empty",
+            "Neither compiles for std::vector"
+          ],
+          "correctAnswer": "Both create empty vectors — they're the same for class types with default constructors",
+          "explanation": "For class types with user-defined default constructors, default init and value init both call the default ctor. The difference only matters for built-in types and aggregates."
+        }
+      ]
+    },
+    "08 — Value Categories": {
+      "questions": [
+        {
+          "question": "What value category does a named variable always have, even if it's an rvalue reference?",
+          "options": [
+            "xvalue",
+            "prvalue",
+            "lvalue",
+            "glvalue"
+          ],
+          "correctAnswer": "lvalue",
+          "explanation": "Named variables are always lvalues. Even 'int&& r = 5;' — r is an lvalue. You can take its address. To use it as an rvalue, cast with std::move(r)."
+        },
+        {
+          "question": "What does std::move actually do?",
+          "options": [
+            "Moves the object's resources to a new location",
+            "Casts its argument to an rvalue reference (xvalue)",
+            "Deletes the original object",
+            "Calls the move constructor"
+          ],
+          "correctAnswer": "Casts its argument to an rvalue reference (xvalue)",
+          "explanation": "std::move is an unconditional cast to T&&. It doesn't move anything. It doesn't generate any code. It's a type-system annotation that says 'treat this as an xvalue.' The actual move happens later when the xvalue is consumed."
+        },
+        {
+          "question": "Which of these is a prvalue (pure rvalue)?",
+          "options": [
+            "A named variable: int x = 5;",
+            "A literal: 42",
+            "A dereferenced pointer: *ptr",
+            "An array element: arr[0]"
+          ],
+          "correctAnswer": "A literal: 42",
+          "explanation": "Literals have no identity and no storage — they're pure computations. Named variables, dereferenced pointers, and array elements are all lvalues because they have addresses."
+        },
+        {
+          "question": "What value category is the result of 'std::move(x)'?",
+          "options": [
+            "lvalue",
+            "prvalue",
+            "xvalue",
+            "glvalue"
+          ],
+          "correctAnswer": "xvalue",
+          "explanation": "std::move returns T&& — an xvalue (eXpiring value). It has identity (refers to x) but can be moved from. An xvalue is both a glvalue and an rvalue."
+        },
+        {
+          "question": "Why does 'const std::string s; auto t = std::move(s);' call the COPY constructor, not the move constructor?",
+          "options": [
+            "std::move on const does nothing",
+            "std::move(s) returns const string&& which can't bind to string&& (move ctor), only const string& (copy ctor)",
+            "move is disabled for const objects",
+            "The compiler optimizes move to copy"
+          ],
+          "correctAnswer": "std::move(s) returns const string&& which can't bind to string&& (move ctor), only const string& (copy ctor)",
+          "explanation": "std::move preserves const. const T&& can't bind to T&& (move constructor parameter), but CAN bind to const T& (copy constructor). Moving from const silently copies — a subtle performance bug."
+        },
+        {
+          "question": "What does 'auto&&' deduce to when given an lvalue?",
+          "options": [
+            "T&&",
+            "T&",
+            "T",
+            "const T&"
+          ],
+          "correctAnswer": "T&",
+          "explanation": "auto&& is a forwarding reference. When initialized with an lvalue, auto deduces to T&, and reference collapsing makes T& && = T&. When initialized with an rvalue, auto deduces to T and auto&& = T&&."
+        },
+        {
+          "question": "What value category is the result of a function call that returns by value?",
+          "options": [
+            "lvalue",
+            "xvalue",
+            "prvalue",
+            "glvalue"
+          ],
+          "correctAnswer": "prvalue",
+          "explanation": "Functions returning by value produce prvalues — pure computations with no identity. If needed, the prvalue is materialized into a temporary xvalue (temporary materialization)."
+        },
+        {
+          "question": "What is the relationship between glvalue and rvalue?",
+          "options": [
+            "They are disjoint — nothing is both",
+            "xvalue is both a glvalue and an rvalue",
+            "All glvalues are rvalues",
+            "All rvalues are glvalues"
+          ],
+          "correctAnswer": "xvalue is both a glvalue and an rvalue",
+          "explanation": "xvalue is the intersection: it has identity (glvalue) and can be moved from (rvalue). lvalue is glvalue but not rvalue. prvalue is rvalue but not glvalue."
+        },
+        {
+          "question": "How does std::forward<T> work?",
+          "options": [
+            "It always casts to T&&",
+            "It conditionally casts: if T is an lvalue reference type, casts to lvalue; otherwise casts to rvalue",
+            "It calls std::move internally",
+            "It does nothing at runtime"
+          ],
+          "correctAnswer": "It conditionally casts: if T is an lvalue reference type, casts to lvalue; otherwise casts to rvalue",
+          "explanation": "std::forward<T> is defined as static_cast<T&&>. When T = Widget&, T&& = Widget& (reference collapsing). When T = Widget, T&& = Widget&&. This conditional cast is what enables perfect forwarding."
+        }
+      ]
+    },
+    "06 — Build & Debug Tools": {
+      "questions": [
+        {
+          "question": "What does Address Sanitizer (ASan) catch?",
+          "options": [
+            "Syntax errors",
+            "Use-after-free, heap buffer overflow, stack buffer overflow, and double free",
+            "Logic errors in algorithms",
+            "Compile-time type errors"
+          ],
+          "correctAnswer": "Use-after-free, heap buffer overflow, stack buffer overflow, and double free",
+          "explanation": "ASan instruments every memory access with shadow memory checks. It catches spatial errors (overflow) and temporal errors (use-after-free) at runtime with a ~2x slowdown."
+        },
+        {
+          "question": "Which sanitizer should you use to detect data races?",
+          "options": [
+            "Address Sanitizer (ASan)",
+            "Undefined Behavior Sanitizer (UBSan)",
+            "Thread Sanitizer (TSan)",
+            "Memory Sanitizer (MSan)"
+          ],
+          "correctAnswer": "Thread Sanitizer (TSan)",
+          "explanation": "TSan instruments every memory access to track happens-before relationships between threads. It detects data races (concurrent access, at least one write, no synchronization) with ~5-15x slowdown."
+        },
+        {
+          "question": "What does 'perf stat' show?",
+          "options": [
+            "A list of running processes",
+            "Hardware performance counters: cycles, instructions, cache misses, branch mispredicts",
+            "Memory allocation statistics",
+            "Thread creation and destruction events"
+          ],
+          "correctAnswer": "Hardware performance counters: cycles, instructions, cache misses, branch mispredicts",
+          "explanation": "perf stat reads the CPU's PMU (Performance Monitoring Unit) to count hardware events. IPC (instructions per cycle) < 1.0 indicates pipeline stalls from cache misses or dependency chains."
+        },
+        {
+          "question": "What does the compiler flag '-O2' do?",
+          "options": [
+            "Disable all optimizations",
+            "Standard release optimization — balance of speed and compilation time",
+            "Maximum optimization for size",
+            "Optimize for debugging"
+          ],
+          "correctAnswer": "Standard release optimization — balance of speed and compilation time",
+          "explanation": "-O2 enables most optimizations without extreme compile time or code size increase. -O3 is more aggressive (may be faster or slower). -Os optimizes for size. -Og balances optimization with debuggability."
+        },
+        {
+          "question": "Why should you NOT combine -fsanitize=address and -fsanitize=thread in the same build?",
+          "options": [
+            "They conflict — ASan and TSan modify the same memory allocation routines",
+            "They cause a 100x slowdown",
+            "The compiler rejects the combination",
+            "They work fine together"
+          ],
+          "correctAnswer": "They conflict — ASan and TSan modify the same memory allocation routines",
+          "explanation": "ASan and TSan both replace malloc/free and instrument memory accesses. They cannot coexist in one binary. Run separate CI builds for each."
+        },
+        {
+          "question": "What does '-DNDEBUG' do?",
+          "options": [
+            "Enable debug mode",
+            "Disable assert() macros — assertions are stripped from the binary",
+            "Enable extra debugging symbols",
+            "Set the optimization level to debug"
+          ],
+          "correctAnswer": "Disable assert() macros — assertions are stripped from the binary",
+          "explanation": "The assert() macro is a no-op when NDEBUG is defined. This strips assertion checks from release builds (where the checks would cost cycles). Use it with -O2 for production builds."
+        },
+        {
+          "question": "What does Valgrind do that ASan doesn't require?",
+          "options": [
+            "Finds more bugs",
+            "Works without recompilation — runs on any binary with debug symbols",
+            "Is faster than ASan",
+            "Catches compile-time errors"
+          ],
+          "correctAnswer": "Works without recompilation — runs on any binary with debug symbols",
+          "explanation": "Valgrind uses dynamic binary instrumentation — it runs your program in a virtual machine, tracking every memory access. No recompilation needed. But it's ~20x slower than ASan."
+        },
+        {
+          "question": "What does '-flto' enable?",
+          "options": [
+            "Link-Time Optimization — whole-program optimization across translation units",
+            "Loop unrolling",
+            "Function inlining",
+            "Debug symbol generation"
+          ],
+          "correctAnswer": "Link-Time Optimization — whole-program optimization across translation units",
+          "explanation": "LTO allows the compiler to optimize across .cpp file boundaries. Without it, the compiler can only optimize within a single translation unit. LTO enables cross-TU inlining, dead code elimination, and devirtualization."
+        }
+      ]
+    },
+    "12 — I-O Streams": {
+      "questions": [
+        {
+          "question": "What happens when you mix 'std::cin >> x' and 'std::getline(std::cin, s)'?",
+          "options": [
+            "They work fine together",
+            "getline reads the leftover newline from cin >> x, producing an empty string",
+            "The program crashes",
+            "The compiler rejects the combination"
+          ],
+          "correctAnswer": "getline reads the leftover newline from cin >> x, producing an empty string",
+          "explanation": "operator>> stops at whitespace but leaves the delimiter (newline) in the buffer. The next getline() reads that newline and returns immediately. Fix with cin.ignore() after operator>>."
+        },
+        {
+          "question": "What is the difference between std::endl and '\\n'?",
+          "options": [
+            "No difference — they are identical",
+            "std::endl writes '\\n' AND flushes the buffer; '\\n' just writes the character",
+            "'\\n' flushes; std::endl doesn't",
+            "std::endl is a deprecated C++98 feature"
+          ],
+          "correctAnswer": "std::endl writes '\\n' AND flushes the buffer; '\\n' just writes the character",
+          "explanation": "std::endl calls flush() which forces the buffer to the OS (expensive system call). '\\n' just writes a newline character. Use '\\n' unless you specifically need a flush."
+        },
+        {
+          "question": "What does opening a file stream with 'std::ios::binary' do?",
+          "options": [
+            "Encodes data in binary format",
+            "Disables platform-specific text transformations (e.g., \\n → \\r\\n on Windows)",
+            "Enables faster I/O",
+            "Prevents the file from being read by text editors"
+          ],
+          "correctAnswer": "Disables platform-specific text transformations (e.g., \\n → \\r\\n on Windows)",
+          "explanation": "On Windows, text mode translates \\n to \\r\\n on write and \\r\\n to \\n on read. Binary mode disables this. On POSIX, text and binary modes are identical."
+        },
+        {
+          "question": "How do you check if a file opened successfully?",
+          "options": [
+            "if (file.is_open())",
+            "if (file) — streams convert to bool (true = good)",
+            "if (file != nullptr)",
+            "Files always open successfully"
+          ],
+          "correctAnswer": "if (file) — streams convert to bool (true = good)",
+          "explanation": "Streams have an operator bool() that returns true if no error flags are set (failbit or badbit). if (!file) is the idiomatic way to check for failure."
+        },
+        {
+          "question": "What is std::istringstream used for?",
+          "options": [
+            "Writing formatted output to a string",
+            "Parsing values from a string as if it was input — type-safe alternative to sscanf",
+            "Reading from a file",
+            "Network I/O"
+          ],
+          "correctAnswer": "Parsing values from a string as if it was input — type-safe alternative to sscanf",
+          "explanation": "istringstream wraps a string in a stream interface. You can use operator>> to extract typed values: iss >> x >> y. It's the C++ replacement for sscanf — type-safe and buffer-overflow-proof."
+        },
+        {
+          "question": "What error flag is set when you try to read an int but the input contains 'abc'?",
+          "options": [
+            "eofbit",
+            "badbit",
+            "failbit",
+            "goodbit"
+          ],
+          "correctAnswer": "failbit",
+          "explanation": "failbit indicates a logical error — the input couldn't be parsed as the requested type. badbit indicates an irrecoverable stream error (disk failure). eofbit indicates end of file. After failbit is set, further reads are no-ops until clear() is called."
+        },
+        {
+          "question": "What is the default buffering mode of std::cout?",
+          "options": [
+            "Unbuffered — every character goes straight to the terminal",
+            "Fully buffered — flushes when buffer is full",
+            "Line-buffered — flushes on newline when connected to a terminal",
+            "It has no buffer"
+          ],
+          "correctAnswer": "Line-buffered — flushes on newline when connected to a terminal",
+          "explanation": "cout is line-buffered when connected to an interactive device (terminal). cerr is unbuffered (every write goes straight to output). File streams are fully buffered (flushed when the buffer is full)."
+        },
+        {
+          "question": "How do you make your custom type work with std::cout << myObj?",
+          "options": [
+            "Inherit from std::ostream",
+            "Overload operator<< as a free function taking std::ostream& and your type",
+            "Call myObj.toString()",
+            "You can't — only standard types work with streams"
+          ],
+          "correctAnswer": "Overload operator<< as a free function taking std::ostream& and your type",
+          "explanation": "std::ostream& operator<<(std::ostream& os, const MyType& obj) { return os << obj.data; }. This is how the stream insertion operator is extended for user-defined types — it's the C++ equivalent of Python's __str__."
+        }
+      ]
+    },
+    "06 — Multiple Inheritance": {
+      "questions": [
+        {
+          "question": "What is the diamond problem in C++?",
+          "options": [
+            "When two classes can't inherit from the same base",
+            "When a class inherits from two classes that share a common base — leading to duplicate base subobjects",
+            "When a class has too many virtual functions",
+            "When inheritance depth exceeds compiler limits"
+          ],
+          "correctAnswer": "When a class inherits from two classes that share a common base — leading to duplicate base subobjects",
+          "explanation": "In a diamond (D→B, D→C, B→A, C→A), D gets two copies of A unless virtual inheritance is used. Accessing A's members becomes ambiguous."
+        },
+        {
+          "question": "How does virtual inheritance solve the diamond problem?",
+          "options": [
+            "It prevents the diamond from compiling",
+            "A single shared instance of the virtual base is created — both branches share it",
+            "It deletes one copy at random",
+            "It merges the two copies into one"
+          ],
+          "correctAnswer": "A single shared instance of the virtual base is created — both branches share it",
+          "explanation": "Virtual inheritance makes the base class shared. Each intermediate class stores a vptr to locate the shared base. The most-derived class initializes the virtual base directly."
+        },
+        {
+          "question": "In what order are virtual base classes constructed?",
+          "options": [
+            "After all non-virtual bases",
+            "First — before any non-virtual bases",
+            "In reverse declaration order",
+            "In alphabetical order"
+          ],
+          "correctAnswer": "First — before any non-virtual bases",
+          "explanation": "Virtual bases are constructed first (depth-first, left-to-right), then non-virtual bases (declaration order), then the class's own members. The most-derived class initializes virtual bases directly."
+        },
+        {
+          "question": "When is multiple inheritance safe without virtual inheritance?",
+          "options": [
+            "Always — virtual inheritance is just an optimization",
+            "When base classes are pure interfaces with no data members",
+            "When all bases are from the same library",
+            "Never — virtual inheritance is always required"
+          ],
+          "correctAnswer": "When base classes are pure interfaces with no data members",
+          "explanation": "If bases have no data members (only pure virtual functions), there's nothing to duplicate. The diamond problem only matters when data is inherited through multiple paths. This is the interface pattern used by UE's IInterface system."
+        },
+        {
+          "question": "Which cast can safely navigate a virtual inheritance hierarchy?",
+          "options": [
+            "static_cast",
+            "dynamic_cast",
+            "reinterpret_cast",
+            "const_cast"
+          ],
+          "correctAnswer": "dynamic_cast",
+          "explanation": "dynamic_cast uses RTTI to follow vptrs and find the correct subobject. static_cast assumes a fixed offset which may be wrong with virtual inheritance. reinterpret_cast is always unsafe for class hierarchy navigation."
+        },
+        {
+          "question": "What is the cost of virtual inheritance?",
+          "options": [
+            "No cost — it's a compile-time feature",
+            "An extra indirection (vptr dereference) to access virtual base members, plus storage for the vptr",
+            "Doubles the size of every object",
+            "Runtime type-checking on every member access"
+          ],
+          "correctAnswer": "An extra indirection (vptr dereference) to access virtual base members, plus storage for the vptr",
+          "explanation": "Each class that virtually inherits stores a vptr pointing to the shared base's offset. Accessing a virtual base member requires loading the vptr, reading the offset, and computing the address — typically 2-3 extra instructions."
+        },
+        {
+          "question": "Who is responsible for constructing a virtual base in a multiple inheritance hierarchy?",
+          "options": [
+            "The first intermediate class",
+            "The most-derived class",
+            "The virtual base itself",
+            "The compiler — it's automatic"
+          ],
+          "correctAnswer": "The most-derived class",
+          "explanation": "The most-derived class must initialize virtual bases directly. If intermediate classes pass arguments to the virtual base constructor, those arguments are IGNORED when the class is a subobject of a more-derived class."
+        },
+        {
+          "question": "How are subobjects laid out in memory for non-virtual multiple inheritance?",
+          "options": [
+            "Randomly",
+            "Alphabetically by class name",
+            "Left-to-right in declaration order",
+            "Largest-to-smallest"
+          ],
+          "correctAnswer": "Left-to-right in declaration order",
+          "explanation": "class C : A, B lays out A first (offset 0), then B (offset sizeof(A)), then C's own members. A C* cast to B* adds sizeof(A) to the pointer. The compiler handles these adjustments silently."
+        }
+      ]
     }
   },
   "quiz_notes": {

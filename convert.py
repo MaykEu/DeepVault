@@ -24,7 +24,6 @@ FOLDER_MAP = [
 
 SKIP = {
     'Learning Path.md', 'Glossary.md',
-    'From Transistor to Running Program.md',
     'From Source to Running Program \u2014 C++ Edition.md',
     'From UCLASS to Running Object \u2014 The UE Core Pipeline.md',
     'From Input to Replication \u2014 The Networking Pipeline.md',
