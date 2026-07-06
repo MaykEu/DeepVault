@@ -31,7 +31,7 @@ const Dashboard = {
 
       html += '<div class="folder-card' + (isFirst ? ' folder-card-first' : '') + '" style="--card-accent:' + folder.color + '" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
         (isFirst ? '<div class="folder-card-badge">Start here</div>' : '') +
-        (stats.totalNotes < 30 ? '<div class="folder-card-badge folder-card-badge-soon">More coming soon</div>' : '') +
+        (stats.totalNotes < 30 ? '<div class="folder-card-badge folder-card-badge-soon" title="Work in progress">●</div>' : '') +
         '<div class="folder-icon">' + (FOLDER_ICONS[folder.id] || folder.icon) + '</div>' +
         '<div class="folder-name">' + folder.name + '</div>' +
         '<div class="folder-meta">' +

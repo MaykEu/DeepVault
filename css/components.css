@@ -35,7 +35,8 @@
 }
 .folder-card-badge-soon {
   background: #d2991d; color: #0d1117;
-  top: 0.5rem;
+  font-size: 0.6rem; padding: 0.1em 0.35em; line-height: 1;
+  top: 0.5rem; cursor: help;
 }
 
 /* Buttons */
