@@ -2,13 +2,19 @@ const Dashboard = {
   render(container) {
     var html = '';
 
-    // Welcome hero — first-time visitors only
+    // Welcome hero — first-time visitors only (dynamic counts)
     if (!localStorage.getItem('dv_onboarded')) {
+      var totalNotes = 0;
+      for (var fi = 0; fi < FOLDERS.length; fi++) {
+        totalNotes += (NOTES[FOLDERS[fi].id] || []).length;
+      }
+      var totalQuizzes = 0;
+      for (var qk in QUIZ_DATA) { if (QUIZ_DATA.hasOwnProperty(qk)) totalQuizzes++; }
       html += '<div class="welcome-hero">' +
         '<div class="welcome-hero-icon">🎓</div>' +
         '<div class="welcome-hero-body">' +
           '<h2>Welcome to DeepVault</h2>' +
-          '<p>164 interactive notes with quizzes across 6 categories — from transistors to Unreal Engine networking.</p>' +
+          '<p>' + totalNotes + ' interactive notes with ' + totalQuizzes + ' quizzes across ' + FOLDERS.length + ' categories — from transistors to Unreal Engine networking.</p>' +
           '<p><strong>Start with Computer Systems →</strong> Everything builds on understanding the hardware.</p>' +
         '</div>' +
         '<button class="welcome-hero-close" onclick="this.parentElement.remove();localStorage.setItem(\'dv_onboarded\',\'1\')">✕</button>' +
@@ -23,7 +29,7 @@ const Dashboard = {
       var pctClass = pct > 0 ? (pct < 50 ? ' progress-amber' : ' progress-green') : '';
       var isFirst = !localStorage.getItem('dv_onboarded') && i === 0;
 
-      html += '<div class="folder-card' + (isFirst ? ' folder-card-first' : '') + '" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
+      html += '<div class="folder-card' + (isFirst ? ' folder-card-first' : '') + '" style="--card-accent:' + folder.color + '" onclick="router.navigate(\'#/folder/' + encodeURIComponent(folder.id) + '\')">' +
         (isFirst ? '<div class="folder-card-badge">Start here</div>' : '') +
         '<div class="folder-icon">' + folder.icon + '</div>' +
         '<div class="folder-name">' + folder.name + '</div>' +
