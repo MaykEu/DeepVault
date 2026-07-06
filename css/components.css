@@ -3,7 +3,7 @@
   background: var(--bg-secondary); border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem; cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, border-left-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   display: flex; flex-direction: column; gap: 0.5rem;
 }
 .folder-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
