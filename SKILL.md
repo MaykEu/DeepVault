@@ -60,12 +60,45 @@ js/data.js          ← GENERATED — never edit manually
 
 **PROJECTS PIPELINE.** Notes inside `*/Projects/` folders in the vault are automatically detected by `convert.py`, written to `data/projects.json`, and surfaced in the 🔨 Projects tab via `PROJECT_NOTES` in `data.js`. No quizzes needed — projects are build-work, not test-work. To add a project: create `Category Name/Projects/My Project.md` in the vault, run `python convert.py`. Everything else is automatic.
 
-## Current Stats (updated 2026-07-06)
+## Current Stats (updated 2026-07-07)
 
-- 181 notes across 6 categories (Computer Systems, C++, Game Math, UE Core, UE Networking, Big O)
-- 169 quizzes, 1,062 questions
-- 6 projects (2 CS, 2 C++, 2 Math)
-- C++: 44/44 non-project notes fully quizzed, 0 missing exercises, 0 missing See Also
+- 204 notes across 6 categories (Computer Systems, C++, Game Math, UE Core, UE Networking, Big O)
+- 181 quizzes, 1,130 questions
+- 7 projects (2 CS, 3 C++, 2 Math)
+- All 6 Learning Paths restructured: Main Path (core sequence) separated from Deep Dives (optional depth)
+
+## Learning Path Structure
+
+All Learning Paths follow a consistent format:
+
+- **Main Path** — the core sequence of numbered notes. Follow in order. Contains only the essential notes for each topic.
+- **Deep Dives** — optional depth. Each deep dive is a clearly labeled section saying "Take after **NN — Note Name**". These are supplementary — skip them and continue the main path, or take them for deeper understanding.
+- **Chapter Summaries** — synthesis notes that connect the dots after completing a section.
+- **`—` notation** — used ONLY for overview notes (labeled "Overview — read first") and reference notes (labeled "Reference"). Never used for deep dives or branches.
+
+**PITFALL:** Do NOT interleave deep-dive notes into the Main Path table with `—` numbers. Every deep dive belongs in its own clearly separated section. The `—` symbol must never be ambiguous — it always means either an overview or a reference note.
+
+### Example (Computer Systems LP excerpt)
+
+```
+## Main Path
+
+| # | Note | Quiz |
+|---|------|------|
+| 06 | Memory Allocation | ✓ |
+| 07 | Virtual Memory — The Full Picture | ✓ |
+| 08 | RAID | ✓ |
+
+## Deep Dives — Go Deeper
+
+### RAM & Virtual Memory
+*Take after **07 — Virtual Memory**...*
+
+| # | Note | Quiz |
+|---|------|------|
+| — | RAM & VM Overview | — |
+| — | DRAM Cells & Memory Physics | ✓ |
+```
 
 ## Quiz Quality Rules
 

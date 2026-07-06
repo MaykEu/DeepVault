@@ -5,10 +5,11 @@ Thanks for wanting to help! Here's how.
 ## How It Works
 
 ```
-data/                    ← 4 independent JSON source files
-├── notes.json           ← Note content (vault → build.py)
+data/                    ← 5 independent JSON source files
+├── notes.json           ← Note content (vault → convert.py)
 ├── quizzes.json         ← Quiz questions (safe to edit)
 ├── folders.json         ← Folder structure
+├── projects.json        ← Project notes (vault → convert.py)
 └── reference.json       ← Glossary, Guide, Learning Paths
 
 python build.py          ← Combines sources → js/data.js (validates first)
