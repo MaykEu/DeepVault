@@ -78,12 +78,11 @@ def main():
         old_quizzes[name] = old[start:i+1]
         pos = i + 1
     
-    # Read DeepVault Guide from static file (never from previous build — avoids corruption)
+    # Read DeepVault Guide from vault (same as all other notes — single source of truth)
     old_guide = ''
-    guide_file = r'D:\User\Desktop\DeepVault\guide-content.txt'
-    if os.path.exists(guide_file):
-        with open(guide_file, 'r', encoding='utf-8') as f:
-            old_guide = f.read()
+    guide_path = os.path.join(VAULT, 'DeepVault Guide.md')
+    if os.path.exists(guide_path):
+        old_guide = read_note(guide_path)
 
     # Scan all folders recursively
     notes_content = {}
@@ -144,11 +143,9 @@ def main():
             ref_name = f"Learning Path \u2014 {dname}"
             reference[ref_name] = read_note(p)
     
-    # DeepVault Guide — loaded from static file
-    guide_file = r"D:\User\Desktop\DeepVault\guide-content.txt"
-    if os.path.exists(guide_file):
-        with open(guide_file, 'r', encoding='utf-8') as f:
-            reference['DeepVault Guide'] = f.read()
+    # DeepVault Guide — already loaded from vault above, stored in old_guide
+    if old_guide:
+        reference['DeepVault Guide'] = old_guide
     
     # Quiz data: preserve only quizzes for existing notes
     quizzes = {}
@@ -209,7 +206,6 @@ def main():
     lines.append('const REFERENCE = {')
     for rn, rc in reference.items():
         lines.append(f"  '{rn}': {json.dumps(rc)},")
-    lines.append(f"  'DeepVault Guide': {json.dumps(old_guide)},")
     lines.append('};\n')
     
     output = '\n'.join(lines)
