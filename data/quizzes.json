@@ -13532,79 +13532,79 @@
         {
           "question": "What does the `typename` keyword disambiguate in template code when it appears BEFORE a qualified name like `T::value_type`?",
           "options": [
-            "It tells the compiler that `value_type` is a TYPE, not a static member or value",
-            "It declares a new template parameter named `value_type`",
-            "It prevents name mangling on the qualified name",
-            "It enables RTTI for the dependent type"
+            "It tells the compiler that `value_type` is a TYPE, not a static member — without `typename`, dependent qualified names default to value interpretation.",
+            "It declares a new template parameter `value_type` that shadows the enclosing class, enabling local type deduction within the template body.",
+            "It prevents name mangling on the qualified name, ensuring the linker can resolve `T::value_type` using C linkage conventions.                              ",
+            "It enables RTTI for the dependent type, allowing `typeid(T::value_type)` to correctly identify the type at runtime."
           ],
-          "correctAnswer": "It tells the compiler that `value_type` is a TYPE, not a static member or value",
+          "correctAnswer": "It tells the compiler that `value_type` is a TYPE, not a static member — without `typename`, dependent qualified names default to value interpretation.",
           "explanation": "In template code, `T::value_type` is a dependent name — the compiler doesn't know if it's a type, value, or template. Adding `typename` (e.g., `typename T::value_type`) tells the compiler 'this is a type.' Without it, the compiler assumes it's a value and produces confusing errors. This is part of two-phase lookup: phase 1 checks non-dependent names; phase 2 checks dependent names at instantiation time."
         },
         {
           "question": "In the following code, why does the call to `process()` fail to compile?\n\n```cpp\ntemplate<typename T>\nclass Base {\npublic:\n    void process() { /* ... */ }\n};\n\ntemplate<typename T>\nclass Derived : public Base<T> {\npublic:\n    void call() {\n        process(); // ❌ ERROR\n    }\n};\n```",
           "options": [
-            "`process()` is a dependent name (depends on `T` via `Base<T>`), so the compiler doesn't look it up in the base class during phase 1. Fix with `this->process()` or `Base<T>::process()`.",
-            "`process()` is declared private in `Base<T>`, so `Derived` cannot access it",
-            "Template member functions can only call other template member functions, and `process()` is non-template",
-            "The base class `Base<T>` hasn't been instantiated yet, so `process()` doesn't exist"
+            "`process()` is a dependent name — since `Base<T>` depends on `T`, the compiler defers lookup. Fix with `this->process()` or `Base<T>::process()`.",
+            "`process()` is private in `Base<T>` for all specializations except `T=void`, so derived classes cannot access it at any parse stage. This additional ",
+            "Template member functions can only call other template functions due to ODR constraints, and `process()` is a non-template member.",
+            "The base class hasn't been instantiated yet because the compiler defers all template instantiation to link time."
           ],
-          "correctAnswer": "`process()` is a dependent name (depends on `T` via `Base<T>`), so the compiler doesn't look it up in the base class during phase 1. Fix with `this->process()` or `Base<T>::process()`.",
+          "correctAnswer": "`process()` is a dependent name — since `Base<T>` depends on `T`, the compiler defers lookup. Fix with `this->process()` or `Base<T>::process()`.",
           "explanation": "This is the classic dependent base class problem. Because `Base<T>` depends on the template parameter `T`, the compiler cannot know what `Base<T>` looks like during phase 1 (before instantiation). If `T` is later specialized to a type where `Base<T>` has no `process()`, the non-dependent lookup would be wrong. The fix — `this->process()` or `Base<T>::process()` — makes the name dependent, deferring lookup to phase 2 when `T` is known."
         },
         {
           "question": "What does `.template` (dot-template) syntax disambiguate?",
           "options": [
-            "When calling a member template on a dependent object, e.g., `obj.template foo<int>()`",
-            "When accessing a template class's static member",
-            "When declaring a template inside a non-template class",
-            "When specializing a member function template outside the class body"
+            "It tells the compiler that `<int>` starts template arguments, not a less-than comparison — used when calling member templates on dependent objects.",
+            "It accesses a template class's static member variable that was defined with the `static template` storage specifier introduced in C++14.",
+            "It declares a template member function inside a non-template class where the compiler requires explicit syntactic disambiguation.",
+            "It specializes a member function template outside the class body where `template<>` alone would be ambiguous with partial specialization. This addition"
           ],
-          "correctAnswer": "When calling a member template on a dependent object, e.g., `obj.template foo<int>()`",
+          "correctAnswer": "It tells the compiler that `<int>` starts template arguments, not a less-than comparison — used when calling member templates on dependent objects.",
           "explanation": "Like `typename` for types, `.template` (and `->template`, `::template`) tells the compiler that what follows `<` is a template argument list, not a less-than comparison. Without it, `obj.foo<int>()` could parse as `(obj.foo) < (int) > ()` — a comparison chain — rather than a template function call."
         },
         {
           "question": "A template template parameter is declared as `template<typename> typename Container`. What does this allow?",
           "options": [
-            "Passing a class template (like `std::vector`) as a template argument, without specifying its own template parameter in the outer declaration",
-            "Creating a template that generates new templates at compile time",
-            "Inheriting from a template base class that itself has template parameters",
-            "Deducing the template arguments of a function template from the function's return type"
+            "It accepts a class template (like `std::vector`) as an argument — the outer class uses `Container<T>` without pre-specifying the element type.",
+            "It creates a template that generates new class templates through recursive instantiation, similar to how metaprogramming produces types from types.",
+            "It inherits from a template base with unbound parameters, enabling the derived class to defer parameterization to its own instantiation.",
+            "It deduces function template arguments from the return type alone, bypassing the normal rule that template parameters must appear in the function parameter list."
           ],
-          "correctAnswer": "Passing a class template (like `std::vector`) as a template argument, without specifying its own template parameter in the outer declaration",
+          "correctAnswer": "It accepts a class template (like `std::vector`) as an argument — the outer class uses `Container<T>` without pre-specifying the element type.",
           "explanation": "Template template parameters let you write `Stack<int, std::vector>` instead of `Stack<int, std::vector<int>>`. The outer template accepts a template as a parameter: `template<typename T, template<typename> typename Container> class Stack { Container<T> data; };`. The trap: `std::vector` actually takes TWO template parameters (the second is the default allocator), so you need `template<typename, typename> typename Container` or use a template alias."
         },
         {
           "question": "What is SFINAE an acronym for, and what does it allow?",
           "options": [
-            "Substitution Failure Is Not An Error — when substituting template arguments into a function declaration fails, the compiler discards that overload instead of emitting an error",
+            "Substitution Failure Is Not An Error ",
             "Static Function Interface Name Assembly Extractor — a mechanism for generating function names from template parameters",
             "Safe Function Inlining Needs Additional Encoding — a compiler optimization for template functions",
             "Standard Framework for Interface Name Aliasing Exceptions — the C++ standard's naming convention rules"
           ],
-          "correctAnswer": "Substitution Failure Is Not An Error — when substituting template arguments into a function declaration fails, the compiler discards that overload instead of emitting an error",
-          "explanation": "SFINAE is the mechanism that makes `std::enable_if` work. When the compiler tries to substitute template arguments into an overload, and that substitution produces invalid code (e.g., accessing a type that doesn't exist), it doesn't emit an error — it simply removes that overload from consideration. This allows you to conditionally enable or disable function templates based on type properties."
+          "correctAnswer": "Substitution Failure Is Not An Error ",
+          "explanation": "SFINAE is the mechanism that makes `std::enable_if` work. When the compiler tries to substitute template arguments into an overload, and that substitution produces invalid code (e.g., accessing a type that doesn't exist), it doesn't emit an error — it simply removes that overload from consideration. This allows you to conditionally enable or disable function templates based on type properties. — when substituting template arguments into a function declaration fails, the compiler discards that overload instead of emitting an error"
         },
         {
           "question": "In C++17, what is the pre-C++17 equivalent of `if constexpr (std::is_integral_v<T>)` for selecting different code paths at compile time?",
           "options": [
-            "SFINAE with `std::enable_if` on separate function template overloads, or tag dispatch with different integral types",
-            "A runtime `if` statement combined with `constexpr` variables",
-            "The `#if` preprocessor directive combined with `__is_integral` compiler built-in",
-            "Template specialization where `T` is explicitly specialized for each integral type"
+            "SFINAE with `std::enable_if` on separate overloads, or tag dispatch — both select the correct function at compile time before `if constexpr` existed.",
+            "A runtime `if` combined with `constexpr` variables — the optimizer would recognize compile-time constants and eliminate dead branches during code generation.",
+            "The `#if` preprocessor directive combined with compiler built-ins like `__is_integral` — this was the only portable way to branch before C++17.",
+            "Explicit template specialization where a primary template handles integral types and partial specializations cover all remaining categories."
           ],
-          "correctAnswer": "SFINAE with `std::enable_if` on separate function template overloads, or tag dispatch with different integral types",
+          "correctAnswer": "SFINAE with `std::enable_if` on separate overloads, or tag dispatch — both select the correct function at compile time before `if constexpr` existed.",
           "explanation": "Before C++17's `if constexpr`, compile-time branching required SFINAE: `template<typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>`. `if constexpr` makes this dramatically cleaner — the discarded branch is never instantiated, so it can contain code that would be invalid for the given type, which wasn't possible with plain `if`."
         },
         {
           "question": "What does `std::enable_if_t<std::is_floating_point_v<T>, int> = 0` do in a template parameter list?",
           "options": [
-            "If T is a floating-point type, `enable_if_t` resolves to `int`, making the template parameter `int = 0` valid. If T is NOT floating-point, substitution fails, and SFINAE removes this overload.",
+            "If T is a floating-point type, `enable_if_t` resolves to `int`, making the...",
             "It sets a default template argument of 0 for all types, with an additional constraint check",
             "It creates a static assertion that fails at compile time if T is not a floating-point type",
             "It initializes a member variable of the template class to 0 if T is a floating-point type"
           ],
-          "correctAnswer": "If T is a floating-point type, `enable_if_t` resolves to `int`, making the template parameter `int = 0` valid. If T is NOT floating-point, substitution fails, and SFINAE removes this overload.",
-          "explanation": "This is the classic enable_if pattern for function templates. `enable_if_t<Condition, Type>` resolves to `Type` if `Condition` is true, otherwise substitution fails. By placing it as a defaulted template parameter (`int = 0`), the overload simply vanishes from the candidate set when the condition is false, and the compiler picks another overload (or emits a 'no matching function' error if none remain)."
+          "correctAnswer": "If T is a floating-point type, `enable_if_t` resolves to `int`, making the...",
+          "explanation": "This is the classic enable_if pattern for function templates. `enable_if_t<Condition, Type>` resolves to `Type` if `Condition` is true, otherwise substitution fails. By placing it as a defaulted template parameter (`int = 0`), the overload simply vanishes from the candidate set when the condition is false, and the compiler picks another overload (or emits a 'no matching function' error if none remain). If T is NOT floating-point, substitution fails, and SFINAE removes this overload.  template parameter `int = 0` valid."
         },
         {
           "question": "Explain why `template<typename T> void foo(T&)` and `template<typename T> void foo(T&&)` CAN coexist as overloads, but `template<typename T> void foo(T)` and `template<typename T> void foo(T&)` can be ambiguous. What rule governs this?",
@@ -13618,67 +13618,67 @@
         {
           "question": "According to Meyers' framework, how does `template<typename T> void f(T param)` deduce `T` when called with `int x = 5; f(x);`?",
           "options": [
-            "Case 3 (pass-by-value): `T = int`, `param = int`. Top-level const and references are stripped.",
+            "Case 3 (pass-by-value): `T = int`, `param = int`.",
             "Case 1 (reference/pointer): `T = int&`, `param = int&` — preserves lvalueness",
             "Case 2 (universal reference): `T = int&`, `param = int&` — forwarding reference deduction",
             "Template argument deduction fails because `param` is not a reference"
           ],
-          "correctAnswer": "Case 3 (pass-by-value): `T = int`, `param = int`. Top-level const and references are stripped.",
-          "explanation": "Meyers' Case 3 covers pass-by-value parameters. The parameter type is `T`, not `T&` or `T&&`. When the argument is an lvalue (`x`), `T` deduces to `int` (the reference-ness and const-ness of `x` are ignored). If `x` were `const int`, `T` would STILL deduce to `int` — top-level const is stripped in pass-by-value deduction. This is why pass-by-value gives you a copy regardless."
+          "correctAnswer": "Case 3 (pass-by-value): `T = int`, `param = int`.",
+          "explanation": "Meyers' Case 3 covers pass-by-value parameters. The parameter type is `T`, not `T&` or `T&&`. When the argument is an lvalue (`x`), `T` deduces to `int` (the reference-ness and const-ness of `x` are ignored). If `x` were `const int`, `T` would STILL deduce to `int` — top-level const is stripped in pass-by-value deduction. This is why pass-by-value gives you a copy regardless. Top-level const and references are stripped."
         },
         {
           "question": "What is the critical difference between `decltype(x)` and `decltype((x))` when `x` is an `int` variable?",
           "options": [
-            "`decltype(x)` gives `int` (the declared type). `decltype((x))` gives `int&` — the extra parentheses make it an lvalue EXPRESSION, and decltype adds a reference for lvalue expressions.",
-            "Both give `int` — the parentheses have no effect on `decltype`",
-            "`decltype(x)` gives `int&` and `decltype((x))` gives `int` — the parentheses suppress the reference",
-            "`decltype(x)` gives `int&&` and `decltype((x))` gives `int`"
+            "`decltype(x)` = `int` (declared type of the name). `decltype((x))` = `int&` — parenthesized names become lvalue expressions, and decltype adds a reference for lvalues.",
+            "Both give `int` — the outer parentheses in `decltype((x))` are a redundant grouping operator with no effect on the deduced type, contrary to common misconception. This addi",
+            "`decltype(x)` gives `int&` and `decltype((x))` gives `int` — the parentheses suppress the reference that would normally be added to a variable name.",
+            "`decltype(x)` gives `int&&` for block-scope variables while `decltype((x))` gives `int` by stripping both reference layers during deduction."
           ],
-          "correctAnswer": "`decltype(x)` gives `int` (the declared type). `decltype((x))` gives `int&` — the extra parentheses make it an lvalue EXPRESSION, and decltype adds a reference for lvalue expressions.",
-          "explanation": "This is the 'parenthesized names trap' from Meyers Item 3. `decltype` has two modes: for unparenthesized names, it returns the declared type. For expressions (including parenthesized names), it returns `T&` for lvalue expressions and `T&&` for xvalue expressions. `(x)` is an lvalue expression, so `decltype((x))` = `int&`. This matters immensely for `decltype(auto)` return types: `decltype(auto) f() { int x = 5; return (x); }` returns `int&` — a dangling reference!"
+          "correctAnswer": "`decltype(x)` = `int` (declared type of the name). `decltype((x))` = `int&` — parenthesized names become lvalue expressions, and decltype adds a reference for lvalues.",
+          "explanation": "This is the 'parenthesized names trap' from Meyers Item 3. `decltype` has two modes: for unparenthesized names, it returns the declared type. For expressions (including parenthesized names), it returns `T&` for lvalue expressions and `T&&` for xvalue expressions. `(x)` is an lvalue expression, so `decltype((x))` = `int&`. This matters immensely for `decltype(auto)` return types: `decltype(auto) f() { int x = 5; return (x); }` returns `int&` — a dangling reference! `decltype((x))` gives `int&` — the extra parentheses make it an lvalue EXPRESSION, and decltype adds a reference for lvalue expressions."
         },
         {
           "question": "What is the primary purpose of `decltype(auto)`?",
           "options": [
-            "To deduce a return type that perfectly preserves references — it uses `decltype` deduction rules instead of `auto` (template) deduction rules",
+            "To deduce a return type that perfectly preserves references ",
             "To automatically apply `auto` type deduction to `decltype` expressions",
             "To enable automatic return type deduction in C++11",
             "To declare variables whose type matches the initializer's type exactly, including cv-qualifiers"
           ],
-          "correctAnswer": "To deduce a return type that perfectly preserves references — it uses `decltype` deduction rules instead of `auto` (template) deduction rules",
-          "explanation": "`auto` return type deduction strips references (like template Case 3). If a function should return a reference, `auto` loses it. `decltype(auto)` uses `decltype` rules, preserving reference-ness: if the return expression is an lvalue, the return type is an lvalue reference. The trap: `decltype(auto) f() { int x = 5; return (x); }` returns `int&` (dangling!) while `decltype(auto) f() { int x = 5; return x; }` returns `int` (safe)."
+          "correctAnswer": "To deduce a return type that perfectly preserves references ",
+          "explanation": "`auto` return type deduction strips references (like template Case 3). If a function should return a reference, `auto` loses it. `decltype(auto)` uses `decltype` rules, preserving reference-ness: if the return expression is an lvalue, the return type is an lvalue reference. The trap: `decltype(auto) f() { int x = 5; return (x); }` returns `int&` (dangling!) while `decltype(auto) f() { int x = 5; return x; }` returns `int` (safe). — it uses `decltype` deduction rules instead of `auto` (template) deduction rules"
         },
         {
           "question": "Why does `template<typename T> class Widget { Widget(T&& x); };` act as a 'perfect forwarding constructor' that can hijack copy construction?",
           "options": [
-            "Because `Widget(Widget&)` calls the template constructor with `T=Widget&`, which is a better match than the copy constructor (which takes `const Widget&`) for non-const lvalues",
-            "Because the template constructor always takes precedence over compiler-generated constructors",
-            "Because `T&&` is an rvalue reference and copy construction uses rvalue references",
-            "Because the template constructor explicitly deletes the compiler-generated copy constructor"
+            "For non-const lvalues, the template instantiates as `Widget(Widget&)` — a PERFECT match. The copy constructor takes `const Widget&`, requiring a conversion.",
+            "The template constructor takes priority because user-declared constructors always outrank implicitly-declared ones in overload resolution per the standard.",
+            "The forwarding reference constructor deletes the copy constructor through a hidden SFINAE constraint defined by the standard library implementation. This additi",
+            "Since `T&&` in a constructor is an rvalue reference, and copy construction uses rvalue semantics, the template matches the copy constructor perfectly."
           ],
-          "correctAnswer": "Because `Widget(Widget&)` calls the template constructor with `T=Widget&`, which is a better match than the copy constructor (which takes `const Widget&`) for non-const lvalues",
+          "correctAnswer": "For non-const lvalues, the template instantiates as `Widget(Widget&)` — a PERFECT match. The copy constructor takes `const Widget&`, requiring a conversion.",
           "explanation": "This is Meyers Item 26. When you write `Widget w2(w1)` where `w1` is non-const, the compiler considers: (1) the implicit copy constructor `Widget(const Widget&)`, and (2) the template `Widget(Widget&)` (instantiated with `T=Widget&`). The template version is a PERFECT match (no const-qualification conversion needed), so it wins. The copy constructor is bypassed. This is the universal-reference-overloading trap — the solution is tag dispatch, `if constexpr`, or SFINAE to disable the template for Widget types."
         },
         {
           "question": "In `template<typename T> void f(T&& x)`, why is `T&&` called a 'universal reference' (or 'forwarding reference') and NOT just an rvalue reference?",
           "options": [
-            "Because `T` is being DEDUCED — `T&&` can bind to both lvalues (where `T` deduces to `SomeType&`, and reference collapsing makes `SomeType& &&` → `SomeType&`) and rvalues (where `T` deduces to `SomeType`, giving `SomeType&&`)",
-            "Because the `&&` syntax is overloaded to mean 'universal' in all contexts",
-            "Because the C++ standard requires all `T&&` parameters to accept both lvalues and rvalues regardless of context",
-            "Because `std::forward` automatically makes any `&&` parameter universal"
+            "`T` is being DEDUCED — `T&&` binds to lvalues (T→T&, collapsing to T&) and rvalues (T→T, giving T&&). Without deduction, `&&` is always rvalue reference.",
+            "The `&&` syntax is overloaded by the standard — any `&&` in a parameter declaration accepts both lvalues and rvalues regardless of deduction context.",
+            "The standard requires all `T&&` parameters to accept both value categories, enforced by a mandatory implicit conversion in the compiler frontend. This additi",
+            "`std::forward` converts any `&&` parameter into a universal reference by injecting reference collapsing rules at the call site at compile time."
           ],
-          "correctAnswer": "Because `T` is being DEDUCED — `T&&` can bind to both lvalues (where `T` deduces to `SomeType&`, and reference collapsing makes `SomeType& &&` → `SomeType&`) and rvalues (where `T` deduces to `SomeType`, giving `SomeType&&`)",
+          "correctAnswer": "`T` is being DEDUCED — `T&&` binds to lvalues (T→T&, collapsing to T&) and rvalues (T→T, giving T&&). Without deduction, `&&` is always rvalue reference.",
           "explanation": "`T&&` is a forwarding reference ONLY when `T` is being deduced (in a function template, or `auto&&`). The key is template argument deduction + reference collapsing: an lvalue argument deduces `T=SomeType&`, and `SomeType& &&` collapses to `SomeType&`. An rvalue argument deduces `T=SomeType`, giving `SomeType&&`. This is why `std::vector<T>&&` is always an rvalue reference — `T` is not being deduced in that context."
         },
         {
           "question": "How can you view the actual type deduced by the compiler for a template parameter?",
           "options": [
-            "Use a deliberately incomplete class template like `template<typename T> struct TD;` and write `TD<T> td;` — the compiler error will print the deduced type. Or use `typeid(T).name()` / `boost::typeindex::type_id<T>().pretty_name()`.",
-            "Use `std::cout << type_of(T)` which is a built-in C++ debugging feature",
-            "Inspect the object file with `objdump` to find the mangled name of `T`",
-            "Use `static_assert(sizeof(T) == 0)` which prints the type in the error message"
+            "Use an incomplete class template `struct TD;` and write `TD<T> td;` — the error message reveals T. Or `boost::typeindex::type_id<T>().pretty_name()`.",
+            "Use `std::cout << type_of(T)` — a C++17 utility that prints the fully qualified type name of any template parameter to standard output. This additional c",
+            "Inspect the object file with `objdump -t` to find the mangled symbol, then decode with `c++filt` to extract the deduced type name.",
+            "Use `static_assert(sizeof(T) == 0)` which forces a compiler error that prints the type of T in the diagnostic along with the assertion text."
           ],
-          "correctAnswer": "Use a deliberately incomplete class template like `template<typename T> struct TD;` and write `TD<T> td;` — the compiler error will print the deduced type. Or use `typeid(T).name()` / `boost::typeindex::type_id<T>().pretty_name()`.",
+          "correctAnswer": "Use an incomplete class template `struct TD;` and write `TD<T> td;` — the error message reveals T. Or `boost::typeindex::type_id<T>().pretty_name()`.",
           "explanation": "The 'Type Display' (TD) trick is the classic method: `template<typename T> struct TD;` (declared but never defined). Writing `TD<T> td;` causes a compiler error like 'error: aggregate TD<int> td has incomplete type' — the type is right there in the error. `typeid(T).name()` works at runtime (with typeinfo) but returns mangled names on some compilers. `boost::typeindex::type_id<T>().pretty_name()` gives human-readable names."
         },
         {
@@ -13693,68 +13693,68 @@
         {
           "question": "What happens to a `std::thread` object if its destructor runs while the thread is still joinable (neither joined nor detached)?",
           "options": [
-            "`std::terminate()` is called — the program crashes. You MUST either `join()` or `detach()` every thread before its `std::thread` object is destroyed.",
-            "The thread is automatically joined (waited for completion)",
+            "`std::terminate()` is called — the program crashes.",
+            "The thread is automatically joined (waited for completion) This approach was ...",
             "The thread is automatically detached and continues running independently",
             "The thread continues running and the `std::thread` object silently releases its handle"
           ],
-          "correctAnswer": "`std::terminate()` is called — the program crashes. You MUST either `join()` or `detach()` every thread before its `std::thread` object is destroyed.",
-          "explanation": "This is the most dangerous `std::thread` trap. The `std::thread` destructor calls `std::terminate()` if the thread is still joinable — it does NOT automatically join or detach. This is by design: auto-join would risk deadlocking the destructor, and auto-detach would risk the thread accessing destroyed stack variables. The solution: RAII thread wrapper (like `std::jthread` in C++20, which auto-joins in its destructor)."
+          "correctAnswer": "`std::terminate()` is called — the program crashes.",
+          "explanation": "This is the most dangerous `std::thread` trap. The `std::thread` destructor calls `std::terminate()` if the thread is still joinable — it does NOT automatically join or detach. This is by design: auto-join would risk deadlocking the destructor, and auto-detach would risk the thread accessing destroyed stack variables. The solution: RAII thread wrapper (like `std::jthread` in C++20, which auto-joins in its destructor). You MUST either `join()` or `detach()` every thread before its `std::thread` object is destroyed."
         },
         {
           "question": "What is the difference between `std::lock_guard` and `std::unique_lock`?",
           "options": [
-            "`lock_guard` always owns the lock until destruction — it cannot be unlocked early or transferred. `unique_lock` supports deferred locking, early unlocking, and move semantics.",
+            "`lock_guard` always owns the lock until destruction — it cannot be unlocked early or transferred.",
             "`lock_guard` is for shared mutexes and `unique_lock` is for exclusive mutexes",
             "`lock_guard` provides better performance because it uses atomic operations",
-            "`lock_guard` can be copied but `unique_lock` cannot"
+            "`lock_guard` can be copied but `unique_lock` cannot This behavior is specifie... This additional conte"
           ],
-          "correctAnswer": "`lock_guard` always owns the lock until destruction — it cannot be unlocked early or transferred. `unique_lock` supports deferred locking, early unlocking, and move semantics.",
-          "explanation": "`lock_guard` is minimalist: lock on construction, unlock on destruction. Zero overhead beyond the mutex itself. `unique_lock` is more flexible: you can defer locking (`std::defer_lock`), unlock early (`.unlock()`), re-lock (`.lock()`), and transfer ownership via move. `unique_lock` is required for `std::condition_variable::wait()` because the wait may need to unlock and re-lock internally."
+          "correctAnswer": "`lock_guard` always owns the lock until destruction — it cannot be unlocked early or transferred.",
+          "explanation": "`lock_guard` is minimalist: lock on construction, unlock on destruction. Zero overhead beyond the mutex itself. `unique_lock` is more flexible: you can defer locking (`std::defer_lock`), unlock early (`.unlock()`), re-lock (`.lock()`), and transfer ownership via move. `unique_lock` is required for `std::condition_variable::wait()` because the wait may need to unlock and re-lock internally. `unique_lock` supports deferred locking, early unlocking, and move semantics."
         },
         {
           "question": "In `std::condition_variable::wait(lock, predicate)`, why is the predicate (the lambda) necessary instead of just checking `queue.empty()` before waiting?",
           "options": [
-            "Because of spurious wakeups — the condition variable may wake up even when no thread signaled it. The predicate loop handles this and the TOCTOU race between checking and waiting.",
-            "Because the condition variable's internal queue requires a predicate for thread scheduling",
-            "Because the mutex must be unlocked before the predicate runs",
+            "Because of spurious wakeups — the condition variable may wake up even when no thread signaled it.",
+            "Because the condition variable's internal queue requires a predicate for thread scheduling This additi",
+            "Because the mutex must be unlocked before the predicate runs Some legacy code...",
             "Because the predicate converts the wait from a blocking call to a non-blocking one"
           ],
-          "correctAnswer": "Because of spurious wakeups — the condition variable may wake up even when no thread signaled it. The predicate loop handles this and the TOCTOU race between checking and waiting.",
-          "explanation": "The predicate form `cv.wait(lock, [] { return !queue.empty(); })` is equivalent to `while (queue.empty()) { cv.wait(lock); }`. This handles: (1) spurious wakeups — the OS may wake the thread for no reason, (2) TOCTOU — another thread may have consumed the data between wakeup and lock re-acquisition. Always use the predicate form of wait — it's the correct pattern."
+          "correctAnswer": "Because of spurious wakeups — the condition variable may wake up even when no thread signaled it.",
+          "explanation": "The predicate form `cv.wait(lock, [] { return !queue.empty(); })` is equivalent to `while (queue.empty()) { cv.wait(lock); }`. This handles: (1) spurious wakeups — the OS may wake the thread for no reason, (2) TOCTOU — another thread may have consumed the data between wakeup and lock re-acquisition. Always use the predicate form of wait — it's the correct pattern. The predicate loop handles this and the TOCTOU race between checking and waiting."
         },
         {
           "question": "What is the difference between `std::launch::async` and `std::launch::deferred` when passed to `std::async`?",
           "options": [
-            "`async` guarantees the function runs on a new thread. `deferred` guarantees the function runs lazily on the CALLING thread when `get()` or `wait()` is called on the future.",
+            "`async` guarantees the function runs on a new thread.",
             "`async` runs the function immediately and `deferred` runs it after a timeout",
-            "`async` uses thread pools and `deferred` creates dedicated threads",
-            "`async` is for CPU-bound tasks and `deferred` is for IO-bound tasks"
+            "`async` uses thread pools and `deferred` creates dedicated threads This appro...",
+            "`async` is for CPU-bound tasks and `deferred` is for IO-bound tasks This diff..."
           ],
-          "correctAnswer": "`async` guarantees the function runs on a new thread. `deferred` guarantees the function runs lazily on the CALLING thread when `get()` or `wait()` is called on the future.",
-          "explanation": "`std::launch::async` creates a new thread (or uses a thread pool — implementation-defined) to run the function concurrently. `std::launch::deferred` does NOT run the function until someone calls `get()` or `wait()` on the future — and it runs on the thread that makes that call. The default (`std::launch::async | std::launch::deferred`) lets the implementation choose — which is why you should explicitly specify `std::launch::async` if you need concurrent execution."
+          "correctAnswer": "`async` guarantees the function runs on a new thread.",
+          "explanation": "`std::launch::async` creates a new thread (or uses a thread pool — implementation-defined) to run the function concurrently. `std::launch::deferred` does NOT run the function until someone calls `get()` or `wait()` on the future — and it runs on the thread that makes that call. The default (`std::launch::async | std::launch::deferred`) lets the implementation choose — which is why you should explicitly specify `std::launch::async` if you need concurrent execution. `deferred` guarantees the function runs lazily on the CALLING thread when `get()` or `wait()` is called on the future."
         },
         {
           "question": "What is the dangerous trap with `std::async`'s returned future if you don't store it?",
           "options": [
-            "The future's destructor BLOCKS until the async task completes — making `std::async` effectively synchronous if the returned future is a temporary",
-            "The async task is immediately cancelled and never executes",
-            "The async task runs but its results are lost, causing a memory leak",
-            "The future is automatically converted to `std::shared_future` which has different semantics"
+            "The future's destructor BLOCKS until the async task completes — making `std::async` effectively synchronous if the returned.",
+            "The async task is immediately cancelled and never executes This differs from ...",
+            "The async task runs but its results are lost, causing a memory leak This beha...",
+            "The future is automatically converted to `std::shared_future` which has different semantics                                      "
           ],
-          "correctAnswer": "The future's destructor BLOCKS until the async task completes — making `std::async` effectively synchronous if the returned future is a temporary",
-          "explanation": "`std::async` returns a `std::future`. The destructor of a `std::future` obtained from `std::async` (with `std::launch::async` policy) BLOCKS until the task completes. If you write `std::async(std::launch::async, foo);` without storing the future, the temporary future is destroyed immediately, blocking until `foo()` finishes — making the call synchronous. Always store the returned future in a variable."
+          "correctAnswer": "The future's destructor BLOCKS until the async task completes — making `std::async` effectively synchronous if the returned.",
+          "explanation": "`std::async` returns a `std::future`. The destructor of a `std::future` obtained from `std::async` (with `std::launch::async` policy) BLOCKS until the task completes. If you write `std::async(std::launch::async, foo);` without storing the future, the temporary future is destroyed immediately, blocking until `foo()` finishes — making the call synchronous. Always store the returned future in a variable. future is a temporary"
         },
         {
           "question": "How does `std::scoped_lock` differ from calling `std::lock()` on multiple mutexes manually?",
           "options": [
-            "`std::scoped_lock` uses the same deadlock-avoidance algorithm as `std::lock()` internally, but wraps it in RAII — it locks ALL mutexes in one deadlock-free operation and auto-unlocks on scope exit",
-            "`std::scoped_lock` locks mutexes one at a time, unlike `std::lock()` which locks them simultaneously",
-            "`std::scoped_lock` uses spinlocks internally for better performance",
+            "`std::scoped_lock` uses the same deadlock-avoidance algorithm as `std::lock()` internally, but wraps it in RAII — it locks ALL.",
+            "`std::scoped_lock` locks mutexes one at a time, unlike `std::lock()` which locks them simultaneously                                ",
+            "`std::scoped_lock` uses spinlocks internally for better performance This inte...",
             "`std::scoped_lock` can only lock a single mutex, while `std::lock()` can lock multiple"
           ],
-          "correctAnswer": "`std::scoped_lock` uses the same deadlock-avoidance algorithm as `std::lock()` internally, but wraps it in RAII — it locks ALL mutexes in one deadlock-free operation and auto-unlocks on scope exit",
-          "explanation": "`std::scoped_lock` (C++17) is the successor to `std::lock_guard` for multi-mutex locking. It uses `std::lock()`'s deadlock-avoidance algorithm (try-lock-and-back-off with ordered locking) to acquire multiple mutexes, then releases them all in its destructor. It's the preferred way to lock multiple mutexes in modern C++."
+          "correctAnswer": "`std::scoped_lock` uses the same deadlock-avoidance algorithm as `std::lock()` internally, but wraps it in RAII — it locks ALL.",
+          "explanation": "`std::scoped_lock` (C++17) is the successor to `std::lock_guard` for multi-mutex locking. It uses `std::lock()`'s deadlock-avoidance algorithm (try-lock-and-back-off with ordered locking) to acquire multiple mutexes, then releases them all in its destructor. It's the preferred way to lock multiple mutexes in modern C++. mutexes in one deadlock-free operation and auto-unlocks on scope exit"
         },
         {
           "question": "Explain the relationship between `std::promise`, `std::future`, and `std::packaged_task`. How do they connect?",
@@ -13768,67 +13768,67 @@
         {
           "question": "The Single Responsibility Principle (SRP) states that a class should have only ONE reason to change. What is the primary benefit of following SRP?",
           "options": [
-            "When a requirement changes, only the relevant class needs modification — changes are localized, reducing the risk of breaking unrelated functionality",
-            "Classes become smaller, which improves compile times",
-            "It makes the class hierarchy easier to navigate in an IDE",
-            "It guarantees that the class will have no more than N methods"
+            "When a requirement changes, only the relevant class needs modification — changes are localized, reducing the risk of breaking.",
+            "Classes become smaller, which improves compile times This differs from the mo...                                                   ",
+            "It makes the class hierarchy easier to navigate in an IDE This interacts with...",
+            "It guarantees that the class will have no more than N methods This approach w..."
           ],
-          "correctAnswer": "When a requirement changes, only the relevant class needs modification — changes are localized, reducing the risk of breaking unrelated functionality",
-          "explanation": "SRP is about cohesion: each class should encapsulate ONE area of responsibility. If a class handles both data persistence AND business logic, a change to the database schema could break business rules. By separating concerns, changes propagate minimally. This directly reduces regression bugs and makes the codebase easier to reason about."
+          "correctAnswer": "When a requirement changes, only the relevant class needs modification — changes are localized, reducing the risk of breaking.",
+          "explanation": "SRP is about cohesion: each class should encapsulate ONE area of responsibility. If a class handles both data persistence AND business logic, a change to the database schema could break business rules. By separating concerns, changes propagate minimally. This directly reduces regression bugs and makes the codebase easier to reason about. unrelated functionality"
         },
         {
           "question": "The Open-Closed Principle (OCP) says classes should be 'open for extension, closed for modification.' How do C++ templates achieve this?",
           "options": [
-            "Templates enable static polymorphism — new types can be passed to a template function without modifying the function's source code. The function is 'closed' (unchanged) but 'open' to new types.",
-            "Templates prevent subclasses from overriding base class methods",
+            "Templates enable static polymorphism — new types can be passed to a template function without modifying the function's source code.",
+            "Templates prevent subclasses from overriding base class methods This interact...                                                        ",
             "Templates generate compile-time error messages when modification is attempted",
-            "Templates automatically version-control all changes to the class"
+            "Templates automatically version-control all changes to the class This differs..."
           ],
-          "correctAnswer": "Templates enable static polymorphism — new types can be passed to a template function without modifying the function's source code. The function is 'closed' (unchanged) but 'open' to new types.",
-          "explanation": "OCP can be achieved via runtime polymorphism (virtual functions + inheritance — add a new subclass without changing base class code) or compile-time polymorphism (templates + concepts — pass a new type to a constrained template without modifying it). The Strategy pattern is another OCP enabler: swap strategies by composing, not by modifying existing code."
+          "correctAnswer": "Templates enable static polymorphism — new types can be passed to a template function without modifying the function's source code.",
+          "explanation": "OCP can be achieved via runtime polymorphism (virtual functions + inheritance — add a new subclass without changing base class code) or compile-time polymorphism (templates + concepts — pass a new type to a constrained template without modifying it). The Strategy pattern is another OCP enabler: swap strategies by composing, not by modifying existing code. The function is 'closed' (unchanged) but 'open' to new types."
         },
         {
           "question": "The Liskov Substitution Principle (LSP) states that subtypes must be substitutable for their base types. Which of the following is an LSP violation?",
           "options": [
-            "A `Square` class inheriting from `Rectangle` where `Square::setWidth()` also changes height — code expecting a `Rectangle` breaks when `setWidth` and `setHeight` interact unexpectedly",
+            "A `Square` class inheriting from `Rectangle` where `Square::setWidth()` also changes height — code expecting a `Rectangle` breaks.",
             "A `Cat` class inheriting from `Animal` and overriding `speak()` to return 'meow'",
             "A `DieselCar` class inheriting from `Car` and adding a `refuelDiesel()` method",
-            "A `std::vector<int>` replacing a C-style array in a function that only reads elements sequentially"
+            "A `std::vector<int>` replacing a C-style array in a function that only reads elements sequentially                                     "
           ],
-          "correctAnswer": "A `Square` class inheriting from `Rectangle` where `Square::setWidth()` also changes height — code expecting a `Rectangle` breaks when `setWidth` and `setHeight` interact unexpectedly",
-          "explanation": "The Rectangle-Square problem is the canonical LSP violation. The subtype (Square) strengthens the base type's invariants (width == height). Code that works correctly with Rectangle (calling setWidth then setHeight independently) breaks with Square. The fix: don't use inheritance for Square-from-Rectangle — they don't have an 'is-a' relationship in terms of mutable behavior."
+          "correctAnswer": "A `Square` class inheriting from `Rectangle` where `Square::setWidth()` also changes height — code expecting a `Rectangle` breaks.",
+          "explanation": "The Rectangle-Square problem is the canonical LSP violation. The subtype (Square) strengthens the base type's invariants (width == height). Code that works correctly with Rectangle (calling setWidth then setHeight independently) breaks with Square. The fix: don't use inheritance for Square-from-Rectangle — they don't have an 'is-a' relationship in terms of mutable behavior. when `setWidth` and `setHeight` interact unexpectedly"
         },
         {
           "question": "The Interface Segregation Principle (ISP) says clients should not depend on interfaces they don't use. What's the C++ consequence of violating ISP?",
           "options": [
-            "Unnecessary recompilation — changing a method a client doesn't use still forces recompilation of all dependent translation units. Also, clients must provide implementations for pure virtual methods they don't need.",
+            "Unnecessary recompilation — changing a method a client doesn't use still forces recompilation of all dependent translation units.",
             "The compiler emits larger binaries because unused virtual functions are still included",
-            "Memory usage increases because the vtable grows with unused functions",
-            "Run-time performance degrades because the CPU must check which methods are actually used"
+            "Memory usage increases because the vtable grows with unused functions This be...",
+            "Run-time performance degrades because the CPU must check which methods are actually used                                              "
           ],
-          "correctAnswer": "Unnecessary recompilation — changing a method a client doesn't use still forces recompilation of all dependent translation units. Also, clients must provide implementations for pure virtual methods they don't need.",
-          "explanation": "ISP is about minimizing interface surface. In C++, a fat interface means: (1) when ANY method's signature changes, ALL clients recompile even if they don't use that method, (2) implementing classes must stub out methods they don't support. The fix: split large interfaces into smaller, role-specific ones. A `Renderable` interface should not include `Serialize()`."
+          "correctAnswer": "Unnecessary recompilation — changing a method a client doesn't use still forces recompilation of all dependent translation units.",
+          "explanation": "ISP is about minimizing interface surface. In C++, a fat interface means: (1) when ANY method's signature changes, ALL clients recompile even if they don't use that method, (2) implementing classes must stub out methods they don't support. The fix: split large interfaces into smaller, role-specific ones. A `Renderable` interface should not include `Serialize()`. Also, clients must provide implementations for pure virtual methods they don't need."
         },
         {
           "question": "The Dependency Inversion Principle (DIP) says high-level modules should not depend on low-level modules — both should depend on abstractions. How does dependency injection implement this in C++?",
           "options": [
-            "The high-level class receives a pointer/reference to an abstract interface in its constructor. The concrete implementation is passed from outside — the high-level class only knows about the abstraction, not the implementation.",
+            "The high-level class receives a pointer/reference to an abstract interface in its constructor.",
             "The high-level class uses `#include` to bring in the low-level module's header",
             "The high-level class creates instances of the low-level class using `new`",
-            "The high-level class inherits from the low-level class to access its functionality"
+            "The high-level class inherits from the low-level class to access its functionality This additional "
           ],
-          "correctAnswer": "The high-level class receives a pointer/reference to an abstract interface in its constructor. The concrete implementation is passed from outside — the high-level class only knows about the abstraction, not the implementation.",
-          "explanation": "DIP inverts the traditional dependency direction: instead of `GameEngine` → `OpenGLRenderer` (high depends on low), both depend on `IRenderer` (an abstraction). Dependency injection is the mechanism: the concrete renderer is created externally and injected via constructor, setter, or template parameter. This enables: testing (mock renderer), swapping implementations (OpenGL → Vulkan), and independent development."
+          "correctAnswer": "The high-level class receives a pointer/reference to an abstract interface in its constructor.",
+          "explanation": "DIP inverts the traditional dependency direction: instead of `GameEngine` → `OpenGLRenderer` (high depends on low), both depend on `IRenderer` (an abstraction). Dependency injection is the mechanism: the concrete renderer is created externally and injected via constructor, setter, or template parameter. This enables: testing (mock renderer), swapping implementations (OpenGL → Vulkan), and independent development. The concrete implementation is passed from outside — the high-level class only knows about the abstraction, not the implementation."
         },
         {
           "question": "Which SOLID principle does the Strategy pattern most directly implement?",
           "options": [
-            "Open-Closed Principle — you can add new strategies (algorithms) without modifying the context class that uses them",
-            "Single Responsibility Principle — each strategy class has exactly one responsibility",
-            "Liskov Substitution Principle — all strategies conform to the same interface",
-            "Dependency Inversion Principle — the context depends on the abstract strategy interface"
+            "Open-Closed Principle — you add new strategies without modifying the context class that uses them, keeping existing code untouched.",
+            "Single Responsibility Principle — each strategy class handles exactly one algorithm, keeping responsibilities cleanly separated and independently testable.",
+            "Liskov Substitution Principle — all strategy implementations conform to the same interface, allowing any strategy to substitute for any other safely.",
+            "Dependency Inversion Principle — the context depends on the abstract strategy interface rather than concrete implementations, inverting the dependency direction."
           ],
-          "correctAnswer": "Open-Closed Principle — you can add new strategies (algorithms) without modifying the context class that uses them",
+          "correctAnswer": "Open-Closed Principle — you add new strategies without modifying the context class that uses them, keeping existing code untouched.",
           "explanation": "While Strategy touches multiple SOLID principles, its PRIMARY motivation is OCP: the context class is closed for modification (you don't change its code) but open for extension (you add new strategy subclasses). The context only knows about the `IStrategy` interface — new concrete strategies are plug-and-play."
         },
         {
@@ -13843,57 +13843,57 @@
         {
           "question": "The Strategy pattern defines a family of interchangeable algorithms. How is it different from simply using function pointers?",
           "options": [
-            "Strategy encapsulates the algorithm as an OBJECT — it can hold state (configuration, statistics, caches) that function pointers can't easily carry. It also provides a clear interface contract via the base class.",
-            "Function pointers are always faster than Strategy objects",
-            "Strategy objects are allocated on the heap, while function pointers are always on the stack",
+            "Strategy encapsulates the algorithm as an OBJECT — it can hold state (configuration, statistics, caches) that function pointers.",
+            "Function pointers are always faster than Strategy objects This differs from t...",
+            "Strategy objects are allocated on the heap, while function pointers are always on the stack                                          ",
             "There is no difference — Strategy is just syntactic sugar for function pointers"
           ],
-          "correctAnswer": "Strategy encapsulates the algorithm as an OBJECT — it can hold state (configuration, statistics, caches) that function pointers can't easily carry. It also provides a clear interface contract via the base class.",
-          "explanation": "Strategy objects are stateful. A `PathfindingStrategy` could cache the navigation mesh, track performance statistics, or hold configuration parameters. A bare function pointer can't do this without global state. Additionally, Strategy provides a named interface (`findPath()` vs `(*fnPtr)(...)`) and compile-time type checking of the full interface, not just the function signature."
+          "correctAnswer": "Strategy encapsulates the algorithm as an OBJECT — it can hold state (configuration, statistics, caches) that function pointers.",
+          "explanation": "Strategy objects are stateful. A `PathfindingStrategy` could cache the navigation mesh, track performance statistics, or hold configuration parameters. A bare function pointer can't do this without global state. Additionally, Strategy provides a named interface (`findPath()` vs `(*fnPtr)(...)`) and compile-time type checking of the full interface, not just the function signature. can't easily carry. It also provides a clear interface contract via the base class."
         },
         {
           "question": "In the Observer pattern, what is the most common memory management trap?",
           "options": [
-            "The dangling observer problem: if an observer is destroyed without unsubscribing, the subject holds a dangling pointer. When the subject later notifies, it dereferences freed memory.",
-            "Observers always leak memory because they're stored in `std::vector`",
+            "The dangling observer problem: if an observer is destroyed without unsubscribing, the subject holds a dangling pointer.",
+            "Observers always leak memory because they're stored in `std::vector` Some leg...                                            ",
             "The subject cannot be destroyed until all observers have been notified",
-            "Observers must be allocated with `new` and cannot be stack-allocated"
+            "Observers must be allocated with `new` and cannot be stack-allocated This dif..."
           ],
-          "correctAnswer": "The dangling observer problem: if an observer is destroyed without unsubscribing, the subject holds a dangling pointer. When the subject later notifies, it dereferences freed memory.",
-          "explanation": "This is the classic Observer memory bug. Solutions: (1) Observers unregister themselves in their destructors, (2) Subject holds `std::weak_ptr<IObserver>` instead of raw pointers, (3) Observers hold a registration token (RAII) that auto-unsubscribes on destruction. Qt's signal/slot system handles this automatically with QObject parent-child ownership."
+          "correctAnswer": "The dangling observer problem: if an observer is destroyed without unsubscribing, the subject holds a dangling pointer.",
+          "explanation": "This is the classic Observer memory bug. Solutions: (1) Observers unregister themselves in their destructors, (2) Subject holds `std::weak_ptr<IObserver>` instead of raw pointers, (3) Observers hold a registration token (RAII) that auto-unsubscribes on destruction. Qt's signal/slot system handles this automatically with QObject parent-child ownership. When the subject later notifies, it dereferences freed memory."
         },
         {
           "question": "What problem does the Command pattern solve that a simple function call does not?",
           "options": [
-            "Commands can be stored, queued, logged, undone, and replayed — they turn function calls into first-class OBJECTS with `execute()` and `undo()` methods",
+            "Commands can be stored, queued, logged, undone, and replayed — they turn function calls into first-class OBJECTS with `execute()`.",
             "Commands are faster than function calls because they bypass the virtual dispatch mechanism",
-            "Commands eliminate the need for parameters by encoding all data in the command's constructor",
+            "Commands eliminate the need for parameters by encoding all data in the command's constructor                                           ",
             "Commands allow functions to be called across network boundaries automatically"
           ],
-          "correctAnswer": "Commands can be stored, queued, logged, undone, and replayed — they turn function calls into first-class OBJECTS with `execute()` and `undo()` methods",
-          "explanation": "Command's power is reification — turning an action into an object. Once an action is an object, you can: queue it (input buffering), log it (replay system), undo it (by storing inverse state or an `undo()` method), serialize it (network multiplayer), or compose it (macro commands = multiple commands treated as one). A plain function call evaporates after execution."
+          "correctAnswer": "Commands can be stored, queued, logged, undone, and replayed — they turn function calls into first-class OBJECTS with `execute()`.",
+          "explanation": "Command's power is reification — turning an action into an object. Once an action is an object, you can: queue it (input buffering), log it (replay system), undo it (by storing inverse state or an `undo()` method), serialize it (network multiplayer), or compose it (macro commands = multiple commands treated as one). A plain function call evaporates after execution. and `undo()` methods"
         },
         {
           "question": "How does the Adapter pattern differ from the Facade pattern?",
           "options": [
-            "Adapter changes ONE interface to match another (making foreign code fit your system). Facade provides a SIMPLIFIED interface to a complex subsystem (making your own code easier to use).",
-            "Adapter is for classes and Facade is for functions",
-            "Adapter is a structural pattern and Facade is a behavioral pattern",
+            "Adapter changes ONE interface to match another (making foreign code fit your system).",
+            "Adapter is for classes and Facade is for functions This behavior is specified... This addi",
+            "Adapter is a structural pattern and Facade is a behavioral pattern This behav...",
             "There is no difference — they are different names for the same pattern"
           ],
-          "correctAnswer": "Adapter changes ONE interface to match another (making foreign code fit your system). Facade provides a SIMPLIFIED interface to a complex subsystem (making your own code easier to use).",
-          "explanation": "Adapter: you have `IOldInterface` and need `INewInterface` — the adapter translates between them. Think power plug adapter. Facade: you have 5 complex subsystems (audio, physics, rendering, input, networking) — the facade provides `GameEngine::Initialize()` that calls all 5. Adapter is about compatibility; Facade is about simplicity."
+          "correctAnswer": "Adapter changes ONE interface to match another (making foreign code fit your system).",
+          "explanation": "Adapter: you have `IOldInterface` and need `INewInterface` — the adapter translates between them. Think power plug adapter. Facade: you have 5 complex subsystems (audio, physics, rendering, input, networking) — the facade provides `GameEngine::Initialize()` that calls all 5. Adapter is about compatibility; Facade is about simplicity. Facade provides a SIMPLIFIED interface to a complex subsystem (making your own code easier to use)."
         },
         {
           "question": "What is the Meyers Singleton and why is it preferred over the classic 'static pointer + mutex' approach?",
           "options": [
-            "It's thread-safe by C++11 standard guarantee (local static initialization is thread-safe), lazy-initialized on first call, and automatically destroyed at program exit — no explicit `new`, no mutex, no memory leak",
-            "It uses atomic operations internally for better performance",
-            "It stores the instance on the stack instead of the heap",
+            "It's thread-safe by C++11 standard guarantee (local static initialization is thread-safe), lazy-initialized on first call, and.",
+            "It uses atomic operations internally for better performance This behavior is ...                                                    ",
+            "It stores the instance on the stack instead of the heap This approach was com...",
             "It allows multiple instances to be created under controlled conditions"
           ],
-          "correctAnswer": "It's thread-safe by C++11 standard guarantee (local static initialization is thread-safe), lazy-initialized on first call, and automatically destroyed at program exit — no explicit `new`, no mutex, no memory leak",
-          "explanation": "The Meyers Singleton: `static Singleton& get() { static Singleton instance; return instance; }`. Since C++11, the compiler guarantees thread-safe initialization of local statics — only one thread runs the constructor. It's lazy (constructed on first `get()` call), and destroyed during static destruction (reverse order). This eliminated the need for the Double-Checked Locking Pattern (which was broken before C++11's memory model)."
+          "correctAnswer": "It's thread-safe by C++11 standard guarantee (local static initialization is thread-safe), lazy-initialized on first call, and.",
+          "explanation": "The Meyers Singleton: `static Singleton& get() { static Singleton instance; return instance; }`. Since C++11, the compiler guarantees thread-safe initialization of local statics — only one thread runs the constructor. It's lazy (constructed on first `get()` call), and destroyed during static destruction (reverse order). This eliminated the need for the Double-Checked Locking Pattern (which was broken before C++11's memory model). automatically destroyed at program exit — no explicit `new`, no mutex, no memory leak"
         },
         {
           "question": "When should you NOT use the Singleton pattern? Provide a CONCRETE scenario where it would be the wrong choice.",
@@ -13912,68 +13912,68 @@
         {
           "question": "The Visitor pattern's classic implementation uses 'double dispatch.' What does double dispatch mean in this context?",
           "options": [
-            "The correct `visit()` overload is chosen based on the runtime types of TWO objects: the visitor AND the element being visited. The element's `accept()` dispatches to the visitor's `visit()` for the concrete element type.",
+            "The correct `visit()` overload is chosen based on the runtime types of TWO objects: the visitor AND the element being visited.",
             "The visitor is dispatched twice — once for the element and once for the parent",
-            "Each visit method dispatches to two helper methods internally",
+            "Each visit method dispatches to two helper methods internally This interacts ...                                                   ",
             "The visitor pattern requires exactly two virtual function calls per visit"
           ],
-          "correctAnswer": "The correct `visit()` overload is chosen based on the runtime types of TWO objects: the visitor AND the element being visited. The element's `accept()` dispatches to the visitor's `visit()` for the concrete element type.",
-          "explanation": "Single dispatch (virtual functions): the function called depends on ONE runtime type (the object). Double dispatch: depends on TWO runtime types. Visitor achieves this via `element.accept(visitor)` → `visitor.visitConcreteElement(*this)` — the first call dispatches on the element type, the second on the visitor type. This is the mechanism that makes Visitor work without knowing all element types at compile time."
+          "correctAnswer": "The correct `visit()` overload is chosen based on the runtime types of TWO objects: the visitor AND the element being visited.",
+          "explanation": "Single dispatch (virtual functions): the function called depends on ONE runtime type (the object). Double dispatch: depends on TWO runtime types. Visitor achieves this via `element.accept(visitor)` → `visitor.visitConcreteElement(*this)` — the first call dispatches on the element type, the second on the visitor type. This is the mechanism that makes Visitor work without knowing all element types at compile time. The element's `accept()` dispatches to the visitor's `visit()` for the concrete element type."
         },
         {
           "question": "How does `std::variant` with `std::visit` solve the same problem as the Visitor pattern, and what advantage does it have?",
           "options": [
-            "`std::variant` holds one of N types; `std::visit` applies a visitor (callable) to whichever type is currently active. Unlike classic Visitor, the set of types is known at COMPILE TIME — you get exhaustive handling guarantees and no inheritance hierarchy is needed.",
-            "`std::variant` is always faster than the Visitor pattern because it uses direct dispatch",
+            "`std::variant` holds one of N types; `std::visit` applies a visitor (callable) to whichever type is currently active.",
+            "`std::variant` is always faster than the Visitor pattern because it uses direct dispatch                                  ",
             "`std::variant` allows new element types to be added without recompiling existing code",
             "`std::variant` eliminates the need for the 'accept' method on each element"
           ],
-          "correctAnswer": "`std::variant` holds one of N types; `std::visit` applies a visitor (callable) to whichever type is currently active. Unlike classic Visitor, the set of types is known at COMPILE TIME — you get exhaustive handling guarantees and no inheritance hierarchy is needed.",
-          "explanation": "`std::variant` + `std::visit` is the modern C++ replacement for many Visitor use cases. With the `overloaded` pattern (`template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };`), each type gets its own lambda. If you forget a type, the compiler errors. Trade-off: variant types are a closed set (known at compile time); classic Visitor allows adding element types at runtime."
+          "correctAnswer": "`std::variant` holds one of N types; `std::visit` applies a visitor (callable) to whichever type is currently active.",
+          "explanation": "`std::variant` + `std::visit` is the modern C++ replacement for many Visitor use cases. With the `overloaded` pattern (`template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };`), each type gets its own lambda. If you forget a type, the compiler errors. Trade-off: variant types are a closed set (known at compile time); classic Visitor allows adding element types at runtime. Unlike classic Visitor, the set of types is known at COMPILE TIME — you get exhaustive handling guarantees and no inheritance hierarchy is needed."
         },
         {
           "question": "CRTP (Curiously Recurring Template Pattern) enables static polymorphism. How does it eliminate the cost of virtual function calls?",
           "options": [
-            "The base class `Base<Derived>` calls `static_cast<Derived*>(this)->method()` — the call is resolved at COMPILE TIME via templates, producing a direct function call with no vtable lookup",
-            "CRTP uses inline assembly to bypass the virtual dispatch mechanism",
-            "CRTP replaces all function calls with compile-time constants",
-            "CRTP uses the `final` keyword to prevent further inheritance, which the compiler can optimize"
+            "The base class `Base<Derived>` calls `static_cast<Derived*>(this)->method()` — the call is resolved at COMPILE TIME via.",
+            "CRTP uses inline assembly to bypass the virtual dispatch mechanism This inter...",
+            "CRTP replaces all function calls with compile-time constants This approach wa...",
+            "CRTP uses the `final` keyword to prevent further inheritance, which the compiler can optimize                                "
           ],
-          "correctAnswer": "The base class `Base<Derived>` calls `static_cast<Derived*>(this)->method()` — the call is resolved at COMPILE TIME via templates, producing a direct function call with no vtable lookup",
-          "explanation": "CRTP: `class Derived : public Base<Derived>`. `Base<Derived>` knows the exact derived type at compile time, so `static_cast<Derived*>(this)->doWork()` is a direct function call — the compiler can even inline it. No vtable, no indirection, no runtime dispatch overhead. The cost: you can't store different derived types in a heterogeneous container (they're different types, unlike virtual inheritance where `Base*` can point to any `Derived`)."
+          "correctAnswer": "The base class `Base<Derived>` calls `static_cast<Derived*>(this)->method()` — the call is resolved at COMPILE TIME via.",
+          "explanation": "CRTP: `class Derived : public Base<Derived>`. `Base<Derived>` knows the exact derived type at compile time, so `static_cast<Derived*>(this)->doWork()` is a direct function call — the compiler can even inline it. No vtable, no indirection, no runtime dispatch overhead. The cost: you can't store different derived types in a heterogeneous container (they're different types, unlike virtual inheritance where `Base*` can point to any `Derived`). templates, producing a direct function call with no vtable lookup"
         },
         {
           "question": "The Bridge pattern's purpose is to 'decouple an abstraction from its implementation.' How does this differ from simply using an abstract interface?",
           "options": [
-            "Bridge decouples TWO independent hierarchies (e.g., Shape hierarchy AND Renderer hierarchy). An abstract interface only decouples ONE hierarchy from its client. Bridge enables the N×M → N+M class reduction.",
+            "Bridge decouples TWO independent hierarchies (e.g., Shape hierarchy AND Renderer hierarchy).",
             "Bridge forces the use of multiple inheritance, while abstract interfaces use single inheritance",
             "Bridge eliminates all virtual function calls, while abstract interfaces require them",
             "There is no difference — Bridge is just another name for an abstract interface"
           ],
-          "correctAnswer": "Bridge decouples TWO independent hierarchies (e.g., Shape hierarchy AND Renderer hierarchy). An abstract interface only decouples ONE hierarchy from its client. Bridge enables the N×M → N+M class reduction.",
-          "explanation": "The classic bridge example: `N` Shape types (Circle, Square, Triangle) × `M` Renderers (OpenGL, Vulkan, DirectX) = `N × M` subclasses with inheritance alone. With Bridge: N Shape subclasses hold an `IRenderer*` — total `N + M` classes. Both hierarchies can evolve independently. This is the N×M → N+M transformation: composition over inheritance at the architectural level."
+          "correctAnswer": "Bridge decouples TWO independent hierarchies (e.g., Shape hierarchy AND Renderer hierarchy).",
+          "explanation": "The classic bridge example: `N` Shape types (Circle, Square, Triangle) × `M` Renderers (OpenGL, Vulkan, DirectX) = `N × M` subclasses with inheritance alone. With Bridge: N Shape subclasses hold an `IRenderer*` — total `N + M` classes. Both hierarchies can evolve independently. This is the N×M → N+M transformation: composition over inheritance at the architectural level. An abstract interface only decouples ONE hierarchy from its client. Bridge enables the N×M → N+M class reduction."
         },
         {
           "question": "Type Erasure allows storing objects of different types in a single container without a common base class. What is the key mechanism that makes this work?",
           "options": [
-            "An internal 'concept' (abstract interface) and a templated 'model' (concrete wrapper). The outer class holds a pointer to the concept; the model wraps any type that satisfies the interface. The template is hidden INSIDE the constructor, not on the class itself.",
-            "Type erasure uses `void*` pointers and `reinterpret_cast` to bypass the type system",
-            "Type erasure requires all types to inherit from `std::any`",
+            "An internal 'concept' (abstract interface) and a templated 'model' (concrete wrapper).",
+            "Type erasure uses `void*` pointers and `reinterpret_cast` to bypass the type system This ad",
+            "Type erasure requires all types to inherit from `std::any` This interacts wit...",
             "Type erasure converts all types to `std::string` representation internally"
           ],
-          "correctAnswer": "An internal 'concept' (abstract interface) and a templated 'model' (concrete wrapper). The outer class holds a pointer to the concept; the model wraps any type that satisfies the interface. The template is hidden INSIDE the constructor, not on the class itself.",
-          "explanation": "Type Erasure = external polymorphism without inheritance. The pattern: `class AnyShape { struct Concept { virtual void draw() = 0; }; template<typename T> struct Model : Concept { T obj; void draw() override { obj.draw(); } }; std::unique_ptr<Concept> p; };`. The constructor `template<typename T> AnyShape(T x)` creates a `Model<T>`. The outer class is NOT a template — it's a concrete type. This is how `std::function` and `std::any` work."
+          "correctAnswer": "An internal 'concept' (abstract interface) and a templated 'model' (concrete wrapper).",
+          "explanation": "Type Erasure = external polymorphism without inheritance. The pattern: `class AnyShape { struct Concept { virtual void draw() = 0; }; template<typename T> struct Model : Concept { T obj; void draw() override { obj.draw(); } }; std::unique_ptr<Concept> p; };`. The constructor `template<typename T> AnyShape(T x)` creates a `Model<T>`. The outer class is NOT a template — it's a concrete type. This is how `std::function` and `std::any` work. The outer class holds a pointer to the concept; the model wraps any type that satisfies the interface. The template is hidden INSIDE the constructor, not on the class itself."
         },
         {
           "question": "What problem does External Polymorphism solve that regular inheritance cannot?",
           "options": [
-            "It allows adding polymorphic behavior to EXISTING types that you can't modify (third-party library classes, fundamental types) — the polymorphism is external to the type, not baked into its class hierarchy",
+            "It allows adding polymorphic behavior to EXISTING types that you can't modify (third-party library classes, fundamental types) —.",
             "It makes virtual function calls faster by removing the vtable indirection",
-            "It allows a class to have multiple vtable pointers for different interface groups",
-            "It enables compile-time polymorphism without templates"
+            "It allows a class to have multiple vtable pointers for different interface groups                                                     ",
+            "It enables compile-time polymorphism without templates This approach was comm..."
           ],
-          "correctAnswer": "It allows adding polymorphic behavior to EXISTING types that you can't modify (third-party library classes, fundamental types) — the polymorphism is external to the type, not baked into its class hierarchy",
-          "explanation": "External Polymorphism = non-intrusive polymorphism. You can't add `virtual void draw()` to `int` or to a third-party `Vec3` class. External Polymorphism creates a separate adapter hierarchy that wraps these types and provides the virtual interface. This is the ultimate 'open for extension' pattern — you extend types you don't own without modifying them."
+          "correctAnswer": "It allows adding polymorphic behavior to EXISTING types that you can't modify (third-party library classes, fundamental types) —.",
+          "explanation": "External Polymorphism = non-intrusive polymorphism. You can't add `virtual void draw()` to `int` or to a third-party `Vec3` class. External Polymorphism creates a separate adapter hierarchy that wraps these types and provides the virtual interface. This is the ultimate 'open for extension' pattern — you extend types you don't own without modifying them. the polymorphism is external to the type, not baked into its class hierarchy"
         },
         {
           "question": "Compare CRTP and virtual functions: in what scenario would CRTP be the BAD choice despite its performance advantage?",
@@ -13987,57 +13987,57 @@
         {
           "question": "What is the Pimpl (Pointer to Implementation) idiom and what specific problem does it solve?",
           "options": [
-            "Pimpl hides implementation details in a source file behind an opaque pointer in the header. Changing private members no longer forces recompilation of all translation units that include the header.",
-            "Pimpl automatically generates virtual destructors for all classes",
-            "Pimpl replaces all heap allocations with stack allocations for better performance",
+            "Pimpl hides implementation details in a source file behind an opaque pointer in the header.",
+            "Pimpl automatically generates virtual destructors for all classes This approa...",
+            "Pimpl replaces all heap allocations with stack allocations for better performance This additiona",
             "Pimpl is a design pattern for creating plugin architectures in game engines"
           ],
-          "correctAnswer": "Pimpl hides implementation details in a source file behind an opaque pointer in the header. Changing private members no longer forces recompilation of all translation units that include the header.",
-          "explanation": "Pimpl (also called 'compiler firewall') solves the 'change one private member → recompile everything' problem. The header contains only a forward declaration + `std::unique_ptr<Impl>`. The implementation (all private members, includes) lives in the .cpp file. Changing private details only recompiles that one .cpp. The cost: one heap allocation, one pointer indirection per access."
+          "correctAnswer": "Pimpl hides implementation details in a source file behind an opaque pointer in the header.",
+          "explanation": "Pimpl (also called 'compiler firewall') solves the 'change one private member → recompile everything' problem. The header contains only a forward declaration + `std::unique_ptr<Impl>`. The implementation (all private members, includes) lives in the .cpp file. Changing private details only recompiles that one .cpp. The cost: one heap allocation, one pointer indirection per access. Changing private members no longer forces recompilation of all translation units that include the header."
         },
         {
           "question": "What is ADL (Argument-Dependent Lookup) and what surprising behavior can it cause?",
           "options": [
-            "ADL searches for function names in the NAMESPACES of the function's ARGUMENTS. Surprise: a function call can find an overload you didn't intend, leading to silent behavior changes when you add a `using` or change argument types.",
+            "ADL searches for function names in the NAMESPACES of the function's ARGUMENTS.",
             "ADL automatically adds function arguments to the dependency graph at link time",
             "ADL prevents name collisions between different namespaces by renaming functions",
             "ADL is a linker optimization that inline functions based on argument types"
           ],
-          "correctAnswer": "ADL searches for function names in the NAMESPACES of the function's ARGUMENTS. Surprise: a function call can find an overload you didn't intend, leading to silent behavior changes when you add a `using` or change argument types.",
-          "explanation": "ADL is why `std::cout << \"hello\"` finds `operator<<` in namespace `std` — the argument `std::cout` triggers lookup in `std`. The trap: if you write `swap(a, b)` where `a` is from `namespace lib`, ADL finds `lib::swap` — which may have different semantics than `std::swap`. This is also why `using namespace std;` is dangerous in headers: it can silently redirect function calls via ADL."
+          "correctAnswer": "ADL searches for function names in the NAMESPACES of the function's ARGUMENTS.",
+          "explanation": "ADL is why `std::cout << \"hello\"` finds `operator<<` in namespace `std` — the argument `std::cout` triggers lookup in `std`. The trap: if you write `swap(a, b)` where `a` is from `namespace lib`, ADL finds `lib::swap` — which may have different semantics than `std::swap`. This is also why `using namespace std;` is dangerous in headers: it can silently redirect function calls via ADL. Surprise: a function call can find an overload you didn't intend, leading to silent behavior changes when you add a `using` or change argument types."
         },
         {
           "question": "What is the One Definition Rule (ODR) and how does it relate to header-only libraries?",
           "options": [
-            "ODR says each entity (function, class, variable) can only have ONE definition across the entire program. Inline functions and templates are exceptions — they can appear in multiple translation units as long as all definitions are identical.",
+            "ODR says each entity (function, class, variable) can only have ONE definition across the entire program.",
             "ODR requires every .cpp file to define its own copy of all functions it uses",
-            "ODR prevents any function from being defined in a header file",
+            "ODR prevents any function from being defined in a header file This differs fr...                             ",
             "ODR is a linker rule that ensures all object files have the same timestamp"
           ],
-          "correctAnswer": "ODR says each entity (function, class, variable) can only have ONE definition across the entire program. Inline functions and templates are exceptions — they can appear in multiple translation units as long as all definitions are identical.",
-          "explanation": "ODR violations cause linker errors ('multiple definition of...') or, worse, silent undefined behavior (when definitions differ but the linker picks one arbitrarily). Inline functions and templates are ODR-exceptions because they must be visible in every translation unit that uses them — the linker deduplicates identical definitions. 'Inline' in this context means 'can appear in multiple TUs,' not 'the compiler should inline the call.'"
+          "correctAnswer": "ODR says each entity (function, class, variable) can only have ONE definition across the entire program.",
+          "explanation": "ODR violations cause linker errors ('multiple definition of...') or, worse, silent undefined behavior (when definitions differ but the linker picks one arbitrarily). Inline functions and templates are ODR-exceptions because they must be visible in every translation unit that uses them — the linker deduplicates identical definitions. 'Inline' in this context means 'can appear in multiple TUs,' not 'the compiler should inline the call.' Inline functions and templates are exceptions — they can appear in multiple translation units as long as all definitions are identical."
         },
         {
           "question": "Why should you avoid `using namespace std;` in header files?",
           "options": [
-            "It pollutes the global namespace for EVERY translation unit that includes the header — potentially causing name collisions, silent ADL hijacking, and making it impossible to track where a name came from",
-            "It causes a compiler error because the C++ standard forbids it",
-            "It increases compile times because the compiler must parse the entire std namespace",
-            "It prevents the use of other namespaces in the same translation unit"
+            "It pollutes the global namespace for EVERY translation unit that includes the header — potentially causing name collisions,.",
+            "It causes a compiler error because the C++ standard forbids it This differs f...",
+            "It increases compile times because the compiler must parse the entire std namespace                                              ",
+            "It prevents the use of other namespaces in the same translation unit This app..."
           ],
-          "correctAnswer": "It pollutes the global namespace for EVERY translation unit that includes the header — potentially causing name collisions, silent ADL hijacking, and making it impossible to track where a name came from",
-          "explanation": "`using namespace std;` in a header is 'infectious' — every .cpp that includes the header (directly or transitively) now has the entire `std` namespace dumped into its global scope. This can silently change which `swap()`, `begin()`, or `find()` is called via ADL. The rule: `using namespace` is acceptable in .cpp files (you control the scope); never in headers."
+          "correctAnswer": "It pollutes the global namespace for EVERY translation unit that includes the header — potentially causing name collisions,.",
+          "explanation": "`using namespace std;` in a header is 'infectious' — every .cpp that includes the header (directly or transitively) now has the entire `std` namespace dumped into its global scope. This can silently change which `swap()`, `begin()`, or `find()` is called via ADL. The rule: `using namespace` is acceptable in .cpp files (you control the scope); never in headers. silent ADL hijacking, and making it impossible to track where a name came from"
         },
         {
           "question": "How does forward declaration reduce build times in C++?",
           "options": [
-            "A forward declaration (`class Foo;`) tells the compiler 'Foo is a class' without requiring the full definition. Headers that only use `Foo*` or `Foo&` don't need `#include \"Foo.h\"` — reducing the include graph and speeding up compilation",
-            "Forward declarations bypass the preprocessor entirely",
-            "Forward declarations compile to smaller object files because they omit debug symbols",
+            "A forward declaration (`class Foo;`) tells the compiler 'Foo is a class' without requiring the full definition.",
+            "Forward declarations bypass the preprocessor entirely This approach was commo...",
+            "Forward declarations compile to smaller object files because they omit debug symbols                                ",
             "Forward declarations enable the compiler to parallelize translation unit compilation"
           ],
-          "correctAnswer": "A forward declaration (`class Foo;`) tells the compiler 'Foo is a class' without requiring the full definition. Headers that only use `Foo*` or `Foo&` don't need `#include \"Foo.h\"` — reducing the include graph and speeding up compilation",
-          "explanation": "The compiler needs the full definition only when it needs to know: size of the type (for stack allocation), member access (`.` or `->`), or inheritance. For pointers and references (which are always the same size), a forward declaration suffices. Every `#include` you eliminate reduces the preprocessed translation unit size, which directly speeds up compilation. This compounds: removing one `#include` from a popular header can save millions of lines of parsing across a large project."
+          "correctAnswer": "A forward declaration (`class Foo;`) tells the compiler 'Foo is a class' without requiring the full definition.",
+          "explanation": "The compiler needs the full definition only when it needs to know: size of the type (for stack allocation), member access (`.` or `->`), or inheritance. For pointers and references (which are always the same size), a forward declaration suffices. Every `#include` you eliminate reduces the preprocessed translation unit size, which directly speeds up compilation. This compounds: removing one `#include` from a popular header can save millions of lines of parsing across a large project. Headers that only use `Foo*` or `Foo&` don't need `#include \"Foo.h\"` — reducing the include graph and speeding up compilation"
         },
         {
           "question": "Explain the relationship between the Pimpl idiom and special member functions. Why can't you just use `std::unique_ptr<Impl>` with a forward-declared `Impl` and defaulted destructor?",
@@ -14051,68 +14051,68 @@
         {
           "question": "What is the algorithmic complexity difference between `std::sort` and `std::partial_sort` when you only need the top-5 elements from a million-element vector?",
           "options": [
-            "`std::sort` is O(N log N) = ~20M comparisons. `std::partial_sort` is O(N log K) = ~5M comparisons (for K=5). For large N and small K, `partial_sort` is much faster.",
-            "Both are O(N log N) — there is no algorithmic difference",
-            "`std::sort` is O(N) and `std::partial_sort` is O(N²)",
-            "`std::partial_sort` is always faster than `std::sort` regardless of K"
+            "`std::sort` is O(N log N) = ~20M comparisons.",
+            "Both are O(N log N) — there is no algorithmic difference This differs from th...",
+            "`std::sort` is O(N) and `std::partial_sort` is O(N²) This interacts with othe...",
+            "`std::partial_sort` is always faster than `std::sort` regardless of K This be..."
           ],
-          "correctAnswer": "`std::sort` is O(N log N) = ~20M comparisons. `std::partial_sort` is O(N log K) = ~5M comparisons (for K=5). For large N and small K, `partial_sort` is much faster.",
-          "explanation": "`partial_sort` uses a heap of size K: push the first K elements onto a max-heap, then for each remaining element, if it's smaller than the max, pop and push. Each of the (N-K) remaining elements costs O(log K). Total: O(N log K). When K=5 and N=1M: `sort` = ~20M comparisons, `partial_sort` = ~5M comparisons — 4× faster."
+          "correctAnswer": "`std::sort` is O(N log N) = ~20M comparisons.",
+          "explanation": "`partial_sort` uses a heap of size K: push the first K elements onto a max-heap, then for each remaining element, if it's smaller than the max, pop and push. Each of the (N-K) remaining elements costs O(log K). Total: O(N log K). When K=5 and N=1M: `sort` = ~20M comparisons, `partial_sort` = ~5M comparisons — 4× faster. `std::partial_sort` is O(N log K) = ~5M comparisons (for K=5). For large N and small K, `partial_sort` is much faster."
         },
         {
           "question": "What's the difference between `std::lower_bound` and `std::binary_search`?",
           "options": [
-            "`binary_search` returns a `bool` — it only tells you IF the value exists. `lower_bound` returns an ITERATOR to the first position where the value could be inserted without breaking sorted order — it tells you WHERE.",
+            "`binary_search` returns a `bool` — it only tells you IF the value exists.",
             "`lower_bound` uses linear search and `binary_search` uses binary search",
             "`binary_search` is for sorted ranges and `lower_bound` is for unsorted ranges",
-            "There is no difference — they are aliases for the same algorithm"
+            "There is no difference — they are aliases for the same algorithm This differs..."
           ],
-          "correctAnswer": "`binary_search` returns a `bool` — it only tells you IF the value exists. `lower_bound` returns an ITERATOR to the first position where the value could be inserted without breaking sorted order — it tells you WHERE.",
-          "explanation": "`binary_search` is the 'is it there?' question. `lower_bound` is the 'where does it go?' question — it returns the first element ≥ the search value. This is more useful because you get: (1) the position for insertion, (2) existence check (`it != end && *it == value`), (3) distance from start for index-based containers. Always prefer `lower_bound` unless you ONLY need a boolean."
+          "correctAnswer": "`binary_search` returns a `bool` — it only tells you IF the value exists.",
+          "explanation": "`binary_search` is the 'is it there?' question. `lower_bound` is the 'where does it go?' question — it returns the first element ≥ the search value. This is more useful because you get: (1) the position for insertion, (2) existence check (`it != end && *it == value`), (3) distance from start for index-based containers. Always prefer `lower_bound` unless you ONLY need a boolean. `lower_bound` returns an ITERATOR to the first position where the value could be inserted without breaking sorted order — it tells you WHERE."
         },
         {
           "question": "Why would you use `std::make_heap` + `std::push_heap` + `std::pop_heap` instead of `std::priority_queue`?",
           "options": [
-            "Heap algorithms operate on the underlying container DIRECTLY — you can iterate, find, modify elements in-place, then re-heapify. `std::priority_queue` hides the container and only exposes `top()`/`push()`/`pop()`.",
+            "Heap algorithms operate on the underlying container DIRECTLY — you can iterate, find, modify elements in-place, then re-heapify.",
             "Heap algorithms are always faster because they bypass the container abstraction",
-            "`std::priority_queue` doesn't support custom comparators",
-            "Heap algorithms work on any container, while `std::priority_queue` only works on `std::vector`"
+            "`std::priority_queue` doesn't support custom comparators This behavior is spe...",
+            "Heap algorithms work on any container, while `std::priority_queue` only works on `std::vector`                                       "
           ],
-          "correctAnswer": "Heap algorithms operate on the underlying container DIRECTLY — you can iterate, find, modify elements in-place, then re-heapify. `std::priority_queue` hides the container and only exposes `top()`/`push()`/`pop()`.",
-          "explanation": "`std::priority_queue` is a wrapper that restricts access to enforce heap invariants. Heap algorithms (`make_heap`, `push_heap`, `pop_heap`, `sort_heap`) give you full access to the underlying container while STILL maintaining the heap property when you use the algorithms correctly. This lets you: iterate the heap (for debugging), find and update elements (Dijkstra's decrease-key), or use a `std::vector` you already have."
+          "correctAnswer": "Heap algorithms operate on the underlying container DIRECTLY — you can iterate, find, modify elements in-place, then re-heapify.",
+          "explanation": "`std::priority_queue` is a wrapper that restricts access to enforce heap invariants. Heap algorithms (`make_heap`, `push_heap`, `pop_heap`, `sort_heap`) give you full access to the underlying container while STILL maintaining the heap property when you use the algorithms correctly. This lets you: iterate the heap (for debugging), find and update elements (Dijkstra's decrease-key), or use a `std::vector` you already have. `std::priority_queue` hides the container and only exposes `top()`/`push()`/`pop()`."
         },
         {
           "question": "What does `std::inclusive_scan` compute?",
           "options": [
-            "The running prefix sum: `result[i] = v[0] + v[1] + ... + v[i]`. Each output element includes the input at the same position.",
-            "The running total where each result excludes the current element",
-            "A parallel search that scans multiple ranges simultaneously",
-            "The cumulative product of all elements in reverse order"
+            "The running prefix sum: `result[i] = v[0] + v[1] + ...",
+            "The running total where each result excludes the current element This approac...",
+            "A parallel search that scans multiple ranges simultaneously This interacts wi...",
+            "The cumulative product of all elements in reverse order This approach was com..."
           ],
-          "correctAnswer": "The running prefix sum: `result[i] = v[0] + v[1] + ... + v[i]`. Each output element includes the input at the same position.",
-          "explanation": "Inclusive vs exclusive: `inclusive_scan` includes the current element (`result[i]` = sum of `v[0..i]`). `exclusive_scan` excludes it (`result[i]` = sum of `v[0..i-1]`, with `result[0]` = initial value). Prefix sums are fundamental in parallel algorithms (GPU scans), cumulative damage tracking, and any 'running total' computation."
+          "correctAnswer": "The running prefix sum: `result[i] = v[0] + v[1] + ...",
+          "explanation": "Inclusive vs exclusive: `inclusive_scan` includes the current element (`result[i]` = sum of `v[0..i]`). `exclusive_scan` excludes it (`result[i]` = sum of `v[0..i-1]`, with `result[0]` = initial value). Prefix sums are fundamental in parallel algorithms (GPU scans), cumulative damage tracking, and any 'running total' computation. + v[i]`. Each output element includes the input at the same position."
         },
         {
           "question": "What is the difference between `std::accumulate` and `std::reduce`?",
           "options": [
-            "`accumulate` guarantees LEFT-fold (sequential order). `reduce` may reorder operations for parallelism — use `reduce` with `std::execution::par` for concurrent execution on large datasets.",
+            "`accumulate` guarantees LEFT-fold (sequential order).",
             "`accumulate` is for integers and `reduce` is for floating-point numbers",
-            "`reduce` always produces smaller results than `accumulate`",
-            "There is no difference — they are aliases in different headers"
+            "`reduce` always produces smaller results than `accumulate` This differs from ...",
+            "There is no difference — they are aliases in different headers Some legacy co..."
           ],
-          "correctAnswer": "`accumulate` guarantees LEFT-fold (sequential order). `reduce` may reorder operations for parallelism — use `reduce` with `std::execution::par` for concurrent execution on large datasets.",
-          "explanation": "`accumulate` (from `<numeric>`, pre-C++17) guarantees left-to-right evaluation: `((init + a[0]) + a[1]) + a[2])...`. `reduce` (C++17) does NOT guarantee order — it may use tree reduction for parallelism. Use `reduce` when the operation is associative AND commutative (addition, multiplication). Use `accumulate` when order matters (string concatenation, non-associative operations)."
+          "correctAnswer": "`accumulate` guarantees LEFT-fold (sequential order).",
+          "explanation": "`accumulate` (from `<numeric>`, pre-C++17) guarantees left-to-right evaluation: `((init + a[0]) + a[1]) + a[2])...`. `reduce` (C++17) does NOT guarantee order — it may use tree reduction for parallelism. Use `reduce` when the operation is associative AND commutative (addition, multiplication). Use `accumulate` when order matters (string concatenation, non-associative operations). `reduce` may reorder operations for parallelism — use `reduce` with `std::execution::par` for concurrent execution on large datasets."
         },
         {
           "question": "Why does `std::sort` not work on `std::list`? What's the fundamental reason?",
           "options": [
-            "`std::sort` requires RandomAccess iterators — it needs `it + n` for efficient partitioning. `std::list` provides only Bidirectional iterators. Use `list.sort()` member function instead.",
-            "`std::list` elements are not stored contiguously, so the compiler can't vectorize sort",
+            "`std::sort` requires RandomAccess iterators — it needs `it + n` for efficient partitioning.",
+            "`std::list` elements are not stored contiguously, so the compiler can't vectorize sort This addi",
             "`std::sort` would compile but produce incorrect results on `std::list`",
-            "`std::list` doesn't have `begin()` and `end()` methods"
+            "`std::list` doesn't have `begin()` and `end()` methods Some legacy codebases ..."
           ],
-          "correctAnswer": "`std::sort` requires RandomAccess iterators — it needs `it + n` for efficient partitioning. `std::list` provides only Bidirectional iterators. Use `list.sort()` member function instead.",
-          "explanation": "Every STL algorithm documents its iterator requirements. `std::sort` requires RandomAccess iterators because quicksort/introsort needs to jump to arbitrary positions (pivot selection, partitioning). `std::list::iterator` is bidirectional — it can only move one step at a time. `std::list` provides its own `.sort()` member function (typically merge sort, which works with bidirectional iterators). This is a compile-time error, not a runtime bug — the type system enforces it."
+          "correctAnswer": "`std::sort` requires RandomAccess iterators — it needs `it + n` for efficient partitioning.",
+          "explanation": "Every STL algorithm documents its iterator requirements. `std::sort` requires RandomAccess iterators because quicksort/introsort needs to jump to arbitrary positions (pivot selection, partitioning). `std::list::iterator` is bidirectional — it can only move one step at a time. `std::list` provides its own `.sort()` member function (typically merge sort, which works with bidirectional iterators). This is a compile-time error, not a runtime bug — the type system enforces it. `std::list` provides only Bidirectional iterators. Use `list.sort()` member function instead."
         },
         {
           "question": "You need to find the FIRST element in a sorted `std::vector<int>` that is ≥ 42, using binary search. You also need to know its INDEX. What algorithm(s) do you use?",
@@ -14126,57 +14126,57 @@
         {
           "question": "What is Amdahl's Law and why does it matter for performance optimization?",
           "options": [
-            "Amdahl's Law states that the maximum speedup from optimizing a component is limited by the FRACTION of time that component takes. Optimizing something that takes 10% of runtime can only improve total runtime by at most ~11%.",
-            "Amdahl's Law states that performance improvements scale linearly with the number of CPU cores",
+            "Amdahl's Law states that the maximum speedup from optimizing a component is limited by the FRACTION of time that component takes.",
+            "Amdahl's Law states that performance improvements scale linearly with the number of CPU cores                                         ",
             "Amdahl's Law states that all optimizations must be applied simultaneously for any benefit",
             "Amdahl's Law states that the compiler can optimize away 90% of handwritten code"
           ],
-          "correctAnswer": "Amdahl's Law states that the maximum speedup from optimizing a component is limited by the FRACTION of time that component takes. Optimizing something that takes 10% of runtime can only improve total runtime by at most ~11%.",
-          "explanation": "Amdahl's Law: Speedup = 1 / ((1-P) + P/S). P = fraction of time spent in the optimized part. If P = 0.1 (10%) and S = ∞ (infinite speedup of that part), total speedup = 1 / (0.9 + 0/∞) = 1.11×. The practical lesson: PROFILE FIRST. Don't micro-optimize a function that takes 1% of runtime — find the 90% hotspot."
+          "correctAnswer": "Amdahl's Law states that the maximum speedup from optimizing a component is limited by the FRACTION of time that component takes.",
+          "explanation": "Amdahl's Law: Speedup = 1 / ((1-P) + P/S). P = fraction of time spent in the optimized part. If P = 0.1 (10%) and S = ∞ (infinite speedup of that part), total speedup = 1 / (0.9 + 0/∞) = 1.11×. The practical lesson: PROFILE FIRST. Don't micro-optimize a function that takes 1% of runtime — find the 90% hotspot. Optimizing something that takes 10% of runtime can only improve total runtime by at most ~11%."
         },
         {
           "question": "What is 'false sharing' in multi-threaded code, and how does it degrade performance?",
           "options": [
-            "Two threads write to DIFFERENT variables that happen to be on the SAME cache line. Each write invalidates the other thread's cache line, causing constant cache-coherency traffic even though they're not actually sharing data.",
+            "Two threads write to DIFFERENT variables that happen to be on the SAME cache line.",
             "Two threads accidentally share a mutex when they should have separate mutexes",
             "The OS scheduler moves threads between CPU cores, causing cache misses",
             "Two threads read from the same memory location, causing the CPU to serialize the reads"
           ],
-          "correctAnswer": "Two threads write to DIFFERENT variables that happen to be on the SAME cache line. Each write invalidates the other thread's cache line, causing constant cache-coherency traffic even though they're not actually sharing data.",
-          "explanation": "False sharing is the silent performance killer. The cache coherency protocol operates at cache-line granularity (64 bytes). Two `int` variables (4 bytes each) on the same cache line, accessed by different threads, trigger MESI protocol invalidations on every write. Fix: pad variables to cache-line boundaries with `alignas(64)` or `std::hardware_destructive_interference_size`."
+          "correctAnswer": "Two threads write to DIFFERENT variables that happen to be on the SAME cache line.",
+          "explanation": "False sharing is the silent performance killer. The cache coherency protocol operates at cache-line granularity (64 bytes). Two `int` variables (4 bytes each) on the same cache line, accessed by different threads, trigger MESI protocol invalidations on every write. Fix: pad variables to cache-line boundaries with `alignas(64)` or `std::hardware_destructive_interference_size`. Each write invalidates the other thread's cache line, causing constant cache-coherency traffic even though they're not actually sharing data."
         },
         {
           "question": "Why is AoS (Array of Structures) slower than SoA (Structure of Arrays) for single-field iteration?",
           "options": [
-            "With AoS, iterating one field loads the ENTIRE struct into each cache line — most of that data is unused. With SoA, each cache line contains 16 contiguous floats (64 bytes / 4 bytes) — zero wasted bandwidth.",
-            "SoA uses SIMD instructions automatically while AoS does not",
-            "AoS requires virtual function calls for each element access",
+            "With AoS, iterating one field loads the ENTIRE struct into each cache line — most of that data is unused.",
+            "SoA uses SIMD instructions automatically while AoS does not Some legacy codeb...                              ",
+            "AoS requires virtual function calls for each element access This interacts wi...",
             "AoS allocates each element separately on the heap, causing pointer-chasing"
           ],
-          "correctAnswer": "With AoS, iterating one field loads the ENTIRE struct into each cache line — most of that data is unused. With SoA, each cache line contains 16 contiguous floats (64 bytes / 4 bytes) — zero wasted bandwidth.",
-          "explanation": "Cache lines are 64 bytes. An AoS struct with `float x,y,z; float health; char name[32]; uint32_t flags;` is ~56 bytes. Iterating just `health` loads ~56 bytes per element but uses only 4 — 93% wasted bandwidth. SoA stores all `health` values contiguously: 64 bytes = 16 `health` floats per cache line. 16× throughput for single-field iteration."
+          "correctAnswer": "With AoS, iterating one field loads the ENTIRE struct into each cache line — most of that data is unused.",
+          "explanation": "Cache lines are 64 bytes. An AoS struct with `float x,y,z; float health; char name[32]; uint32_t flags;` is ~56 bytes. Iterating just `health` loads ~56 bytes per element but uses only 4 — 93% wasted bandwidth. SoA stores all `health` values contiguously: 64 bytes = 16 `health` floats per cache line. 16× throughput for single-field iteration. With SoA, each cache line contains 16 contiguous floats (64 bytes / 4 bytes) — zero wasted bandwidth."
         },
         {
           "question": "What is PGO (Profile-Guided Optimization) and how does it improve performance?",
           "options": [
-            "PGO compiles the program twice: first with instrumentation to collect runtime profile data (which branches are taken, which functions are hot), then a second time using that data to guide inlining, branch layout, and code placement.",
-            "PGO is a runtime profiler that shows which functions are slow",
+            "PGO compiles the program twice: first with instrumentation to collect runtime profile data (which branches are taken, which.",
+            "PGO is a runtime profiler that shows which functions are slow Some legacy cod...                                                 ",
             "PGO replaces all function calls with inline assembly for maximum speed",
-            "PGO is a compiler flag that enables all optimizations simultaneously"
+            "PGO is a compiler flag that enables all optimizations simultaneously This app..."
           ],
-          "correctAnswer": "PGO compiles the program twice: first with instrumentation to collect runtime profile data (which branches are taken, which functions are hot), then a second time using that data to guide inlining, branch layout, and code placement.",
-          "explanation": "PGO (using `-fprofile-generate` then `-fprofile-use`) lets the compiler learn from real execution data. The profile reveals: (1) hot paths → inline aggressively, (2) cold paths → move far away to improve icache, (3) branch direction → optimize the taken path. PGO typically delivers 10-20% improvement over `-O2` alone. The key: profile on REPRESENTATIVE workloads."
+          "correctAnswer": "PGO compiles the program twice: first with instrumentation to collect runtime profile data (which branches are taken, which.",
+          "explanation": "PGO (using `-fprofile-generate` then `-fprofile-use`) lets the compiler learn from real execution data. The profile reveals: (1) hot paths → inline aggressively, (2) cold paths → move far away to improve icache, (3) branch direction → optimize the taken path. PGO typically delivers 10-20% improvement over `-O2` alone. The key: profile on REPRESENTATIVE workloads. functions are hot), then a second time using that data to guide inlining, branch layout, and code placement."
         },
         {
           "question": "Why do modern CPUs use branch prediction, and why does a sorted array iterate faster through conditionals than an unsorted one?",
           "options": [
-            "Branch prediction speculatively executes the predicted path. A sorted array makes branches PREDICTABLE (all below threshold, then all above) → near-zero mispredict penalty. An unsorted array has RANDOM conditions → ~50% mispredict rate → ~15-20 cycle penalty per misprediction.",
+            "Branch prediction speculatively executes the predicted path.",
             "Sorted arrays are stored in L1 cache while unsorted arrays are in main memory",
-            "The compiler generates different code for sorted vs unsorted arrays",
+            "The compiler generates different code for sorted vs unsorted arrays This beha...",
             "Branch prediction only works on arrays smaller than the branch predictor's history table"
           ],
-          "correctAnswer": "Branch prediction speculatively executes the predicted path. A sorted array makes branches PREDICTABLE (all below threshold, then all above) → near-zero mispredict penalty. An unsorted array has RANDOM conditions → ~50% mispredict rate → ~15-20 cycle penalty per misprediction.",
-          "explanation": "This is the classic StackOverflow benchmark: processing a sorted array is 3-6× faster through conditionals. The branch predictor learns patterns — when all 'below threshold' tests cluster together, the predictor learns 'below, below, below...' and speculates correctly. With random data, the predictor guesses wrong ~50% of the time, flushing the pipeline. Lesson: data layout affects branch prediction."
+          "correctAnswer": "Branch prediction speculatively executes the predicted path.",
+          "explanation": "This is the classic StackOverflow benchmark: processing a sorted array is 3-6× faster through conditionals. The branch predictor learns patterns — when all 'below threshold' tests cluster together, the predictor learns 'below, below, below...' and speculates correctly. With random data, the predictor guesses wrong ~50% of the time, flushing the pipeline. Lesson: data layout affects branch prediction. A sorted array makes branches PREDICTABLE (all below threshold, then all above) → near-zero mispredict penalty. An unsorted array has RANDOM conditions → ~50% mispredict rate → ~15-20 cycle penalty per misprediction."
         },
         {
           "question": "A benchmark shows that your function takes 0 nanoseconds. What most likely happened?",
@@ -14190,46 +14190,46 @@
         {
           "question": "What does `extern \"C\"` actually do at the compiler/linker level?",
           "options": [
-            "It disables C++ name mangling for the enclosed declarations AND specifies C calling convention — the linker sees the EXACT function name you wrote, and the calling convention matches the platform's C ABI",
-            "It compiles the enclosed code as C instead of C++",
-            "It links the enclosed code against the C standard library",
-            "It converts C++ exceptions into C error codes automatically"
+            "It disables C++ name mangling for the enclosed declarations AND specifies C calling convention — the linker sees the EXACT.",
+            "It compiles the enclosed code as C instead of C++ Some legacy codebases still...                                                ",
+            "It links the enclosed code against the C standard library This approach was c...",
+            "It converts C++ exceptions into C error codes automatically This approach was..."
           ],
-          "correctAnswer": "It disables C++ name mangling for the enclosed declarations AND specifies C calling convention — the linker sees the EXACT function name you wrote, and the calling convention matches the platform's C ABI",
-          "explanation": "C++ mangles function names to support overloading (e.g., `foo(int)` → `_Z3fooi`). C doesn't mangle — `foo` stays `foo`. `extern \"C\"` tells the C++ compiler: (1) use C linkage (no mangling), (2) use C calling convention. This ensures that a C++ caller can find the C function in the library, and vice versa."
+          "correctAnswer": "It disables C++ name mangling for the enclosed declarations AND specifies C calling convention — the linker sees the EXACT.",
+          "explanation": "C++ mangles function names to support overloading (e.g., `foo(int)` → `_Z3fooi`). C doesn't mangle — `foo` stays `foo`. `extern \"C\"` tells the C++ compiler: (1) use C linkage (no mangling), (2) use C calling convention. This ensures that a C++ caller can find the C function in the library, and vice versa. function name you wrote, and the calling convention matches the platform's C ABI"
         },
         {
           "question": "What is the 'opaque handle' pattern for exposing C++ classes to C code?",
           "options": [
-            "Declare an incomplete `struct Handle` in the C header. C++ implementation `reinterpret_cast`s between `Handle*` and the real C++ class pointer. C code only sees the opaque pointer — it never knows the class exists.",
-            "Wrap the C++ class in a `void*` and pass it to C functions",
-            "Export the C++ class's vtable so C code can call virtual functions",
-            "Compile the C++ class as a shared library with C-compatible symbols"
+            "Declare an incomplete `struct Handle` in the C header.",
+            "Wrap the C++ class in a `void*` and pass it to C functions Some legacy codeba...",
+            "Export the C++ class's vtable so C code can call virtual functions This behav...",
+            "Compile the C++ class as a shared library with C-compatible symbols This beha..."
           ],
-          "correctAnswer": "Declare an incomplete `struct Handle` in the C header. C++ implementation `reinterpret_cast`s between `Handle*` and the real C++ class pointer. C code only sees the opaque pointer — it never knows the class exists.",
-          "explanation": "The opaque handle pattern: `typedef struct EngineHandle EngineHandle;` (C header — incomplete type). C++ implementation: `EngineHandle* create() { return reinterpret_cast<EngineHandle*>(new Engine()); }`. C code calls `EngineHandle* h = create(); engine_update(h); destroy(h);`. `reinterpret_cast` is safe here because all object pointers have the same representation. This pattern is used by every C-compatible C++ library."
+          "correctAnswer": "Declare an incomplete `struct Handle` in the C header.",
+          "explanation": "The opaque handle pattern: `typedef struct EngineHandle EngineHandle;` (C header — incomplete type). C++ implementation: `EngineHandle* create() { return reinterpret_cast<EngineHandle*>(new Engine()); }`. C code calls `EngineHandle* h = create(); engine_update(h); destroy(h);`. `reinterpret_cast` is safe here because all object pointers have the same representation. This pattern is used by every C-compatible C++ library. C++ implementation `reinterpret_cast`s between `Handle*` and the real C++ class pointer. C code only sees the opaque pointer — it never knows the class exists."
         },
         {
           "question": "What is the golden rule for memory management across C/C++ boundaries?",
           "options": [
-            "Free where you allocated — if memory was allocated by C's `malloc`, it must be freed by C's `free`. Never `delete` a `malloc`'d pointer or `free` a `new`'d pointer.",
-            "Always use `std::unique_ptr` with a custom deleter for all cross-boundary allocations",
+            "Free where you allocated — if memory was allocated by C's `malloc`, it must be freed by C's `free`.",
+            "Always use `std::unique_ptr` with a custom deleter for all cross-boundary allocations This additional co",
             "C code should allocate and C++ code should free, or vice versa — never mix",
             "All cross-boundary allocations should use `new` and `delete` for consistency"
           ],
-          "correctAnswer": "Free where you allocated — if memory was allocated by C's `malloc`, it must be freed by C's `free`. Never `delete` a `malloc`'d pointer or `free` a `new`'d pointer.",
-          "explanation": "Mixing allocators across language boundaries causes undefined behavior. The C++ `delete` operator may use a different heap or bookkeeping format than C's `free`. The fix: provide symmetric create/destroy functions (`engine_create()` / `engine_destroy()`). The same code that allocates is responsible for freeing."
+          "correctAnswer": "Free where you allocated — if memory was allocated by C's `malloc`, it must be freed by C's `free`.",
+          "explanation": "Mixing allocators across language boundaries causes undefined behavior. The C++ `delete` operator may use a different heap or bookkeeping format than C's `free`. The fix: provide symmetric create/destroy functions (`engine_create()` / `engine_destroy()`). The same code that allocates is responsible for freeing. Never `delete` a `malloc`'d pointer or `free` a `new`'d pointer."
         },
         {
           "question": "Why must C++ exceptions NEVER escape through `extern \"C\"` function boundaries?",
           "options": [
-            "C code has no concept of exceptions — if a C++ exception propagates through a C stack frame, the C runtime doesn't know how to unwind it. The result is undefined behavior (typically `std::terminate` or stack corruption).",
-            "C compilers will silently catch and discard the exception",
+            "C code has no concept of exceptions — if a C++ exception propagates through a C stack frame, the C runtime doesn't know how to unwind it.",
+            "C compilers will silently catch and discard the exception This behavior is sp...",
             "Exceptions would be converted to C-style `setjmp`/`longjmp` calls automatically",
-            "`extern \"C\"` functions can't throw because they're compiled without exception support"
+            "`extern \"C\"` functions can't throw because they're compiled without exception support                                                         "
           ],
-          "correctAnswer": "C code has no concept of exceptions — if a C++ exception propagates through a C stack frame, the C runtime doesn't know how to unwind it. The result is undefined behavior (typically `std::terminate` or stack corruption).",
-          "explanation": "Every `extern \"C\"` function should be a firewall: catch all C++ exceptions and translate to error codes. `extern \"C\" int engine_update() { try { ... return 0; } catch(...) { return -1; } }`. This protects the C caller from C++ exceptions and gives the C code an actionable error code."
+          "correctAnswer": "C code has no concept of exceptions — if a C++ exception propagates through a C stack frame, the C runtime doesn't know how to unwind it.",
+          "explanation": "Every `extern \"C\"` function should be a firewall: catch all C++ exceptions and translate to error codes. `extern \"C\" int engine_update() { try { ... return 0; } catch(...) { return -1; } }`. This protects the C caller from C++ exceptions and gives the C code an actionable error code. The result is undefined behavior (typically `std::terminate` or stack corruption)."
         },
         {
           "question": "Explain why `std::vector<MyType>` cannot be passed directly to a C function. What alternative do you use?",
@@ -14243,46 +14243,46 @@
         {
           "question": "What problem do C++ package managers (vcpkg, Conan) solve that manual dependency management does not?",
           "options": [
-            "They automate downloading, building, and versioning of dependencies — you declare what you need and they handle transitive dependencies, platform-specific patches, and binary compatibility. Manual management requires tracking each library's build system and updates.",
-            "They eliminate the need for any build system by managing the compilation process",
+            "They automate downloading, building, and versioning of dependencies — you declare what you need and they handle transitive.",
+            "They eliminate the need for any build system by managing the compilation process                                                ",
             "They convert all third-party code to header-only libraries for easier inclusion",
             "They guarantee that all dependencies are ABI-compatible with each other"
           ],
-          "correctAnswer": "They automate downloading, building, and versioning of dependencies — you declare what you need and they handle transitive dependencies, platform-specific patches, and binary compatibility. Manual management requires tracking each library's build system and updates.",
-          "explanation": "Before package managers, C++ dependencies were 'download the zip, figure out the build, patch for your platform, check into your repo, repeat on every update.' vcpkg and Conan automate this: `vcpkg install fmt sdl2 glm` → libraries are downloaded, built for your toolchain, and ready to `find_package()` in CMake. They also handle transitive dependencies (fmt depends on nothing; your app that uses fmt + SDL gets both automatically)."
+          "correctAnswer": "They automate downloading, building, and versioning of dependencies — you declare what you need and they handle transitive.",
+          "explanation": "Before package managers, C++ dependencies were 'download the zip, figure out the build, patch for your platform, check into your repo, repeat on every update.' vcpkg and Conan automate this: `vcpkg install fmt sdl2 glm` → libraries are downloaded, built for your toolchain, and ready to `find_package()` in CMake. They also handle transitive dependencies (fmt depends on nothing; your app that uses fmt + SDL gets both automatically). dependencies, platform-specific patches, and binary compatibility. Manual management requires tracking each library's build system and updates."
         },
         {
           "question": "How does clang-tidy differ from the C++ compiler's built-in warnings?",
           "options": [
-            "clang-tidy runs DEEPER analysis — it can detect logic bugs (use-after-move, branch clones), style issues (naming conventions), and modernization opportunities (use `override`, replace `NULL` with `nullptr`). Compiler warnings focus on language correctness.",
-            "clang-tidy is faster because it only checks syntax, not semantics",
+            "clang-tidy runs DEEPER analysis — it can detect logic bugs (use-after-move, branch clones), style issues (naming conventions),.",
+            "clang-tidy is faster because it only checks syntax, not semantics This approa...                                                    ",
             "clang-tidy replaces the compiler's frontend with a more lenient parser",
             "There is no difference — clang-tidy is just a wrapper around compiler warnings"
           ],
-          "correctAnswer": "clang-tidy runs DEEPER analysis — it can detect logic bugs (use-after-move, branch clones), style issues (naming conventions), and modernization opportunities (use `override`, replace `NULL` with `nullptr`). Compiler warnings focus on language correctness.",
-          "explanation": "Compiler warnings (`-Wall -Wextra`) catch language-level issues: unused variables, type mismatches, missing return statements. clang-tidy uses the Clang AST to find PATTERN-level bugs: copied-pasted branches (`bugprone-branch-clone`), use-after-move, performance traps (unnecessary value parameters). clang-tidy also auto-fixes many issues with `--fix`."
+          "correctAnswer": "clang-tidy runs DEEPER analysis — it can detect logic bugs (use-after-move, branch clones), style issues (naming conventions),.",
+          "explanation": "Compiler warnings (`-Wall -Wextra`) catch language-level issues: unused variables, type mismatches, missing return statements. clang-tidy uses the Clang AST to find PATTERN-level bugs: copied-pasted branches (`bugprone-branch-clone`), use-after-move, performance traps (unnecessary value parameters). clang-tidy also auto-fixes many issues with `--fix`. and modernization opportunities (use `override`, replace `NULL` with `nullptr`). Compiler warnings focus on language correctness."
         },
         {
           "question": "What is the purpose of `.clang-format` in a C++ project?",
           "options": [
-            "It defines a CONSISTENT code style that all developers (and CI) enforce automatically. No more arguing about brace placement or indentation — the tool formats, the team moves on.",
-            "It configures the compiler to accept non-standard C++ extensions",
-            "It specifies which C++ standard version the project uses",
+            "It defines a CONSISTENT code style that all developers (and CI) enforce automatically.",
+            "It configures the compiler to accept non-standard C++ extensions This interac... This addit",
+            "It specifies which C++ standard version the project uses This differs from th...",
             "It provides IDE configuration for auto-complete and syntax highlighting"
           ],
-          "correctAnswer": "It defines a CONSISTENT code style that all developers (and CI) enforce automatically. No more arguing about brace placement or indentation — the tool formats, the team moves on.",
-          "explanation": "`.clang-format` is the industry standard for C++ code formatting. Pick a base style (`Google`, `LLVM`, `Chromium`, `WebKit`), customize overrides, check into version control. CI runs `clang-format --dry-run -Werror` — any unformatted code fails the build. This eliminates style arguments from code review and ensures the entire codebase looks uniform."
+          "correctAnswer": "It defines a CONSISTENT code style that all developers (and CI) enforce automatically.",
+          "explanation": "`.clang-format` is the industry standard for C++ code formatting. Pick a base style (`Google`, `LLVM`, `Chromium`, `WebKit`), customize overrides, check into version control. CI runs `clang-format --dry-run -Werror` — any unformatted code fails the build. This eliminates style arguments from code review and ensures the entire codebase looks uniform. No more arguing about brace placement or indentation — the tool formats, the team moves on."
         },
         {
           "question": "What should a minimal C++ CI pipeline include?",
           "options": [
-            "Build (Debug + Release), unit tests (ctest), sanitizers (ASan + UBSan), static analysis (clang-tidy or cppcheck), and format check (clang-format). These catch correctness, memory, and style issues automatically on every push.",
+            "Build (Debug + Release), unit tests (ctest), sanitizers (ASan + UBSan), static analysis (clang-tidy or cppcheck), and format.",
             "Only compilation — testing is done manually by developers after CI passes",
-            "A full performance benchmark suite that must run within 5 minutes",
-            "Deployment to production servers after every commit"
+            "A full performance benchmark suite that must run within 5 minutes This intera...                                                  ",
+            "Deployment to production servers after every commit This interacts with other..."
           ],
-          "correctAnswer": "Build (Debug + Release), unit tests (ctest), sanitizers (ASan + UBSan), static analysis (clang-tidy or cppcheck), and format check (clang-format). These catch correctness, memory, and style issues automatically on every push.",
-          "explanation": "A CI pipeline answers: does it compile? does it pass tests? is there undefined behavior? is there a memory bug? is the code formatted? The matrix: Debug + ASan+UBSan catches memory errors + UB that Release builds might mask. Multiple compilers (GCC + Clang) catch compiler-specific assumptions. These checks run on every PR — catching a bug in CI costs seconds; catching it in production costs hours or worse."
+          "correctAnswer": "Build (Debug + Release), unit tests (ctest), sanitizers (ASan + UBSan), static analysis (clang-tidy or cppcheck), and format.",
+          "explanation": "A CI pipeline answers: does it compile? does it pass tests? is there undefined behavior? is there a memory bug? is the code formatted? The matrix: Debug + ASan+UBSan catches memory errors + UB that Release builds might mask. Multiple compilers (GCC + Clang) catch compiler-specific assumptions. These checks run on every PR — catching a bug in CI costs seconds; catching it in production costs hours or worse. check (clang-format). These catch correctness, memory, and style issues automatically on every push."
         },
         {
           "question": "Why is Compiler Explorer (godbolt.org) considered an essential C++ learning and optimization tool?",
@@ -14296,57 +14296,57 @@
         {
           "question": "What is the TOCTOU (Time-of-Check to Time-of-Use) problem in thread-safe data structure design?",
           "options": [
-            "It's the race condition where a thread checks a condition (e.g., `isEmpty()`) and another thread changes it BEFORE the first thread acts on the check (e.g., `pop()`). The check was true when measured but false when used.",
-            "It's a compiler optimization that reorders time checks across threads",
+            "It's the race condition where a thread checks a condition (e.g., `isEmpty()`) and another thread changes it BEFORE the first.",
+            "It's a compiler optimization that reorders time checks across threads This ap...",
             "It's a bug where two threads simultaneously create the same data structure",
-            "It's a deadlock condition where two threads check and use locks in opposite order"
+            "It's a deadlock condition where two threads check and use locks in opposite order                                                 "
           ],
-          "correctAnswer": "It's the race condition where a thread checks a condition (e.g., `isEmpty()`) and another thread changes it BEFORE the first thread acts on the check (e.g., `pop()`). The check was true when measured but false when used.",
-          "explanation": "TOCTOU is the fundamental thread-safety design constraint. `if (!stack.Empty()) stack.Pop();` has a window between `Empty()` and `Pop()` where another thread can pop. Fix: combine check, act, and return into a single synchronized operation: `auto val = stack.TryPop(); if (val) ...`. Never expose separate query-and-act interfaces unless they're inherently atomic from the caller's perspective."
+          "correctAnswer": "It's the race condition where a thread checks a condition (e.g., `isEmpty()`) and another thread changes it BEFORE the first.",
+          "explanation": "TOCTOU is the fundamental thread-safety design constraint. `if (!stack.Empty()) stack.Pop();` has a window between `Empty()` and `Pop()` where another thread can pop. Fix: combine check, act, and return into a single synchronized operation: `auto val = stack.TryPop(); if (val) ...`. Never expose separate query-and-act interfaces unless they're inherently atomic from the caller's perspective. thread acts on the check (e.g., `pop()`). The check was true when measured but false when used."
         },
         {
           "question": "Why should `condition_variable::notify_one()` be called OUTSIDE the mutex lock when possible?",
           "options": [
-            "Notifying inside the lock causes the woken thread to immediately block on the mutex (which the notifying thread still holds). This wastes a context switch. Notifying after unlock lets the woken thread acquire the mutex directly.",
-            "Notifying inside the lock causes a deadlock with the waiting thread",
-            "The C++ standard requires notification to happen outside of any lock",
+            "Notifying inside the lock causes the woken thread to immediately block on the mutex (which the notifying thread still holds).",
+            "Notifying inside the lock causes a deadlock with the waiting thread This diff...                                                  ",
+            "The C++ standard requires notification to happen outside of any lock This int...",
             "Notifying inside the lock causes the condition variable to miss the notification"
           ],
-          "correctAnswer": "Notifying inside the lock causes the woken thread to immediately block on the mutex (which the notifying thread still holds). This wastes a context switch. Notifying after unlock lets the woken thread acquire the mutex directly.",
-          "explanation": "The 'notify outside lock' optimization: `{ std::lock_guard lk(m); queue.push(x); } cv.notify_one();` — the lock is released BEFORE notifying. The woken thread tries the mutex, finds it free, and proceeds. If you notify inside the lock, the woken thread wakes, tries the mutex, finds it locked, goes back to sleep — wasted wakeup + context switch. It's correct either way, but outside-lock is faster."
+          "correctAnswer": "Notifying inside the lock causes the woken thread to immediately block on the mutex (which the notifying thread still holds).",
+          "explanation": "The 'notify outside lock' optimization: `{ std::lock_guard lk(m); queue.push(x); } cv.notify_one();` — the lock is released BEFORE notifying. The woken thread tries the mutex, finds it free, and proceeds. If you notify inside the lock, the woken thread wakes, tries the mutex, finds it locked, goes back to sleep — wasted wakeup + context switch. It's correct either way, but outside-lock is faster. This wastes a context switch. Notifying after unlock lets the woken thread acquire the mutex directly."
         },
         {
           "question": "What is the ABA problem in lock-free programming?",
           "options": [
-            "Thread A reads value A from `head`. Thread B removes A, does work, puts A back. Thread A's CAS sees 'head still points to A' and succeeds — but A's NEXT pointer now points to different data. Thread A operates on stale state.",
-            "Two atomic operations (A and B) execute in the wrong order due to memory reordering",
+            "Thread A reads value A from `head`. Thread B removes A, does work, puts A back. Thread A's CAS sees 'head still points to A' and.",
+            "Two atomic operations (A and B) execute in the wrong order due to memory reordering                                                   ",
             "A race condition where thread A begins a CAS but thread B aborts it mid-operation",
             "A deadlock where thread A waits for B and B waits for A simultaneously"
           ],
-          "correctAnswer": "Thread A reads value A from `head`. Thread B removes A, does work, puts A back. Thread A's CAS sees 'head still points to A' and succeeds — but A's NEXT pointer now points to different data. Thread A operates on stale state.",
-          "explanation": "ABA is the classic lock-free trap. The CAS compares addresses, not identities. If a node is popped, recycled, and re-pushed between a thread's load and CAS, the address matches but the logical state is different. Solutions: (1) tagged pointers (version counter in unused pointer bits), (2) hazard pointers (deferred reclamation), (3) `std::atomic<std::shared_ptr<T>>` (C++20 — compares `shared_ptr` identity, not raw address)."
+          "correctAnswer": "Thread A reads value A from `head`. Thread B removes A, does work, puts A back. Thread A's CAS sees 'head still points to A' and.",
+          "explanation": "ABA is the classic lock-free trap. The CAS compares addresses, not identities. If a node is popped, recycled, and re-pushed between a thread's load and CAS, the address matches but the logical state is different. Solutions: (1) tagged pointers (version counter in unused pointer bits), (2) hazard pointers (deferred reclamation), (3) `std::atomic<std::shared_ptr<T>>` (C++20 — compares `shared_ptr` identity, not raw address). succeeds — but A's NEXT pointer now points to different data. Thread A operates on stale state."
         },
         {
           "question": "How does per-bucket locking in a concurrent hash map improve throughput over a single global mutex?",
           "options": [
-            "Threads accessing DIFFERENT buckets can operate concurrently (no contention). With 256 buckets and 16 threads, expected contention is only ~6% — most operations proceed in parallel. A single mutex serializes ALL operations.",
+            "Threads accessing DIFFERENT buckets can operate concurrently (no contention).",
             "Per-bucket locking eliminates the need for any locking on read operations",
             "Per-bucket locking uses hardware transactional memory instead of mutexes",
-            "Per-bucket locking prevents hash collisions by dynamically resizing buckets"
+            "Per-bucket locking prevents hash collisions by dynamically resizing buckets This a"
           ],
-          "correctAnswer": "Threads accessing DIFFERENT buckets can operate concurrently (no contention). With 256 buckets and 16 threads, expected contention is only ~6% — most operations proceed in parallel. A single mutex serializes ALL operations.",
-          "explanation": "Per-bucket locking reduces contention proportional to the number of buckets. With a good hash function, keys distribute uniformly across buckets. The probability that two threads access the same bucket = 1/BucketCount. With 256 buckets, even 64 threads have low contention. This is the simplest way to scale a hash map for concurrent access — no lock-free wizardry needed."
+          "correctAnswer": "Threads accessing DIFFERENT buckets can operate concurrently (no contention).",
+          "explanation": "Per-bucket locking reduces contention proportional to the number of buckets. With a good hash function, keys distribute uniformly across buckets. The probability that two threads access the same bucket = 1/BucketCount. With 256 buckets, even 64 threads have low contention. This is the simplest way to scale a hash map for concurrent access — no lock-free wizardry needed. With 256 buckets and 16 threads, expected contention is only ~6% — most operations proceed in parallel. A single mutex serializes ALL operations."
         },
         {
           "question": "Why does `std::atomic<std::shared_ptr<T>>` (C++20) solve the ABA problem for lock-free stacks?",
           "options": [
-            "`shared_ptr`'s `compare_exchange` compares `shared_ptr` IDENTITY (not just raw address). Even if a recycled node has the same address, it's wrapped in a DIFFERENT `shared_ptr` object — the CAS fails correctly. The reference count prevents premature deletion.",
+            "`shared_ptr`'s `compare_exchange` compares `shared_ptr` IDENTITY (not just raw address).",
             "`shared_ptr` uses a global lock internally, which prevents ABA by serialization",
-            "`shared_ptr` tags each pointer with a timestamp that CAS checks",
+            "`shared_ptr` tags each pointer with a timestamp that CAS checks This differs ... This additio",
             "`shared_ptr` stores nodes in a garbage-collected heap that prevents reuse"
           ],
-          "correctAnswer": "`shared_ptr`'s `compare_exchange` compares `shared_ptr` IDENTITY (not just raw address). Even if a recycled node has the same address, it's wrapped in a DIFFERENT `shared_ptr` object — the CAS fails correctly. The reference count prevents premature deletion.",
-          "explanation": "Two key properties make `atomic<shared_ptr>` ABA-safe: (1) `compare_exchange` compares the FULL `shared_ptr` state (pointer + control block), not just the raw pointer. A recycled node at the same address has a different control block — CAS detects this. (2) The reference count ensures nodes are never deleted while any thread holds a `shared_ptr` to them — no dangling pointer access during CAS retry loops."
+          "correctAnswer": "`shared_ptr`'s `compare_exchange` compares `shared_ptr` IDENTITY (not just raw address).",
+          "explanation": "Two key properties make `atomic<shared_ptr>` ABA-safe: (1) `compare_exchange` compares the FULL `shared_ptr` state (pointer + control block), not just the raw pointer. A recycled node at the same address has a different control block — CAS detects this. (2) The reference count ensures nodes are never deleted while any thread holds a `shared_ptr` to them — no dangling pointer access during CAS retry loops. Even if a recycled node has the same address, it's wrapped in a DIFFERENT `shared_ptr` object — the CAS fails correctly. The reference count prevents premature deletion."
         },
         {
           "question": "When should you choose lock-based over lock-free data structures? Give concrete criteria.",
@@ -14360,46 +14360,46 @@
         {
           "question": "In Catch2, what is the difference between `REQUIRE` and `CHECK`?",
           "options": [
-            "`REQUIRE` is a hard assertion — the test STOPS on failure. `CHECK` is a soft assertion — the test CONTINUES and reports all failures. Use `REQUIRE` for preconditions, `CHECK` for multiple independent validations.",
-            "`REQUIRE` checks preconditions and `CHECK` checks postconditions",
-            "`REQUIRE` is for unit tests and `CHECK` is for integration tests",
+            "`REQUIRE` is a hard assertion — the test STOPS on failure.",
+            "`REQUIRE` checks preconditions and `CHECK` checks postconditions This approac...",
+            "`REQUIRE` is for unit tests and `CHECK` is for integration tests This behavio...",
             "There is no difference — they are aliases with different names for readability"
           ],
-          "correctAnswer": "`REQUIRE` is a hard assertion — the test STOPS on failure. `CHECK` is a soft assertion — the test CONTINUES and reports all failures. Use `REQUIRE` for preconditions, `CHECK` for multiple independent validations.",
-          "explanation": "`REQUIRE` aborts the test case immediately on failure — useful when subsequent assertions depend on the first one passing (`REQUIRE(vec.size() == 3); REQUIRE(vec[2] == 42);` — index 2 is only valid if size is 3). `CHECK` reports the failure and continues — useful when testing multiple independent properties of the same state."
+          "correctAnswer": "`REQUIRE` is a hard assertion — the test STOPS on failure.",
+          "explanation": "`REQUIRE` aborts the test case immediately on failure — useful when subsequent assertions depend on the first one passing (`REQUIRE(vec.size() == 3); REQUIRE(vec[2] == 42);` — index 2 is only valid if size is 3). `CHECK` reports the failure and continues — useful when testing multiple independent properties of the same state. `CHECK` is a soft assertion — the test CONTINUES and reports all failures. Use `REQUIRE` for preconditions, `CHECK` for multiple independent validations."
         },
         {
           "question": "What does the 'Red → Green → Refactor' TDD cycle mean?",
           "options": [
-            "RED: write a failing test. GREEN: write MINIMAL code to pass it. REFACTOR: clean up the code while tests stay green. Never write production code without a failing test first.",
-            "RED: mark failing code with comments. GREEN: fix all compiler errors. REFACTOR: optimize for performance.",
+            "RED: write a failing test. GREEN: write MINIMAL code to pass it. REFACTOR: clean up the code while tests stay green. Never write.",
+            "RED: mark failing code with comments. GREEN: fix all compiler errors. REFACTOR: optimize for performance.                             ",
             "RED: delete all failing tests. GREEN: write new tests that pass. REFACTOR: document the code.",
             "RED: identify performance bottlenecks. GREEN: optimize them. REFACTOR: merge to main branch."
           ],
-          "correctAnswer": "RED: write a failing test. GREEN: write MINIMAL code to pass it. REFACTOR: clean up the code while tests stay green. Never write production code without a failing test first.",
-          "explanation": "TDD is a design discipline, not just testing. Writing the test FIRST forces you to think about the interface before the implementation. The test is an executable specification. The minimal-code step prevents over-engineering ('you aren't gonna need it'). The refactor step ensures code stays clean — the test safety net makes refactoring fearless."
+          "correctAnswer": "RED: write a failing test. GREEN: write MINIMAL code to pass it. REFACTOR: clean up the code while tests stay green. Never write.",
+          "explanation": "TDD is a design discipline, not just testing. Writing the test FIRST forces you to think about the interface before the implementation. The test is an executable specification. The minimal-code step prevents over-engineering ('you aren't gonna need it'). The refactor step ensures code stays clean — the test safety net makes refactoring fearless. production code without a failing test first."
         },
         {
           "question": "What is the 'testing pyramid' and why is it shaped like a pyramid?",
           "options": [
-            "Many fast unit tests at the base, fewer integration tests in the middle, very few slow E2E tests at the top. The pyramid shape reflects that you should have MANY cheap, fast tests and FEW expensive, slow tests — this maximizes bug-catching per CI minute.",
+            "Many fast unit tests at the base, fewer integration tests in the middle, very few slow E2E tests at the top.",
             "It's a hierarchy of test importance, with unit tests being least important",
-            "It's a diagram showing that all test types should be written in equal proportion",
-            "It represents the organizational structure of a QA team"
+            "It's a diagram showing that all test types should be written in equal proportion                                 ",
+            "It represents the organizational structure of a QA team This behavior is spec..."
           ],
-          "correctAnswer": "Many fast unit tests at the base, fewer integration tests in the middle, very few slow E2E tests at the top. The pyramid shape reflects that you should have MANY cheap, fast tests and FEW expensive, slow tests — this maximizes bug-catching per CI minute.",
-          "explanation": "Unit tests run in <1ms — you can have thousands. Integration tests take seconds — you can have hundreds. E2E tests take minutes — you have dozens. If your test suite is an inverted pyramid (many slow E2E tests, few unit tests), CI takes forever and developers stop running tests. The pyramid optimizes feedback speed: catch bugs at the cheapest level possible."
+          "correctAnswer": "Many fast unit tests at the base, fewer integration tests in the middle, very few slow E2E tests at the top.",
+          "explanation": "Unit tests run in <1ms — you can have thousands. Integration tests take seconds — you can have hundreds. E2E tests take minutes — you have dozens. If your test suite is an inverted pyramid (many slow E2E tests, few unit tests), CI takes forever and developers stop running tests. The pyramid optimizes feedback speed: catch bugs at the cheapest level possible. The pyramid shape reflects that you should have MANY cheap, fast tests and FEW expensive, slow tests — this maximizes bug-catching per CI minute."
         },
         {
           "question": "What bugs does AddressSanitizer (ASan) catch that a normal Debug build might miss?",
           "options": [
-            "ASan instruments memory accesses to catch: use-after-free, heap/stack buffer overflow, double-free, and memory leaks. These bugs often produce NO visible symptoms in Debug builds — the memory might still contain the old value or the overflow might land in unused padding.",
-            "ASan catches compile-time errors that the compiler misses",
+            "ASan instruments memory accesses to catch: use-after-free, heap/stack buffer overflow, double-free, and memory leaks.",
+            "ASan catches compile-time errors that the compiler misses Some legacy codebas...                                          ",
             "ASan catches all logic bugs including incorrect algorithm implementations",
-            "ASan replaces all memory allocations with safer alternatives"
+            "ASan replaces all memory allocations with safer alternatives This behavior is..."
           ],
-          "correctAnswer": "ASan instruments memory accesses to catch: use-after-free, heap/stack buffer overflow, double-free, and memory leaks. These bugs often produce NO visible symptoms in Debug builds — the memory might still contain the old value or the overflow might land in unused padding.",
-          "explanation": "Memory bugs are 'silent' — use-after-free might read the old value because the memory hasn't been reused yet. Buffer overflows might corrupt memory that's never read. Debug builds don't detect these; Release builds might crash or produce wrong results. ASan adds red-zones around allocations and tracks which memory is valid — it detects these bugs deterministically when they happen."
+          "correctAnswer": "ASan instruments memory accesses to catch: use-after-free, heap/stack buffer overflow, double-free, and memory leaks.",
+          "explanation": "Memory bugs are 'silent' — use-after-free might read the old value because the memory hasn't been reused yet. Buffer overflows might corrupt memory that's never read. Debug builds don't detect these; Release builds might crash or produce wrong results. ASan adds red-zones around allocations and tracks which memory is valid — it detects these bugs deterministically when they happen. These bugs often produce NO visible symptoms in Debug builds — the memory might still contain the old value or the overflow might land in unused padding."
         },
         {
           "question": "Explain why TDD naturally leads to better software design. What design principle does it reinforce?",
@@ -14413,57 +14413,57 @@
         {
           "question": "How does the Prototype pattern differ from the Factory pattern for object creation?",
           "options": [
-            "Prototype clones an existing INSTANCE (which carries default state). Factory constructs from a TYPE (which knows construction but not state). Prototype is better when objects have complex default configurations (game prefabs).",
+            "Prototype clones an existing INSTANCE (which carries default state).",
             "Prototype is always faster than Factory because it bypasses constructors",
-            "Prototype uses templates and Factory uses inheritance",
+            "Prototype uses templates and Factory uses inheritance This interacts with oth...",
             "Prototype creates objects on the stack while Factory creates on the heap"
           ],
-          "correctAnswer": "Prototype clones an existing INSTANCE (which carries default state). Factory constructs from a TYPE (which knows construction but not state). Prototype is better when objects have complex default configurations (game prefabs).",
-          "explanation": "Prototype = clone what exists. Factory = build from blueprint. A game prefab (Prototype) stores: mesh, materials, default stats, behavior tree — all the state that makes a 'Goblin' a Goblin. Cloning copies all of it. A Factory would need to reconstruct all that state from scratch every time. UE5's CDO (Class Default Object) is the Prototype pattern: each UClass has a default instance that NewObject clones."
+          "correctAnswer": "Prototype clones an existing INSTANCE (which carries default state).",
+          "explanation": "Prototype = clone what exists. Factory = build from blueprint. A game prefab (Prototype) stores: mesh, materials, default stats, behavior tree — all the state that makes a 'Goblin' a Goblin. Cloning copies all of it. A Factory would need to reconstruct all that state from scratch every time. UE5's CDO (Class Default Object) is the Prototype pattern: each UClass has a default instance that NewObject clones. Factory constructs from a TYPE (which knows construction but not state). Prototype is better when objects have complex default configurations (game prefabs)."
         },
         {
           "question": "The Decorator pattern solves the 'combinatorial explosion' problem. What IS this problem?",
           "options": [
-            "N independent modifiers require 2^N subclasses with inheritance (FlamingSword, PoisonedSword, FlamingPoisonedSword, etc.). Decorator requires only N decorator classes — they compose at runtime via wrapping.",
+            "N independent modifiers require 2^N subclasses with inheritance (FlamingSword, PoisonedSword, FlamingPoisonedSword, etc.).",
             "Decorated objects become exponentially larger in memory as more decorators are added",
-            "The compiler generates exponentially more template instantiations for each decorator combination",
+            "The compiler generates exponentially more template instantiations for each decorator combination                               ",
             "Decorator methods become exponentially slower as the decorator chain grows"
           ],
-          "correctAnswer": "N independent modifiers require 2^N subclasses with inheritance (FlamingSword, PoisonedSword, FlamingPoisonedSword, etc.). Decorator requires only N decorator classes — they compose at runtime via wrapping.",
-          "explanation": "Combinatorial explosion: 3 modifiers (Flaming, Poisoned, Blessed) × all combinations = 2³ = 8 subclasses with inheritance. 10 modifiers = 1024 subclasses. Decorator: 1 base + 10 decorator classes = 11 total. The trade-off: decorator chains add indirection (each call passes through the chain) and order can matter (FlamingPoisoned vs PoisonedFlaming may interact differently)."
+          "correctAnswer": "N independent modifiers require 2^N subclasses with inheritance (FlamingSword, PoisonedSword, FlamingPoisonedSword, etc.).",
+          "explanation": "Combinatorial explosion: 3 modifiers (Flaming, Poisoned, Blessed) × all combinations = 2³ = 8 subclasses with inheritance. 10 modifiers = 1024 subclasses. Decorator: 1 base + 10 decorator classes = 11 total. The trade-off: decorator chains add indirection (each call passes through the chain) and order can matter (FlamingPoisoned vs PoisonedFlaming may interact differently). Decorator requires only N decorator classes — they compose at runtime via wrapping."
         },
         {
           "question": "What is the 'intrinsic state' in the Flyweight pattern, and why is it separated from 'extrinsic state'?",
           "options": [
-            "Intrinsic state is SHARED and IMMUTABLE (texture, color ramp, lifetime curve) — one copy for all instances. Extrinsic state is UNIQUE per instance (position, velocity, age) — stored per-instance. Separating them allows sharing the heavy data.",
-            "Intrinsic state is computed at compile time and extrinsic state at runtime",
+            "Intrinsic state is SHARED and IMMUTABLE (texture, color ramp, lifetime curve) — one copy for all instances.",
+            "Intrinsic state is computed at compile time and extrinsic state at runtime                                      ",
             "Intrinsic state is private data and extrinsic state is public interface",
             "Intrinsic state is stored on the stack and extrinsic state on the heap"
           ],
-          "correctAnswer": "Intrinsic state is SHARED and IMMUTABLE (texture, color ramp, lifetime curve) — one copy for all instances. Extrinsic state is UNIQUE per instance (position, velocity, age) — stored per-instance. Separating them allows sharing the heavy data.",
-          "explanation": "Flyweight exploits the observation that many 'objects' have mostly identical data. 10,000 fire particles share: texture handle (8 bytes), color ramp (64 bytes), lifetime curve (128 bytes). Without Flyweight: 10,000 × 200 bytes = 2MB. With Flyweight: 10,000 × (8-byte pointer + per-particle state: 32 bytes) + 200 bytes shared = ~400KB. The intrinsic/extrinsic split IS the Flyweight pattern."
+          "correctAnswer": "Intrinsic state is SHARED and IMMUTABLE (texture, color ramp, lifetime curve) — one copy for all instances.",
+          "explanation": "Flyweight exploits the observation that many 'objects' have mostly identical data. 10,000 fire particles share: texture handle (8 bytes), color ramp (64 bytes), lifetime curve (128 bytes). Without Flyweight: 10,000 × 200 bytes = 2MB. With Flyweight: 10,000 × (8-byte pointer + per-particle state: 32 bytes) + 200 bytes shared = ~400KB. The intrinsic/extrinsic split IS the Flyweight pattern. Extrinsic state is UNIQUE per instance (position, velocity, age) — stored per-instance. Separating them allows sharing the heavy data."
         },
         {
           "question": "Template Method uses inheritance to define a fixed algorithm skeleton. How does this differ from the Strategy pattern?",
           "options": [
-            "Template Method: INHERITANCE — base class defines algorithm, subclasses override steps. Strategy: COMPOSITION — context holds a strategy object, the ENTIRE algorithm can be swapped. Template Method is for fixed structure with variable steps; Strategy is for variable structure.",
+            "Template Method: INHERITANCE — base class defines algorithm, subclasses override steps.",
             "Template Method is a creational pattern and Strategy is a behavioral pattern",
-            "Template Method uses templates and Strategy uses virtual functions",
+            "Template Method uses templates and Strategy uses virtual functions This appro... This additi",
             "Template Method is always faster because it resolves calls at compile time"
           ],
-          "correctAnswer": "Template Method: INHERITANCE — base class defines algorithm, subclasses override steps. Strategy: COMPOSITION — context holds a strategy object, the ENTIRE algorithm can be swapped. Template Method is for fixed structure with variable steps; Strategy is for variable structure.",
-          "explanation": "Template Method: 'I know the recipe (input → update → render), you fill in the ingredients (what happens in each step).' The algorithm structure is FIXED. Strategy: 'I need sorting — plug in whichever algorithm you want (quicksort, mergesort, radix sort).' The algorithm itself is REPLACEABLE. UE5's AActor::Tick is Template Method (fixed phases). Sorting algorithms are Strategy (swappable implementations)."
+          "correctAnswer": "Template Method: INHERITANCE — base class defines algorithm, subclasses override steps.",
+          "explanation": "Template Method: 'I know the recipe (input → update → render), you fill in the ingredients (what happens in each step).' The algorithm structure is FIXED. Strategy: 'I need sorting — plug in whichever algorithm you want (quicksort, mergesort, radix sort).' The algorithm itself is REPLACEABLE. UE5's AActor::Tick is Template Method (fixed phases). Sorting algorithms are Strategy (swappable implementations). Strategy: COMPOSITION — context holds a strategy object, the ENTIRE algorithm can be swapped. Template Method is for fixed structure with variable steps; Strategy is for variable structure."
         },
         {
           "question": "How does the State pattern eliminate giant switch statements in character controllers?",
           "options": [
-            "Each state (Idle, Running, Jumping) is a separate CLASS with its own Enter/Update/Exit methods. The character delegates to the current state. Adding a new state = new class, zero changes to Character::Update().",
+            "Each state (Idle, Running, Jumping) is a separate CLASS with its own Enter/Update/Exit methods.",
             "State converts all switch cases to function pointers stored in a lookup table",
             "State uses the preprocessor to generate switch cases from a configuration file",
-            "State compiles each switch case into a separate translation unit for modularity"
+            "State compiles each switch case into a separate translation unit for modularity This additional cont"
           ],
-          "correctAnswer": "Each state (Idle, Running, Jumping) is a separate CLASS with its own Enter/Update/Exit methods. The character delegates to the current state. Adding a new state = new class, zero changes to Character::Update().",
-          "explanation": "State replaces an open switch (violates OCP — adding a state means modifying the switch) with a closed delegation. `Character::Update()` calls `currentState->Update(*this)` — it doesn't know or care which state is active. Adding Dodging: create `DodgingState` class, zero changes to Character. The state transition logic lives IN each state (e.g., 'Running → Jumping when jump button pressed'), keeping related logic co-located."
+          "correctAnswer": "Each state (Idle, Running, Jumping) is a separate CLASS with its own Enter/Update/Exit methods.",
+          "explanation": "State replaces an open switch (violates OCP — adding a state means modifying the switch) with a closed delegation. `Character::Update()` calls `currentState->Update(*this)` — it doesn't know or care which state is active. Adding Dodging: create `DodgingState` class, zero changes to Character. The state transition logic lives IN each state (e.g., 'Running → Jumping when jump button pressed'), keeping related logic co-located. The character delegates to the current state. Adding a new state = new class, zero changes to Character::Update()."
         },
         {
           "question": "Compare the Facade and Adapter patterns — when would you use Facade over Adapter for a legacy game engine subsystem?",
