@@ -14,12 +14,12 @@ OUTPUT_DIR = r"D:\User\Desktop\DeepVault\data"
 OUTPUT = r"D:\User\Desktop\DeepVault\js\data.js"  # Legacy — build.py generates this
 
 FOLDER_MAP = [
-    ('computer-systems', 'Computer Systems', 'Computer Systems', '💻', '#58a6ff'),
-    ('cpp-fundamentals', 'C++', 'C++', '⚙️', '#f0883e'),
-    ('game-math', 'Game Math', 'Game Math', '\U0001F3AE', '#3fb950'),
-    ('ue-core', 'Unreal Engine Core', 'UE Core', '\U0001F527', '#bc8cff'),
-    ('ue-networking', 'Unreal Engine Networking', 'UE Networking', '\U0001F310', '#f85149'),
-    ('big-o', 'Algorithms & Complexity', 'Big O Notation', '\U0001F4CA', '#d2991d'),
+    ('computer-systems', 'Computer Systems', 'Computer Systems', '⬡', '#58a6ff'),
+    ('cpp-fundamentals', 'C++', 'C++', '◆', '#f0883e'),
+    ('game-math', 'Game Math', 'Game Math', '▲', '#3fb950'),
+    ('ue-core', 'Unreal Engine Core', 'UE Core', '■', '#bc8cff'),
+    ('ue-networking', 'Unreal Engine Networking', 'UE Networking', '●', '#f85149'),
+    ('big-o', 'Algorithms & Complexity', 'Big O Notation', '▼', '#d2991d'),
 ]
 
 SKIP = {

@@ -1,10 +1,10 @@
 const FOLDERS = [
-  {id:'computer-systems', name:'Computer Systems', icon:'💻', color:'#58a6ff'},
-  {id:'cpp-fundamentals', name:'C++', icon:'📝', color:'#7ee787'},
-  {id:'game-math', name:'Game Math', icon:'📐', color:'#d2a8ff'},
-  {id:'ue-core', name:'Unreal Engine Core', icon:'🎮', color:'#ff7b72'},
-  {id:'ue-networking', name:'Unreal Engine Networking', icon:'🌐', color:'#ffa657'},
-  {id:'big-o', name:'Algorithms & Complexity', icon:'📊', color:'#79c0ff'},
+  {id:'computer-systems', name:'Computer Systems', icon:'⬡', color:'#58a6ff'},
+  {id:'cpp-fundamentals', name:'C++', icon:'◆', color:'#f0883e'},
+  {id:'game-math', name:'Game Math', icon:'▲', color:'#3fb950'},
+  {id:'ue-core', name:'Unreal Engine Core', icon:'■', color:'#bc8cff'},
+  {id:'ue-networking', name:'Unreal Engine Networking', icon:'●', color:'#f85149'},
+  {id:'big-o', name:'Algorithms & Complexity', icon:'▼', color:'#d2991d'},
 ];
 
 const FOLDER_GROUPS = {
