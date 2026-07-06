@@ -1,5 +1,5 @@
 const FOLDERS = [
-  {id:'computer-systems', name:'Computer Systems', icon:'🖥', color:'#58a6ff'},
+  {id:'computer-systems', name:'Computer Systems', icon:'💻', color:'#58a6ff'},
   {id:'cpp-fundamentals', name:'C++', icon:'📝', color:'#7ee787'},
   {id:'game-math', name:'Game Math', icon:'📐', color:'#d2a8ff'},
   {id:'ue-core', name:'Unreal Engine Core', icon:'🎮', color:'#ff7b72'},

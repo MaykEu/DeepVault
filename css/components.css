@@ -1,7 +1,7 @@
 /* Folder card */
 .folder-card {
   background: var(--bg-secondary); border: 1px solid var(--border);
-  border-left: 3px solid var(--accent); border-radius: var(--radius);
+  border-left: 3px solid var(--card-accent, var(--accent)); border-radius: var(--radius);
   padding: 1.5rem; cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s, border-left-color 0.15s;
   display: flex; flex-direction: column; gap: 0.5rem;
