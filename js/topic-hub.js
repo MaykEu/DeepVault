@@ -8,12 +8,18 @@ const TopicHub = {
     var quizNotes = QUIZ_NOTES[folder.id] || [];
     var pct = stats.totalNotes > 0 ? Math.round((stats.completedNotes / stats.totalNotes) * 100) : 0;
 
-    // Split notes
-    var studyList = []; var guideList = [];
+    // Split notes — capstones go to Projects, not Study/Guides
+    var projectNotes = PROJECT_NOTES[folder.id] || [];
+    var studyList = []; var guideList = []; var projectList = [];
     for (var i = 0; i < notes.length; i++) {
       var n = notes[i];
-      if (quizNotes.indexOf(n) !== -1) studyList.push(n);
-      else guideList.push(n);
+      if (projectNotes.indexOf(n) !== -1) {
+        projectList.push(n);
+      } else if (quizNotes.indexOf(n) !== -1) {
+        studyList.push(n);
+      } else {
+        guideList.push(n);
+      }
     }
 
     // Bookmark filter
@@ -21,7 +27,7 @@ const TopicHub = {
 
     var tab = this.activeTab[folder.id] || 'quizzes';
     var activeSet = {};
-    var displayList = tab === 'quizzes' ? studyList : tab === 'bookmarks' ? bmList : guideList;
+    var displayList = tab === 'quizzes' ? studyList : tab === 'projects' ? projectList : tab === 'bookmarks' ? bmList : guideList;
     for (var s = 0; s < displayList.length; s++) {
       activeSet[displayList[s]] = true;
     }
@@ -43,21 +49,35 @@ const TopicHub = {
       '<span class=\"folder-header-pct\">' + pct + '% complete</span>' +
     '</div>';
 
-    // Tabs — three: Study, Bookmarks, Guides
-    html += '<div class=\"tabs\">' +
-      '<button class=\"tab-btn' + (tab === 'quizzes' ? ' active' : '') + '\" onclick=\"TopicHub.switchTab(\'' + folder.id + '\',\'quizzes\')\">\u{1F4DA} Study <span class=\"tab-count\">' + studyList.length + '</span></button>' +
-      '<button class=\"tab-btn' + (tab === 'bookmarks' ? ' active' : '') + '\" onclick=\"TopicHub.switchTab(\'' + folder.id + '\',\'bookmarks\')\">\u2B50 Bookmarks <span class=\"tab-count\">' + bmList.length + '</span></button>' +
-      '<button class=\"tab-btn' + (tab === 'reference' ? ' active' : '') + '\" onclick=\"TopicHub.switchTab(\'' + folder.id + '\',\'reference\')\">\u{1F9ED} Guides <span class=\"tab-count\">' + guideList.length + '</span></button>' +
+    // Tabs — Study, Guides, Projects (left) ... Bookmarks ⭐ (right)
+    html += '<div class="tabs">' +
+      '<div class="tabs-left">' +
+        '<button class="tab-btn' + (tab === 'quizzes' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'quizzes\')">📚 Study <span class="tab-count">' + studyList.length + '</span></button>' +
+        '<button class="tab-btn' + (tab === 'reference' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'reference\')">🧭 Guides <span class="tab-count">' + guideList.length + '</span></button>' +
+        '<button class="tab-btn' + (tab === 'projects' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'projects\')">🔨 Projects <span class="tab-count">' + projectList.length + '</span></button>' +
+      '</div>' +
+      '<button class="tab-btn tab-bookmark' + (tab === 'bookmarks' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'bookmarks\')" title="Bookmarks">⭐</button>' +
     '</div>';
 
     // Bookmarks tab: flat list
     if (tab === 'bookmarks') {
-      html += '<div class=\"topic-hub\">';
+      html += '<div class="topic-hub">';
       if (bmList.length === 0) {
-        html += '<div class=\"tab-empty\">No bookmarks yet. Click \u2B50 on any note to bookmark it.</div>';
+        html += '<div class="tab-empty">No bookmarks yet. Click ⭐ on any note to bookmark it.</div>';
       } else {
         for (var bi = 0; bi < bmList.length; bi++) {
           html += this.noteCard(bmList[bi], folder, quizNotes);
+        }
+      }
+      html += '</div>';
+    } else if (tab === 'projects') {
+      // Projects tab: flat list — capstone notes, Learn only (no quizzes)
+      html += '<div class="topic-hub">';
+      if (projectList.length === 0) {
+        html += '<div class="tab-empty">No project notes yet.</div>';
+      } else {
+        for (var pi = 0; pi < projectList.length; pi++) {
+          html += this.noteCard(projectList[pi], folder, quizNotes);
         }
       }
       html += '</div>';

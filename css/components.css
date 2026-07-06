@@ -228,6 +228,10 @@
 .tabs {
   display: flex; gap: 0; margin-bottom: 1rem;
   border-bottom: 1px solid var(--border);
+  align-items: stretch;
+}
+.tabs-left {
+  display: flex;
 }
 .tab-btn {
   background: none; border: none; border-bottom: 2px solid transparent;
@@ -237,6 +241,11 @@
 }
 .tab-btn:hover { color: var(--text-primary); }
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-bookmark {
+  margin-left: auto;
+  font-size: 1rem;
+  padding: 0.5em 0.75em;
+}
 .tab-count {
   background: var(--bg-tertiary); color: var(--text-muted);
   font-size: 0.7rem; padding: 0.1em 0.45em; border-radius: 10px;

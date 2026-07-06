@@ -25,23 +25,25 @@ Everything stays on your device — no accounts, no servers, no tracking.
 
 | Feature | Description |
 |---|---|
-| 📚 **Learn** | 178 notes across 6 categories — full Obsidian vault notes rendered to HTML with syntax highlighting, table of contents, wiki links, and callouts |
-|| 🎯 **Quiz** | 1,078 quiz questions across 170 notes — multiple choice and text input with instant feedback |
-| 📊 **Progress** | Track quiz scores per note and folder. Sync across devices with a free GitHub token |
-| 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
-| 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |
-| 🔍 **Search** | Search all notes by title, heading, or content |
-| 📱 **Mobile** | Responsive design works on phones |
-| 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
-| ⭐ **Bookmarks** | Bookmark notes for quick access under a dedicated tab |
+| 📚 **Learn** | 182 notes across 6 categories — full Obsidian vault notes with syntax highlighting, TOC, wiki links, callouts |
+|| 🎯 **Quiz** | 1,052 questions across 168 notes — MC and text input with instant feedback |
+|| 🔨 **Projects** | 6 capstone projects — build a CPU, allocator, smart pointers, vector, math library, and physics engine |
+|| 📊 **Progress** | Track quiz scores per note and folder. Sync across devices with a free GitHub token |
+|| 🧭 **Guides** | Learning Paths for every category. Sequential prev/next navigation |
+|| 🎨 **Themes** | Midnight, Dark, Light, and AMOLED — persistent per-device |
+|| 🔍 **Search** | Search all notes by title, heading, or content |
+|| 📱 **Mobile** | Responsive design works on phones |
+|| 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
+|| ⭐ **Bookmarks** | Bookmark notes for quick access under a dedicated tab |
 
 ## Architecture
 
 ```
-data/               ← 4 independent JSON source files
-├── notes.json      ← Note content (vault → build.py)
-├── quizzes.json    ← Quiz questions (Worker writes here — safe)
+data/               ← 5 independent JSON source files
+├── notes.json      ← Note content (vault → convert.py)
+├── quizzes.json    ← Quiz questions (safe to edit)
 ├── folders.json    ← Folder structure
+├── projects.json   ← Project notes (vault → convert.py)
 └── reference.json  ← Glossary, Guide, Learning Paths
 
 build.py            ← Combines sources → js/data.js (validates first)

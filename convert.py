@@ -272,6 +272,16 @@ def main():
         with open(quiz_path, 'w', encoding='utf-8') as f:
             json2.dump(old_quizzes, f, indent=2)
     
+    # Build projects.json — notes under Projects/ folders per category
+    projects = {}
+    for fid, _, _, _, _ in FOLDER_MAP:
+        proj_notes = []
+        if 'Projects' in groups.get(fid, {}):
+            proj_notes = list(groups[fid]['Projects'])
+        projects[fid] = proj_notes
+    with open(os.path.join(OUTPUT_DIR, 'projects.json'), 'w', encoding='utf-8') as f:
+        json2.dump(projects, f, indent=2)
+
     # Run build.py
     r = subprocess.run(['python', os.path.join(os.path.dirname(OUTPUT_DIR), 'build.py')], capture_output=True, text=True)
     if r.returncode != 0:

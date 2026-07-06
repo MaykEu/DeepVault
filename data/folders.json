@@ -1,9 +1,5 @@
 {
   "computer-systems": {
-    "": [
-      "CPU Simulator \u2014 Capstone",
-      "Memory Allocator \u2014 Capstone"
-    ],
     "Concurrency": [
       "00 \u2014 Concurrency Overview",
       "01 \u2014 Processes & Threads",
@@ -64,6 +60,10 @@
       "03 \u2014 NVMe, SATA & PCIe",
       "04 \u2014 Filesystems & Page Cache",
       "Storage \u2014 Chapter Summary"
+    ],
+    "Projects": [
+      "CPU Simulator \u2014 Project",
+      "Memory Allocator \u2014 Project"
     ],
     "System Software": [
       "02 \u2014 Compiler Pipeline",
@@ -137,6 +137,10 @@
       "03 \u2014 Modules (C++20)",
       "04 \u2014 Exceptions & Error Handling",
       "05 \u2014 CMake & Build Systems"
+    ],
+    "Projects": [
+      "Smart Pointer \u2014 Project",
+      "Vector \u2014 Project"
     ]
   },
   "game-math": {
@@ -187,6 +191,10 @@
       "03 \u2014 L-Systems & Marching Cubes",
       "04 \u2014 Probability & Randomness",
       "05 \u2014 Voxels & Octrees"
+    ],
+    "Projects": [
+      "3D Math Library \u2014 Project",
+      "Physics Engine \u2014 Project"
     ],
     "Rendering": [
       "00 \u2014 Rendering",

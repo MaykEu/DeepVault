@@ -46,6 +46,7 @@ data/
 ├── notes.json      ← Note content (vault → build.py)
 ├── quizzes.json    ← Quiz questions (safe to edit)
 ├── folders.json    ← Folder structure
+├── projects.json   ← Project notes (vault → convert.py)
 └── reference.json  ← Glossary, Guide, Learning Paths
 
 build.py            ← Combines sources → js/data.js (validates first)
@@ -57,11 +58,14 @@ js/data.js          ← GENERATED — never edit manually
 
 **VAULT FIRST — ALWAYS.** Every content change MUST happen in the vault `.md` file FIRST, then sync to data.js. The vault is bundled in this repo at `Obsidian/Game Development/` — this is the canonical source of truth for all note content, quizzes, and learning paths. Never create or edit content directly in `data/notes.json` — always write the `.md` file in the vault first, then rebuild.
 
+**PROJECTS PIPELINE.** Notes inside `*/Projects/` folders in the vault are automatically detected by `convert.py`, written to `data/projects.json`, and surfaced in the 🔨 Projects tab via `PROJECT_NOTES` in `data.js`. No quizzes needed — projects are build-work, not test-work. To add a project: create `Category Name/Projects/My Project.md` in the vault, run `python convert.py`. Everything else is automatic.
+
 ## Current Stats (updated 2026-07-06)
 
-- 178 notes across 6 categories (Computer Systems, C++ Fundamentals, Game Math, UE Core, UE Networking, Big O)
-- 170 quizzes, 1,078 questions
-- Computer Systems: 62/62 fully quizzed
+- 182 notes across 6 categories (Computer Systems, C++ Fundamentals, Game Math, UE Core, UE Networking, Big O)
+- 168 quizzes, 1,052 questions
+- 6 projects (2 CS, 2 C++, 2 Math)
+- Computer Systems: 60/60 non-project notes fully quizzed
 
 ## Quiz Quality Rules
 

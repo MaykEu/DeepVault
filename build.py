@@ -33,6 +33,9 @@ reference = load_json("reference.json")
 quizzes = quiz_data.get("quizzes", {})
 quiz_notes = quiz_data.get("quiz_notes", {})
 
+# Load project notes
+projects = load_json("projects.json")
+
 # Validate quizzes
 total_questions = 0
 errors = 0
@@ -114,7 +117,15 @@ for fid, _, _, _, _ in folder_list:
         lines.append(f"  '{fid}': [\n    {nl}\n  ],")
 lines.append("};\n")
 
-# 5. QUIZ_DATA — as assignment statements (backward compatible)
+# 5. PROJECT_NOTES
+lines.append("const PROJECT_NOTES = {")
+for fid, _, _, _, _ in folder_list:
+    if fid in projects:
+        pnl = ",\n    ".join(f"'{n}'" for n in sorted(projects[fid]))
+        lines.append(f"  '{fid}': [\n    {pnl}\n  ],")
+lines.append("};\n")
+
+# 6. QUIZ_DATA — as assignment statements (backward compatible)
 lines.append("const QUIZ_DATA = {};")
 for name in sorted(quizzes.keys()):
     qd = quizzes[name]
