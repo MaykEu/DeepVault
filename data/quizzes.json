@@ -7225,6 +7225,84 @@
           ],
           "correctAnswer": "Converting a smaller signed integer to a larger one",
           "explanation": "Sign extension copies the sign bit to all new higher bits when widening a signed integer. Example: int8_t -5 (11111011) → int16_t (11111111 11111011) = still -5."
+        },
+        {
+          "question": "Why does 0.1 + 0.2 != 0.3 in floating-point?",
+          "correctAnswer": "0.1 and 0.2 have infinite repeating binary representations that must be truncated to 23 (float) or 52 (double) mantissa bits — the sum of two approximations is inexact",
+          "acceptableAnswers": [
+            "binary representations are inexact",
+            "0.1 is a repeating fraction in binary",
+            "0.1 cannot be exactly represented in binary"
+          ],
+          "explanation": "0.1 decimal = 0.0001100110011... binary (infinite repeating). IEEE 754 stores only 23 (float) or 52 (double) mantissa bits. Truncated values are approximations. Sum of two approximations compounds error: 0.1+0.2≈0.3000000119≠0.3."
+        },
+        {
+          "question": "What are subnormal numbers and why are they a performance trap?",
+          "correctAnswer": "Numbers so small they use implicit leading 0 instead of 1 — operations are 10-100× slower because the FPU traps to microcode",
+          "acceptableAnswers": [
+            "very small floats that are extremely slow",
+            "numbers below normal range that trap to microcode"
+          ],
+          "explanation": "When exponent=0, formula changes from (1.mantissa) to (0.mantissa). FPU can't handle these in one cycle — traps to microcode. Game physics drifting into subnormals can drop from 60 FPS to 6 FPS. Fix: FTZ/DAZ in MXCSR."
+        },
+        {
+          "question": "What is the default IEEE 754 rounding mode and why 'round to nearest even'?",
+          "options": [
+            "Round to nearest even eliminates statistical bias — .5 rounds up half the time and down half the time, preventing systematic inflation",
+            "It's faster to compute",
+            "It's required by the C++ standard",
+            "Round-half-up was patented by IBM"
+          ],
+          "correctAnswer": "Round to nearest even eliminates statistical bias — .5 rounds up half the time and down half the time, preventing systematic inflation",
+          "explanation": "Always rounding .5 up adds small positive bias per tie-break. Over millions of values, bias compounds. Round to even (1.5→2, 2.5→2, 3.5→4, 4.5→4) distributes ties equally. Default on all IEEE 754 hardware."
+        },
+        {
+          "question": "Why does NaN != NaN?",
+          "options": [
+            "It's a bug in IEEE 754",
+            "NaN means 'not a valid number' — two invalid things aren't necessarily equal. Every comparison with NaN returns false by design",
+            "NaN comparison is undefined behavior in C++",
+            "NaN equality depends on quiet vs signaling encoding"
+          ],
+          "correctAnswer": "NaN means 'not a valid number' — two invalid things aren't necessarily equal. Every comparison with NaN returns false by design",
+          "explanation": "NaN = 'result is not a number.' No meaningful comparison between two NaN results. IEEE 754 specifies all comparisons with NaN return false — including NaN==NaN. Use std::isnan() to check."
+        },
+        {
+          "question": "What is FMA (Fused Multiply-Add) and why is it more accurate?",
+          "correctAnswer": "Computes a*b + c with a SINGLE rounding step instead of two — without FMA, (a*b) rounds once then +c rounds again, accumulating twice the error",
+          "acceptableAnswers": [
+            "single rounding for multiply-add",
+            "multiply and add with one rounding"
+          ],
+          "explanation": "Without FMA: a*b rounds once (intermediate result fits format), +c rounds again = double error. FMA: multiply produces infinite-precision intermediate, adds c, THEN rounds once. Available on all modern CPUs, fundamental GPU matrix op."
+        },
+        {
+          "question": "Why is signed integer overflow undefined behavior but unsigned overflow is defined?",
+          "correctAnswer": "Unsigned overflow wraps modulo 2^n (well-defined). Signed overflow is UB so compilers can optimize assuming it never happens — enabling better code generation",
+          "acceptableAnswers": [
+            "unsigned wraps, signed is UB for optimization",
+            "compiler optimizations assume no signed overflow"
+          ],
+          "explanation": "Unsigned: result wraps (well-defined). Signed: overflow is UB so compiler can assume a+b never overflows. This allows removing overflow checks: 'if (a+b < 0)' deleted because compiler proves a,b positive so a+b 'can't' overflow. Use __builtin_add_overflow()."
+        },
+        {
+          "question": "Why is integer division so slow compared to multiplication?",
+          "correctAnswer": "Division takes 20-80 cycles (iterative algorithm, hard to pipeline) vs 3-5 for multiply. Compilers replace division by constant with multiplication by reciprocal",
+          "acceptableAnswers": [
+            "division takes more cycles",
+            "division is 20-80 cycles vs 3-5 for multiply",
+            "division can't be pipelined well"
+          ],
+          "explanation": "Integer division uses iterative algorithms (non-restoring/SRT) taking many cycles and resisting pipelining. Compilers emit (x*0xCCCCCCCD)>>35 for x/10 — ~5× faster than DIV instruction."
+        },
+        {
+          "question": "What is NaN boxing in JavaScript engines?",
+          "correctAnswer": "Exploiting 2^51 unused NaN mantissa bits to store pointers alongside doubles in 64 bits — NaN check on top bits distinguishes pointers from numbers",
+          "acceptableAnswers": [
+            "using NaN mantissa bits to store pointers",
+            "storing pointers in NaN bit patterns"
+          ],
+          "explanation": "64-bit IEEE 754 value with all-1s exponent and non-zero mantissa is NaN. 51 unused mantissa bits remain. V8/SpiderMonkey store pointers there: if NaN check passes, it's a pointer; otherwise a double. Single 64-bit value holds either."
         }
       ]
     },
@@ -7405,6 +7483,46 @@
             "Cache coherence across cores"
           ],
           "explanation": "MESI (Modified, Exclusive, Shared, Invalid) is a cache coherence protocol that ensures all CPU cores see a consistent view of memory. It tracks the state of each cache line across all caches."
+        },
+        {
+          "question": "What is the difference between write-through and write-back cache policies?",
+          "options": [
+            "Write-through writes to main memory immediately; write-back only writes when the cache line is evicted",
+            "Write-through writes all data in a single pass; write-back writes one byte at a time",
+            "Write-through uses L1; write-back uses L2",
+            "Write-through is always faster"
+          ],
+          "correctAnswer": "Write-through writes to main memory immediately; write-back only writes when the cache line is evicted",
+          "explanation": "Write-through: every store updates cache AND main memory — simple but high traffic. Write-back: stores only update cache, marking line 'dirty.' Main memory updated only on eviction, reducing traffic dramatically."
+        },
+        {
+          "question": "What is the purpose of the dirty bit in a write-back cache?",
+          "correctAnswer": "Marks cache lines modified but not yet written to main memory — on eviction, dirty lines must be written back",
+          "acceptableAnswers": [
+            "tracks modified cache lines needing writeback",
+            "flags lines changed in cache but not in memory"
+          ],
+          "explanation": "When CPU writes to a cached address in write-back mode, the line is updated and dirty bit set. On eviction: if dirty, write to memory; if clean, discard. Avoids unnecessary writes for read-only data."
+        },
+        {
+          "question": "What does write-allocate mean?",
+          "options": [
+            "Cache allocates a new line for every write",
+            "On a write miss, the cache loads the line from memory first, then performs the write — pairs naturally with write-back",
+            "On a write miss, data is written directly to memory without caching",
+            "Cache pre-allocates space for future writes"
+          ],
+          "correctAnswer": "On a write miss, the cache loads the line from memory first, then performs the write — pairs naturally with write-back",
+          "explanation": "Write-allocate: fetch line on write miss, then modify in cache. Pairs with write-back — subsequent writes hit in cache. No-write-allocate: write directly to memory, don't cache. Pairs with write-through."
+        },
+        {
+          "question": "What problem do write-back caches create for multi-core consistency?",
+          "correctAnswer": "A dirty line in Core A's L1 contains data not yet in main memory — if Core B reads the same address, it gets stale data",
+          "acceptableAnswers": [
+            "dirty lines in one core's cache are invisible to other cores",
+            "cache coherency problem from write-back"
+          ],
+          "explanation": "Modified data sits in a core's private cache, invisible to others. Cache coherence protocols (MESI) solve this: cores snoop bus traffic and invalidate/update copies. Without coherence, multi-threaded programs see inconsistent memory."
         }
       ]
     },
@@ -12996,6 +13114,416 @@
           ],
           "correctAnswer": "Left-to-right in declaration order",
           "explanation": "class C : A, B lays out A first (offset 0), then B (offset sizeof(A)), then C's own members. A C* cast to B* adds sizeof(A) to the pointer. The compiler handles these adjustments silently."
+        }
+      ]
+    },
+    "05 — System-Level I-O": {
+      "questions": [
+        {
+          "question": "What is a file descriptor?",
+          "options": [
+            "A pointer to a kernel data structure representing an open file",
+            "An integer index into a per-process file descriptor table",
+            "A handle managed by the C standard library",
+            "The physical address of a file on disk"
+          ],
+          "correctAnswer": "An integer index into a per-process file descriptor table",
+          "explanation": "A file descriptor is a small integer — an index into the kernel's per-process FD table. Each entry in that table points to a system-wide open file table entry, which in turn references the v-node (actual file metadata)."
+        },
+        {
+          "question": "What are the three standard file descriptors and their numbers?",
+          "options": [
+            "0=stdin, 1=stdout, 2=stderr",
+            "1=stdin, 2=stdout, 3=stderr",
+            "0=stdin, 3=stdout, 5=stderr",
+            "0=stderr, 1=stdin, 2=stdout"
+          ],
+          "correctAnswer": "0=stdin, 1=stdout, 2=stderr",
+          "explanation": "The three standard descriptors: 0 (stdin) for input, 1 (stdout) for normal output, and 2 (stderr) for error messages. This is a convention, not hardware-enforced."
+        },
+        {
+          "question": "You call read(fd, buffer, 1024) and it returns 512. What does this mean?",
+          "options": [
+            "An error occurred — read() should always return the requested number of bytes",
+            "Only 512 bytes were available — this is a short count, NOT an error",
+            "The file descriptor was closed halfway through the read",
+            "The buffer is corrupt and read() stopped to prevent overflow"
+          ],
+          "correctAnswer": "Only 512 bytes were available — this is a short count, NOT an error",
+          "explanation": "Short counts from read() are normal. Data arrives in chunks matching sender's write() sizes for pipes, one line at a time for terminals, or in arbitrary TCP segment sizes. A short count is not an error — you must retry."
+        },
+        {
+          "question": "Why is a naive read/write loop without handling EINTR broken?",
+          "options": [
+            "EINTR means the file was deleted — the loop would infinite-retry",
+            "EINTR means a signal interrupted the syscall — retrying is correct, not an error",
+            "EINTR is a fatal error that requires process termination",
+            "EINTR only happens on Windows, not on Linux"
+          ],
+          "correctAnswer": "EINTR means a signal interrupted the syscall — retrying is correct, not an error",
+          "explanation": "When a signal arrives during a blocking read()/write() and no data has been transferred yet, the syscall returns -1 with errno=EINTR. Retry the call — it's an interruption, not a failure."
+        },
+        {
+          "question": "What happens when you fork() a process with open file descriptors?",
+          "options": [
+            "The child gets new, independent copies of each open file table entry",
+            "The child shares the SAME open file table entries — both processes share the file position",
+            "All file descriptors are closed in the child",
+            "The file descriptors are duplicated but the child gets new, separate entries in the open file table"
+          ],
+          "correctAnswer": "The child shares the SAME open file table entries — both processes share the file position",
+          "explanation": "fork() duplicates the per-process FD table, but the open file table entries are shared (reference count incremented). Parent and child share the file position — a read by one advances the position for both."
+        },
+        {
+          "question": "How does dup2(oldfd, newfd) work?",
+          "options": [
+            "It creates a new file descriptor that points to the same file but at a different position",
+            "It makes newfd point to the same open file table entry as oldfd, silently closing newfd if it was open",
+            "It copies the file data from oldfd to newfd",
+            "It renames the file descriptor from oldfd to newfd"
+          ],
+          "correctAnswer": "It makes newfd point to the same open file table entry as oldfd, silently closing newfd if it was open",
+          "explanation": "dup2() atomically closes newfd if open, then copies oldfd's open file table pointer into newfd. Both FDs now share the same file position. This is how shells redirect output (e.g., dup2(file_fd, STDOUT_FILENO))."
+        },
+        {
+          "question": "Why does select() not scale to thousands of connections?",
+          "options": [
+            "select() is limited to 64 FDs total on all systems",
+            "It scans ALL monitored FDs on every call (O(n)) and is capped at FD_SETSIZE (typically 1024)",
+            "select() can only monitor sockets, not regular files",
+            "select() uses polling which consumes 100% CPU"
+          ],
+          "correctAnswer": "It scans ALL monitored FDs on every call (O(n)) and is capped at FD_SETSIZE (typically 1024)",
+          "explanation": "select() has two scalability limits: the FD_SETSIZE cap (~1024) and O(n) scanning — it checks every monitored FD each call, even if only 3 of 10,000 have data. epoll() solves both: no FD limit, O(k) where k=active FDs."
+        },
+        {
+          "question": "What is the core event loop pattern for a scalable async server?",
+          "correctAnswer": "while(running){ epoll_wait(); for each active fd handle_read(); }",
+          "acceptableAnswers": [
+            "while running call epoll_wait then process each active fd",
+            "epoll_wait loop handling active file descriptors"
+          ],
+          "explanation": "The pattern: (1) block on epoll_wait() until any FD has data, (2) iterate only the ACTIVE ones (O(active), not O(total)), (3) handle each read event, (4) loop. One thread handles tens of thousands of connections."
+        },
+        {
+          "question": "Why should you never mix fread() and read() on the same file descriptor?",
+          "options": [
+            "fread() uses mutexes that read() doesn't acquire",
+            "The FILE* has an internal buffer that read() can't see — read() bypasses buffered data",
+            "read() is deprecated when FILE* is available",
+            "Mixing them causes a file permission error"
+          ],
+          "correctAnswer": "The FILE* has an internal buffer that read() can't see — read() bypasses buffered data",
+          "explanation": "When fgetc() is called, stdio reads a whole buffer (e.g., 4096 bytes). If you then call read() on the underlying FD, it reads from the kernel's file position — skipping the rest of the stdio buffer. Data is silently lost."
+        },
+        {
+          "question": "UE5's log system uses write() directly rather than fprintf(). Why?",
+          "correctAnswer": "If the engine crashes, buffered stdio data would be lost — write() goes directly to the kernel without an intermediate buffer",
+          "acceptableAnswers": [
+            "to prevent log loss on crash",
+            "write avoids in-memory buffer that could be lost",
+            "no stdio buffer means logs survive crash"
+          ],
+          "explanation": "stdio buffers data in user-space memory. If the engine crashes before fflush(), buffered log messages are lost — the kernel never received them. Raw write() goes directly to the kernel, so logs survive even if the process dies immediately."
+        }
+      ]
+    },
+    "06 — Performance Optimization": {
+      "questions": [
+        {
+          "question": "What does CPE (Cycles Per Element) measure?",
+          "correctAnswer": "CPU clock cycles required to process one element of data in a compute-bound loop",
+          "acceptableAnswers": [
+            "cycles per element processed",
+            "clock cycles per element"
+          ],
+          "explanation": "CPE = total_cycles / N. Lower CPE = faster loop. It's the standard metric for compute-bound optimization. Compare baseline CPE to optimized CPE for speedup ratio."
+        },
+        {
+          "question": "What is the correct sequence of the optimization workflow?",
+          "options": [
+            "Profile → Measure → Transform → Remeasure",
+            "Transform → Measure → Profile → Remeasure",
+            "Measure → Profile → Transform → Remeasure",
+            "Profile → Transform → Measure → Remeasure"
+          ],
+          "correctAnswer": "Measure → Profile → Transform → Remeasure",
+          "explanation": "1) Measure baseline CPE. 2) Profile to find the actual bottleneck (never guess). 3) Apply ONE transformation at a time. 4) Remeasure to confirm. If no improvement, revert."
+        },
+        {
+          "question": "Why is code motion (hoisting loop-invariant computations) important?",
+          "options": [
+            "It makes code more readable",
+            "It prevents recomputing the same value every iteration — can turn O(n²) into O(n) if the invariant is expensive",
+            "It is required by the C++ standard",
+            "It reduces register pressure"
+          ],
+          "correctAnswer": "It prevents recomputing the same value every iteration — can turn O(n²) into O(n) if the invariant is expensive",
+          "explanation": "Calling strlen(s) inside a loop's condition recalculates it N times (each walking the string), making an O(n) loop O(n²). Hoisting it out reduces to one call."
+        },
+        {
+          "question": "Why does loop unrolling alone NOT help data-dependent code?",
+          "options": [
+            "Unrolling only works with floating-point",
+            "It increases I-cache pressure which cancels benefits",
+            "The critical path is still a single chain of dependent operations — each iteration still waits for the previous result",
+            "Modern CPUs cannot execute unrolled loops faster"
+          ],
+          "correctAnswer": "The critical path is still a single chain of dependent operations — each iteration still waits for the previous result",
+          "explanation": "Unrolling reduces loop overhead but doesn't break the data dependency chain. If each operation depends on the previous result, unrolling 4× creates 4 dependent ops in sequence. You need multiple accumulators to create independent parallel chains."
+        },
+        {
+          "question": "What is the key insight behind using multiple accumulators?",
+          "correctAnswer": "Breaking a single dependency chain into independent parallel chains lets the CPU's superscalar execution units work simultaneously",
+          "acceptableAnswers": [
+            "independent accumulators allow parallel execution",
+            "breaking dependency chain enables superscalar parallelism"
+          ],
+          "explanation": "With one accumulator, every op depends on the previous — ALU waits. With 4 accumulators, 4 independent chains let the CPU issue 2-4 ops per cycle, hiding latency. CPE drops from ~5 (latency bound) to ~1 (throughput bound)."
+        },
+        {
+          "question": "Why can't compilers reassociate floating-point operations without -ffast-math?",
+          "options": [
+            "Compilers don't know algebra",
+            "Floating-point addition is NOT associative due to rounding — (a+b)+c may differ from a+(b+c)",
+            "Reassociation requires extra registers",
+            "IEEE 754 prohibits all compiler optimizations on FP"
+          ],
+          "correctAnswer": "Floating-point addition is NOT associative due to rounding — (a+b)+c may differ from a+(b+c)",
+          "explanation": "With finite precision, (1e20+-1e20)+1.0=1.0 but 1e20+(-1e20+1.0)=0.0. The compiler cannot change operation order without -ffast-math because it may change results."
+        },
+        {
+          "question": "What is Amdahl's Law?",
+          "correctAnswer": "Speedup ≤ 1 / (S + (1-S)/P). If 10% of work is serial, max speedup is 10× regardless of cores — optimize serial bottleneck first",
+          "acceptableAnswers": [
+            "speedup is limited by serial portion",
+            "serial fraction limits parallel speedup"
+          ],
+          "explanation": "Amdahl's Law: Speedup=1/(S+(1-S)/P). If S=10% and P=∞, max=10×. Game engines keep the game thread lean because every cycle in serial code limits the entire frame."
+        },
+        {
+          "question": "In the sustained worked example, what was the final CPE after all six transformations?",
+          "options": [
+            "10.0",
+            "5.0",
+            "3.0",
+            "1.01"
+          ],
+          "correctAnswer": "1.01",
+          "explanation": "Combine6() uses reassociation for tree reduction: acc*(data[i]*data[i+1]), letting three integer execution ports work in parallel. CPE dropped from 10.0 to 1.01 — near the throughput bound. Cannot go faster without changing the algorithm."
+        },
+        {
+          "question": "How many accumulators do you typically need to hide FP add latency?",
+          "correctAnswer": "throughput × latency — for 0.5 cycles/add throughput and 4 cycle latency, at least 8 accumulators",
+          "acceptableAnswers": [
+            "8",
+            "4 to 8",
+            "throughput times latency"
+          ],
+          "explanation": "Sweet spot = throughput × latency. If CPU starts 2 adds/cycle (t=0.5) and each takes 4 cycles (l=4), you need 4/0.5=8 accumulators. Register pressure limits you in practice."
+        },
+        {
+          "question": "What is the difference between latency bound and throughput bound?",
+          "correctAnswer": "Latency bound is the minimum CPE from the longest dependent operation chain; throughput bound is the minimum CPE from finite execution units. Actual CPE = max(latency_bound, throughput_bound)",
+          "acceptableAnswers": [
+            "latency is dependent chain limit, throughput is execution unit limit",
+            "CPE is max of latency and throughput bounds"
+          ],
+          "explanation": "If FP add takes 4 cycles and all are dependent, CPE ≥ 4.0 (latency bound). If CPU has 2 FP adders, CPE ≥ 0.5 (throughput bound). When CPE approaches the throughput bound, you're at the hardware limit."
+        }
+      ]
+    },
+    "07 — Signals & Process Control": {
+      "questions": [
+        {
+          "question": "What is a signal in Unix?",
+          "correctAnswer": "A small integer sent by the kernel to a process that interrupts normal execution to run a handler function",
+          "acceptableAnswers": [
+            "a kernel notification that interrupts a process",
+            "an integer notification from the OS"
+          ],
+          "explanation": "A signal is the kernel's asynchronous notification. Ctrl+C → SIGINT (2). The kernel interrupts the process, saves register state, runs the handler, then returns to the interrupted code."
+        },
+        {
+          "question": "Why are SIGKILL and SIGSTOP special?",
+          "options": [
+            "They are the only signals that can be sent by root",
+            "They cannot be caught, blocked, or ignored by any process",
+            "They are the only signals that deliver data",
+            "They only work on same-user processes"
+          ],
+          "correctAnswer": "They cannot be caught, blocked, or ignored by any process",
+          "explanation": "SIGKILL (9) and SIGSTOP (19) are the two signals a process CANNOT intercept. The kernel handles them directly. SIGKILL is the 'nuclear option' when a process won't respond to SIGTERM."
+        },
+        {
+          "question": "Why are signals NOT queued by default?",
+          "options": [
+            "The kernel doesn't have enough memory",
+            "Each signal has only ONE pending bit — sending it multiple times before delivery results in at most one delivery",
+            "Signals are always queued by default",
+            "Queuing requires a special kernel module"
+          ],
+          "correctAnswer": "Each signal has only ONE pending bit — sending it multiple times before delivery results in at most one delivery",
+          "explanation": "The kernel tracks pending signals with a per-process bit vector. If SIGINT is already pending, additional sends have no effect. At most one instance per signal type between handler runs. Real-time signals (SIGRTMIN+) ARE queued."
+        },
+        {
+          "question": "Which function is NOT safe to call from a signal handler?",
+          "options": [
+            "write()",
+            "_exit()",
+            "printf()",
+            "close()"
+          ],
+          "correctAnswer": "printf()",
+          "explanation": "printf() is NOT async-signal-safe — it allocates buffers, acquires locks, may call malloc(). If the signal interrupted a malloc() call, calling printf()→malloc() corrupts the heap. write() is safe (simple syscall with no userspace state)."
+        },
+        {
+          "question": "What is the safe pattern for signal handling?",
+          "correctAnswer": "Set a volatile sig_atomic_t flag in the handler, check it in the main loop — keep handlers minimal",
+          "acceptableAnswers": [
+            "set a flag in handler and check in main loop",
+            "minimal handler that sets a flag",
+            "handler sets a flag to request shutdown"
+          ],
+          "explanation": "The handler does minimal work: set a flag. The main loop checks it and performs actual cleanup (save state, close connections, flush logs) with full library access. Avoids all async-signal-safety issues."
+        },
+        {
+          "question": "What does setjmp/longjmp do?",
+          "options": [
+            "Saves and restores the entire process memory state",
+            "Saves CPU register state (RBX,RBP,R12-R15,RSP,RIP) with setjmp(), restores it with longjmp() — jumps across stack frames",
+            "Creates a new thread and switches execution to it",
+            "Saves state to a file and loads it later"
+          ],
+          "correctAnswer": "Saves CPU register state (RBX,RBP,R12-R15,RSP,RIP) with setjmp(), restores it with longjmp() — jumps across stack frames",
+          "explanation": "setjmp() saves callee-saved registers into jmp_buf. longjmp() restores them all. The CPU 'wakes up' at the setjmp() call site. setjmp() returns 0 first time; after longjmp(), returns the value passed."
+        },
+        {
+          "question": "Why is setjmp/longjmp dangerous in C++?",
+          "options": [
+            "It causes undefined behavior in all C++ programs",
+            "It doesn't call destructors for local variables in skipped stack frames — RAII resources leak",
+            "It's incompatible with C++ exceptions",
+            "It only works with POD types"
+          ],
+          "correctAnswer": "It doesn't call destructors for local variables in skipped stack frames — RAII resources leak",
+          "explanation": "When longjmp() jumps across stack frames, destructors of local objects are NEVER called. A std::vector's heap buffer leaks, a std::mutex stays locked. This violates C++ RAII guarantees."
+        },
+        {
+          "question": "What does strace do?",
+          "correctAnswer": "Traces every syscall a process makes, showing arguments, return values, and timing",
+          "acceptableAnswers": [
+            "traces system calls",
+            "shows all syscalls a process makes"
+          ],
+          "explanation": "strace uses ptrace to intercept every syscall. Shows syscall name, arguments, return value, timing. If a program is stuck, strace shows which syscall it's blocking on. 'strace -c' shows counts and time per syscall."
+        },
+        {
+          "question": "What is in /proc/PID/fd?",
+          "correctAnswer": "A directory of symbolic links showing every open file descriptor with its target (file, pipe, or socket)",
+          "acceptableAnswers": [
+            "open file descriptors as symlinks",
+            "all open FDs for the process"
+          ],
+          "explanation": "/proc/PID/fd contains one entry per open FD, numbered by descriptor. Each is a symlink to the actual resource: a file path, pipe:[inode], or socket:[inode]. Shows all open connections, logs, and pipes at a glance."
+        }
+      ]
+    },
+    "08 — Memory Bugs & Garbage Collection": {
+      "questions": [
+        {
+          "question": "What is a use-after-free bug?",
+          "options": [
+            "Calling free() twice on the same pointer",
+            "Reading or writing memory after it has been freed — the memory may have been reallocated to another part of the program",
+            "Allocating memory but never freeing it",
+            "Freeing memory that was allocated on the stack"
+          ],
+          "correctAnswer": "Reading or writing memory after it has been freed — the memory may have been reallocated to another part of the program",
+          "explanation": "After free(ptr), the memory is returned to the allocator and may be reused. Your dangling pointer now corrupts someone else's data. Works 99% of the time, crashes 1% — when the freed memory happened to be reused."
+        },
+        {
+          "question": "Why does reading uninitialized memory often 'work' in debug but fail in release?",
+          "options": [
+            "Debug builds zero-initialize all memory",
+            "MSVC fills stack with 0xCC in debug — reading gives a recognizable pattern. In release, it's whatever garbage was left behind",
+            "Release builds add extra bounds checking",
+            "Uninitialized memory always works"
+          ],
+          "correctAnswer": "MSVC fills stack with 0xCC in debug — reading gives a recognizable pattern. In release, it's whatever garbage was left behind",
+          "explanation": "Debug: MSVC fills uninitialized stack with 0xCC, heap with 0xCD. Predictable wrong values. Release: memory contains whatever the previous function left — truly random garbage. Classic 'works in debug, crashes in release.'"
+        },
+        {
+          "question": "What tool detects memory bugs by instrumenting every memory access at compile time?",
+          "options": [
+            "Valgrind",
+            "Address Sanitizer (ASan)",
+            "strace",
+            "gdb"
+          ],
+          "correctAnswer": "Address Sanitizer (ASan)",
+          "explanation": "ASan (-fsanitize=address) instruments every load, store, and allocation. Maintains 'shadow memory' tracking valid bytes. Catches use-after-free, buffer overflow, stack-use-after-scope at the exact instruction with detailed reports."
+        },
+        {
+          "question": "Why can't reference counting collect cycles?",
+          "correctAnswer": "In a cycle (A→B, B→A), each object holds a reference to the other, so their counts never reach zero even with no external references",
+          "acceptableAnswers": [
+            "cycles keep reference counts above zero",
+            "circular references prevent counts from reaching zero"
+          ],
+          "explanation": "Two objects with shared_ptr to each other both have refcount ≥1. Even when unreachable, neither releases. weak_ptr breaks cycles — it doesn't increment the reference count."
+        },
+        {
+          "question": "In mark-and-sweep GC, what are 'roots'?",
+          "options": [
+            "The base classes in an inheritance hierarchy",
+            "The initial set of objects known to be reachable: global variables, stack variables, CPU registers",
+            "The oldest objects in the heap",
+            "The memory addresses where GC metadata is stored"
+          ],
+          "correctAnswer": "The initial set of objects known to be reachable: global variables, stack variables, CPU registers",
+          "explanation": "Mark phase starts from roots — everything the program can access without following pointers. Recursively marks all reachable objects. Sweep frees unmarked ones. Correctly handles cycles since unreachable cycles won't be marked."
+        },
+        {
+          "question": "Why does UE5 use mark-and-sweep GC for UObjects rather than reference counting?",
+          "options": [
+            "Reference counting is slower",
+            "UObjects form complex webs of cross-references (Materials→Textures, Blueprints→Meshes) that would leak with reference counting due to undetected cycles",
+            "Mark-and-sweep uses less memory",
+            "The C++ standard requires mark-and-sweep for virtual classes"
+          ],
+          "correctAnswer": "UObjects form complex webs of cross-references (Materials→Textures, Blueprints→Meshes) that would leak with reference counting due to undetected cycles",
+          "explanation": "UE's object graph is highly interconnected. Reference counting would leak cycles. Mark-and-sweep correctly identifies unreachable subgraphs even with internal cycles. UE uses clusters for faster marking."
+        },
+        {
+          "question": "What is the generational hypothesis in garbage collection?",
+          "correctAnswer": "Most objects die young — collect the nursery frequently and cheaply, promote survivors to older generations collected rarely",
+          "acceptableAnswers": [
+            "most objects die young so collect them separately",
+            "young objects collected frequently, old rarely",
+            "generational hypothesis"
+          ],
+          "explanation": "Most objects have very short lifetimes. By collecting only the young generation (nursery) most of the time, you avoid scanning the entire heap. Survivors promote to older generations. Dramatically reduces average GC pause time."
+        },
+        {
+          "question": "Why should game engines avoid GC allocations during gameplay?",
+          "options": [
+            "GC allocations require kernel transitions",
+            "GC pauses cause frame time spikes — even incremental GC adds unpredictable overhead that can drop frames below 60 FPS",
+            "Game engines don't support GC at all",
+            "GC allocations always fragment memory"
+          ],
+          "correctAnswer": "GC pauses cause frame time spikes — even incremental GC adds unpredictable overhead that can drop frames below 60 FPS",
+          "explanation": "At 60 FPS, budget is 16.7ms/frame. A 5ms GC pause = 30% budget lost. Even incremental collectors add variable overhead. Solution: object pools, pre-allocate, GC only during loading screens."
+        },
+        {
+          "question": "What is a stack buffer overflow and why is it dangerous?",
+          "correctAnswer": "Writing past the end of a stack array can overwrite the saved return address — enabling attackers to redirect execution to arbitrary code",
+          "acceptableAnswers": [
+            "writing past array bounds on stack corrupting return address",
+            "stack smashing that overwrites return address"
+          ],
+          "explanation": "Writing past a stack buffer overwrites the saved return address above it. An attacker overwrites it with malicious code address. When the function returns, execution jumps there. Mitigations: stack canaries, ASLR, W^X."
         }
       ]
     }
