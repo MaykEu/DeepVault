@@ -1,0 +1,1 @@
+Creation of my website. This website is my own learning platform made for just myself and my friends. The purpose is to make it the only learning platform we need for learning about computing. No other sources required.
