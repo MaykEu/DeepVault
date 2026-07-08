@@ -21,6 +21,7 @@ const QuizEngine = {
   },
 
   isMC(q) { return q.options && q.options.length > 0; },
+  isMulti(q) { return Array.isArray(q.correctAnswer); },
 
   findCorrectIndex(q) {
     // Robust match: try exact first, then normalized fallback
@@ -29,6 +30,24 @@ const QuizEngine = {
     const norm = s => (s || '').trim().toLowerCase();
     const target = norm(q.correctAnswer);
     return q.options.findIndex(o => norm(o) === target);
+  },
+
+  findCorrectIndices(q) {
+    // For multi-correct: find indices of all correctAnswer entries
+    const norm = s => (s || '').trim().toLowerCase();
+    const targets = q.correctAnswer.map(a => norm(a));
+    const indices = [];
+    for (let i = 0; i < q.options.length; i++) {
+      if (targets.indexOf(norm(q.options[i])) >= 0) indices.push(i);
+    }
+    // If not found by text, try back: correctAnswer strings may be different from options
+    // In that case try literal match
+    if (indices.length === 0) {
+      for (let i = 0; i < q.options.length; i++) {
+        if (q.correctAnswer.indexOf(q.options[i]) >= 0) indices.push(i);
+      }
+    }
+    return indices;
   },
 
   start(container, folderId, noteName, reviewQuestions) {
@@ -96,21 +115,31 @@ const QuizEngine = {
     `;
 
     if (this.isMC(q)) {
-      html += '<div class="options-group">';
+      const isMulti = this.isMulti(q);
+      html += '<div class="options-group' + (isMulti ? ' multi-select' : '') + '">';
       const selected = s.answers[s.currentIndex];
-      // Use robust matching after option shuffle
+      // For multi: selected is an array of indices, for single: just an index
       const correctIdx = this.findCorrectIndex(q);
+      const correctIndices = isMulti ? this.findCorrectIndices(q) : null;
       for (let i = 0; i < q.options.length; i++) {
         let cls = 'option-label';
+        const isSelected = isMulti ? (Array.isArray(selected) && selected.indexOf(i) >= 0) : (i === selected);
         if (s.submitted) {
-          if (i === correctIdx) cls += ' option-correct';
-          else if (i === selected && !s.answers[s.currentIndex + '_correct']) cls += ' option-incorrect';
-        } else if (i === selected) {
+          if (isMulti) {
+            if (correctIndices.indexOf(i) >= 0) cls += ' option-correct';
+            else if (isSelected) cls += ' option-incorrect';
+          } else {
+            if (i === correctIdx) cls += ' option-correct';
+            else if (i === selected && !s.answers[s.currentIndex + '_correct']) cls += ' option-incorrect';
+          }
+        } else if (isSelected) {
           cls += ' selected';
         }
+        const inputType = isMulti ? 'checkbox' : 'radio';
+        const inputName = isMulti ? 'quiz-chk' : 'quiz-opt';
         html += `
           <label class="${cls}" onclick="${!s.submitted ? `QuizEngine.selectOption(${i})` : ''}">
-            <input type="radio" name="quiz-opt" class="option-radio" ${i===selected?'checked':''} ${s.submitted?'disabled':''}>
+            <input type="${inputType}" name="${inputName}" class="option-radio" ${isSelected?'checked':''} ${s.submitted?'disabled':''}>
             <span>${q.options[i]}</span>
           </label>`;
       }
@@ -152,7 +181,19 @@ const QuizEngine = {
   },
 
   selectOption(index) {
-    this.state.answers[this.state.currentIndex] = index;
+    const s = this.state;
+    const q = s.questions[s.currentIndex];
+    if (this.isMulti(q)) {
+      // Toggle in/out of selection array
+      let sel = s.answers[s.currentIndex];
+      if (!Array.isArray(sel)) sel = [];
+      const pos = sel.indexOf(index);
+      if (pos >= 0) sel.splice(pos, 1);
+      else sel.push(index);
+      s.answers[s.currentIndex] = sel;
+    } else {
+      s.answers[s.currentIndex] = index;
+    }
     this.showQuestion(document.getElementById('app-main'));
   },
 
@@ -161,12 +202,22 @@ const QuizEngine = {
     const q = s.questions[s.currentIndex];
     
     if (this.isMC(q)) {
-      if (s.answers[s.currentIndex] === undefined) return;
-      // Use robust matching after option shuffle
-      const correctIdx = this.findCorrectIndex(q);
-      const correct = s.answers[s.currentIndex] === correctIdx;
-      s.answers[s.currentIndex + '_correct'] = correct;
-      s.answers[s.currentIndex + '_given'] = q.options[s.answers[s.currentIndex]];
+      if (this.isMulti(q)) {
+        var sel = s.answers[s.currentIndex];
+        if (!Array.isArray(sel) || sel.length === 0) return;
+        const correctIndices = this.findCorrectIndices(q);
+        // Correct if same length and all selected match correct set
+        const correct = sel.length === correctIndices.length && sel.every(v => correctIndices.indexOf(v) >= 0);
+        s.answers[s.currentIndex + '_correct'] = correct;
+        s.answers[s.currentIndex + '_given'] = sel.map(i => q.options[i]).join('; ');
+      } else {
+        if (s.answers[s.currentIndex] === undefined) return;
+        // Use robust matching after option shuffle
+        const correctIdx = this.findCorrectIndex(q);
+        const correct = s.answers[s.currentIndex] === correctIdx;
+        s.answers[s.currentIndex + '_correct'] = correct;
+        s.answers[s.currentIndex + '_given'] = q.options[s.answers[s.currentIndex]];
+      }
     } else {
       const el = document.getElementById('text-answer');
       if (!el || !el.value.trim()) return;
