@@ -32,7 +32,7 @@ const TopicHub = {
       activeSet[displayList[s]] = true;
     }
 
-    var html = '<a href=\"#\" class=\"back-link\" onclick=\"router.navigate(\'#/\')\">\u2190 Dashboard</a>';
+    var html = '<a href=\"javascript:void(0)\" class=\"back-link\" onclick=\"router.navigate(\'#/\')\">\u2190 Dashboard</a>';
 
     // Folder header
     html += '<div class=\"folder-header\">' +

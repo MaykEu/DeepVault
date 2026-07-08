@@ -26,7 +26,7 @@ const Summary = {
       : '';
 
     container.innerHTML =
-      '<a href="#" class="back-link" onclick="router.navigate(\'#/folder/' + encodeURIComponent(state.folderId) + '\')">\u2190 Back</a>' +
+      '<a href="javascript:void(0)" class="back-link" onclick="router.navigate(\'#/folder/' + encodeURIComponent(state.folderId) + '\')">\u2190 Back</a>' +
       '<div class="summary-card">' +
         '<div class="summary-score">' +
           '<div class="summary-score-icon">' + emoji + '</div>' +

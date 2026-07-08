@@ -5,7 +5,7 @@ const QuizEngine = {
   render(container, folderId, noteName) {
     const data = QUIZ_DATA[noteName];
     if (!data) {
-      container.innerHTML = `<div class="page-title">${noteName}</div><p>No quiz available yet. <a href="#" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}')">← Back</a></p>`;
+      container.innerHTML = `<div class="page-title">${noteName}</div><p>No quiz available yet. <a href="javascript:void(0)" onclick="router.navigate('#/folder/${encodeURIComponent(folderId)}')">← Back</a></p>`;
       return;
     }
     const best = Storage.getBestScore(folderId, noteName);
