@@ -14,7 +14,16 @@
       "10 \u2014 Practical Concurrency",
       "11 \u2014 Quick Reference",
       "12 \u2014 Concurrency \u2014 Chapter Summary",
+      "Asynchronous I-O",
+      "C++ Concepts for Systems Programming",
+      "Data-Parallel Algorithms",
       "Deadlock \u2014 The Four Conditions",
+      "Debugging Concurrency",
+      "GPU Concurrency",
+      "Hardware Transactional Memory",
+      "NUMA Awareness",
+      "Reading x86-64 Assembly",
+      "SIMD & Concurrency",
       "Scheduling \u2014 MLFQ & Proportional Share"
     ],
     "Hardware": [
