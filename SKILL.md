@@ -60,10 +60,11 @@ js/data.js          ← GENERATED — never edit manually
 
 **PROJECTS PIPELINE.** Notes inside `*/Projects/` folders in the vault are automatically detected by `convert.py`, written to `data/projects.json`, and surfaced in the 🔨 Projects tab via `PROJECT_NOTES` in `data.js`. No quizzes needed — projects are build-work, not test-work. To add a project: create `Category Name/Projects/My Project.md` in the vault, run `python convert.py`. Everything else is automatic.
 
-## Current Stats (updated 2026-07-07)
+## Current Stats (updated 2026-07-09)
 
-- 204 notes across 6 categories (Computer Systems, C++, Game Math, UE Core, UE Networking, Big O)
-- 181 quizzes, 1,130 questions
+- 213 notes across 6 categories
+- 190 quizzes, 3,880 questions
+- Scroll memory: remembers position in every note
 - 7 projects (2 CS, 3 C++, 2 Math)
 - All 6 Learning Paths restructured: Main Path (core sequence) separated from Deep Dives (optional depth)
 
@@ -177,6 +178,30 @@ Two edge cases: submit button silently fails (correctAnswer vs correctIndex mism
 ## Hash Routing
 
 Same-hash navigation bug: `router.navigate` to current hash is ignored. Fix: append `?t=timestamp` to quiz routes. Also: NEVER build onclick strings via Python — multi-level escaping nightmare. Use router-based solutions. See `references/hash-routing-pitfalls.md`.
+
+## Scroll Tracking — Per-Note Position Persistence (2026-07-09)
+
+The `LearnView.trackScroll` and `LearnView.restoreScroll` methods save and restore scroll position per note.
+
+**Save triggers (4 layers):**
+1. **Scroll debounce (300ms)** — saves during reading
+2. **`router.navigate` wrapper** — saves immediately BEFORE any SPA link click (before hash changes, while correct scrollY is still available)
+3. **`hashchange` capture listener** — clears `_tk` to prevent dashboard overwrites (see below)
+4. **`beforeunload`** — catches tab close / refresh
+
+**Restore:** Uses double `requestAnimationFrame` (not `setTimeout`) to ensure DOM settles after `innerHTML` replacement before `window.scrollTo(0, position)`.
+
+**CRITICAL — `_tk` clearing:** After navigating away from a note, `_tk` is set to `null`. Without this, `_tk` retains the last note's key. When the user clicks "Learn" from the dashboard, the wrapper saves the dashboard's `scrollY` (0) under the note's key — overwriting the real saved position. `restoreScroll` then reads 0 and scrolls to top.
+
+**Architectural insight:** `hashchange` fires too late in bubble phase (router listener runs first). The CAPTURE phase listener (`true` flag) fires BEFORE the router, saving position while old content is still visible. The save was moved OUT of the capture handler because the browser scrolls to top when the hash changes to `#/` — the capture handler was overwriting the correct position with 0.
+
+## `href="#"` Overrides SPA Hash Navigation — CRITICAL PITFALL (2026-07-09)
+
+**`<a href="#">` will silently break your SPA navigation.** After the onclick handler calls `router.navigate('#/some/path')` and sets the hash, the browser follows the `href="#"` target, setting `window.location.hash` to `#` (empty). The router sees an empty hash and renders the dashboard. **No errors, no console warnings.**
+
+**Fix:** Use `href="javascript:void(0)"` on ALL navigation links. Wiki-links and footnotes already have `event.preventDefault()` — their `href="#"` is harmless.
+
+**Files fixed:** `learn.js` (3 back-links), `topic-hub.js` (1), `quiz-engine.js` (1), `summary.js` (1).
 
 ## convert.py — Common Bugs & Fixes
 
