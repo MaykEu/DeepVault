@@ -1,6 +1,6 @@
 const QuizEngine = {
   state: null,
-  questionsPerQuiz: 15,  // draw N from shuffled pool; if pool < N, show all
+  questionsPerQuiz: 7,  // draw N from shuffled pool; if pool < N, show all
 
   render(container, folderId, noteName) {
     const data = QUIZ_DATA[noteName];
