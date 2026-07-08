@@ -3382,6 +3382,61 @@
           ],
           "correctAnswer": "~1-5 µs (microseconds)",
           "explanation": "Context switch: save/restore registers, switch page tables (CR3), potentially flush TLB. ~1-5 µs on modern CPUs."
+        },
+        {
+          "question": "On x86-64, what specifically happens when a context switch occurs at the instruction level?",
+          "options": [
+            "The OS saves all GPRs to the PCB, performs CR3 write (TLB flush), then restores from new PCB",
+            "The CPU automatically saves all registers to a kernel stack",
+            "The scheduler runs after every single instruction",
+            "A timer interrupt fires, saves RIP/RSP/RFLAGS to kernel stack, restores from next thread"
+          ],
+          "correctAnswer": "A timer interrupt fires, saves RIP/RSP/RFLAGS to kernel stack, restores from next thread",
+          "explanation": "Context switch starts with timer interrupt → CPU pushes RIP/RSP/RFLAGS to kernel stack → scheduler runs → selects next thread → switches kernel stacks → performs CR3 write (TLB flush if no PCID) → iretq to user mode in next thread"
+        },
+        {
+          "question": "What does PCID (Process Context Identifier) do for context switching?",
+          "options": [
+            "It tags TLB entries with an address-space ID, allowing TLB entries from multiple processes to coexist",
+            "It identifies the CPU core that should run a process",
+            "It compresses the page table for faster switching",
+            "It caches CR3 values to avoid memory writes"
+          ],
+          "correctAnswer": "It tags TLB entries with an address-space ID, allowing TLB entries from multiple processes to coexist",
+          "explanation": "Without PCID, every CR3 write (context switch) flushes the entire TLB. With PCID, TLB entries are tagged with a 12-bit PCID — entries for the old process survive and don't need to be re-fetched when the process resumes."
+        },
+        {
+          "question": "A game has 8 worker threads on a 4-core CPU. Each context switch costs ~5000 cycles. At 3 GHz, how much time per second is lost to switching if all threads are runnable and switch every 2 ms?",
+          "options": [
+            "~6.7 ms/s (0.67%)",
+            "~1.7 ms/s (0.17%)",
+            "~13.3 ms/s (1.3%)",
+            "~3.3 ms/s (0.33%)"
+          ],
+          "correctAnswer": "~6.7 ms/s (0.67%)",
+          "explanation": "8 threads, each quantum 2 ms → 500 switches/s/core × 4 cores = 2000 switches/s. 2000 × 5000 cycles = 10M cycles/s. At 3 GHz (3B cycles/s): 10M/3B = 0.33%. Wait — each switch is 5000 cycles, 2000 switches/s = 10M cycles/s = 10M/3B = 0.33%. But this ignores cache warmup which adds 5-50 µs per switch, making actual overhead 5-15%."
+        },
+        {
+          "question": "What is the primary difference between CFS and EEVDF scheduling?",
+          "options": [
+            "CFS picks the thread with lowest vruntime; EEVDF adds deadlines to prevent unbounded scheduling delays",
+            "EEVDF is only for real-time threads; CFS is for normal threads",
+            "CFS uses priority queues; EEVDF uses a red-black tree",
+            "EEVDF replaced CFS because CFS was slower on ARM"
+          ],
+          "correctAnswer": "CFS picks the thread with lowest vruntime; EEVDF adds deadlines to prevent unbounded scheduling delays",
+          "explanation": "CFS's vruntime approach could cause a CPU-bound thread to wait an unbounded time as other threads accumulated more vruntime. EEVDF assigns each thread a deadline — the time by which it must run — preventing starvation and improving latency for interactive workloads."
+        },
+        {
+          "question": "Why does the Windows NT scheduler boost a thread's priority after it completes an I/O operation?",
+          "options": [
+            "I/O completion suggests the thread is interactive and needs low latency for its next operation",
+            "The thread pays a penalty for blocking, so the boost compensates",
+            "I/O operations always produce high-priority results",
+            "The thread needs to flush its cache after I/O"
+          ],
+          "correctAnswer": "I/O completion suggests the thread is interactive and needs low latency for its next operation",
+          "explanation": "This is MLFQ behavior: a thread that blocks on I/O before its quantum expires is likely interactive (responding to user input, network data, etc.). Boosting its priority ensures the response is immediate when data arrives."
         }
       ]
     },
@@ -3502,6 +3557,50 @@
           ],
           "correctAnswer": "CAS on futex word in userspace — fast path ~20 cycles, no kernel involvement. Kernel only on contention.",
           "explanation": "futex: 0=unlocked, 1=locked-no-waiters, 2=locked-with-waiters. Lock = CAS 0→1 (~20 cycles). Contention → FUTEX_WAIT syscall."
+        },
+        {
+          "question": "In the futex two-phase mutex, what happens on the uncontended lock path?",
+          "options": [
+            "A single LOCK CMPXCHG changes the futex word from 0 to 1 (~20 cycles, no syscall)",
+            "The thread calls FUTEX_WAIT, which blocks until the mutex is free",
+            "The kernel preempts the owning thread",
+            "The thread spins in a loop until the lock is free"
+          ],
+          "correctAnswer": "A single LOCK CMPXCHG changes the futex word from 0 to 1 (~20 cycles, no syscall)",
+          "explanation": "The futex word is an atomic 32-bit integer. When 0 = unlocked, 1 = locked (no waiters), 2 = locked (waiters). Lock attempts CAS 0→1 (~20 cycles). On unlock, if the word was 1, atomic_dec_and_test to 0 — no syscall. If 2, call FUTEX_WAKE to wake waiters."
+        },
+        {
+          "question": "What does `timed_mutex::try_lock_for(10ms)` do on a contended mutex?",
+          "options": [
+            "It blocks for up to 10 ms attempting to acquire the lock, returning false if not acquired in time",
+            "It tries once and returns immediately if the lock is held",
+            "It blocks for exactly 10 ms regardless of when the lock is released",
+            "It throws an exception if the lock cannot be acquired in 10 ms"
+          ],
+          "correctAnswer": "It blocks for up to 10 ms attempting to acquire the lock, returning false if not acquired in time",
+          "explanation": "try_lock_for uses a relative timeout: it calls FUTEX_WAIT with a timeout parameter. If the lock is acquired within 10ms, returns true. If the timeout expires first, FUTEX_WAIT returns ETIMEDOUT and try_lock_for returns false."
+        },
+        {
+          "question": "On ARM64, what instruction pair does std::atomic::compare_exchange_strong compile to?",
+          "options": [
+            "ldaxr (load-acquire exclusive) + stlxr (store-release exclusive), retry loop on failure",
+            "LOCK CMPXCHG (same as x86)",
+            "ldar + str (load-acquire, store-release — no exclusivity)",
+            "CAS instruction (hardware CAS available in ARMv8.1+)"
+          ],
+          "correctAnswer": "ldaxr (load-acquire exclusive) + stlxr (store-release exclusive), retry loop on failure",
+          "explanation": "ARM uses LL/SC (Load-Linked/Store-Conditional). ldaxr loads with acquire+exclusive monitor, stlxr stores with release+condition. If another core wrote to the address between ldaxr and stlxr, the store fails (returns non-zero) and the CAS loop retries."
+        },
+        {
+          "question": "Why does try_lock() need a retry strategy in a contended scenario?",
+          "options": [
+            "Without it, the thread may pin the CPU at 100% in a tight CAS loop, wasting power and starving other threads",
+            "try_lock() returns false on every second call by design",
+            "The kernel preempts threads that call try_lock()",
+            "try_lock() always corrupts the mutex state on failure"
+          ],
+          "correctAnswer": "Without it, the thread may pin the CPU at 100% in a tight CAS loop, wasting power and starving other threads",
+          "explanation": "A tight CAS loop (spin-wait) burns a full CPU core at 100% while doing no useful work. The recommended pattern: try_lock() → std::this_thread::yield() → try_lock() → std::this_thread::sleep_for(1ms) → repeat. This gives other threads a chance to run and release the lock."
         }
       ]
     },
@@ -3618,6 +3717,50 @@
           ],
           "correctAnswer": "x86 has Total Store Order (TSO) — stores appear in consistent order to all cores. acquire/release are free.",
           "explanation": "x86 TSO makes acquire/release semantically free. ARM/RISC-V are weakly ordered — require explicit barrier instructions."
+        },
+        {
+          "question": "On x86-64, what is the difference between a `relaxed` load and an `acquire` load at the assembly level?",
+          "options": [
+            "On x86-64, both compile to the same `mov` instruction — the TSO memory model already provides acquire semantics for all loads",
+            "acquire adds an MFENCE after the load; relaxed has no fence",
+            "relaxed uses a regular mov; acquire uses a locked instruction",
+            "acquire compiles to two mov instructions for redundancy"
+          ],
+          "correctAnswer": "On x86-64, both compile to the same `mov` instruction — the TSO memory model already provides acquire semantics for all loads",
+          "explanation": "x86's Total Store Order (TSO) guarantees that all loads are acquire and all stores are release. A `mov` load from memory is already acquire. On ARM, relaxed = `ldr` (plain load), acquire = `ldar` (load-acquire, ~3 extra cycles)."
+        },
+        {
+          "question": "What does a store buffer do, and why does it cause memory ordering issues?",
+          "options": [
+            "A store buffer holds pending writes in a core before they become visible to L1 cache, so a store from Core 0 may not be visible to Core 1 until the buffer drains",
+            "The store buffer holds recently read values for faster access",
+            "The store buffer merges multiple stores to the same address",
+            "The store buffer is a second-level cache for write-combining"
+          ],
+          "correctAnswer": "A store buffer holds pending writes in a core before they become visible to L1 cache, so a store from Core 0 may not be visible to Core 1 until the buffer drains",
+          "explanation": "Each core has a store buffer (4-16 entries) where stores sit before being written to L1. Store-to-load forwarding makes the store visible to the same core instantly, but other cores see L1 only. A release fence drains the store buffer, ensuring prior stores are visible."
+        },
+        {
+          "question": "In C++ atomics, what does `memory_order_seq_cst` guarantee that `memory_order_acquire`/`memory_order_release` does not?",
+          "options": [
+            "seq_cst total orders all sequentially-consistent operations across all threads; acquire/release only guarantees happens-before between paired operations",
+            "seq_cst is faster on ARM than acquire/release",
+            "seq_cst prevents data races entirely; acquire/release does not",
+            "seq_cst works with non-atomic variables; acquire/release only works with atomics"
+          ],
+          "correctAnswer": "seq_cst total orders all sequentially-consistent operations across all threads; acquire/release only guarantees happens-before between paired operations",
+          "explanation": "With acquire/release, thread A's store (release) and thread B's load (acquire) create a happens-before edge only if B observes A's store. Two stores with release semantics have no ordering relative to each other. seq_cst ensures a single total order visible to ALL threads, enforced via MFENCE on x86 or full dmb on ARM."
+        },
+        {
+          "question": "What happens when you use `fetch_add(1, memory_order_relaxed)` on a counter shared between two threads?",
+          "options": [
+            "The counter will eventually reach the correct total, but the order of intermediate values is undefined between threads",
+            "The operation is not atomic and may tear",
+            "The compiler deletes the operation as undefined behavior",
+            "The counter becomes thread-local and each thread sees its own value"
+          ],
+          "correctAnswer": "The counter will eventually reach the correct total, but the order of intermediate values is undefined between threads",
+          "explanation": "fetch_add with relaxed is atomic (LOCK XADD on x86) — no intermediate value will be torn. Each thread will see the full 32-bit value. However, there's no ordering guarantee: thread A's fetch_add before a `data=42` store may be visible after `data=42` to thread B."
         }
       ]
     },
@@ -4270,6 +4413,17 @@
           ],
           "correctAnswer": "Binary machine code + symbol table + relocation entries — not yet executable",
           "explanation": ".o contains compiled code but unresolved symbols. Linker combines .o files, resolves relocations, produces executable."
+        },
+        {
+          "question": "What is GIMPLE and why does GCC use it?",
+          "options": [
+            "GIMPLE is a three-address code IR that breaks complex expressions into simple operations with at most two operands, enabling simpler optimization passes",
+            "GIMPLE is the assembly output of the GCC compiler",
+            "GIMPLE is GCC's debug output format",
+            "GIMPLE is a C++ standard library component"
+          ],
+          "correctAnswer": "GIMPLE is a three-address code IR that breaks complex expressions into simple operations with at most two operands, enabling simpler optimization passes",
+          "explanation": "GIMPLE (GNU IMPLEmentation Language) decomposes every expression into a sequence of simple three-address statements: each operation takes at most two operands and produces one result. This makes data-flow analysis, dead code elimination, and constant propagation much simpler to implement — every optimization pass works on the same canonical IR format."
         }
       ]
     },
@@ -4388,6 +4542,28 @@
           ],
           "correctAnswer": "A high-performance async I/O interface using shared ring buffers — submit and complete queues mapped in userspace, minimal syscalls",
           "explanation": "io_uring: submission queue (SQ) and completion queue (CQ) shared between kernel and userspace. Batch I/O ops with minimal syscall overhead."
+        },
+        {
+          "question": "On x86-64, what does the `syscall` instruction do to the RFLAGS register?",
+          "options": [
+            "RFLAGS.RF and RFLAGS.VM are cleared; the kernel restores RFLAGS from a saved copy on sysret",
+            "RFLAGS is completely saved on the kernel stack",
+            "RFLAGS is unchanged during a syscall",
+            "RFLAGS is zeroed for security"
+          ],
+          "correctAnswer": "RFLAGS.RF and RFLAGS.VM are cleared; the kernel restores RFLAGS from a saved copy on sysret",
+          "explanation": "This is an Intel x86-64 implementation detail. The syscall instruction clears RF and VM bits. The kernel saves RFLAGS to the kernel stack. On sysret, RFLAGS is restored from the saved copy, but only the user-controllable bits. This is why getpid() can be cached by glibc — it doesn't touch any state that requires RFLAGS preservation."
+        },
+        {
+          "question": "Why does glibc cache getpid() on modern Linux systems?",
+          "options": [
+            "getpid() never changes during a process's lifetime, so caching it avoids a syscall that provides the same answer every time",
+            "The kernel caches it automatically",
+            "getpid() calls clone() which is slow",
+            "glibc doesn't actually cache getpid()"
+          ],
+          "correctAnswer": "getpid() never changes during a process's lifetime, so caching it avoids a syscall that provides the same answer every time",
+          "explanation": "On most modern glibc versions, the first call to getpid() issues a syscall and caches the result. Every subsequent call returns the cached value — zero syscalls. This is safe because PID never changes within a process (except in some obscure clone() scenarios). This saves ~100 cycles per call but is only beneficial if getpid() is called frequently."
         }
       ]
     },
@@ -11144,6 +11320,28 @@
             "no stdio buffer means logs survive crash"
           ],
           "explanation": "stdio buffers data in user-space memory. If the engine crashes before fflush(), buffered log messages are lost — the kernel never received them. Raw write() goes directly to the kernel, so logs survive even if the process dies immediately."
+        },
+        {
+          "question": "What happens when you mix `read()` and `fread()` on the same file descriptor?",
+          "options": [
+            "The FILE* buffer contains data the raw read() doesn't know about, causing the read() to skip over buffered data — silent corruption",
+            "The file descriptor becomes invalid",
+            "The kernel merges the two operations transparently",
+            "The calls synchronize automatically via the kernel"
+          ],
+          "correctAnswer": "The FILE* buffer contains data the raw read() doesn't know about, causing the read() to skip over buffered data — silent corruption",
+          "explanation": "fread() reads 4096 bytes into the FILE*'s internal buffer, returning only the requested amount. If you then call read(fileno(fp), buf, 10), the read() doesn't know about those already-buffered bytes — it reads from the kernel's position, which has moved past the buffered data."
+        },
+        {
+          "question": "When is `mmap()` preferable to `read()` for file I/O?",
+          "options": [
+            "For random access to large files where only portions are needed — mmap avoids copying data from kernel page cache to userspace",
+            "mmap is always faster than read()",
+            "mmap is only useful for mapping device memory",
+            "read() is always safer than mmap()"
+          ],
+          "correctAnswer": "For random access to large files where only portions are needed — mmap avoids copying data from kernel page cache to userspace",
+          "explanation": "mmap maps file pages directly into the process's virtual address space. On page hit, access is zero-copy (a regular load instruction). On page miss, the kernel pages it in. For sequential reads of small files (<64KB), read() is often faster because mmap incurs page fault and TLB miss overhead."
         }
       ]
     },
@@ -11345,6 +11543,39 @@
             "all open FDs for the process"
           ],
           "explanation": "/proc/PID/fd contains one entry per open FD, numbered by descriptor. Each is a symlink to the actual resource: a file path, pipe:[inode], or socket:[inode]. Shows all open connections, logs, and pipes at a glance."
+        },
+        {
+          "question": "What is the key difference between `signal()` and `sigaction()` for installing a signal handler?",
+          "options": [
+            "sigaction() offers well-defined semantics across all Unix platforms, including signal masking during handler execution and auto-restart of interrupted syscalls",
+            "signal() is faster because it doesn't allocate memory",
+            "sigaction() can only be used with real-time signals",
+            "There is no difference — signal() is just a wrapper around sigaction()"
+          ],
+          "correctAnswer": "sigaction() offers well-defined semantics across all Unix platforms, including signal masking during handler execution and auto-restart of interrupted syscalls",
+          "explanation": "signal() has implementation-defined behavior (BSD vs SysV semantics on whether handler auto-resets). sigaction() is POSIX-standardized and supports SA_RESTART (auto-restart interrupted syscalls), SA_SIGINFO (extended signal info), and explicit signal masking during handler execution."
+        },
+        {
+          "question": "Why can't `printf()` be called safely from a signal handler?",
+          "options": [
+            "printf() uses stdio's internal buffer, which may be mid-update when the handler interrupts — calling it again corrupts the buffer",
+            "printf() is too slow for a signal handler",
+            "printf() requires the kernel stack which is not available during signal handling",
+            "printf() changes the thread's signal mask"
+          ],
+          "correctAnswer": "printf() uses stdio's internal buffer, which may be mid-update when the handler interrupts — calling it again corrupts the buffer",
+          "explanation": "printf() is not async-signal-safe because it acquires a lock on the FILE*'s internal buffer. If the handler interrupts while the main code holds this lock, printf() inside the handler deadlocks. The async-signal-safe write() function avoids userspace buffering entirely."
+        },
+        {
+          "question": "What is the purpose of sigaltstack?",
+          "options": [
+            "It provides a separate known-safe stack for signal handlers, preventing stack overflow from preventing SIGSEGV delivery",
+            "It allows multiple signal handlers to run simultaneously",
+            "It speeds up signal delivery by avoiding kernel stack operations",
+            "It prevents signal handlers from seeing the process's data"
+          ],
+          "correctAnswer": "It provides a separate known-safe stack for signal handlers, preventing stack overflow from preventing SIGSEGV delivery",
+          "explanation": "If SIGSEGV is caused by stack overflow, the main stack is already exhausted. The kernel cannot push a signal frame onto an exhausted stack — delivery fails. sigaltstack provides a dedicated stack for the handler to run on. The kernel sets SS_ONSTACK while the handler runs, preventing recursive use."
         }
       ]
     },
@@ -12480,6 +12711,28 @@
           ],
           "correctAnswer": "sem_post increments the counter and may wake a waiter",
           "explanation": "sem_post (V operation from Dutch 'verhogen' = increase) atomically increments the semaphore counter. If the counter was 0, it wakes one blocked waiter. sem_wait (P operation from 'proberen' = try) atomically decrements the counter if >0, or blocks if the counter is 0. Named semaphores (sem_open) can synchronize between processes."
+        },
+        {
+          "question": "Why must `cv.wait()` be called inside a `while(predicate)` loop?",
+          "options": [
+            "Spurious wakeups can occur — the thread may wake even though no thread called notify, and the predicate may be false",
+            "The C++ standard requires the while loop syntactically",
+            "Without the loop, the mutex would be corrupted",
+            "The condition variable needs the loop to initialize its internal state"
+          ],
+          "correctAnswer": "Spurious wakeups can occur — the thread may wake even though no thread called notify, and the predicate may be false",
+          "explanation": "Spurious wakeups happen on all platforms (POSIX signals, kernel scheduler decisions, opportunistic FUTEX_WAKE). The Mesa semantics guarantee: on return from wait(), the predicate might be false. The while loop re-checks the condition and re-waits if necessary."
+        },
+        {
+          "question": "What does C++20 `std::counting_semaphore` use internally on Linux?",
+          "options": [
+            "A futex word (same as std::mutex), providing ~20 cycle fast path for uncontended acquire",
+            "A POSIX semaphore wrapper",
+            "A spinlock with exponential backoff",
+            "A kernel event object"
+          ],
+          "correctAnswer": "A futex word (same as std::mutex), providing ~20 cycle fast path for uncontended acquire",
+          "explanation": "std::counting_semaphore on Linux uses a single atomic counter as the futex word. acquire() atomically decrements; if the result is < 0, it calls FUTEX_WAIT. release() atomically increments; if previous value was < 0, it calls FUTEX_WAKE."
         }
       ]
     },
@@ -12561,6 +12814,50 @@
           ],
           "correctAnswer": "Each thread publishes the pointers it is currently accessing",
           "explanation": "Before accessing a node, a thread writes its pointer to a publicly visible 'hazard pointer' slot. Before freeing a node, the reclaimer scans ALL hazard pointers — if the node appears in any, it is retired to a free list for later reclamation. Only when no thread holds the pointer is it safe to delete."
+        },
+        {
+          "question": "Why does the Michael-Scott queue use a dummy node?",
+          "options": [
+            "The dummy node prevents ABA by ensuring head and tail never point to the same node when the queue is empty",
+            "The dummy node stores the queue length",
+            "The dummy node provides thread-local storage for concurrent operations",
+            "The dummy node is a work-stealing optimization"
+          ],
+          "correctAnswer": "The dummy node prevents ABA by ensuring head and tail never point to the same node when the queue is empty",
+          "explanation": "In the MS queue, head always points to the dummy node (which is never removed). Tail points to the last real node (or the dummy when empty). Since head never advances past the dummy, the ABA problem on head is eliminated. Tail is only modified by the producer, so CAS on tail is safe."
+        },
+        {
+          "question": "In Chase-Lev work-stealing deques, why does the owner pop from the bottom (LIFO) while thieves steal from the top (FIFO)?",
+          "options": [
+            "LIFO for the owner maintains cache locality (most recently added task is hottest in cache); FIFO for thieves gives them the oldest, coldest task that the owner won't miss",
+            "The owner always runs the newest tasks; thieves only get old tasks as punishment for stealing",
+            "LIFO is easier to implement with atomic operations",
+            "The deque is implemented as a ring buffer, making FIFO natural for thieves"
+          ],
+          "correctAnswer": "LIFO for the owner maintains cache locality (most recently added task is hottest in cache); FIFO for thieves gives them the oldest, coldest task that the owner won't miss",
+          "explanation": "A task spawned by the current task shares data with it (cache hot). The owner picks it up immediately via LIFO pop. Thieves grab the other end (oldest tasks) which are cache-cold and the owner wasn't going to run soon anyway."
+        },
+        {
+          "question": "What is the ABA problem in lock-free programming?",
+          "options": [
+            "A pointer value A is freed, the memory is reused, and a new allocation gets address A again — CAS succeeds thinking nothing changed, corrupting the structure",
+            "Threads A and B both try to pop the same node simultaneously",
+            "Thread A blocks thread B indefinitely while holding a lock",
+            "The allocator returns addresses in reverse order, breaking assumptions"
+          ],
+          "correctAnswer": "A pointer value A is freed, the memory is reused, and a new allocation gets address A again — CAS succeeds thinking nothing changed, corrupting the structure",
+          "explanation": "In a lock-free stack: Thread 1 reads head→A (expecting A.next = B), gets preempted. Thread 2 pops A and C (frees A), pushes D. Head is now D→... . The freed A's memory is reused and address A appears again. Thread 1 wakes, CAS(&head, A, B) succeeds — but head now points to stale memory B."
+        },
+        {
+          "question": "When should you choose a mutex over a lock-free structure?",
+          "options": [
+            "Under high contention where CAS retries burn CPU time; the futex-based mutex parks the thread efficiently",
+            "Never — lock-free is always faster",
+            "When the critical section is extremely short (< 10 cycles)",
+            "When you need real-time guarantees"
+          ],
+          "correctAnswer": "Under high contention where CAS retries burn CPU time; the futex-based mutex parks the thread efficiently",
+          "explanation": "Under high contention, many CAS operations fail, each burning ~15-30 cycles in a LOCK-prefixed bus transaction. Meanwhile, the futex mutex parks waiting threads (zero CPU) and wakes the next thread with a single operation. Lock-free excels at low-to-moderate contention (<10% conflicting)."
         }
       ]
     },
@@ -13106,6 +13403,43 @@
           ],
           "correctAnswer": "It adds a hardware shadow stack that verifies return addresses — preventing ROP (Return-Oriented Programming) attacks that overwrite stack return addresses",
           "explanation": "CET (Intel Tiger Lake+) adds two features: Shadow Stack (every CALL pushes the return address to a separate, hardware-protected shadow stack; every RET compares the regular stack return address against the shadow stack copy — mismatch triggers #CP exception) and Indirect Branch Tracking (marks valid indirect branch targets with ENDBRANCH; jumping to an unmarked address triggers #CP). Together they defeat ROP and JOP (Jump-Oriented Programming) attacks."
+        }
+      ]
+    },
+    "Debugging Concurrency": {
+      "questions": [
+        {
+          "question": "What does ThreadSanitizer (TSan) detect?",
+          "options": [
+            "Data races — two threads accessing the same memory without synchronization, with at least one write",
+            "Deadlocks that haven't executed yet",
+            "Cache line false sharing",
+            "Stack buffer overflows"
+          ],
+          "correctAnswer": "Data races — two threads accessing the same memory without synchronization, with at least one write",
+          "explanation": "TSan instruments every memory access at compile time. It uses hybrid happens-before + lockset detection. When it detects concurrent access without a happens-before edge, it reports a data race. TSan does not detect potential deadlocks (that's Helgrind) or false sharing (that's perf)."
+        },
+        {
+          "question": "Why is TSan not compatible with ASan?",
+          "options": [
+            "Both tools shadow-map memory, but their shadow layouts are incompatible — running both simultaneously corrupts the metadata",
+            "TSan and ASan are compatible and can be used together",
+            "ASan is for Linux only; TSan works on macOS",
+            "TSan is deprecated; ASan replaced it"
+          ],
+          "correctAnswer": "Both tools shadow-map memory, but their shadow layouts are incompatible — running both simultaneously corrupts the metadata",
+          "explanation": "TSan maintains a shadow map for vector clocks (every 8 bytes of app memory → 4 bytes of TSan metadata). ASan maintains red zones and quarantine shadows. The two shadow maps overlap in the address space and use incompatible encoding. You must choose one per build."
+        },
+        {
+          "question": "What does high `cpu-migrations` in perf stat indicate?",
+          "options": [
+            "Threads are being moved between CPU cores frequently, destroying cache locality",
+            "The CPU is overheating and throttling",
+            "Too many processes are running",
+            "The kernel is swapping memory to disk"
+          ],
+          "correctAnswer": "Threads are being moved between CPU cores frequently, destroying cache locality",
+          "explanation": "Each cpu-migration event means the scheduler moved a thread from one core to another. The thread's L1/L2 cache working set on the old core is now cold on the new core. High rates indicate poor thread affinity — threads should be pinned to cores."
         }
       ]
     }
