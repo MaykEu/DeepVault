@@ -17,7 +17,7 @@ FOLDER_MAP = [
     ('computer-systems', 'Computer Systems', 'Computer Systems', '⬡', '#58a6ff'),
     ('cpp-fundamentals', 'C++', 'C++', '◆', '#f0883e'),
     ('game-math', 'Game Math', 'Game Math', '▲', '#3fb950'),
-    ('ue-core', 'Unreal Engine Core', 'Unreal Engine', '■', '#bc8cff'),
+    ('ue-core', 'Unreal Engine', 'Unreal Engine', '■', '#bc8cff'),
     ('ue-networking', 'Unreal Engine Networking', 'UE Networking', '●', '#f85149'),
     ('big-o', 'Algorithms & Complexity', 'Big O Notation', '▼', '#d2991d'),
 ]
