@@ -34,9 +34,9 @@ def read_note(path):
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
     # Strip YAML frontmatter
-    content = re.sub(r'^---\\n.*?\\n---\\n\\n', '', content, flags=re.DOTALL).strip()
+    content = re.sub(r'^---\r?\n.*?\r?\n---\r?\n\r?\n', '', content, flags=re.DOTALL).strip()
     # Wrap bare C++ attribute syntax [[attr]] in backticks so they aren't parsed as wiki links
-    content = re.sub(r'(?<![`\w])\[\[(nodiscard|noreturn|deprecated|maybe_unused|fallthrough|no_unique_address|likely|unlikely|gnu::\w+)\]\](?![`\w])', r'`[[\1]]`', content)
+    content = re.sub(r'(?<![`\w])\[\[(nodiscard|noreturn|deprecated|maybe_unused|fallthrough|no_unique_address|likely|unlikely|gnu::\w+)\]\]', r'`[[\1]]`', content)
     return content
 
 def main():
