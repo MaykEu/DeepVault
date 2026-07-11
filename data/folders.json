@@ -248,19 +248,30 @@
     ]
   },
   "ue-core": {
-    "": [
-      "FName vs FString vs FText",
-      "Move Semantics in UE",
-      "Pointer Ecosystem",
+    "Containers & Templates": [
       "TArray Internals",
       "TMap Internals",
       "TSet Internals",
-      "UE Enums & Flags",
+      "UE Templates & T-Containers"
+    ],
+    "Core Systems": [
+      "FName vs FString vs FText",
+      "Pointer Ecosystem",
       "UE Inheritance & UObject System",
-      "UE Templates & T-Containers",
       "UHT, Macros & Reflection"
     ],
-    "Casting": [
+    "Gameplay Abilities": [
+      "Prediction & Networking"
+    ],
+    "Gameplay Abilities/Effects": [
+      "GameplayEffectExecutionCalculation",
+      "GameplayModMagnitudeCalculation"
+    ],
+    "Language & Patterns": [
+      "Move Semantics in UE",
+      "UE Enums & Flags"
+    ],
+    "Language & Patterns/Casting": [
       "00 \u2014 Casting Overview",
       "01 \u2014 Cast Internals & Variants",
       "02 \u2014 Interface Casting & References",

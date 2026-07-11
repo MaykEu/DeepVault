@@ -25,7 +25,7 @@ Everything stays on your device — no accounts, no servers, no tracking.
 
 | Feature | Description |
 |---|---|
-| 📚 **Learn** | 213 notes across 6 categories — full Obsidian vault notes with syntax highlighting, TOC, wiki links, callouts |
+| 📚 **Learn** | 216 notes across 6 categories — full Obsidian vault notes with syntax highlighting, TOC, wiki links, callouts |
 | 🎯 **Quiz** | 3,880 questions across 190 notes — MC and text input with instant feedback, random subsets per session |
 | 🔨 **Projects** | 7 capstone projects — build a CPU, allocator, smart pointers, vector, math library, physics engine, and thread pool |
 | 📊 **Progress** | Track quiz scores per note and folder. Sync across devices with a free GitHub token |

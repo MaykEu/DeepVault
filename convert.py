@@ -17,7 +17,7 @@ FOLDER_MAP = [
     ('computer-systems', 'Computer Systems', 'Computer Systems', '⬡', '#58a6ff'),
     ('cpp-fundamentals', 'C++', 'C++', '◆', '#f0883e'),
     ('game-math', 'Game Math', 'Game Math', '▲', '#3fb950'),
-    ('ue-core', 'Unreal Engine Core', 'UE Core', '■', '#bc8cff'),
+    ('ue-core', 'Unreal Engine Core', 'Unreal Engine', '■', '#bc8cff'),
     ('ue-networking', 'Unreal Engine Networking', 'UE Networking', '●', '#f85149'),
     ('big-o', 'Algorithms & Complexity', 'Big O Notation', '▼', '#d2991d'),
 ]
@@ -32,7 +32,12 @@ SKIP = {
 
 def read_note(path):
     with open(path, 'r', encoding='utf-8') as f:
-        return re.sub(r'^---\n.*?\n---\n\n', '', f.read(), flags=re.DOTALL).strip()
+        content = f.read()
+    # Strip YAML frontmatter
+    content = re.sub(r'^---\\n.*?\\n---\\n\\n', '', content, flags=re.DOTALL).strip()
+    # Wrap bare C++ attribute syntax [[attr]] in backticks so they aren't parsed as wiki links
+    content = re.sub(r'(?<![`\w])\[\[(nodiscard|noreturn|deprecated|maybe_unused|fallthrough|no_unique_address|likely|unlikely|gnu::\w+)\]\](?![`\w])', r'`[[\1]]`', content)
+    return content
 
 def main():
     # Read existing data.js for quiz preservation

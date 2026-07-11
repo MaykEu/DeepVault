@@ -62,7 +62,7 @@ js/data.js          ← GENERATED — never edit manually
 
 ## Current Stats (updated 2026-07-09)
 
-- 213 notes across 6 categories
+- 216 notes across 6 categories
 - 190 quizzes, 3,880 questions
 - Scroll memory: remembers position in every note
 - 7 projects (2 CS, 3 C++, 2 Math)
