@@ -13,10 +13,7 @@ var BASELINE = path.join(BASE, 'tests/baseline');
 var SAMPLE_LIST = path.join(BASE, 'tests/sample-notes.txt');
 
 // Load data.js
-var sandbox = { NOTES_CONTENT: {}, REFERENCE: {} };
-vm.createContext(sandbox);
-new vm.Script(fs.readFileSync(path.join(BASE, 'js/data.js'), 'utf-8')).runInContext(sandbox);
-Object.assign(global, sandbox);
+new vm.Script(fs.readFileSync(path.join(BASE, 'js/data.js'), 'utf-8')).runInThisContext();
 
 // Load NEW modules (these replace learn.js)
 // Phase 2 extraction: these files will exist after modules are extracted
@@ -28,18 +25,13 @@ var modules = [
   'js/scroll-track.js'
 ];
 
-var loaded = false;
-for (var i = 0; i < modules.length; i++) {
-  var mp = path.join(BASE, modules[i]);
+// Load modules in order (matching index.html)
+var loadOrder = ['js/code-highlight.js', 'js/wiki-link.js', 'js/learn.js'];
+for (var i = 0; i < loadOrder.length; i++) {
+  var mp = path.join(BASE, loadOrder[i]);
   if (fs.existsSync(mp)) {
     new vm.Script(fs.readFileSync(mp, 'utf-8')).runInThisContext();
-    loaded = true;
   }
-}
-
-// Fall back to learn.js if no modules exist yet
-if (!loaded) {
-  new vm.Script(fs.readFileSync(path.join(BASE, 'js/learn.js'), 'utf-8')).runInThisContext();
 }
 
 // ── Compare ──────────────────────────────────────────────────
