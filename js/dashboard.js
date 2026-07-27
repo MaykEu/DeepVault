@@ -45,6 +45,11 @@ const Dashboard = {
     }
     html += '</div>';
 
+    // ── Game Math Practice Section ──────────────────────────────────
+    if (typeof ExercisesUI !== 'undefined' && ExercisesUI.renderDashboardSection) {
+      html += ExercisesUI.renderDashboardSection();
+    }
+
     var recent = Storage.getRecent();
     if (recent.length > 0) {
       html += '<div style="display:flex;align-items:center;gap:0.5rem;margin-top:2rem;margin-bottom:0.75rem;">' +

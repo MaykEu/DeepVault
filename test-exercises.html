@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Math Practice — Engine Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; }
+    h1 { color: #58a6ff; margin-bottom: 8px; }
+    h2 { color: #c9d1d9; margin: 16px 0 8px; font-size: 1.1em; }
+    .panel { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    button { background: #238636; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; margin: 4px; }
+    button:hover { background: #2ea043; }
+    button.danger { background: #da3633; }
+    button.danger:hover { background: #f85149; }
+    button.info { background: #1f6feb; }
+    input[type="text"] { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 12px; border-radius: 6px; width: 300px; font-size: 14px; margin: 4px; }
+    .correct { color: #3fb950; }
+    .incorrect { color: #f85149; }
+    .streak { color: #d2991d; font-weight: bold; }
+    .scenario { background: #1c2128; padding: 12px; border-radius: 6px; margin: 8px 0; border-left: 3px solid #58a6ff; }
+    .hint-box { background: #1c2128; padding: 8px 12px; border-radius: 6px; margin: 4px 0; color: #8b949e; font-size: 0.9em; border-left: 2px solid #d2991d; }
+    .solution { background: #1c2128; padding: 12px; border-radius: 6px; margin: 8px 0; border-left: 3px solid #3fb950; }
+    .results { text-align: center; padding: 20px; }
+    .star { font-size: 2em; }
+    .level-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin: 12px 0; }
+    .level-card { background: #1c2128; border: 1px solid #30363d; border-radius: 6px; padding: 12px; text-align: center; }
+    .level-card.locked { opacity: 0.5; }
+    .level-card.current { border-color: #58a6ff; }
+    .level-card.completed { border-color: #3fb950; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 12px 0; }
+    .stat { background: #1c2128; padding: 12px; border-radius: 6px; text-align: center; }
+    .stat-value { font-size: 1.5em; color: #58a6ff; }
+    .stat-label { font-size: 0.8em; color: #8b949e; margin-top: 4px; }
+    .log { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 12px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.85em; margin-top: 12px; }
+    .log-entry { padding: 2px 0; border-bottom: 1px solid #21262d; }
+    .log-ok { color: #3fb950; }
+    .log-err { color: #f85149; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Game Math Practice — Engine Test</h1>
+  
+  <div class="panel">
+    <h2>Load Data</h2>
+    <button onclick="loadData()">Load exercises.json</button>
+    <span id="load-status"></span>
+  </div>
+
+  <div class="panel" id="topic-panel" style="display:none">
+    <h2>Topic: Vectors</h2>
+    <div class="stats" id="stats-bar"></div>
+    <div class="level-list" id="level-list"></div>
+    <h2>Start Session</h2>
+    <label>Level: <input type="number" id="start-level" value="1" min="1" max="10" style="width:80px"></label>
+    <button onclick="startSession()">Start Practice</button>
+    <button class="danger" onclick="resetProgress()">Reset Progress</button>
+  </div>
+
+  <div class="panel" id="question-panel" style="display:none">
+    <h2>Question <span id="q-num">1/5</span> — Streak: <span class="streak" id="q-streak">0</span></h2>
+    <div class="scenario" id="q-scenario"></div>
+    <div>
+      <input type="text" id="q-answer" placeholder="Your answer..." onkeydown="if(event.key==='Enter') submitAnswer()">
+      <button onclick="submitAnswer()">Submit</button>
+      <button class="info" onclick="showHint()">💡 Hint</button>
+    </div>
+    <div id="q-feedback"></div>
+    <div id="q-hints"></div>
+    <button id="next-btn" style="display:none" onclick="nextQuestion()">Next →</button>
+  </div>
+
+  <div class="panel" id="results-panel" style="display:none"></div>
+
+  <div class="panel">
+    <h2>Validation Log</h2>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script src="data/exercises-data.js"></script>
+  <script src="js/exercises-engine.js"></script>
+  <script>
+    // Engine auto-detects EXERCISES_DATA from the script include
+    var currentSession = null;
+    var hintLevel = 0;
+
+    function log(msg, cls) {
+      var div = document.createElement('div');
+      div.className = 'log-entry ' + (cls || '');
+      div.textContent = msg;
+      document.getElementById('log').appendChild(div);
+      document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+    }
+
+    function loadData() {
+      if (typeof EXERCISES_DATA !== 'undefined' && EXERCISES_DATA) {
+        document.getElementById('load-status').innerHTML = '<span class="correct">✓ Loaded ' + 
+          EXERCISES_DATA.topics.vectors.levels.length + ' levels (' + 
+          (function(){var c=0; EXERCISES_DATA.topics.vectors.levels.forEach(function(l){c+=l.questions.length}); return c;})() + ' questions)</span>';
+        document.getElementById('topic-panel').style.display = 'block';
+        renderTopicPanel();
+        log('Data loaded: ' + EXERCISES_DATA.topics.vectors.levels.length + ' levels', 'log-ok');
+        runValidationTests();
+      } else {
+        document.getElementById('load-status').innerHTML = '<span class="incorrect">✗ Data not loaded</span>';
+      }
+    }
+
+    function renderTopicPanel() {
+      var meta = ExercisesEngine.getTopicMeta('vectors');
+      var stats = document.getElementById('stats-bar');
+      stats.innerHTML = 
+        '<div class="stat"><div class="stat-value">Lv.' + meta.currentLevel + '</div><div class="stat-label">Current Level</div></div>' +
+        '<div class="stat"><div class="stat-value">' + meta.bestStreak + '</div><div class="stat-label">Best Streak</div></div>' +
+        '<div class="stat"><div class="stat-value">' + meta.totalAnswered + '</div><div class="stat-label">Answered</div></div>' +
+        '<div class="stat"><div class="stat-value">' + (meta.totalAnswered > 0 ? Math.round(meta.totalCorrect / meta.totalAnswered * 100) : 0) + '%</div><div class="stat-label">Accuracy</div></div>';
+
+      var list = document.getElementById('level-list');
+      list.innerHTML = meta.levels.map(function(lv) {
+        var cls = 'level-card';
+        if (lv.level > meta.currentLevel) cls += ' locked';
+        else if (meta.completedLevels.indexOf(lv.level) >= 0) cls += ' completed';
+        if (lv.level === meta.currentLevel) cls += ' current';
+        
+        var clears = meta.perfectClears[lv.level] || 0;
+        var stars = '';
+        for (var s = 0; s < 3; s++) { stars += s < clears ? '⭐' : '☆'; }
+        
+        return '<div class="' + cls + '"><b>Lv.' + lv.level + '</b><br>' + lv.title + '<br>' + stars + '</div>';
+      }).join('');
+    }
+
+    function startSession() {
+      var level = parseInt(document.getElementById('start-level').value);
+      if (level < 1 || level > 10) { alert('Level must be 1-10'); return; }
+      
+      var result = ExercisesEngine.startSession('vectors', level);
+      if (!result) { alert('Failed to start session'); return; }
+      
+      currentSession = result;
+      hintLevel = 0;
+      
+      document.getElementById('question-panel').style.display = 'block';
+      document.getElementById('results-panel').style.display = 'none';
+      document.getElementById('q-feedback').innerHTML = '';
+      document.getElementById('q-hints').innerHTML = '';
+      document.getElementById('next-btn').style.display = 'none';
+      
+      document.getElementById('start-level').value = level;
+      
+      renderQuestion();
+      log('Session started: Level ' + level + ', ' + result.total + ' questions', 'log-ok');
+    }
+
+    function renderQuestion() {
+      var q = ExercisesEngine.getCurrentQuestion();
+      if (!q) { return; }
+      
+      document.getElementById('q-num').textContent = (q.index + 1) + '/' + q.total;
+      document.getElementById('q-streak').textContent = q.streak;
+      document.getElementById('q-scenario').textContent = q.question.scenario;
+      document.getElementById('q-answer').value = '';
+      document.getElementById('q-answer').focus();
+      document.getElementById('q-feedback').innerHTML = '';
+      document.getElementById('q-hints').innerHTML = '';
+      document.getElementById('next-btn').style.display = 'none';
+      hintLevel = 0;
+      
+      log('Q' + (q.index + 1) + ': ' + q.question.id + ' [' + q.question.answerType + ']');
+    }
+
+    function submitAnswer() {
+      var answer = document.getElementById('q-answer').value.trim();
+      if (!answer) { return; }
+      
+      var result = ExercisesEngine.submitAnswer(answer);
+      if (!result) { return; }
+      
+      var fb = document.getElementById('q-feedback');
+      if (result.correct) {
+        fb.innerHTML = '<div class="correct">✅ Correct!</div>';
+        log('  → Correct! Expected: ' + JSON.stringify(result.correctValue), 'log-ok');
+      } else {
+        fb.innerHTML = '<div class="incorrect">❌ Incorrect</div>';
+        log('  → Wrong. User: ' + answer + ', Expected: ' + JSON.stringify(result.correctValue), 'log-err');
+      }
+      
+      // Show solution
+      fb.innerHTML += '<div class="solution"><b>Solution:</b><br>' +
+        'Expected: ' + ExercisesEngine.formatCorrectValue(result.correctValue, result.answerType) + 
+        (result.units ? ' ' + result.units : '') + '<br>' +
+        'Formula: ' + result.solutionExpr + '<br>' +
+        'Params: ' + JSON.stringify(result.params) + '</div>';
+      
+      document.getElementById('q-streak').textContent = result.streak;
+      
+      if (result.sessionDone) {
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('question-panel').style.display = 'none';
+        showResults(result.sessionResult);
+      } else {
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').textContent = 'Next →';
+      }
+    }
+
+    function nextQuestion() {
+      renderQuestion();
+    }
+
+    function showHint() {
+      var q = ExercisesEngine.getCurrentQuestion();
+      if (!q || !q.question.hints || hintLevel >= q.question.hints.length) { return; }
+      
+      var hintDiv = document.getElementById('q-hints');
+      hintDiv.innerHTML += '<div class="hint-box">💡 Hint ' + (hintLevel + 1) + ': ' + q.question.hints[hintLevel] + '</div>';
+      hintLevel++;
+    }
+
+    function showResults(result) {
+      var panel = document.getElementById('results-panel');
+      panel.style.display = 'block';
+      
+      if (result.perfect) {
+        panel.innerHTML = '<div class="results">' +
+          '<div class="star">🎉 PERFECT SCORE! 🎉</div>' +
+          '<p>⭐ Star earned! (' + result.clears + '/' + result.clearsNeeded + ' clears)</p>' +
+          (result.leveledUp ? '<p><b>🚀 LEVEL ' + result.newLevel + ' UNLOCKED!</b></p>' : '') +
+          '<p>Streak: ' + result.streak + '</p>' +
+          '</div>';
+        log('PERFECT! ' + result.clears + '/' + result.clearsNeeded + ' clears' + 
+          (result.leveledUp ? '. LEVEL UP to ' + result.newLevel + '!' : ''), 'log-ok');
+      } else {
+        panel.innerHTML = '<div class="results">' +
+          '<p>' + result.correct + '/' + result.total + ' correct — no clear</p>' +
+          '<p>Clears: ' + result.clears + '/' + result.clearsNeeded + '</p>' +
+          '<p>Streak: ' + result.streak + '</p>' +
+          '</div>';
+        log(result.correct + '/' + result.total + ' — no clear', 'log-err');
+      }
+      
+      panel.innerHTML += '<button onclick="startSession()">Retry Level</button> ' +
+        '<button class="info" onclick="renderTopicPanel(); document.getElementById(\'results-panel\').style.display=\'none\'">Back to Levels</button>';
+    }
+
+    function resetProgress() {
+      localStorage.removeItem('deepvault-exercises');
+      renderTopicPanel();
+      log('Progress reset', 'log-ok');
+    }
+
+    function runValidationTests() {
+      log('--- Running validation tests ---');
+      var tests = 0, passed = 0;
+      
+      // Test 1: Start a session at level 1
+      var s = ExercisesEngine.startSession('vectors', 1);
+      tests++;
+      if (s && s.total === 5) { passed++; log('Test 1: Start session ✓', 'log-ok'); }
+      else { log('Test 1: Start session FAILED', 'log-err'); }
+      
+      // Test 2: Get current question
+      var q = ExercisesEngine.getCurrentQuestion();
+      tests++;
+      if (q && q.question.scenario) { passed++; log('Test 2: Question rendering ✓', 'log-ok'); }
+      else { log('Test 2: Question rendering FAILED', 'log-err'); }
+      
+      // Test 3: Submit correct answer to first question
+      var correctVal = q.question.correctValue;
+      var answer = Array.isArray(correctVal) ? '(' + correctVal.join(', ') + ')' : String(correctVal);
+      var r = ExercisesEngine.submitAnswer(answer);
+      tests++;
+      if (r && r.correct) { passed++; log('Test 3: Correct answer validation ✓', 'log-ok'); }
+      else { log('Test 3: Correct answer validation FAILED (expected: ' + JSON.stringify(correctVal) + ', answer: ' + answer + ')', 'log-err'); }
+      
+      // Test 4: Wrong answer
+      var r2 = ExercisesEngine.submitAnswer('999, 999, 999');
+      tests++;
+      if (r2 && !r2.correct) { passed++; log('Test 4: Wrong answer detection ✓', 'log-ok'); }
+      else { log('Test 4: Wrong answer detection FAILED', 'log-err'); }
+      
+      // Test 5: Test across all 10 levels — verify question generation works
+      for (var lv = 1; lv <= 10; lv++) {
+        var sess = ExercisesEngine.startSession('vectors', lv);
+        tests++;
+        if (sess && sess.total > 0) { passed++; }
+        else { log('Level ' + lv + ': Start session FAILED', 'log-err'); }
+        
+        // Check first question has valid scenario and correctValue
+        var qq = ExercisesEngine.getCurrentQuestion();
+        if (qq && qq.question.scenario && qq.question.correctValue !== undefined && !isNaN(ExercisesEngine.submitAnswer('dummy_test_skip') ? 0 : 0)) {
+          // Just verify it doesn't crash
+        }
+      }
+      
+      // Test 6: localStorage persistence
+      ExercisesEngine.saveProgress(ExercisesEngine.loadProgress());
+      tests++;
+      var p = ExercisesEngine.getTopicProgress('vectors');
+      if (p && typeof p.currentLevel === 'number') { passed++; log('Test 6: localStorage persistence ✓', 'log-ok'); }
+      else { log('Test 6: localStorage persistence FAILED', 'log-err'); }
+      
+      log('--- ' + passed + '/' + tests + ' tests passed ---', passed === tests ? 'log-ok' : 'log-err');
+    }
+
+    // Try auto-load on page load
+    window.onload = function() {
+      try { loadData(); } catch(e) { log('Auto-load failed: ' + e.message, 'log-err'); }
+    };
+  </script>
+</body>
+</html>

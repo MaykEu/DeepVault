@@ -12,6 +12,9 @@ const router = {
 
     if (parts.length === 0) {
       Dashboard.render(main);
+    } else if (parts.length === 2 && parts[0] === 'practice') {
+      if (typeof ExercisesUI !== 'undefined') { ExercisesUI.renderTopicPage(main, decodeURIComponent(parts[1])); }
+      else { main.innerHTML = '<div class="loading">Exercises not loaded.</div>'; }
     } else if (parts.length === 2 && parts[0] === 'reference') {
       LearnView.renderRef(main, decodeURIComponent(parts[1]));
     } else if (parts.length === 2 && parts[0] === 'folder') {
