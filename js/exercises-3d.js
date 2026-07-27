@@ -187,7 +187,194 @@ window.render3DGraph = function(containerEl, points, arrows) {
   
   _startLoop(renderer, scene, camera, controls);
   
-  window._threeCleanup = function() { _cleanupScene(scene, renderer); };
+  // ── Point Placer Toolbar ──────────────────────────────────────
+  var toolbar = document.createElement('div');
+  toolbar.className = 'ex-3d-toolbar';
+  toolbar.innerHTML = 
+    '<span style="color:var(--text-secondary);font-size:0.85rem;margin-right:6px;">Add point:</span>' +
+    '<label style="color:#f85149;font-size:0.8rem;">X</label><input class="ex-3d-inp" id="ex-3d-px" type="number" step="1" placeholder="0" style="width:55px">' +
+    '<label style="color:#3fb950;font-size:0.8rem;">Y</label><input class="ex-3d-inp" id="ex-3d-py" type="number" step="1" placeholder="0" style="width:55px">' +
+    '<label style="color:#58a6ff;font-size:0.8rem;">Z</label><input class="ex-3d-inp" id="ex-3d-pz" type="number" step="1" placeholder="0" style="width:55px">' +
+    '<button class="ex-3d-btn" id="ex-3d-add">+ Add</button>' +
+    '<button class="ex-3d-btn ex-3d-btn-clear" id="ex-3d-clear">Clear</button>' +
+    '<div id="ex-3d-plist" style="margin-top:6px;font-size:0.8rem;color:var(--text-muted);"></div>';
+  containerEl.appendChild(toolbar);
+  
+  // Point placer state
+  var userPoints = [];   // [{x,y,z,label,sphere,labelSprite,dropLine}]
+  var userArrows = [];   // [{shaft,head,labelSprite}]
+  var nextLabel = 1;
+  var sphereGeoUser = new THREE.SphereGeometry(0.28, 16, 16);
+  
+  function _clearUserMeshes() {
+    function disposeMesh(m) {
+      if (m) {
+        if (m.geometry && m.geometry !== sphereGeoUser) m.geometry.dispose();
+        if (m.material) m.material.dispose();
+        scene.remove(m);
+      }
+    }
+    userArrows.forEach(function(a) {
+      disposeMesh(a.shaft);
+      disposeMesh(a.head);
+      if (a.labelSprite) {
+        if (a.labelSprite.material) a.labelSprite.material.dispose();
+        scene.remove(a.labelSprite);
+      }
+    });
+    userPoints.forEach(function(p) {
+      disposeMesh(p.sphere);
+      if (p.labelSprite) {
+        if (p.labelSprite.material) p.labelSprite.material.dispose();
+        scene.remove(p.labelSprite);
+      }
+      if (p.dropLine) {
+        if (p.dropLine.geometry) p.dropLine.geometry.dispose();
+        if (p.dropLine.material) p.dropLine.material.dispose();
+        scene.remove(p.dropLine);
+      }
+    });
+    userPoints = [];
+    userArrows = [];
+  }
+  
+  function _redrawUserArrows() {
+    // Remove old arrows
+    userArrows.forEach(function(a) {
+      if (a.shaft) { scene.remove(a.shaft); if (a.shaft.geometry) a.shaft.geometry.dispose(); if (a.shaft.material) a.shaft.material.dispose(); }
+      if (a.head) { scene.remove(a.head); if (a.head.geometry) a.head.geometry.dispose(); if (a.head.material) a.head.material.dispose(); }
+      if (a.labelSprite) { scene.remove(a.labelSprite); if (a.labelSprite.material) a.labelSprite.material.dispose(); }
+    });
+    userArrows = [];
+    
+    // Draw arrows between consecutive user points
+    for (var ui = 0; ui < userPoints.length - 1; ui++) {
+      var from = userPoints[ui], to = userPoints[ui + 1];
+      var dx = to.x - from.x, dy = to.y - from.y, dz = to.z - from.z;
+      var len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (len < 0.02) continue;
+      var ux = dx/len, uy = dy/len, uz = dz/len;
+      
+      var shaftLen = len - 0.6;
+      var sg = new THREE.CylinderGeometry(0.06, 0.06, shaftLen, 8);
+      var sm = new THREE.MeshStandardMaterial({ color: 0x22ccdd, roughness: 0.3, metalness: 0.3 });
+      var shaft = new THREE.Mesh(sg, sm);
+      shaft.position.set(from.x + dx*0.5, from.z + dz*0.5, from.y + dy*0.5);
+      shaft.setRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0), new THREE.Vector3(ux, uz, uy)));
+      scene.add(shaft);
+      
+      var hg = new THREE.ConeGeometry(0.16, 0.55, 8);
+      var hm = new THREE.MeshStandardMaterial({ color: 0x22ccdd, roughness: 0.3, metalness: 0.3 });
+      var head = new THREE.Mesh(hg, hm);
+      head.position.set(to.x - ux*0.3, to.z - uz*0.3, to.y - uy*0.3);
+      head.setRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0), new THREE.Vector3(ux, uz, uy)));
+      scene.add(head);
+      
+      userArrows.push({shaft: shaft, head: head});
+    }
+  }
+  
+  function _updatePointList() {
+    var listDiv = document.getElementById('ex-3d-plist');
+    if (!listDiv) return;
+    if (userPoints.length === 0) {
+      listDiv.innerHTML = '';
+      return;
+    }
+    var html = '';
+    for (var upi = 0; upi < userPoints.length; upi++) {
+      var up = userPoints[upi];
+      html += '<span style="display:inline-block;margin-right:12px;margin-bottom:4px;">' +
+        '<span style="color:#22ccdd;font-weight:600;">' + up.label + '</span> ' +
+        '(' + up.x + ', ' + up.y + ', ' + up.z + ') ' +
+        '<span onclick="window._removeUserPt(' + upi + ')" style="cursor:pointer;color:#f85149;" title="Remove">✕</span>' +
+      '</span>';
+    }
+    listDiv.innerHTML = html;
+  }
+  
+  function addPoint() {
+    var px = document.getElementById('ex-3d-px');
+    var py = document.getElementById('ex-3d-py');
+    var pz = document.getElementById('ex-3d-pz');
+    var x = parseFloat(px.value) || 0;
+    var y = parseFloat(py.value) || 0;
+    var z = parseFloat(pz.value) || 0;
+    
+    var label = 'P' + nextLabel;
+    nextLabel++;
+    
+    // Sphere
+    var mat = new THREE.MeshStandardMaterial({ color: 0x22ccdd, roughness: 0.3, metalness: 0.2 });
+    var sphere = new THREE.Mesh(sphereGeoUser, mat);
+    sphere.position.set(x, z, y);
+    scene.add(sphere);
+    
+    // Drop line
+    var dropLine = null;
+    if (Math.abs(z) > 0.05) {
+      var lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array([x, z, y, x, 0, y]), 3));
+      var lm = new THREE.LineBasicMaterial({ color: 0x448888, transparent: true, opacity: 0.3 });
+      dropLine = new THREE.Line(lg, lm);
+      scene.add(dropLine);
+    }
+    
+    // Label
+    var ls = _makeSpriteLabel(label, '#22ccdd', 2.5);
+    ls.position.set(x + 0.7, z + 0.6, y);
+    scene.add(ls);
+    
+    userPoints.push({x: x, y: y, z: z, label: label, sphere: sphere, labelSprite: ls, dropLine: dropLine});
+    
+    _redrawUserArrows();
+    _updatePointList();
+    
+    // Clear inputs
+    px.value = ''; py.value = ''; pz.value = '';
+    px.focus();
+  }
+  
+  window._removeUserPt = function(index) {
+    if (index < 0 || index >= userPoints.length) return;
+    var p = userPoints[index];
+    
+    function dispAndRemove(m) {
+      if (!m) return;
+      if (m.geometry && m.geometry !== sphereGeoUser) m.geometry.dispose();
+      if (m.material) m.material.dispose();
+      scene.remove(m);
+    }
+    dispAndRemove(p.sphere);
+    dispAndRemove(p.labelSprite);
+    dispAndRemove(p.dropLine);
+    
+    userPoints.splice(index, 1);
+    _redrawUserArrows();
+    _updatePointList();
+  };
+  
+  window._clearUserPoints = function() {
+    _clearUserMeshes();
+    _updatePointList();
+    nextLabel = 1;
+  };
+  
+  // Event handlers
+  document.getElementById('ex-3d-add').onclick = addPoint;
+  document.getElementById('ex-3d-clear').onclick = window._clearUserPoints;
+  
+  // Enter key in any input → add point
+  [document.getElementById('ex-3d-px'), document.getElementById('ex-3d-py'), document.getElementById('ex-3d-pz')].forEach(function(inp) {
+    inp.onkeydown = function(e) { if (e.key === 'Enter') addPoint(); };
+  });
+  
+  window._threeCleanup = function() {
+    _clearUserMeshes();
+    _cleanupScene(scene, renderer);
+  };
 };
 
 // ═══════════════════════════════════════════════════════════════════

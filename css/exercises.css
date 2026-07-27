@@ -181,6 +181,46 @@
   color: var(--text-primary);
 }
 
+/* ── 3D Graph Toolbar ──────────────────────────────────────────── */
+.ex-3d-toolbar {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.ex-3d-inp {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  padding: 3px 6px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  text-align: center;
+}
+
+.ex-3d-inp:focus { outline: none; border-color: #58a6ff; }
+
+.ex-3d-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ex-3d-btn:hover { background: rgba(88,166,255,0.1); border-color: #58a6ff; }
+.ex-3d-btn-clear:hover { border-color: #f85149; background: rgba(248,81,73,0.1); }
+
 /* ── Visual Diagrams ────────────────────────────────────────── */
 
 .ex-visual-wrap {
