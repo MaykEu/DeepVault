@@ -157,6 +157,30 @@
 .ex-scratch:focus { outline: none; border-color: #8b949e; }
 .ex-scratch::placeholder { color: var(--text-muted); }
 
+.ex-scratch-toolbar {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.ex-sym-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 3px 7px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ex-sym-btn:hover {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: #58a6ff;
+  color: var(--text-primary);
+}
+
 /* ── Visual Diagrams ────────────────────────────────────────── */
 
 .ex-visual-wrap {

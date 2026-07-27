@@ -172,6 +172,16 @@ var ExercisesUI = (function() {
       }
       
       // Scratch pad — work through the problem here
+      html += '<div class="ex-scratch-toolbar">' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'√\')" title="Square root">√</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'²\')" title="Squared">x²</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'θ\')" title="Theta">θ</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'π\')" title="Pi">π</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'°\')" title="Degrees">°</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'·\')" title="Dot product">·</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'Δ\')" title="Delta / change">Δ</button>' +
+        '<button class="ex-sym-btn" onclick="ExercisesUI._insertSymbol(\'→\')" title="Arrow">→</button>' +
+      '</div>';
       html += '<textarea id="ex-scratch" class="ex-scratch" placeholder="Work through your solution here... (scratch pad)" rows="4"></textarea>';
       
       // Input area
@@ -368,7 +378,10 @@ var ExercisesUI = (function() {
     svg += '<polyline points="' + (x2-sq) + ',' + y2 + ' ' + (x2-sq) + ',' + (y2-sq) + ' ' + x2 + ',' + (y2-sq) + '" fill="none" stroke="var(--text-muted)" stroke-width="1.2"/>';
     
     // Angle arc at bottom-left
-    svg += '<path d="M' + (x1+18) + ',' + y1 + ' A18,18 0 0,1 ' + (x1+18*Math.cos(Math.atan2(y3-y1,x3-x1))) + ',' + (y1-18*Math.sin(Math.atan2(y3-y1,x3-x1))) + '" fill="none" stroke="var(--accent,#58a6ff)" stroke-width="1.5"/>';
+    var arcAngle = Math.atan2(y3-y1, x3-x1);
+    var arcEx = x1 + 18 * Math.cos(arcAngle);
+    var arcEy = y1 + 18 * Math.sin(arcAngle);
+    svg += '<path d="M' + (x1+18) + ',' + y1 + ' A18,18 0 0,1 ' + arcEx.toFixed(1) + ',' + arcEy.toFixed(1) + '" fill="none" stroke="var(--accent,#58a6ff)" stroke-width="1.5"/>';
     
     // Side labels
     if (adj) {
@@ -401,7 +414,17 @@ var ExercisesUI = (function() {
     submitCurrentAnswer: submitCurrentAnswer,
     showHint: showHint,
     nextQuestion: nextQuestion,
-    endAndGoBack: endAndGoBack
+    endAndGoBack: endAndGoBack,
+    _insertSymbol: function(symbol) {
+      var ta = document.getElementById('ex-scratch');
+      if (!ta) return;
+      var start = ta.selectionStart;
+      var end = ta.selectionEnd;
+      var text = ta.value;
+      ta.value = text.substring(0, start) + symbol + text.substring(end);
+      ta.selectionStart = ta.selectionEnd = start + symbol.length;
+      ta.focus();
+    }
   };
 })();
 
