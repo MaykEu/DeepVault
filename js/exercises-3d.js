@@ -1,131 +1,126 @@
-// exercises-3d.js — Three.js 3D coordinate graph renderer
+// exercises-3d.js — Three.js 3D coordinate graph renderer (UMD build)
+// Uses global THREE and THREE.OrbitControls (loaded via CDN)
 // Exposes window.render3DScene() for exercises-dashboard.js
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-window._threeCleanup = null;  // stores dispose function
+window._threeCleanup = null;
 
 window.render3DScene = function(containerEl, points, arrows) {
   // Clean up previous scene
   if (window._threeCleanup) {
-    window._threeCleanup();
+    try { window._threeCleanup(); } catch(e) {}
     window._threeCleanup = null;
   }
   
-  // Clear container
   containerEl.innerHTML = '';
   
-  var W = containerEl.clientWidth || 520;
-  var H = 380;
+  var W = Math.max(containerEl.clientWidth || 520, 520);
+  var H = 420;
   
   // ── Scene, Camera, Renderer ──────────────────────────────────
   var scene = new THREE.Scene();
-  scene.background = null; // transparent — inherits page background
   
-  var camera = new THREE.PerspectiveCamera(45, W / H, 0.5, 200);
-  camera.position.set(22, 14, 22);
+  var camera = new THREE.PerspectiveCamera(45, W / H, 0.3, 200);
+  camera.position.set(20, 16, 20);
   camera.lookAt(0, 0, 0);
   
   var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.domElement.style.display = 'block';
+  renderer.domElement.style.margin = '0 auto';
   containerEl.appendChild(renderer.domElement);
   
-  // ── Orbit Controls (rotate, zoom, pan) ──────────────────────
-  var controls = new OrbitControls(camera, renderer.domElement);
+  // ── Orbit Controls ───────────────────────────────────────────
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0, 0);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
-  controls.minDistance = 8;
-  controls.maxDistance = 60;
-  controls.maxPolarAngle = Math.PI * 0.8;
+  controls.dampingFactor = 0.1;
+  controls.minDistance = 5;
+  controls.maxDistance = 50;
+  controls.maxPolarAngle = Math.PI * 0.78;
   controls.update();
   
   // ── Lighting ─────────────────────────────────────────────────
-  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-  var dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-  dirLight.position.set(10, 20, 10);
-  scene.add(dirLight);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+  var dLight = new THREE.DirectionalLight(0xffffff, 0.4);
+  dLight.position.set(10, 20, 10);
+  scene.add(dLight);
   
-  // ── AxesHelper (X=red, Y=green, Z=blue) — scale 14 ──────────
-  var axes = new THREE.AxesHelper(14);
+  // ── AxesHelper (X=red, Y=green, Z=blue) ─────────────────────
+  var axes = new THREE.AxesHelper(15);
   scene.add(axes);
   
-  // ── GridHelper (XZ ground plane) ─────────────────────────────
-  var grid = new THREE.GridHelper(28, 14, 0x444444, 0x222222);
+  // ── GridHelper (XZ ground plane, 30x30 with 15 divisions) ────
+  var grid = new THREE.GridHelper(30, 15, 0x444444, 0x1a1a1a);
   scene.add(grid);
   
-  // ── Axis tick labels (sprites) ───────────────────────────────
-  function makeLabel(text, position, color) {
+  // ── Label sprites ────────────────────────────────────────────
+  function makeLabel(text, pos, color, scaleX) {
     var canvas = document.createElement('canvas');
-    canvas.width = 64; canvas.height = 32;
+    canvas.width = 128; canvas.height = 64;
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = color || '#ffffff';
-    ctx.font = 'bold 20px monospace';
+    ctx.font = 'bold 32px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, 32, 16);
+    ctx.fillText(text, 64, 32);
     
-    var texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    var material = new THREE.SpriteMaterial({ map: texture, depthTest: false, depthWrite: false });
-    var sprite = new THREE.Sprite(material);
-    sprite.position.copy(position);
-    sprite.scale.set(2, 1, 1);
+    var tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    var mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, depthWrite: false, transparent: true });
+    var sprite = new THREE.Sprite(mat);
+    sprite.position.copy(pos);
+    sprite.scale.set(scaleX || 2.5, 1.25, 1);
     return sprite;
   }
   
-  // Tick labels on axes
+  // Tick labels at 2, 4, 6, 8, 10, 12, 14 along each positive axis
   for (var t = 2; t <= 14; t += 2) {
-    scene.add(makeLabel(String(t), new THREE.Vector3(t + 0.5, -0.3, 0), '#ff4444'));
-    scene.add(makeLabel(String(t), new THREE.Vector3(-0.5, t + 0.3, 0), '#44ff44'));
-    scene.add(makeLabel(String(t), new THREE.Vector3(-0.5, 0, t + 0.3), '#4488ff'));
+    scene.add(makeLabel(String(t), new THREE.Vector3(t + 0.5, -0.3, 0), '#ff5555', 1.8));
+    scene.add(makeLabel(String(t), new THREE.Vector3(-0.4, t + 0.3, 0), '#55ff55', 1.8));
+    scene.add(makeLabel(String(t), new THREE.Vector3(-0.4, 0, t + 0.3), '#5588ff', 1.8));
   }
   
   // ── Point spheres ────────────────────────────────────────────
-  var pointMeshes = [];
-  var sphereGeo = new THREE.SphereGeometry(0.3, 16, 16);
+  var sphereGeo = new THREE.SphereGeometry(0.28, 20, 20);
   
   for (var pi = 0; pi < points.length; pi++) {
     var pt = points[pi];
     var isB = pi === 1;
-    var color = isB ? 0xd2991d : 0xffffff;
+    var pColor = isB ? 0xd2991d : 0xffffff;
     
-    var mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.4, metalness: 0.1 });
+    var mat = new THREE.MeshStandardMaterial({ color: pColor, roughness: 0.35, metalness: 0.15 });
     var sphere = new THREE.Mesh(sphereGeo, mat);
-    sphere.position.set(pt.x, pt.z, pt.y); // Three.js: X=right, Y=up, Z=forward — our Z→Y
+    sphere.position.set(pt.x, pt.z, pt.y);
     scene.add(sphere);
-    pointMeshes.push(sphere);
     
-    // Drop line to ground (if Z ≠ 0)
-    if (Math.abs(pt.z) > 0.1) {
+    // Drop line to ground plane
+    if (Math.abs(pt.z) > 0.05) {
       var lineGeo = new THREE.BufferGeometry();
-      var lineVerts = new Float32Array([
-        pt.x, pt.z, pt.y,
-        pt.x, 0, pt.y
-      ]);
-      lineGeo.setAttribute('position', new THREE.BufferAttribute(lineVerts, 3));
-      var lineMat = new THREE.LineBasicMaterial({ color: 0x666666, transparent: true, opacity: 0.4 });
+      lineGeo.setAttribute('position', new THREE.BufferAttribute(
+        new Float32Array([pt.x, pt.z, pt.y, pt.x, 0, pt.y]), 3));
+      var lineMat = new THREE.LineBasicMaterial({ color: 0x555555, transparent: true, opacity: 0.35 });
       scene.add(new THREE.Line(lineGeo, lineMat));
       
-      // Small dot on ground
-      var dotGeo = new THREE.SphereGeometry(0.12, 8, 8);
-      var dotMat = new THREE.MeshBasicMaterial({ color: 0x666666, transparent: true, opacity: 0.4 });
+      var dotGeo = new THREE.SphereGeometry(0.1, 6, 6);
+      var dotMat = new THREE.MeshBasicMaterial({ color: 0x555555, transparent: true, opacity: 0.35 });
       var dot = new THREE.Mesh(dotGeo, dotMat);
       dot.position.set(pt.x, 0, pt.y);
       scene.add(dot);
     }
     
-    // Label sprite
+    // Point label
     if (pt.label) {
-      scene.add(makeLabel(pt.label, new THREE.Vector3(pt.x + 0.6, pt.z + 0.4, pt.y), isB ? '#d2991d' : '#ffffff'));
+      scene.add(makeLabel(pt.label,
+        new THREE.Vector3(pt.x + 0.6, pt.z + 0.5, pt.y),
+        isB ? '#d2991d' : '#ffffff', 2.0));
     }
     
     // Coordinate annotation
-    var coordText = '(' + pt.x.toFixed(0) + ', ' + pt.y.toFixed(0) + ', ' + pt.z.toFixed(0) + ')';
-    var coordLabel = makeLabel(coordText, new THREE.Vector3(pt.x + 0.6, pt.z - 0.5, pt.y), '#999999');
-    coordLabel.scale.set(3, 1, 1);
-    scene.add(coordLabel);
+    var coord = '(' + pt.x.toFixed(0) + ', ' + pt.y.toFixed(0) + ', ' + pt.z.toFixed(0) + ')';
+    scene.add(makeLabel(coord,
+      new THREE.Vector3(pt.x + 0.6, pt.z - 0.6, pt.y),
+      '#777777', 3.5));
   }
   
   // ── Arrows between points ────────────────────────────────────
@@ -139,46 +134,38 @@ window.render3DScene = function(containerEl, points, arrows) {
     var dy = to.y - from.y;
     var dz = to.z - from.z;
     var len = Math.sqrt(dx*dx + dy*dy + dz*dz);
-    if (len < 0.01) continue;
+    if (len < 0.02) continue;
     
-    // Direction
     var ux = dx / len, uy = dy / len, uz = dz / len;
     
-    // Arrow shaft (thin cylinder)
-    var shaftGeo = new THREE.CylinderGeometry(0.08, 0.08, len - 0.8, 8);
-    var shaftMat = new THREE.MeshStandardMaterial({ color: 0xd2991d, roughness: 0.3, metalness: 0.3 });
-    var shaft = new THREE.Mesh(shaftGeo, shaftMat);
-    
-    // Position shaft at midpoint between from and to
-    shaft.position.set(
-      from.x + dx * 0.5,
-      from.z + dz * 0.5,
-      from.y + dy * 0.5
-    );
-    
-    // Orient shaft along the direction
-    var shaftQuat = new THREE.Quaternion();
-    shaftQuat.setFromUnitVectors(
-      new THREE.Vector3(0, 1, 0),
-      new THREE.Vector3(ux, uz, uy) // Three.js: our Z→Y
-    );
-    shaft.setRotationFromQuaternion(shaftQuat);
-    scene.add(shaft);
+    // Shaft (cylinder)
+    var shaftLen = len - 0.7;
+    if (shaftLen > 0.05) {
+      var sGeo = new THREE.CylinderGeometry(0.07, 0.07, shaftLen, 8);
+      var sMat = new THREE.MeshStandardMaterial({ color: 0xd2991d, roughness: 0.3, metalness: 0.3 });
+      var shaft = new THREE.Mesh(sGeo, sMat);
+      shaft.position.set(from.x + dx * 0.5, from.z + dz * 0.5, from.y + dy * 0.5);
+      var quat = new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(ux, uz, uy));
+      shaft.setRotationFromQuaternion(quat);
+      scene.add(shaft);
+    }
     
     // Arrowhead (cone)
-    var headGeo = new THREE.ConeGeometry(0.2, 0.8, 8);
-    var headMat = new THREE.MeshStandardMaterial({ color: 0xd2991d, roughness: 0.3, metalness: 0.3 });
-    var head = new THREE.Mesh(headGeo, headMat);
-    head.position.set(to.x - ux * 0.5, to.z - uz * 0.5, to.y - uy * 0.5);
-    head.setRotationFromQuaternion(shaftQuat);
+    var hGeo = new THREE.ConeGeometry(0.18, 0.7, 8);
+    var hMat = new THREE.MeshStandardMaterial({ color: 0xd2991d, roughness: 0.3, metalness: 0.3 });
+    var head = new THREE.Mesh(hGeo, hMat);
+    head.position.set(to.x - ux * 0.35, to.z - uz * 0.35, to.y - uy * 0.35);
+    head.setRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(ux, uz, uy)));
     scene.add(head);
     
-    // Arrow label
     if (arr.label) {
-      var midX = from.x + dx * 0.5 + ux * 0.8;
-      var midY = from.y + dy * 0.5 + uy * 0.8;
-      var midZ = from.z + dz * 0.5 + uz * 0.8;
-      scene.add(makeLabel(arr.label, new THREE.Vector3(midX, midZ + 0.6, midY), '#d2991d'));
+      scene.add(makeLabel(arr.label,
+        new THREE.Vector3(from.x + dx * 0.5, from.z + dz * 0.5 + 0.7, from.y + dy * 0.5),
+        '#d2991d', 2.0));
     }
   }
   
@@ -190,9 +177,8 @@ window.render3DScene = function(containerEl, points, arrows) {
   }
   animate();
   
-  // ── Cleanup function ─────────────────────────────────────────
+  // ── Cleanup ──────────────────────────────────────────────────
   window._threeCleanup = function() {
-    // Dispose everything
     scene.traverse(function(obj) {
       if (obj.geometry) obj.geometry.dispose();
       if (obj.material) {
@@ -205,8 +191,8 @@ window.render3DScene = function(containerEl, points, arrows) {
     });
     renderer.dispose();
     controls.dispose();
-    if (containerEl.contains(renderer.domElement)) {
-      containerEl.removeChild(renderer.domElement);
+    if (renderer.domElement.parentNode) {
+      renderer.domElement.parentNode.removeChild(renderer.domElement);
     }
   };
 };
