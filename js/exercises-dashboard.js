@@ -203,12 +203,58 @@ var ExercisesUI = (function() {
       html += '</div>';
       container.innerHTML = html;
       
+      // Render Three.js 3D scene if this question uses coordinate-3d
+      var qData = ExercisesEngine.getCurrentQuestion();
+      if (qData && qData.question._template && qData.question._template.params) {
+        var vis = qData.question._template.visual;
+        if (vis && vis.type === 'coordinate-3d') {
+          var graphDiv = document.getElementById('ex-3d-' + _graphId);
+          if (graphDiv && window.render3DScene) {
+            // Build points and arrows from the visual config + resolved params
+            var resolvedParams = qData.question.params || {};
+            var pts = vis.points || [];
+            var pointData = [];
+            
+            function resolveCoord(expr) {
+              var s = String(expr);
+              for (var p in resolvedParams) {
+                s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), resolvedParams[p]);
+              }
+              var n = parseFloat(s);
+              if (!isNaN(n) && String(n) === s.trim()) return n;
+              try {
+                var val = Function('return (' + s + ')')();
+                if (!isNaN(val)) return val;
+              } catch(e) {}
+              return parseFloat(s) || 0;
+            }
+            
+            for (var pi = 0; pi < pts.length; pi++) {
+              pointData.push({
+                x: resolveCoord(pts[pi].x),
+                y: resolveCoord(pts[pi].y),
+                z: resolveCoord(pts[pi].z),
+                label: pts[pi].label || ''
+              });
+            }
+            
+            var arrowData = (vis.arrows || []).map(function(a) {
+              return { from: a.from, to: a.to, label: a.label || '' };
+            });
+            
+            window.render3DScene(graphDiv, pointData, arrowData);
+            _graphId++;
+          }
+        }
+      }
+      
       document.getElementById('ex-answer').focus();
     }
   }
 
   // Track hint level per question
   var _hintLevel = 0;
+  var _graphId = 0;
 
   function showHint() {
     var q = ExercisesEngine.getCurrentQuestion();
@@ -351,7 +397,7 @@ var ExercisesUI = (function() {
       case 'fov-cone':
         return _renderFOVCone(visual, params);
       case 'coordinate-3d':
-        return _renderCoordinate3D(visual, params);
+        return '<div class="ex-visual-wrap"><div class="ex-3d-graph" id="ex-3d-' + _graphId + '"></div></div>';
       default:
         return '';
     }
