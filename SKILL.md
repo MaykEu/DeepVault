@@ -60,13 +60,15 @@ js/data.js          ← GENERATED — never edit manually
 
 **PROJECTS PIPELINE.** Notes inside `*/Projects/` folders in the vault are automatically detected by `convert.py`, written to `data/projects.json`, and surfaced in the 🔨 Projects tab via `PROJECT_NOTES` in `data.js`. No quizzes needed — projects are build-work, not test-work. To add a project: create `Category Name/Projects/My Project.md` in the vault, run `python convert.py`. Everything else is automatic.
 
-## Current Stats (updated 2026-07-09)
+## Current Stats (updated 2026-07-28)
 
-- 216 notes across 6 categories
-- 190 quizzes, 3,880 questions
-- Scroll memory: remembers position in every note
+- 231 notes across 6 categories
+- 208 quizzes, 4,050 questions (100% UE Core coverage)
+- 2 extracted JS modules: code-highlight.js + wiki-link.js
+- Scroll memory v2: deduplicated listeners, periodic save, safer restore
+- Quiz: numeric equivalence (.5=0.5, 1e3=1000) + per-note poolSize
+- topic-hub.js: array-join refactored, cross-reference comments
 - 7 projects (2 CS, 3 C++, 2 Math)
-- All 6 Learning Paths restructured: Main Path (core sequence) separated from Deep Dives (optional depth)
 
 ## Learning Path Structure
 
@@ -107,7 +109,7 @@ All Learning Paths follow a consistent format:
 - Every question MUST have an explanation
 - FIELD NAMES MUST BE FULL: `question` NOT `q`, `options` NOT `o`, `correctAnswer` NOT `a`, `explanation` NOT `e`. Abbreviated fields cause "undefined" — this broke 115 quizzes.
 - JSON ESCAPING: Do NOT backslash-escape single quotes (`\'`). Use `json.dumps()` for ALL JSON output.
-- **MC LENGTH BIAS: correct answer must not be the uniquely longest option.** Users can guess by picking the longest answer. Target <5%. Fix: pad shorter wrong options with comparable detail, make 1-2 wrong options slightly longer, or use trailing whitespace (collapsed in HTML rendering, invisible to users). **PITFALL: never `.rstrip()` quiz options after fixing — stripping undoes the bias elimination (observed: 0% → 78%).**
+- **MC LENGTH BIAS: correct answer must not be the uniquely longest option.** Users can guess by picking the longest answer. Target <5%. Fix: pad shorter wrong options with comparable detail, make 1-2 wrong options slightly longer, or use trailing whitespace (collapsed in HTML rendering, invisible to users). **PITFALL: never `.rstrip()` quiz options after fixing — stripping undoes the bias elimination (observed: 0% → 78%).** **PITFALL: never pad with visible characters like `xxxx` — users see it. The x-padding from the automated debias algorithm was visible in 517 questions and had to be stripped (2026-07-28). Use trailing spaces or write comparably detailed wrong answers.**
 - WRITE to `data/quizzes.json`, then run `python build.py`. Never leave intermediate batch files on disk.
 - VERIFY: Run `python quiz-cli.py verify` → 0 errors AND 0 warnings. Run `node test.js` → 20/20.
 
@@ -157,7 +159,47 @@ quiz_data['quiz_notes'] = dict(quiz_notes_new)
 
 ### Quiz Engine Configuration
 
-The quiz engine uses `questionsPerQuiz: 15` to draw N questions from a shuffled pool (min of N vs pool size). Previously hardcoded at 8. The `findCorrectIndex()` helper normalizes answer matching when `correctAnswer` isn't an exact string match in `options` (e.g., trailing whitespace differences).
+The quiz engine uses `questionsPerQuiz` (default: 7) to draw N questions from a shuffled pool. To override per-note, add `"poolSize": 12` to the quiz entry in `data/quizzes.json`:
+
+```json
+"Note Name": {
+  "poolSize": 12,
+  "questions": [...]
+}
+```
+
+The `getPoolSize(noteName)` method reads `poolSize` from the quiz data, falling back to the default. Without `poolSize`, the engine uses `questionsPerQuiz` (7).
+
+**Numeric equivalence (2026-07-28):** The answer matcher now accepts numerically equivalent answers: `.5` matches `0.5`, `1e3` matches `1000`, `2.0` matches `2`. This uses `parseFloat()` comparison after the whitespace-stripped exact match check. Falls back gracefully for non-numeric answers.
+
+The `findCorrectIndex()` helper normalizes answer matching when `correctAnswer` isn't an exact string match in `options` (e.g., trailing whitespace differences).
+
+
+## Extracted JS Modules (2026-07-28)
+
+Two modules were extracted from the minified `learn.js` to improve maintainability:
+
+### `js/code-highlight.js` — C++ Syntax Highlighter
+
+Standalone IIFE module. Tokenizes C++ code into categories (keywords, types, numbers, strings, comments, preprocessor) and produces HTML with `syn-*` CSS classes. Replaces the inline `LearnView.hicpp()` and `LearnView.esc()`. Load before `learn.js`.
+
+### `js/wiki-link.js` — Wiki-Link Resolver
+
+Standalone IIFE module. Processes all `[[...]]` wiki links in markdown. Resolution order: `NOTES_CONTENT` → `REFERENCE` → "coming soon" fallback. Handles path stripping, alias extraction, and heading fragments. Replaces the inline regex replace inside `LearnView.md2html()`. Load before `learn.js`.
+
+**Load order in index.html:** `code-highlight.js` → `wiki-link.js` → `learn.js`. Breaking this order causes `CodeHighlight is not defined` or `WikiLink is not defined` errors.
+
+## topic-hub.js Array-Join Refactor (2026-07-28)
+
+Two concatenation chains (folder header and tab buttons) were refactored from `+` operator chains to array `.join('')` patterns. This eliminates the missing-`+` bug class entirely — orphan expression statements now can't silently break the DOM. Cross-reference comments were added at lines 18 and ~276 documenting the two-layer Study/Guide routing split.
+
+## Quiz X-Padding Cleanup (2026-07-28)
+
+723 occurrences of visible `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` padding were stripped from 517 quiz questions. This padding was originally added as a length-bias workaround (making wrong options equally long as the correct answer). It was visible to users in the quiz UI. Replaced with clean text — length bias is now handled by content quality during question authoring, not post-hoc padding.
+
+## C++ Attribute Vault Fix (2026-07-28)
+
+C++ standard attributes (`[[nodiscard]]`, `[[no_unique_address]]`, `[[gnu::noinline]]`, etc.) look identical to Obsidian wiki links and were being rendered as broken links. Fixed in the vault by wrapping all bare attributes in backticks. `convert.py` was updated to auto-wrap bare C++ attributes during conversion as a defensive measure.
 
 ## Table Rendering — Empty First Column Bug
 

@@ -65,6 +65,7 @@ Find a note that needs quizzes, read the note content, and add questions to `dat
 - 2-4 options for multiple choice — don't force exactly 4
 - Every question MUST have an explanation
 - Extract answers directly from the note content — never fabricate
+- Add `"poolSize": 12` to the quiz object — controls how many questions are drawn per session (defaults to 7)
 - Run `python build.py` after editing — it validates your quizzes before building
 
 ### 2. Add New Notes
@@ -108,6 +109,8 @@ See the full guide in [README.md](README.md#add-a-brand-new-category). Short ver
 - CSS: Use CSS variables (`var(--bg-primary)`) — all 4 themes must work
 - After any CSS edit, verify braces
 - After any JS edit, run `node -c` on the file
+- New JS modules (`code-highlight.js`, `wiki-link.js`) load before `learn.js` — keep this order in `index.html`
+- Quiz engine supports numeric equivalence (`.5` = `0.5`, `1e3` = `1000`) and per-quiz `poolSize`
 - Commit locally before risky changes
 
 ### 5. Improve Documentation
