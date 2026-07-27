@@ -6,10 +6,62 @@
 .ex-card {
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 14px 16px;
 }
 .ex-card:hover {
   border-color: #d2991d;
   box-shadow: 0 0 0 1px #d2991d;
+}
+
+.ex-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ex-level-badge {
+  margin-left: auto;
+  background: #d2991d;
+  color: #0d1117;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ex-card-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ex-card-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(210, 153, 29, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ex-card-bar-fill {
+  height: 100%;
+  background: #d2991d;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.ex-card-pct {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: right;
 }
 
 /* ── Topic Page ───────────────────────────────────────────────── */

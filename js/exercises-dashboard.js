@@ -31,14 +31,22 @@ var ExercisesUI = (function() {
         else stars += '☆';
       }
       
-      var lvLabel = 'Lv.' + t.currentLevel + '/' + t.totalLevels;
+      var lvLabel = 'Level ' + t.currentLevel + ' of ' + t.totalLevels;
       var pct = t.totalAnswered > 0 ? Math.round(t.totalCorrect / t.totalAnswered * 100) : 0;
+      // Progress = completed levels / total (level 1 = 0%, level 10 = 100%)
+      var completedCount = (t.completedLevels || []).length;
+      var progressPct = Math.round(completedCount / t.totalLevels * 100);
       
       html += '<div class="folder-card ex-card" style="--card-accent:#d2991d" onclick="router.navigate(\'#/practice/' + t.id + '\')">' +
-        '<div class="folder-icon">' + (FOLDER_ICONS['_' + t.id] || t.icon || '📐') + '</div>' +
-        '<div class="folder-name">' + t.name + '</div>' +
-        '<div class="folder-meta">' + lvLabel + (pct > 0 ? ' · ' + pct + '% accuracy' : '') + '</div>' +
-        '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">' + stars + '</div>' +
+        '<div class="ex-card-top">' +
+          '<div class="folder-icon" style="width:28px;height:28px;flex-shrink:0;">' + (FOLDER_ICONS['_' + t.id] || t.icon || '📐') + '</div>' +
+          '<div class="folder-name">' + t.name + '</div>' +
+          '<div class="ex-level-badge">' + t.currentLevel + '</div>' +
+        '</div>' +
+        '<div class="ex-card-progress">' +
+          '<div class="ex-card-bar"><div class="ex-card-bar-fill" style="width:' + progressPct + '%"></div></div>' +
+          '<span class="ex-card-pct">' + progressPct + '%</span>' +
+        '</div>' +
       '</div>';
     }
     
