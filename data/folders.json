@@ -178,6 +178,7 @@
   },
   "game-math": {
     "": [
+      "Math Formula Quick Reference",
       "Matrices & Coordinate Systems",
       "Quaternions & 3D Rotations",
       "Trigonometry & Vectors"
@@ -238,13 +239,6 @@
       "05 \u2014 Monte Carlo & Path Tracing",
       "06 \u2014 Color Spaces & HDR",
       "07 \u2014 Signed Distance Fields"
-    ],
-    "UE Math": [
-      "Collision & Intersection Math",
-      "Curves, Ranges & Random",
-      "FMath \u2014 Interpolation & Utility",
-      "FTransform & FMatrix",
-      "FVector, FRotator, FQuat \u2014 The Core Types"
     ]
   },
   "ue-core": {
@@ -255,27 +249,54 @@
       "UE Templates & T-Containers"
     ],
     "Core Systems": [
+      "DeltaTime & Interpolation",
       "FName vs FString vs FText",
       "Pointer Ecosystem",
+      "StaticClass \u2014 What It Returns",
       "UE Inheritance & UObject System",
-      "UHT, Macros & Reflection"
+      "UHT, Macros & Reflection",
+      "World & GameplayStatics \u2014 Essential Access Points"
     ],
     "Gameplay Abilities": [
-      "Prediction & Networking"
+      "Prediction & Networking",
+      "Tag System Internals"
+    ],
+    "Gameplay Abilities/Core Mechanics": [
+      "ApplyGameplayEffectSpec Pipeline",
+      "Attribute Capture System",
+      "GE Execution Flow"
     ],
     "Gameplay Abilities/Effects": [
       "GameplayEffectExecutionCalculation",
       "GameplayModMagnitudeCalculation"
     ],
+    "Gameplay Framework": [
+      "ACharacter \u2014 Essential API",
+      "APawn \u2014 Essential API"
+    ],
     "Language & Patterns": [
       "Move Semantics in UE",
-      "UE Enums & Flags"
+      "UE Enums & Flags",
+      "UE Interfaces & Execute_ Dispatch",
+      "UPROPERTY \u2014 When and Why"
     ],
     "Language & Patterns/Casting": [
       "00 \u2014 Casting Overview",
       "01 \u2014 Cast Internals & Variants",
       "02 \u2014 Interface Casting & References",
       "03 \u2014 When to Use & Pitfalls"
+    ],
+    "Math": [
+      "Collision & Intersection Math",
+      "Curves, Ranges & Random",
+      "Dot Product & Cross Product",
+      "FMath \u2014 Interpolation & Utility",
+      "FTransform & FMatrix",
+      "FVector, FRotator, FQuat \u2014 The Core Types"
+    ],
+    "Networking": [
+      "FFastArraySerializer \u2014 Fast TArray Replication",
+      "Replication Property Registration"
     ]
   },
   "ue-networking": {
