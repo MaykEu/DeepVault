@@ -41557,6 +41557,1839 @@
           "explanation": "But with interrupts enabled"
         }
       ]
+    },
+    "ACharacter \u2014 Essential API": {
+      "poolSize": 12,
+      "questions": [
+        {
+          "question": "What function returns the ACharacter's movement component?",
+          "options": [
+            "GetMovementComponent()",
+            "GetCharacterMovement()",
+            "GetPawnMovement()",
+            "GetActorMovement()"
+          ],
+          "correctAnswer": "GetCharacterMovement()",
+          "explanation": "GetCharacterMovement() returns UCharacterMovementComponent* which gives access to MaxWalkSpeed, JumpZVelocity, GravityScale, MovementMode, and more."
+        },
+        {
+          "question": "What does ACharacter::Jump() do?",
+          "options": [
+            "Immediately moves the character up by JumpZVelocity",
+            "Triggers the jump state \u2014 the movement component handles the actual physics",
+            "Teleports the character to a NavMesh point",
+            "Adds a force in the Z direction for one frame"
+          ],
+          "correctAnswer": "Triggers the jump state \u2014 the movement component handles the actual physics",
+          "explanation": "Jump() sets bPressedJump = true and the movement component's physics tick handles the actual jumping behavior including JumpZVelocity, air control, and landing."
+        },
+        {
+          "question": "How do you get the velocity of a Character?",
+          "options": [
+            "SomeChar->Velocity",
+            "SomeChar->GetCharacterMovement()->Velocity",
+            "SomeChar->GetVelocity()",
+            "SomeChar->GetRootComponent()->GetComponentVelocity()"
+          ],
+          "correctAnswer": "SomeChar->GetVelocity()",
+          "explanation": "GetVelocity() is defined on AActor (via the movement component). It returns the current linear velocity vector."
+        },
+        {
+          "question": "What does ACharacter::CanJump() return?",
+          "correctAnswer": "True if the character can jump right now (is on ground, not already jumping, movement mode allows it)",
+          "acceptableAnswers": [
+            "True if the character can jump",
+            "checks if character is on ground and not already jumping",
+            "returns true when jump is possible"
+          ],
+          "explanation": "CanJump() checks: IsMovingOnGround() and !bWasJumping and CanJumpInternal_Implementation(). It's a virtual \u2014 override for custom rules."
+        },
+        {
+          "question": "What component does ACharacter create by default?",
+          "options": [
+            "USkeletalMeshComponent only",
+            "UCharacterMovementComponent and UCapsuleComponent",
+            "UCharacterMovementComponent only",
+            "UCapsuleComponent and USkeletalMeshComponent and UCharacterMovementComponent"
+          ],
+          "correctAnswer": "UCapsuleComponent and USkeletalMeshComponent and UCharacterMovementComponent",
+          "explanation": "ACharacter automatically creates: CapsuleComponent (collision), SkeletalMeshComponent (visual), and CharacterMovement (movement). You don't need to create these manually."
+        },
+        {
+          "question": "How do you set a character's maximum walk speed?",
+          "options": [
+            "SomeChar->MaxWalkSpeed = 600.f",
+            "SomeChar->GetCharacterMovement()->MaxWalkSpeed = 600.f",
+            "SomeChar->SetMaxWalkSpeed(600.f)",
+            "SomeChar->Movement->SetSpeed(600.f)"
+          ],
+          "correctAnswer": "SomeChar->GetCharacterMovement()->MaxWalkSpeed = 600.f",
+          "explanation": "MaxWalkSpeed is a property of UCharacterMovementComponent. Access it via GetCharacterMovement() which returns the pointer directly."
+        },
+        {
+          "question": "How do you disable character movement input?",
+          "options": [
+            "SomeChar->SetInputEnabled(false)",
+            "SomeController->SetIgnoreInput(true)",
+            "SomeChar->DisableInput(SomeController)",
+            "SomeChar->GetCharacterMovement()->SetActive(false)"
+          ],
+          "correctAnswer": "SomeChar->DisableInput(SomeController)",
+          "explanation": "DisableInput() is on APawn (parent of ACharacter). Pass the controller to disable. Use EnableInput() to re-enable. This stops input processing \u2014 movement, actions, everything."
+        },
+        {
+          "question": "What does GetCharacterMovement()->IsFalling() return?",
+          "correctAnswer": "True when the character is in the air (MovementMode is MOVE_Falling)",
+          "acceptableAnswers": [
+            "True when in air",
+            "True when movement mode is falling",
+            "true if character is not on ground"
+          ],
+          "explanation": "IsFalling() returns true when MovementMode == MOVE_Falling. Useful for checking if the character is mid-jump, knocked back, or walking off a ledge."
+        },
+        {
+          "question": "How do you launch a Character with physics velocity?",
+          "options": [
+            "SomeChar->AddForce(Velocity * Mass)",
+            "SomeChar->LaunchCharacter(Velocity, bOverrideXY, bOverrideZ)",
+            "SomeChar->GetCharacterMovement()->AddImpulse(Velocity, true)",
+            "SomeChar->ApplyDamage(Velocity.Size(), ...)"
+          ],
+          "correctAnswer": "SomeChar->LaunchCharacter(Velocity, bOverrideXY, bOverrideZ)",
+          "explanation": "LaunchCharacter() sets the character's velocity directly. bOverrideXY: override existing XY velocity. bOverrideZ: override existing Z velocity. Used for jump pads, knockback, etc."
+        },
+        {
+          "question": "What's the difference between a Character and a Pawn?",
+          "correctAnswer": "A Character is a Pawn with built-in movement (capsule, skeletal mesh, CharacterMovementComponent). A Pawn has none of these \u2014 you build movement yourself.",
+          "acceptableAnswers": [
+            "Character has built-in movement and capsule, Pawn does not",
+            "Character = Pawn + capsule + skeletal mesh + movement component",
+            "Character auto-creates movement and collision components"
+          ],
+          "explanation": "ACharacter extends APawn and automatically creates: CapsuleComponent for collision, SkeletalMeshComponent for visuals, and UCharacterMovementComponent for walking/flying/swimming. APawn gives you none \u2014 you implement movement from scratch."
+        },
+        {
+          "question": "Which movement mode lets a character walk on the ground?",
+          "options": [
+            "MOVE_None",
+            "MOVE_Walking",
+            "MOVE_Grounded",
+            "MOVE_NavWalking"
+          ],
+          "correctAnswer": "MOVE_Walking",
+          "explanation": "MOVE_Walking is the default ground movement mode. Others: MOVE_Falling (in air), MOVE_Flying (no gravity), MOVE_Swimming (water), MOVE_NavWalking (AI nav movement)."
+        },
+        {
+          "question": "How do you play a montage on a Character?",
+          "options": [
+            "SomeChar->GetMesh()->GetAnimInstance()->Montage_Play(Montage)",
+            "SomeChar->PlayMontage(Montage)",
+            "SomeChar->PlayAnimMontage(Montage)",
+            "SomeChar->GetAnimInstance()->PlayMontage(Montage)"
+          ],
+          "correctAnswer": "SomeChar->GetMesh()->GetAnimInstance()->Montage_Play(Montage)",
+          "explanation": "Montages are played on the AnimInstance which you get via Character->GetMesh()->GetAnimInstance(). Montage_Play() returns the length; Montage_Stop() with InBlendOutTime for smooth blending."
+        }
+      ]
+    },
+    "APawn \u2014 Essential API": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "How do you get the PlayerState from a Pawn?",
+          "options": [
+            "SomePawn->PlayerState",
+            "SomePawn->GetPlayerState()",
+            "SomePawn->GetState()",
+            "SomePawn->GetOwner()"
+          ],
+          "correctAnswer": "SomePawn->GetPlayerState()",
+          "explanation": "GetPlayerState() returns APlayerState*. There's also a templated version: GetPlayerState<AMyPlayerState>() and GetPlayerStateChecked<T>() which asserts in debug builds."
+        },
+        {
+          "question": "How do you get the Controller controlling this Pawn?",
+          "options": [
+            "SomePawn->Owner",
+            "SomePawn->GetOwner()",
+            "SomePawn->GetController()",
+            "SomePawn->Controller"
+          ],
+          "correctAnswer": "SomePawn->GetController()",
+          "explanation": "GetController() returns AController*. This is the most common way to access the player or AI controller controlling the pawn."
+        },
+        {
+          "question": "What does APawn::GetMovementComponent() return?",
+          "options": [
+            "UCharacterMovementComponent*",
+            "UPawnMovementComponent* \u2014 the base class, may be null",
+            "UMovementComponent* \u2014 always valid",
+            "FVector \u2014 the current velocity"
+          ],
+          "correctAnswer": "UPawnMovementComponent* \u2014 the base class, may be null",
+          "explanation": "GetMovementComponent() returns UPawnMovementComponent*. It may be null for pawns without movement. Characters will return UCharacterMovementComponent which extends UPawnMovementComponent."
+        },
+        {
+          "question": "What does AddMovementInput() do?",
+          "correctAnswer": "Adds movement input in a world direction, scaled by DeltaTime. The movement component consumes this input on the next tick.",
+          "acceptableAnswers": [
+            "Adds movement input in a direction scaled by time",
+            "consumed by movement component on next tick",
+            "adds world-direction input for movement"
+          ],
+          "explanation": "AddMovementInput(WorldDirection, ScaleValue, bForce) adds to a pending input vector. The movement component consumes this vector each tick. bForce bypasses the input scale (e.g., for analog stick vs keyboard)."
+        },
+        {
+          "question": "How do you set a Pawn's location directly?",
+          "options": [
+            "SomePawn->Location = NewPos",
+            "SomePawn->SetActorLocation(NewPos)",
+            "SomePawn->SetLocation(NewPos)",
+            "SomePawn->GetRootComponent()->SetWorldLocation(NewPos)"
+          ],
+          "correctAnswer": "SomePawn->SetActorLocation(NewPos)",
+          "explanation": "SetActorLocation() is inherited from AActor. It teleports the pawn to the new location. There's also SetActorLocationAndRotation() for both at once."
+        },
+        {
+          "question": "What does APawn::GetNavAgentLocation() return?",
+          "correctAnswer": "The location used for navigation/pathfinding (usually the capsule bottom center)",
+          "acceptableAnswers": [
+            "Location for navigation",
+            "capsule bottom center",
+            "the navigation agent position",
+            "where the navmesh sees the pawn"
+          ],
+          "explanation": "GetNavAgentLocation() returns the navigation-relevant location \u2014 typically the bottom center of the collision capsule. The nav system uses this for pathfinding and arrival tests, not the actor's pivot."
+        },
+        {
+          "question": "What is APawn::bUseControllerRotationYaw?",
+          "options": [
+            "If true, the pawn's yaw matches the controller's rotation yaw",
+            "If true, the pawn faces the movement direction",
+            "If true, the pawn rotates toward the nearest enemy",
+            "If true, the pawn's pitch matches the controller"
+          ],
+          "correctAnswer": "If true, the pawn's yaw matches the controller's rotation yaw",
+          "explanation": "bUseControllerRotationYaw makes the pawn's yaw follow the controller. bUseControllerRotationPitch and bUseControllerRotationRoll control the other axes. Characters typically set Yaw only."
+        },
+        {
+          "question": "How do you set a pawn to be possessed by a new controller?",
+          "options": [
+            "NewController->Control(SomePawn)",
+            "NewController->Possess(SomePawn)",
+            "SomePawn->SetOwner(NewController)",
+            "NewController->SetPawn(SomePawn)"
+          ],
+          "correctAnswer": "NewController->Possess(SomePawn)",
+          "explanation": "Possess() on the controller takes control of the pawn. UnPossess() releases it. The pawn's OnPossessed()/OnUnPossessed() events fire during these calls for initialization/cleanup."
+        },
+        {
+          "question": "What does AddControllerYawInput() do?",
+          "correctAnswer": "Adds yaw rotation input (mouse look left/right). The pawn consumes this each tick.",
+          "acceptableAnswers": [
+            "Adds yaw rotation input",
+            "mouse look left right",
+            "rotation around Z axis input"
+          ],
+          "explanation": "AddControllerYawInput(Val) adds to pending yaw rotation. There's also AddControllerPitchInput() and AddControllerRollInput(). The player controller typically calls these in response to mouse/joystick input."
+        },
+        {
+          "question": "What does APawn::GetMovementBaseActor() return?",
+          "options": [
+            "The actor this pawn is currently standing on (e.g., moving platform)",
+            "The root component of the pawn",
+            "The owning controller",
+            "The next movement destination"
+          ],
+          "correctAnswer": "The actor this pawn is currently standing on (e.g., moving platform)",
+          "explanation": "GetMovementBaseActor() returns the AActor the pawn is standing on \u2014 e.g., a moving platform, elevator, or vehicle. When standing on something, the pawn moves with it."
+        }
+      ]
+    },
+    "UE Interfaces & Execute_ Dispatch": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "Why does UE require two classes for an interface?",
+          "options": [
+            "For Blueprint compatibility \u2014 one for C++, one for BP",
+            "Because UE's UObject uses single-inheritance reflection but C++ needs multiple-inheritance for vtables",
+            "For performance \u2014 the U-interface caches function pointers",
+            "For network replication \u2014 interfaces need a UObject base"
+          ],
+          "correctAnswer": "Because UE's UObject uses single-inheritance reflection but C++ needs multiple-inheritance for vtables",
+          "explanation": "UE's reflection system uses single-inheritance (every UObject has one parent). But C++ interfaces need multiple-inheritance (a class can implement many interfaces). The dual-class pattern bridges this: UInterface for reflection registration, IInterface for virtual dispatch."
+        },
+        {
+          "question": "What macro marks the U-side of an interface?",
+          "options": [
+            "UCLASS()",
+            "UINTERFACE()",
+            "UINTERFACE_CLASS()",
+            "UOBJECT()"
+          ],
+          "correctAnswer": "UINTERFACE()",
+          "explanation": "UINTERFACE() marks the UObject side. The C++ side uses standard C++ class with 'class IMyInterface' (no U macro). The UINTERFACE macro takes optional specifiers like BlueprintType, MinimalAPI."
+        },
+        {
+          "question": "What does the auto-generated Execute_ function include?",
+          "correctAnswer": "A built-in ImplementsInterface check before calling the actual implementation, so you can safely call Execute_ on any UObject.",
+          "acceptableAnswers": [
+            "A built-in ImplementsInterface check",
+            "checks if the object implements the interface before calling",
+            "safe call with interface check"
+          ],
+          "explanation": "Execute_FunctionName(Object, Params) is auto-generated by UHT. It first checks Object->GetClass()->ImplementsInterface(UMyInterface::StaticClass()) before calling the virtual function. This makes Execute_ calls safe \u2014 no nullptr or crash on non-implementing objects."
+        },
+        {
+          "question": "How do you call an interface function from C++?",
+          "options": [
+            "Call IMyInterface::Execute_Func(Object, Params)",
+            "Object->Func(Params) \u2014 direct virtual call",
+            "Call IMyInterface::Func(Object, Params)",
+            "IMyInterface::Execute_Func(Object, Params)"
+          ],
+          "correctAnswer": "IMyInterface::Execute_Func(Object, Params)",
+          "explanation": "UE generates static Execute_ functions on the I-interface. Call them as IMyInterface::Execute_DoSomething(SomeObject, Params). The Execute_ prefix indicates the safe, checked version."
+        },
+        {
+          "question": "How do you check if a UObject implements an interface?",
+          "options": [
+            "Object->Implements<UMyInterface>()",
+            "Object->GetClass()->ImplementsInterface(UMyInterface::StaticClass())",
+            "Object->IsA(UMyInterface::StaticClass())",
+            "Object->HasInterface<IMyInterface>()"
+          ],
+          "correctAnswer": "Object->GetClass()->ImplementsInterface(UMyInterface::StaticClass())",
+          "explanation": "ImplementsInterface() checks if the class (or any parent) implements the given UInterface. Returns true/false. You can also do Cast<IMyInterface>(Object) which returns nullptr if not implemented."
+        },
+        {
+          "question": "When do you declare interface functions with BlueprintImplementableEvent?",
+          "options": [
+            "When you want C++ to provide a default implementation",
+            "When you only want Blueprint to implement the function (no C++ default)",
+            "When the function needs network replication",
+            "When the function can only be called from C++"
+          ],
+          "correctAnswer": "When you only want Blueprint to implement the function (no C++ default)",
+          "explanation": "BlueprintImplementableEvent means: declare in C++ (for the interface contract), implement in Blueprint. No _Implementation function needed. BlueprintNativeEvent means: can implement in C++ (_Implementation suffix) with Blueprint override option."
+        },
+        {
+          "question": "What prefix do blueprint-implementable interface functions get when called from C++?",
+          "options": [
+            "Call_",
+            "Execute_",
+            "BP_",
+            "Interface_"
+          ],
+          "correctAnswer": "Execute_",
+          "explanation": "Even BlueprintImplementableEvent functions get Execute_ wrappers. The Execute_ function calls the Blueprint implementation (via UFunction invocation). This makes the calling convention consistent \u2014 Execute_ always works regardless of implementation language."
+        },
+        {
+          "question": "What happens if you call IMyInterface::Execute_Func(Object) and Object doesn't implement the interface?",
+          "options": [
+            "Nullptr crash",
+            "The function silently returns",
+            "The function logs an error and returns default value",
+            "Compile error \u2014 impossible to call"
+          ],
+          "correctAnswer": "The function silently returns",
+          "explanation": "Execute_ checks ImplementsInterface() first. If false, it returns without calling anything. No crash, no error log. This is why you should always check yourself if you need to know whether the call actually executed."
+        },
+        {
+          "question": "How do you iterate all actors implementing an interface?",
+          "correctAnswer": "Use UGameplayStatics::GetAllActorsWithInterface(World, UMyInterface::StaticClass(), OutActors)",
+          "acceptableAnswers": [
+            "GetAllActorsWithInterface",
+            "iterate with ImplementsInterface check",
+            "use GetAllActorsWithInterface from GameplayStatics"
+          ],
+          "explanation": "UGameplayStatics::GetAllActorsWithInterface(World, UMyInterface::StaticClass(), OutActors) fills an array with all actors implementing the interface. Much faster than GetAllActorsOfClass + manual filtering."
+        },
+        {
+          "question": "What's the primary benefit of UE interfaces over C++ dynamic_cast?",
+          "correctAnswer": "UE interfaces use Execute_ with a bit-flag ImplementsInterface check (O(1)), while dynamic_cast walks the vtable hierarchy (O(depth), 50-200+ cycles)",
+          "acceptableAnswers": [
+            "Faster than dynamic_cast using bit-flag check",
+            "Execute_ is O(1) vs dynamic_cast O(depth)",
+            "uses ImplementsInterface bit flag instead of vtable walk"
+          ],
+          "explanation": "dynamic_cast walks the class hierarchy, checking type_info at each level. UE's ImplementsInterface() uses a bit-flag array indexed by interface ID \u2014 one bitwise AND, O(1). This is the same mechanism that makes Cast<T>() faster than dynamic_cast."
+        }
+      ]
+    },
+    "UPROPERTY \u2014 When and Why": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What does UPROPERTY() actually do?",
+          "options": [
+            "Manages memory allocation for the variable",
+            "Registers the variable with UE's reflection system so the engine can track it",
+            "Makes the variable thread-safe",
+            "Automatically creates getter/setter functions"
+          ],
+          "correctAnswer": "Registers the variable with UE's reflection system so the engine can track it",
+          "explanation": "UPROPERTY() registers a member variable with UE's reflection system. It tells the engine the variable EXISTS. The systems that USE this registration (GC, replication, serialization, BP) then work automatically."
+        },
+        {
+          "question": "Which UPROPERTY specifier makes a UObject pointer safe from garbage collection?",
+          "options": [
+            "SaveGame",
+            "Replicated",
+            "EditAnywhere",
+            "No specifier needed \u2014 UPROPERTY() alone marks the pointer for GC"
+          ],
+          "correctAnswer": "No specifier needed \u2014 UPROPERTY() alone marks the pointer for GC",
+          "explanation": "UPROPERTY() alone is sufficient for GC tracking. The engine scans all UPROPERTY-marked UObject pointers and marks them as reachable. Without UPROPERTY, the GC may collect the pointed-to object even while the pointer still references it."
+        },
+        {
+          "question": "What does ReplicatedUsing = OnRep_VarName do?",
+          "options": [
+            "Tells the server to call the function before replicating",
+            "Tells the client to call OnRep_VarName after the variable is replicated",
+            "Tells the network driver to compress the variable",
+            "Tells the engine to log every replication of this variable"
+          ],
+          "correctAnswer": "Tells the client to call OnRep_VarName after the variable is replicated",
+          "explanation": "ReplicatedUsing specifies a callback function called on remote machines after the variable is replicated. Used for visual updates, sound triggers, or any client-side reaction to a replicated change. Must pair with a UFUNCTION() void OnRep_VarName()."
+        },
+        {
+          "question": "What happens to UPROPERTY variables during garbage collection?",
+          "correctAnswer": "They mark referenced UObjects as reachable. The GC then keeps reachable objects and collects unreachable ones.",
+          "acceptableAnswers": [
+            "They mark UObjects as reachable preventing collection",
+            "GC keeps objects referenced by UPROPERTY pointers",
+            "mark phase keeps UPROPERTY-referenced objects alive"
+          ],
+          "explanation": "During GC's mark phase, the engine walks all UObject chains starting from root objects. When it finds a UPROPERTY UObject pointer, it marks that object as reachable. The sweep phase then deletes unreachable objects. Without UPROPERTY, the pointer is invisible to the mark phase."
+        },
+        {
+          "question": "What does EditAnywhere do vs EditDefaultsOnly vs EditInstanceOnly?",
+          "correctAnswer": "EditAnywhere = edit in BP defaults AND per-instance in level. EditDefaultsOnly = only in class defaults. EditInstanceOnly = only on placed instances.",
+          "acceptableAnswers": [
+            "EditAnywhere allows editing anywhere, EditDefaultsOnly only in class defaults, EditInstanceOnly only on instances"
+          ],
+          "explanation": "EditAnywhere: visible in class defaults AND per-instance details panel. EditDefaultsOnly: only in the Blueprint class defaults (not per-instance). EditInstanceOnly: only on instances placed in the level (not in the class defaults)."
+        },
+        {
+          "question": "What does UPROPERTY() provide for Blueprint access?",
+          "options": [
+            "Only BlueprintReadWrite makes the variable visible in BP \u2014 UPROPERTY alone doesn't",
+            "UPROPERTY alone makes it Blueprint-accessible",
+            "UPROPERTY with any specifier makes it Blueprint-accessible",
+            "UPROPERTY always makes variables Blueprint-visible"
+          ],
+          "correctAnswer": "Only BlueprintReadWrite makes the variable visible in BP \u2014 UPROPERTY alone doesn't",
+          "explanation": "UPROPERTY alone registers with reflection but doesn't expose to Blueprint. Add BlueprintReadOnly or BlueprintReadWrite to make it accessible in Blueprint graphs. BlueprintReadOnly = can read in BP, not write. BlueprintReadWrite = full access."
+        },
+        {
+          "question": "What does Transient specifier do?",
+          "options": [
+            "Makes the variable reset to default on level load",
+            "Prevents the variable from being serialized (saved/loaded)",
+            "Makes the variable only exist on the server",
+            "Marks the variable as temporary for GC sweep"
+          ],
+          "correctAnswer": "Prevents the variable from being serialized (saved/loaded)",
+          "explanation": "Transient means the variable is NOT saved with the object. Its value exists only at runtime. Useful for cached data, runtime-only state, or pointers you'll re-acquire on load. Transient variables are also skipped by copy/paste and duplicate."
+        },
+        {
+          "question": "What's the difference between UPROPERTY and UFUNCTION for replication?",
+          "correctAnswer": "UPROPERTY replicates state (variables). UFUNCTION replicates events (RPC calls). Both need the Replicated specifier.",
+          "acceptableAnswers": [
+            "UPROPERTY for replicated variables, UFUNCTION for RPCs",
+            "variables use UPROPERTY, RPCs use UFUNCTION",
+            "UPROPERTY replicates state, UFUNCTION replicates calls"
+          ],
+          "explanation": "UPROPERTY(Replicated) syncs variable values from server to clients automatically. UFUNCTION(Server/Client/NetMulticast) creates Remote Procedure Calls \u2014 function invocations sent across the network. They serve different purposes: state sync vs event dispatch."
+        },
+        {
+          "question": "Does UPROPERTY() make a C++ variable visible in the editor's details panel?",
+          "options": [
+            "Yes \u2014 UPROPERTY alone shows it",
+            "No \u2014 need EditAnywhere, EditDefaultsOnly, or VisibleAnywhere",
+            "Yes, but only for UObject subclasses",
+            "Only with the BlueprintReadOnly specifier"
+          ],
+          "correctAnswer": "No \u2014 need EditAnywhere, EditDefaultsOnly, or VisibleAnywhere",
+          "explanation": "UPROPERTY alone only registers with reflection. To show in the details panel, you need an Edit specifier (EditAnywhere, EditDefaultsOnly, EditInstanceOnly) for editable or VisibleAnywhere/VisibleDefaultsOnly for read-only display."
+        },
+        {
+          "question": "What does AdvancedDisplay specifier do?",
+          "options": [
+            "Makes the variable only visible in C++ code",
+            "Hides the variable behind an 'Advanced' dropdown in the details panel",
+            "Enables GPU-accelerated display rendering",
+            "Marks the variable for high-priority GC scanning"
+          ],
+          "correctAnswer": "Hides the variable behind an 'Advanced' dropdown in the details panel",
+          "explanation": "AdvancedDisplay collapses the property under an 'Advanced' section in the Details panel. Used for rarely-changed or expert-level properties. Cleaner UX \u2014 common properties stay visible, advanced ones are hidden by default."
+        }
+      ]
+    },
+    "Dot Product & Cross Product": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What is the formula for dot product?",
+          "options": [
+            "A.x*B.x + A.y*B.y + A.z*B.z",
+            "(A.x+B.x) * (A.y+B.y) * (A.z+B.z)",
+            "|A| * |B|",
+            "A.x*B.x - A.y*B.y - A.z*B.z"
+          ],
+          "correctAnswer": "A.x*B.x + A.y*B.y + A.z*B.z",
+          "explanation": "Dot product = component-wise multiplication then sum. FVector::DotProduct(A, B) = A.X*B.X + A.Y*B.Y + A.Z*B.Z. Also equals |A||B|cos(\u03b8)."
+        },
+        {
+          "question": "If two vectors are perpendicular, what is their dot product?",
+          "options": [
+            "1",
+            "0",
+            "-1",
+            "90"
+          ],
+          "correctAnswer": "0",
+          "explanation": "Dot product = |A||B|cos(90\u00b0) = |A||B|*0 = 0. This is the most useful property \u2014 dot==0 means perpendicular. Used for wall detection, ground checks, and orthogonality tests."
+        },
+        {
+          "question": "How do you check if a character is facing a target?",
+          "correctAnswer": "GetForwardVector\u00b7(TargetPos - CharPos).Normalize. If result > 0, character is facing the general direction of the target.",
+          "acceptableAnswers": [
+            "dot of forward and direction > 0",
+            "dot forward with normalized direction to target",
+            "GetForwardVector dot towards target > 0"
+          ],
+          "explanation": "CharForward\u00b7DirectionToTarget > 0 means the target is in front of the character. For precision, normalize the direction vector first. cos(\u03b8)>0 means the angle is less than 90\u00b0."
+        },
+        {
+          "question": "What is the magnitude of the cross product?",
+          "options": [
+            "|A||B|sin(\u03b8)",
+            "|A||B|cos(\u03b8)",
+            "|A|+|B|",
+            "|A||B|"
+          ],
+          "correctAnswer": "|A||B|sin(\u03b8)",
+          "explanation": "|A\u00d7B| = |A||B|sin(\u03b8). This equals the area of the parallelogram formed by A and B. When both are unit vectors, the magnitude is sin(\u03b8)."
+        },
+        {
+          "question": "How do you find a surface normal from three points on a triangle?",
+          "correctAnswer": "Cross product of (B-A)\u00d7(C-A), then normalize. The order determines which face the normal points toward (right-hand rule).",
+          "acceptableAnswers": [
+            "cross product of two edge vectors",
+            "cross of (B-A) and (C-A) then normalize"
+          ],
+          "explanation": "Compute edge1 = B-A, edge2 = C-A, then FVector::CrossProduct(edge1, edge2).GetSafeNormal(). The normal points outward from the surface following the right-hand rule."
+        },
+        {
+          "question": "What does the sign of dot product tell you about the angle?",
+          "options": [
+            "Positive = acute (<90\u00b0), negative = obtuse (>90\u00b0), zero = 90\u00b0",
+            "Positive = >180\u00b0, negative = <180\u00b0",
+            "The sign is always positive",
+            "Positive = facing same direction only at 0\u00b0"
+          ],
+          "correctAnswer": "Positive = acute (<90\u00b0), negative = obtuse (>90\u00b0), zero = 90\u00b0",
+          "explanation": "Dot = cos(\u03b8) * |A||B|. Since magnitudes are positive, dot sign = cos sign. cos > 0 for 0\u00b0-90\u00b0, cos < 0 for 90\u00b0-180\u00b0, cos = 0 at 90\u00b0."
+        },
+        {
+          "question": "How do you calculate the angle between two vectors?",
+          "options": [
+            "FMath::Acos(FVector::DotProduct(A.GetSafeNormal(), B.GetSafeNormal()))",
+            "FVector::Angle(A, B)",
+            "FMath::Atan2(A.Size(), B.Size())",
+            "(A\u00b7B) / (|A|*|B|)"
+          ],
+          "correctAnswer": "FMath::Acos(FVector::DotProduct(A.GetSafeNormal(), B.GetSafeNormal()))",
+          "explanation": "acos(dot(normalizedA, normalizedB)) gives the angle in radians. Convert to degrees: FMath::RadiansToDegrees(acos(dot)). FVector::DotProduct alone gives cos(\u03b8), not \u03b8 directly."
+        },
+        {
+          "question": "How do you determine if an enemy is to the left or right of the player?",
+          "correctAnswer": "Cross the player's forward with the direction to the enemy. If result.Z > 0, enemy is to the right. If < 0, to the left.",
+          "acceptableAnswers": [
+            "cross forward with enemy direction check Z sign",
+            "cross product Z component positive means right",
+            "FVector::CrossProduct(forward, toEnemy).Z > 0 = right"
+          ],
+          "explanation": "FVector::CrossProduct(PlayerForward, DirToEnemy).Z > 0 = enemy is to the right (right-hand rule). This is how AI senses flanking, how strafe direction is determined, and how animation blend spaces pick left/right poses."
+        },
+        {
+          "question": "How do you project one vector onto another?",
+          "correctAnswer": "Projected = B * (A\u00b7B / |B|\u00b2). The length of the projection is A\u00b7B when B is unit length.",
+          "acceptableAnswers": [
+            "B times dot A B over B length squared",
+            "A dot B divided by B squared times B",
+            "multiply B by normalized dot"
+          ],
+          "explanation": "Projection of A onto B = (A\u00b7B / B\u00b7B) * B. If B is normalized, this simplifies to (A\u00b7B) * B. FVector::ProjectOnToNormal() handles this. The rejection (perpendicular component) = A - projection."
+        },
+        {
+          "question": "What's the difference between FVector::DotProduct and | (pipe operator) in UE vector math?",
+          "options": [
+            "| is the dot product operator shorthand in UE \u2014 same result",
+            "| performs cross product, not dot",
+            "| returns the distance between two vectors",
+            "| doesn't exist \u2014 dot is always FVector::DotProduct()"
+          ],
+          "correctAnswer": "| is the dot product operator shorthand in UE \u2014 same result",
+          "explanation": "UE overloads operator| for dot product: A | B is identical to FVector::DotProduct(A, B). Similarly, operator^ is cross product: A ^ B = FVector::CrossProduct(A, B). These are UE-specific operator overloads, not standard C++."
+        }
+      ]
+    },
+    "DeltaTime & Interpolation": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What is DeltaTime?",
+          "correctAnswer": "The time in seconds since the last frame \u2014 makes movement frame-rate independent",
+          "acceptableAnswers": [
+            "time since last frame in seconds",
+            "seconds elapsed since previous frame",
+            "time between frames"
+          ],
+          "explanation": "DeltaTime = time elapsed since last Tick(). At 60 FPS = ~0.0167s, at 30 FPS = ~0.033s. Multiplying by DeltaTime makes movement work at the same speed regardless of frame rate."
+        },
+        {
+          "question": "How do you move an actor at a constant speed using DeltaTime?",
+          "options": [
+            "SetActorLocation(GetActorLocation() + Velocity * DeltaTime)",
+            "SetActorLocation(GetActorLocation() + Velocity)",
+            "AddMovementInput(Velocity)",
+            "MoveComponent.Velocity = Velocity"
+          ],
+          "correctAnswer": "SetActorLocation(GetActorLocation() + Velocity * DeltaTime)",
+          "explanation": "Velocity * DeltaTime = distance to move this frame. At 600 units/sec: Frame at 60FPS moves 10 units, frame at 30FPS moves 20 units. Without DeltaTime, the actor moves twice as fast at 60FPS vs 30FPS."
+        },
+        {
+          "question": "What does FMath::FInterpTo do?",
+          "options": [
+            "Moves Current toward Target at a constant speed",
+            "Moves Current toward Target with exponential ease-out \u2014 fast when far, slow when close",
+            "Instantly snaps to Target",
+            "Linearly interpolates between two values"
+          ],
+          "correctAnswer": "Moves Current toward Target with exponential ease-out \u2014 fast when far, slow when close",
+          "explanation": "FInterpTo(Current, Target, DeltaTime, Speed) each frame moves a fraction of the remaining distance: Current += (Target-Current) * Clamp(Speed*DeltaTime). This creates natural deceleration as it approaches the target."
+        },
+        {
+          "question": "When should you use FInterpConstantTo instead of FInterpTo?",
+          "options": [
+            "When you need exponential ease-out",
+            "When you need movement at a constant fixed speed regardless of distance",
+            "When interpolating rotations",
+            "When DeltaTime is zero"
+          ],
+          "correctAnswer": "When you need movement at a constant fixed speed regardless of distance",
+          "explanation": "FInterpConstantTo(Current, Target, DeltaTime, Speed) moves at exactly Speed units per second. Doesn't slow down near the target. Better for: consistent-speed elevators, predictable moving platforms, UI marquees that shouldn't ease."
+        },
+        {
+          "question": "What's the typical DeltaTime at 60 FPS?",
+          "options": [
+            "0.6 seconds",
+            "0.0167 seconds (~16.7ms)",
+            "1.0 seconds",
+            "0.06 seconds"
+          ],
+          "correctAnswer": "0.0167 seconds (~16.7ms)",
+          "explanation": "DeltaTime = 1/FPS. At 60 FPS: 1/60 \u2248 0.0167s. At 30 FPS: 1/30 \u2248 0.033s. At 144 FPS: 1/144 \u2248 0.0069s. The frame rate directly affects DeltaTime \u2014 this is WHY we multiply by it."
+        },
+        {
+          "question": "What happens if you forget to multiply by DeltaTime?",
+          "correctAnswer": "Movement speed becomes frame-rate dependent \u2014 twice as fast at 60 FPS vs 30 FPS",
+          "acceptableAnswers": [
+            "Movement speed varies with frame rate",
+            "game runs at different speeds on different hardware",
+            "frame rate dependent movement"
+          ],
+          "explanation": "Without DeltaTime, an actor moving 10 units/frame moves 600 units/sec at 60 FPS but only 300 units/sec at 30 FPS. The game literally runs at different speeds on different hardware. This is the most common beginner bug in game programming."
+        },
+        {
+          "question": "What does FMath::FInterpTo return when Current == Target?",
+          "options": [
+            "The Target value (no change)",
+            "0",
+            "DeltaTime * Speed",
+            "An error"
+          ],
+          "correctAnswer": "The Target value (no change)",
+          "explanation": "FInterpTo(Current, Target, ...) never overshoots \u2014 when Current reaches Target, it stops moving. The function effectively does: if nearly equal, return Target. Otherwise, move a fraction of the distance."
+        },
+        {
+          "question": "How do you make a camera smoothly follow a target?",
+          "correctAnswer": "CameraPos = FMath::FInterpTo(CameraPos, TargetPos, DeltaTime, FollowSpeed). Exponential ease-out gives smooth deceleration as camera approaches.",
+          "acceptableAnswers": [
+            "FInterpTo for camera follow",
+            "interpolate camera to target with FInterpTo"
+          ],
+          "explanation": "FInterpTo is ideal for camera follow: fast to catch up when the target moves suddenly, slow to settle when close. Speed values: 3-5 for gentle follow, 8-12 for tight follow, 15+ for snap. Use VInterpTo for FVector interpolation."
+        },
+        {
+          "question": "What's the difference between FMath::FInterpTo and FMath::Lerp?",
+          "options": [
+            "No difference \u2014 same function",
+            "FInterpTo = stateful frame-by-frame easing. Lerp = stateless A\u2192B interpolation",
+            "FInterpTo works with FVector, Lerp with float",
+            "FInterpTo is faster"
+          ],
+          "correctAnswer": "FInterpTo = stateful frame-by-frame easing. Lerp = stateless A\u2192B interpolation",
+          "explanation": "FInterpTo needs to be called every frame with the updated Current value \u2014 it builds up movement over time. Lerp(A, B, Alpha) computes one value instantly. Use InterpTo for ongoing movement; Lerp for one-shot blending (e.g., 'set health bar to 60% over 0.5s')."
+        },
+        {
+          "question": "What does AActor::Tick(DeltaTime) provide that you should use?",
+          "options": [
+            "The DeltaTime parameter \u2014 always use this, never use a cached value",
+            "The actor's current velocity",
+            "World context",
+            "The player's input state"
+          ],
+          "correctAnswer": "The DeltaTime parameter \u2014 always use this, never use a cached value",
+          "explanation": "Actor::Tick(DeltaTime) receives the engine-calculated DeltaTime. Always use THIS DeltaTime parameter in Tick, not a value you stored earlier. The engine handles frame pacing, sub-stepping, and time dilation \u2014 your stored value won't reflect these."
+        }
+      ]
+    },
+    "StaticClass \u2014 What It Returns": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What does StaticClass() return?",
+          "options": [
+            "A new instance of the class",
+            "A UClass* pointer \u2014 a singleton runtime metadata object representing the class",
+            "A string containing the class name",
+            "A CDO (Class Default Object)"
+          ],
+          "correctAnswer": "A UClass* pointer \u2014 a singleton runtime metadata object representing the class",
+          "explanation": "StaticClass() returns a UClass* that is created once on first call and stored permanently. It contains: class name, parent class, properties list, functions list, flags, and interface implementations. This is UE's reflection entry point."
+        },
+        {
+          "question": "How many UClass objects exist for a given class?",
+          "options": [
+            "One per instance of the class",
+            "Exactly one \u2014 a singleton, created on first call, kept alive permanently",
+            "One per level that uses the class",
+            "One per module that references the class"
+          ],
+          "correctAnswer": "Exactly one \u2014 a singleton, created on first call, kept alive permanently",
+          "explanation": "The UClass is created once and stored as a global static. Every call to StaticClass() returns the same pointer. It's kept alive by the GC root set \u2014 never collected. There's one UClass per UObject-derived class in the engine."
+        },
+        {
+          "question": "How does StaticClass() know which class to return?",
+          "options": [
+            "It looks up the class name in a global registry",
+            "The IMPLEMENT_CLASS or DECLARE_CLASS macro generates a static function that returns the correct UClass*",
+            "It searches the reflection system at runtime",
+            "It reads the class hierarchy from disk"
+          ],
+          "correctAnswer": "The IMPLEMENT_CLASS or DECLARE_CLASS macro generates a static function that returns the correct UClass*",
+          "explanation": "DECLARE_CLASS declares a static GetPrivateStaticClass() function. IMPLEMENT_CLASS defines it with the class's UClass* singleton. StaticClass() calls this generated function. The macro system ensures each class has the correct UClass reference baked in at compile time."
+        },
+        {
+          "question": "What information does a UClass object contain?",
+          "correctAnswer": "Class name, parent class, properties (UProperty), functions (UFunction), interfaces, flags, and metadata \u2014 everything UE's reflection system needs",
+          "acceptableAnswers": [
+            "class name, parent, properties, functions, interfaces",
+            "class metadata including properties and functions",
+            "the full reflection data for the class"
+          ],
+          "explanation": "UClass holds: ClassName, SuperStruct (parent), Children list, ChildProperties (UProperty array), FuncMap (UFunction array), Interfaces array, ClassFlags, ClassConfigName, and more. This is the runtime representation of everything the UHT (Unreal Header Tool) generated at compile time."
+        },
+        {
+          "question": "What uses a UClass* pointer?",
+          "options": [
+            "Cast<T>()",
+            "ImplementsInterface()",
+            "SpawnActor()",
+            "All of the above \u2014 UClass is the foundation of UE's reflection"
+          ],
+          "correctAnswer": "All of the above \u2014 UClass is the foundation of UE's reflection",
+          "explanation": "Cast<T>(Object) uses UClass for type checking. ImplementsInterface(UClass) checks interface support. SpawnActor<AMyActor>() uses UClass to find the CDO and create instances. NewObject, IsA, GetAllObjectsOfClass \u2014 all rely on UClass pointers."
+        },
+        {
+          "question": "How does Cast<T>(SomeObject) work internally?",
+          "options": [
+            "Walks the vtable hierarchy",
+            "Uses a bitwise AND on EClassCastFlags \u2014 O(1) compared to dynamic_cast's O(depth)",
+            "Calls StaticClass() on SomeObject and compares strings",
+            "Tries to call functions and catches exceptions"
+          ],
+          "correctAnswer": "Uses a bitwise AND on EClassCastFlags \u2014 O(1) compared to dynamic_cast's O(depth)",
+          "explanation": "UE's Cast<T>() checks SomeObject->GetClass()->HasAnyCastFlag(TCastFlags<T>::Value). This is a single bitwise AND operation (1-2 cycles). dynamic_cast walks the class hierarchy checking type_info at each level (50-200+ cycles). This is why UE replaces dynamic_cast entirely."
+        },
+        {
+          "question": "What's the difference between StaticClass() and GetClass()?",
+          "options": [
+            "StaticClass() = class-level (AMyActor::StaticClass()). GetClass() = instance-level (SomeActor->GetClass())",
+            "Both return the same thing",
+            "StaticClass() is deprecated",
+            "GetClass() returns the CDO, StaticClass() returns the UClass"
+          ],
+          "correctAnswer": "StaticClass() = class-level (AMyActor::StaticClass()). GetClass() = instance-level (SomeActor->GetClass())",
+          "explanation": "StaticClass() is a static function (no instance needed) \u2014 returns the UClass for the class itself. GetClass() is an instance method on UObject \u2014 returns the UClass for whatever type this specific object actually is. Both return UClass*."
+        },
+        {
+          "question": "How does the CDO (Class Default Object) relate to UClass?",
+          "options": [
+            "The CDO is an instance of the class created from its UClass \u2014 UClass is the template, CDO is the default instance",
+            "CDO and UClass are the same thing",
+            "UClass is created from the CDO",
+            "The CDO creates the UClass"
+          ],
+          "correctAnswer": "The CDO is an instance of the class created from its UClass \u2014 UClass is the template, CDO is the default instance",
+          "explanation": "UClass::GetDefaultObject() returns the CDO \u2014 a template instance with all default property values. When you spawn a new actor, the engine copies the CDO, then applies any per-instance overrides. The UClass is the metadata; the CDO is the default data."
+        },
+        {
+          "question": "What makes StaticClass() fast?",
+          "options": [
+            "It's an inline static function returning a pre-computed pointer \u2014 one memory access",
+            "It does a hash table lookup",
+            "It reads from a global registry",
+            "It caches the result in a thread-local variable"
+          ],
+          "correctAnswer": "It's an inline static function returning a pre-computed pointer \u2014 one memory access",
+          "explanation": "DECLARE_CLASS generates GetPrivateStaticClass() which returns a static UClass* variable. StaticClass() calls this inline \u2014 it's literally one pointer dereference. No lookup, no string comparison, no registry. The UClass pointer is baked in at link time."
+        },
+        {
+          "question": "When would you pass a UClass* as a function parameter?",
+          "correctAnswer": "When a function needs to work with any subclass \u2014 e.g., SpawnActor(TSubclassOf<AActor>), GetAllObjectsOfClass(UClass*), CreateWidget(UClass*)",
+          "acceptableAnswers": [
+            "when accepting any subclass",
+            "for spawning or finding objects",
+            "with TSubclassOf template"
+          ],
+          "explanation": "Functions that create, find, or validate objects often take UClass* to be polymorphic. TSubclassOf<T> is a type-safe wrapper around UClass* that restricts to subclasses of T. Use TSubclassOf<AActor> instead of UClass* when you want compile-time type checking."
+        }
+      ]
+    },
+    "World & GameplayStatics \u2014 Essential Access Points": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "How do you get the World from anywhere in UE?",
+          "options": [
+            "GetWorld() on any UObject-derived class",
+            "GEngine->GetWorld()",
+            "UWorld::GetCurrent()",
+            "There's no global access \u2014 you need a reference passed in"
+          ],
+          "correctAnswer": "GetWorld() on any UObject-derived class",
+          "explanation": "Every UObject (including Actors, Components, and GameInstance) has GetWorld(). Internally it walks up the outer chain until it finds a UWorld. If called from a CDO or object with no world context, returns nullptr \u2014 always check."
+        },
+        {
+          "question": "What does UGameplayStatics::GetPlayerController(World, PlayerIndex) return?",
+          "options": [
+            "The first player controller in the world",
+            "The player controller at the given index. PlayerIndex 0 = first local player.",
+            "All player controllers as an array",
+            "The AI controller only"
+          ],
+          "correctAnswer": "The player controller at the given index. PlayerIndex 0 = first local player.",
+          "explanation": "PlayerIndex 0 is the first local player. For split-screen, 1 = second player, etc. On the server, this works for listen servers. For dedicated servers (no local players), use GetPlayerControllerFromID() with the player's unique ID."
+        },
+        {
+          "question": "How do you spawn an actor at runtime?",
+          "options": [
+            "new AMyActor()",
+            "UGameplayStatics::BeginSpawningActor() then FinishSpawningActor()",
+            "GetWorld()->SpawnActor<AMyActor>()",
+            "SpawnActor(AMyActor::StaticClass())"
+          ],
+          "correctAnswer": "GetWorld()->SpawnActor<AMyActor>()",
+          "explanation": "GetWorld()->SpawnActor<AMyActor>(Class, Location, Rotation, SpawnParams). Always use SpawnActor \u2014 never use new or malloc on UObjects. The engine manages memory, GC tracking, and network replication for spawned actors. SpawnActorDeferred allows setting properties before the actor finishes spawning."
+        },
+        {
+          "question": "What does UGameplayStatics::GetAllActorsOfClass return?",
+          "options": [
+            "A single actor of the specified class",
+            "All actors in the world of the specified class (in an output array)",
+            "The nearest actor of the class",
+            "The CDO of the class"
+          ],
+          "correctAnswer": "All actors in the world of the specified class (in an output array)",
+          "explanation": "GetAllActorsOfClass(World, Class, OutActors) fills OutActors with all actors matching the class. Slow for large worlds \u2014 caches nothing, iterates all actors. For frequent use, consider GetAllActorsWithInterface or maintain your own cached array."
+        },
+        {
+          "question": "What does GetGameInstance() return?",
+          "options": [
+            "The level's game mode",
+            "UGameInstance* \u2014 persists across level loads, exists from game start to shutdown",
+            "The player's save game data",
+            "Nothing \u2014 GameInstance is deprecated"
+          ],
+          "correctAnswer": "UGameInstance* \u2014 persists across level loads, exists from game start to shutdown",
+          "explanation": "GetGameInstance() returns the UGameInstance which lives for the entire lifetime of the game process. It's created before the first level loads and destroyed at shutdown. Use it for data that must persist across level transitions \u2014 subsystems, save data references, multiplayer session info."
+        },
+        {
+          "question": "How do you get the game mode on the server?",
+          "options": [
+            "GetGameMode() \u2014 only valid on the server, returns nullptr on clients",
+            "GetWorld()->GetAuthGameMode()",
+            "UGameplayStatics::GetGameMode(World)",
+            "All three work"
+          ],
+          "correctAnswer": "All three work",
+          "explanation": "GetWorld()->GetAuthGameMode() returns AGameModeBase* (server only \u2014 nullptr on clients). GetGameMode() is a convenience wrapper. The game mode exists only on the server. On clients, these return nullptr \u2014 always check before using if you're not sure you're on the server."
+        },
+        {
+          "question": "What's the difference between AGameState and AGameMode?",
+          "options": [
+            "GameState = replicated to all. GameMode = server only",
+            "GameMode = replicated, GameState = server only",
+            "Both are replicated",
+            "Neither is replicated"
+          ],
+          "correctAnswer": "GameState = replicated to all. GameMode = server only",
+          "explanation": "AGameModeBase exists ONLY on the server. AGameStateBase is replicated to all clients. Use GameMode for server-authoritative logic (scoring, win conditions). Use GameState for data all players need to see (match time, team scores, player list)."
+        },
+        {
+          "question": "How do you get the player's HUD?",
+          "options": [
+            "GetPlayerController()->GetHUD()",
+            "GetWorld()->GetHUD()",
+            "UGameplayStatics::GetPlayerHUD()",
+            "HUD is accessed through the GameMode only"
+          ],
+          "correctAnswer": "GetPlayerController()->GetHUD()",
+          "explanation": "PlayerController->GetHUD() returns AHUD*. Only valid on the client that owns this controller. On the server, GetHUD() returns nullptr. Use GetHUD<AMyHUD>() for type-safe access. The HUD is created by the GameMode for each player but only on clients."
+        },
+        {
+          "question": "What does UGameplayStatics::OpenLevel do?",
+          "options": [
+            "Opens a new level, unloading the current one",
+            "Streams a level alongside the current one",
+            "Reloads the current level",
+            "Creates a new empty level"
+          ],
+          "correctAnswer": "Opens a new level, unloading the current one",
+          "explanation": "OpenLevel(World, LevelName) loads a new persistent level, replacing the current one. Can only be called on the server (in multiplayer). For single-player or listen servers, it works. For seamless travel, use ServerTravel. OpenLevel is a full unload+reload \u2014 all actors in the current level are destroyed."
+        },
+        {
+          "question": "What's a subsystem and how do you access one?",
+          "options": [
+            "A legacy system no longer used",
+            "GetGameInstance()->GetSubsystem<UMySubsystem>() \u2014 auto-instantiated classes that live with their parent",
+            "A Blueprint-only system",
+            "Subsystems replace game modes"
+          ],
+          "correctAnswer": "GetGameInstance()->GetSubsystem<UMySubsystem>() \u2014 auto-instantiated classes that live with their parent",
+          "explanation": "Subsystems are auto-instantiated singletons tied to a lifecycle: UGameInstanceSubsystem (game lifetime), UWorldSubsystem (level lifetime), ULocalPlayerSubsystem (player lifetime). Declared with UCLASS() and auto-created by the engine. Access: GetGameInstance()->GetSubsystem<UMyGISubsystem>()."
+        }
+      ]
+    },
+    "FFastArraySerializer \u2014 Fast TArray Replication": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "How does FFastArraySerializer differ from a regular TArray with UPROPERTY(Replicated)?",
+          "correctAnswer": "FFastArraySerializer sends only deltas (added/removed/modified items). Regular TArray sends the entire array every time anything changes.",
+          "acceptableAnswers": [
+            "sends only changed items not the whole array",
+            "delta-based replication vs full array",
+            "only changes are replicated"
+          ],
+          "explanation": "Regular TArray replication = entire array sent every time. FFastArraySerializer = sends ReplicationID deltas: added items (full data), removed items (ID only), modified items (full data for changed elements). Dramatically less bandwidth for large arrays that change incrementally."
+        },
+        {
+          "question": "What two structs must you inherit from to use FFastArraySerializer?",
+          "options": [
+            "FFastArraySerializer and FGameplayTag",
+            "FFastArraySerializerItem (the array) and FFastArraySerializer (the container)",
+            "FArrayWriter and FArrayReader",
+            "UPROPERTY and UFUNCTION"
+          ],
+          "correctAnswer": "FFastArraySerializerItem (the array) and FFastArraySerializer (the container)",
+          "explanation": "Your item struct must inherit from FFastArraySerializerItem \u2014 this gives it a ReplicationID and ReplicationKey. Your container struct must inherit from FFastArraySerializer \u2014 this manages the item list and delta tracking."
+        },
+        {
+          "question": "What does MarkItemDirty do?",
+          "correctAnswer": "Marks a single item as changed \u2014 only this item will be replicated on the next update",
+          "acceptableAnswers": [
+            "marks a single item for replication",
+            "flags one item as changed"
+          ],
+          "explanation": "MarkItemDirty(Item) sets the item's ReplicationKey to a new value, signaling the serializer that only this item changed. MarkArrayDirty() forces the entire array to be re-sent. Use MarkItemDirty for surgical updates \u2014 much less bandwidth."
+        },
+        {
+          "question": "What callbacks can you override on FFastArraySerializerItem?",
+          "options": [
+            "PreReplicatedRemove, PostReplicatedAdd, PostReplicatedChange",
+            "BeginPlay, Tick, EndPlay",
+            "OnRep, OnAdd, OnRemove",
+            "Serialize, Deserialize, PostLoad"
+          ],
+          "correctAnswer": "PreReplicatedRemove, PostReplicatedAdd, PostReplicatedChange",
+          "explanation": "PreReplicatedRemove(const StructType&) \u2014 called before an item is removed. PostReplicatedAdd(const StructType&) \u2014 called after an item is added. PostReplicatedChange(const StructType&) \u2014 called after an existing item is modified. These let you react to replication events \u2014 update UI, spawn/despawn actors, recalculate values."
+        },
+        {
+          "question": "What is the ReplicationID used for?",
+          "correctAnswer": "A unique identifier per item that the server and client use to track which items were added, removed, or changed",
+          "acceptableAnswers": [
+            "unique ID for tracking changes",
+            "identifies items across server and client"
+          ],
+          "explanation": "ReplicationID is a server-assigned number. When the server says 'remove item 5', the client knows which item to remove without re-sending the full array. The ID is per-array, not globally unique. It's managed internally by FFastArraySerializer."
+        },
+        {
+          "question": "What happens if you forget to call MarkItemDirty after changing a replicated item?",
+          "options": [
+            "Changes are still replicated on next array update",
+            "Changes are NOT replicated \u2014 the serializer doesn't know the item changed",
+            "The item is deleted",
+            "An assertion fires in debug builds"
+          ],
+          "correctAnswer": "Changes are NOT replicated \u2014 the serializer doesn't know the item changed",
+          "explanation": "FFastArraySerializer uses a replication key comparison to detect changes. If you modify an item's data but don't call MarkItemDirty or increment its ReplicationKey, the serializer sees no change and skips it. This is the most common FFastArraySerializer bug."
+        },
+        {
+          "question": "When should you use MarkArrayDirty instead of MarkItemDirty?",
+          "correctAnswer": "When the array size changed (items added/removed) or you need to force a full re-sync",
+          "acceptableAnswers": [
+            "when items are added or removed",
+            "when array structure changes"
+          ],
+          "explanation": "MarkArrayDirty() forces the entire array to be re-evaluated. Use when: items were added or removed, the array was cleared and repopulated, or you need a guaranteed full sync (e.g., after deserialization). For single item data changes, use MarkItemDirty."
+        },
+        {
+          "question": "How does FFastArraySerializer handle items added and removed in the same frame?",
+          "correctAnswer": "It accumulates all changes and sends a single delta packet with both adds and removes",
+          "acceptableAnswers": [
+            "single packet with all changes",
+            "accumulates and sends once"
+          ],
+          "explanation": "The serializer builds a change list. If item 3 was removed and item 7 was added in the same frame, the client receives both in one replication update. The ordering in the delta ensures adds happen after removes in the same positions."
+        },
+        {
+          "question": "Does FFastArraySerializer work with RPCs?",
+          "options": [
+            "Yes \u2014 it's independent of RPCs",
+            "No \u2014 it conflicts with Server RPCs",
+            "Yes, but only on the server",
+            "Only with multicast RPCs"
+          ],
+          "correctAnswer": "Yes \u2014 it's independent of RPCs",
+          "explanation": "FFastArraySerializer uses standard property replication (UPROPERTY(Replicated)), not RPCs. You can still use RPCs for gameplay logic alongside a FastArray. The array syncs automatically via property replication; RPCs are for event-based communication."
+        },
+        {
+          "question": "What's the bandwidth difference between TArray and FFastArraySerializer for a 100-element inventory where one item changed?",
+          "correctAnswer": "TArray sends all 100 items (~several KB). FFastArraySerializer sends just the one changed item (~tens of bytes).",
+          "acceptableAnswers": [
+            "TArray sends everything, FFastArray sends only the change",
+            "huge bandwidth savings for small changes"
+          ],
+          "explanation": "For a 100-item inventory with one item changed: TArray replication sends 100 complete item structs. FFastArraySerializer sends: one delta entry with item ID and new data. This is O(1) bandwidth vs O(n) for the change \u2014 critical for large, frequently-modified arrays like inventories, scoreboards, and spatial grids."
+        }
+      ]
+    },
+    "Replication Property Registration": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "In modern UE5, do you need DOREPLIFETIME for UPROPERTY(Replicated) variables?",
+          "options": [
+            "Yes \u2014 always required",
+            "No \u2014 auto-registration handles it. DOREPLIFETIME is only needed for custom conditions or non-UPROPERTY replication.",
+            "Only for Blueprint variables",
+            "Only on the server"
+          ],
+          "correctAnswer": "No \u2014 auto-registration handles it. DOREPLIFETIME is only needed for custom conditions or non-UPROPERTY replication.",
+          "explanation": "bAutoRegisterReplicatedProperties = true by default in UE5. UPROPERTY(Replicated) and UPROPERTY(ReplicatedUsing) variables auto-register. You still need DOREPLIFETIME for: custom replication conditions (DOREPLIFETIME_CONDITION), replicating non-UPROPERTY data, or if the CVar is disabled."
+        },
+        {
+          "question": "What CVar controls auto-registration of replicated properties?",
+          "options": [
+            "net.AutoRegisterReplicatedProperties",
+            "r.Replication.AutoRegister",
+            "n.ReplicateAll",
+            "There is no CVar \u2014 it's always on"
+          ],
+          "correctAnswer": "net.AutoRegisterReplicatedProperties",
+          "explanation": "net.AutoRegisterReplicatedProperties (bool, default true) controls whether UPROPERTY(Replicated) variables are automatically registered without DOREPLIFETIME. net.bReplicateAllActorProperties forces ALL actor properties to replicate (debug/testing only)."
+        },
+        {
+          "question": "What does DOREPLIFETIME_CONDITION do?",
+          "correctAnswer": "Registers a variable for replication with a condition \u2014 e.g., only replicate to the owning client (COND_OwnerOnly)",
+          "acceptableAnswers": [
+            "replicates with a condition like owner only",
+            "conditional replication"
+          ],
+          "explanation": "DOREPLIFETIME_CONDITION(Class, Var, Condition) registers with a condition. Common conditions: COND_OwnerOnly (only owner), COND_SkipOwner (everyone except owner), COND_InitialOnly (only on initial spawn), COND_SimulatedOnly (only simulated proxies). Use when auto-registration isn't enough."
+        },
+        {
+          "question": "What happens if you use both auto-registration AND DOREPLIFETIME for the same variable?",
+          "options": [
+            "It registers twice \u2014 wastes bandwidth",
+            "The DOREPLIFETIME overrides auto-registration with its custom condition",
+            "A compile error",
+            "The engine crashes"
+          ],
+          "correctAnswer": "The DOREPLIFETIME overrides auto-registration with its custom condition",
+          "explanation": "If both exist, DOREPLIFETIME takes precedence. The auto-registration system detects the explicit registration and skips the auto-registration for that variable. This is intentional \u2014 DOREPLIFETIME for when you need custom behavior, auto-registration for simple cases."
+        },
+        {
+          "question": "What does UPROPERTY(ReplicatedUsing = OnRep_Func) do differently?",
+          "correctAnswer": "Calls OnRep_Func on the client after the variable is replicated \u2014 used for visual updates or client-side reactions",
+          "acceptableAnswers": [
+            "calls a function when variable is replicated",
+            "triggers a callback on replication"
+          ],
+          "explanation": "ReplicatedUsing = OnRep_FunctionName. The function must be UFUNCTION(), void, with no parameters. Called automatically on remote machines after the variable is received and applied. Use for: playing effects, updating UI, triggering animations, or any client-side reaction to a state change."
+        },
+        {
+          "question": "What's the difference between Replicated and ReplicatedUsing?",
+          "options": [
+            "No difference",
+            "Replicated = auto-syncs value silently. ReplicatedUsing = syncs AND calls a callback function on clients",
+            "Replicated is for Blueprint, ReplicatedUsing for C++",
+            "ReplicatedUsing only works with structs"
+          ],
+          "correctAnswer": "Replicated = auto-syncs value silently. ReplicatedUsing = syncs AND calls a callback function on clients",
+          "explanation": "UPROPERTY(Replicated) just syncs the value. UPROPERTY(ReplicatedUsing = OnRep_X) syncs AND calls OnRep_X() on receiving clients. Use Replicated for values that don't need side effects. Use ReplicatedUsing when the change requires a response: UI updates, sounds, VFX, or derived value recalculation."
+        },
+        {
+          "question": "Can non-UPROPERTY variables be replicated?",
+          "options": [
+            "No \u2014 replication requires UPROPERTY",
+            "Yes \u2014 using DOREPLIFETIME in GetLifetimeReplicatedProps",
+            "Only on the server",
+            "Only with FFastArraySerializer"
+          ],
+          "correctAnswer": "Yes \u2014 using DOREPLIFETIME in GetLifetimeReplicatedProps",
+          "explanation": "DOREPLIFETIME can replicate ANY variable, UPROPERTY or not. Auto-registration only works for UPROPERTY-marked variables. For non-UPROPERTY data (like raw pointers, custom containers, or C-array data), you MUST use DOREPLIFETIME with a custom NetDeltaSerialize or replication condition."
+        },
+        {
+          "question": "Where must DOREPLIFETIME calls be placed?",
+          "options": [
+            "In BeginPlay",
+            "In GetLifetimeReplicatedProps \u2014 this is the required override",
+            "In the constructor",
+            "Anywhere \u2014 the engine finds them automatically"
+          ],
+          "correctAnswer": "In GetLifetimeReplicatedProps \u2014 this is the required override",
+          "explanation": "GetLifetimeReplicatedProps(OutLifetimeProps) is a virtual function on AActor and UActorComponent. Override it, call Super, then add your DOREPLIFETIME/DOREPLIFETIME_CONDITION macros. This runs once when the object is first created to build the replication list."
+        }
+      ]
+    },
+    "Prediction & Networking": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What is the primary purpose of GAS prediction?",
+          "correctAnswer": "Allows clients to simulate ability/effect outcomes locally before server confirmation, eliminating perceived latency",
+          "acceptableAnswers": [
+            "client-side simulation before server confirms",
+            "local prediction to hide latency"
+          ],
+          "explanation": "When a player presses a button, the client immediately predicts the outcome (cooldown, cost, effects) rather than waiting for server confirmation. When the server responds, results are reconciled. This makes abilities feel responsive even at 100ms+ ping."
+        },
+        {
+          "question": "What is the Prediction Key?",
+          "correctAnswer": "A unique identifier generated by the client for each predicted action \u2014 the server echoes it back to confirm which prediction was correct",
+          "acceptableAnswers": [
+            "unique ID for client prediction",
+            "key linking client prediction to server response"
+          ],
+          "explanation": "The Prediction Key is a FPredictionKey generated client-side. It's sent with the ability activation. The server processes the ability and includes this key in its response. If the key doesn't match or the server sends a different outcome, reconciliation occurs."
+        },
+        {
+          "question": "What does HasAuthorityOrPredictionKey check?",
+          "correctAnswer": "Returns true if: you're the server (HasAuthority), OR the current Prediction Key matches the one from when the effect was predicted",
+          "acceptableAnswers": [
+            "server or matching prediction key",
+            "authority or predicted client"
+          ],
+          "explanation": "HasAuthorityOrPredictionKey(Key) = HasAuthority() || (Key.IsValid() && Key == CurrentPredictionKey). This allows predicted clients to see the effect of their own predicted GEs without waiting for server confirmation. Other clients only see server-confirmed effects."
+        },
+        {
+          "question": "How does GAS reconcile incorrect predictions?",
+          "options": [
+            "It rolls back the ability and replays it",
+            "The server's authoritative state overrides the client's predicted state",
+            "The client re-predicts with corrected values",
+            "Prediction errors are ignored \u2014 close enough"
+          ],
+          "correctAnswer": "The server's authoritative state overrides the client's predicted state",
+          "explanation": "If the server's outcome differs from the client's prediction (e.g., damage was blocked by an ability the client didn't know was active), the server sends the correct state. The client replaces its predicted values with the server's authoritative values. Attributes and tags snap to the correct state."
+        },
+        {
+          "question": "Which GE types can be predicted?",
+          "options": [
+            "All GE types",
+            "Instant GEs only \u2014 Duration and Infinite skip prediction",
+            "Duration GEs only",
+            "Prediction is configurable per-GE"
+          ],
+          "correctAnswer": "Instant GEs only \u2014 Duration and Infinite skip prediction",
+          "explanation": "Only Instant GameplayEffects support prediction. Duration and Infinite effects are server-authoritative \u2014 the client doesn't know the full duration or periodic timing. Instant effects apply and complete in one frame, making prediction simple: apply locally, then reconcile when server confirms."
+        },
+        {
+          "question": "What is an MMC's role in prediction?",
+          "correctAnswer": "MMCs run on both client (predicted) and server (authoritative). The client uses predicted attribute values; the server uses real values.",
+          "acceptableAnswers": [
+            "MMCs run on both client and server",
+            "predicted vs authoritative values"
+          ],
+          "explanation": "MMCs calculate magnitudes. During prediction, they use the client's local (possibly predicted) attribute values. On the server, they use authoritative values. If prediction is correct, the values match. If not, reconciliation replaces the client's predicted magnitude with the server's authoritative one."
+        },
+        {
+          "question": "What's the difference between HasAuthority and HasAuthorityOrPredictionKey for Instant GEs?",
+          "correctAnswer": "HasAuthority = only true on server. HasAuthorityOrPredictionKey = true on server OR the client that predicted this GE. Use the latter so predicted clients can see their own instant effects.",
+          "acceptableAnswers": [
+            "HasAuthority is server only, the other includes predicted client",
+            "one includes prediction, one doesn't"
+          ],
+          "explanation": "Without HasAuthorityOrPredictionKey, the predicted client wouldn't see their own instant GE effects until the server confirms \u2014 defeating the purpose of prediction. Use HasAuthority for server-only logic; use HasAuthorityOrPredictionKey for logic that should be visible to the predicting client immediately."
+        },
+        {
+          "question": "What happens to predicted GEs when the server rejects the ability activation?",
+          "options": [
+            "The client keeps the predicted effects",
+            "The predicted GEs are rolled back \u2014 attributes and tags revert to server state",
+            "A warning is logged",
+            "The client disconnects"
+          ],
+          "correctAnswer": "The predicted GEs are rolled back \u2014 attributes and tags revert to server state",
+          "explanation": "If the server rejects activation (e.g., not enough mana, ability on cooldown), all predicted effects from that ability are undone. The ASC tracks which effects were predicted and removes them. The client's state snaps back to match the server. This is seamless \u2014 the player might notice a split-second flash of cooldown or cost, then it disappears."
+        },
+        {
+          "question": "How does the Prediction Key relate to ScopedPredictionKey?",
+          "correctAnswer": "ScopedPredictionKey is an RAII wrapper that sets the current prediction context. When it goes out of scope, the prediction window closes.",
+          "acceptableAnswers": [
+            "RAII wrapper for prediction key",
+            "scoped means temporary prediction window"
+          ],
+          "explanation": "FScopedPredictionKey(AbilitySystemComponent, Key) sets the active prediction key. All GEs applied while this is in scope are marked with this key. When it destructs, the prediction window closes. This is used internally by UAbilitySystemComponent \u2014 you typically don't create these manually."
+        },
+        {
+          "question": "When would you NOT want to use prediction for an ability?",
+          "correctAnswer": "For abilities that: modify the world in irreversible ways, rely on server-only data, or have complex multi-step outcomes that are hard to reconcile.",
+          "acceptableAnswers": [
+            "irreversible world changes",
+            "server-only data",
+            "abilities with complex outcomes"
+          ],
+          "explanation": "Prediction works best for simple, self-contained effects (damage, healing, buffs). Avoid prediction for: spawning/destroying actors, modifying the navmesh, triggering complex cascading effects, or anything the client can't cleanly undo. For these, use a non-predicted ability with a server RPC."
+        }
+      ]
+    },
+    "Tag System Internals": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "How does the ASC store gameplay tags internally?",
+          "correctAnswer": "As a count-based system \u2014 each tag has an integer count. Tag is 'present' when count > 0. Multiple sources can independently increment/decrement.",
+          "acceptableAnswers": [
+            "count-based system",
+            "each tag has an integer count",
+            "present when count is above zero"
+          ],
+          "explanation": "The ASC's tag container uses a map of FGameplayTag \u2192 int32 count. When count > 0, the tag is 'active'. Different sources (abilities, effects, gameplay tasks) increment the same tag independently. The tag stays active until ALL sources have removed their increment."
+        },
+        {
+          "question": "What's the difference between AddLooseGameplayTag and AddGameplayTag?",
+          "options": [
+            "AddLoose = not replicated. AddGameplayTag = replicated",
+            "AddLoose = permanent, AddGameplayTag = temporary",
+            "There is no difference",
+            "AddLoose = for testing, AddGameplayTag = for production"
+          ],
+          "correctAnswer": "AddLoose = not replicated. AddGameplayTag = replicated",
+          "explanation": "AddLooseGameplayTag(Tag, Count) adds a tag directly to the ASC without network replication. Used for local-only tags or when replication is handled separately. AddGameplayTag is the standard replicated version used by gameplay effects."
+        },
+        {
+          "question": "How do GameplayTag queries work?",
+          "options": [
+            "They match exact tags only",
+            "They can match exact tags, parent/child hierarchies, AND/OR combinations, and negation",
+            "They only work with Gameplay Effects",
+            "They query the tag database on disk"
+          ],
+          "correctAnswer": "They can match exact tags, parent/child hierarchies, AND/OR combinations, and negation",
+          "explanation": "FGameplayTagQuery can match: exact tag match, AnyTagsMatch (OR), AllTagsMatch (AND), NoTagsMatch (negation), and parent tag matching (matching 'Ability.Attack' also matches children like 'Ability.Attack.Melee'). Queries are pre-compiled into an efficient evaluation tree."
+        },
+        {
+          "question": "Why does the count system matter for parent tags?",
+          "correctAnswer": "A parent tag is 'present' only when its own count > 0 OR any child tag has count > 0. The count cascades up the hierarchy.",
+          "acceptableAnswers": [
+            "parent tag count includes children",
+            "count cascades up hierarchy"
+          ],
+          "explanation": "Adding 'Ability.Attack.Melee' (count=1) also makes 'Ability.Attack' present and 'Ability' present, because the child's count cascades up. This is computed dynamically \u2014 no explicit parent increment needed. Removing all child counts removes the parent presence automatically."
+        },
+        {
+          "question": "How does tag filtering work in FAggregator evaluation?",
+          "options": [
+            "Tags are not used in aggregator evaluation",
+            "FAggregators check tags on the source and target ASC to determine if modifiers should apply",
+            "Tags only affect visual display",
+            "Tag filtering is disabled by default"
+          ],
+          "correctAnswer": "FAggregators check tags on the source and target ASC to determine if modifiers should apply",
+          "explanation": "Each modifier in a GE can have SourceTagRequirements and TargetTagRequirements. The FAggregator checks these during evaluation. If the source doesn't have required tags or has ignored tags, that modifier is skipped. This is how conditional effects work \u2014 'only apply damage if target has Tag.Burning'."
+        },
+        {
+          "question": "What happens when a GameplayEffect expires \u2014 what happens to its tags?",
+          "options": [
+            "Tags persist until manually removed",
+            "The GE's tag count is decremented. If that was the last increment, the tag is no longer present.",
+            "Tags are immediately removed regardless of count",
+            "Tags are converted to 'expired' status"
+          ],
+          "correctAnswer": "The GE's tag count is decremented. If that was the last increment, the tag is no longer present.",
+          "explanation": "When a GE expires or is removed, it decrements every tag it added. If Count drops to 0, the tag is no longer 'present' \u2014 other GEs that still hold the tag keep it active. This is why multiple sources can independently use the same tag without conflict."
+        },
+        {
+          "question": "What is the purpose of FGameplayTag::RequestGameplayTag?",
+          "options": [
+            "To create a new tag at runtime",
+            "To look up a tag by name and get a valid FGameplayTag handle \u2014 fails if tag isn't in the ini hierarchy",
+            "To delete a tag",
+            "To request tag replication"
+          ],
+          "correctAnswer": "To look up a tag by name and get a valid FGameplayTag handle \u2014 fails if tag isn't in the ini hierarchy",
+          "explanation": "RequestGameplayTag(FName) returns an FGameplayTag handle. If the tag doesn't exist in the registered hierarchy (DefaultGameplayTags.ini), it returns an invalid tag. Tags must be declared in the project's tag hierarchy \u2014 they can't be created dynamically. Use IsValid() to check."
+        },
+        {
+          "question": "How do you check if an ASC has a specific tag?",
+          "options": [
+            "ASC->HasTag(Tag)",
+            "ASC->HasMatchingGameplayTag(Tag)",
+            "ASC->GetOwnedGameplayTags().HasTag(Tag)",
+            "All three work"
+          ],
+          "correctAnswer": "All three work",
+          "explanation": "HasMatchingGameplayTag(Tag) checks if the tag is present (count > 0). HasAllMatchingGameplayTags(Container) checks if all tags match. HasAnyMatchingGameplayTags(Container) checks if any match. The tag container also supports queries for complex AND/OR logic."
+        }
+      ]
+    },
+    "00 \u2014 Casting Overview": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "How is UE's Cast<T> different from C++ dynamic_cast?",
+          "correctAnswer": "Cast<T> uses EClassCastFlags bitwise AND (1-2 cycles). dynamic_cast walks the vtable hierarchy (50-200+ cycles).",
+          "acceptableAnswers": [
+            "Cast uses bit flags, dynamic_cast walks vtable",
+            "Cast is O(1), dynamic_cast is O(depth)"
+          ],
+          "explanation": "dynamic_cast walks the class hierarchy, checking type_info at each level. Cast<T> checks T::StaticClass() flags with a single bitwise AND. On modern CPUs: 1-2 cycles vs 50-200+. This speed difference is why UE replaces dynamic_cast entirely for UObject types."
+        },
+        {
+          "question": "What does Cast<T>(Object) return if Object is not of type T?",
+          "options": [
+            "Throws an exception",
+            "Returns nullptr",
+            "Returns a default-constructed T",
+            "Crashes"
+          ],
+          "correctAnswer": "Returns nullptr",
+          "explanation": "Cast<T> returns nullptr on failure \u2014 never throws. Always check the result before using: if (AMyActor* MyActor = Cast<AMyActor>(SomeObject)). This is safer than C++ dynamic_cast which throws std::bad_cast for reference casts."
+        },
+        {
+          "question": "What is the CDO and how does it relate to casting?",
+          "options": [
+            "Casting doesn't use the CDO",
+            "Cast<T> compares against T's CDO to verify type",
+            "The CDO is unrelated to casting",
+            "Casting checks against the CDO for default values"
+          ],
+          "correctAnswer": "Cast<T> compares against T's CDO to verify type",
+          "explanation": "Cast<T> uses the class hierarchy (UClass chain) and EClassCastFlags, not the CDO directly. The CDO is the default instance used when spawning. They're separate concepts: UClass for type checking (Cast), CDO for default values (SpawnActor)."
+        },
+        {
+          "question": "What's the difference between Cast<T> and CastChecked<T>?",
+          "options": [
+            "CastChecked throws/crashes on failure \u2014 use when you KNOW the cast must succeed",
+            "CastChecked is slower",
+            "CastChecked is for Blueprint only",
+            "No difference"
+          ],
+          "correctAnswer": "CastChecked throws/crashes on failure \u2014 use when you KNOW the cast must succeed",
+          "explanation": "Cast<T> returns nullptr on failure (safe for conditional logic). CastChecked<T> asserts/crashes in development builds if the cast fails (use when failure indicates a logic bug). CastChecked is effectively: Cast<T> with an assertion that the result is non-null."
+        },
+        {
+          "question": "How do you cast between UInterfaces?",
+          "options": [
+            "Cast<IMyInterface>(Object) returns IMyInterface* \u2014 works for objects that implement the interface",
+            "You can't cast to interfaces directly",
+            "Use dynamic_cast for interfaces",
+            "Use GetInterface() method"
+          ],
+          "correctAnswer": "Cast<IMyInterface>(Object) returns IMyInterface* \u2014 works for objects that implement the interface",
+          "explanation": "Cast<IMyInterface> uses the ImplementsInterface check (bit-flag array). Returns nullptr if the object doesn't implement the interface. This is much faster than C++ dynamic_cast for interfaces, which requires full RTTI traversal."
+        },
+        {
+          "question": "What is TSubclassOf<T> and how does it relate to casting?",
+          "options": [
+            "A template for restricting UClass pointers to subclasses of T \u2014 used at compile time",
+            "The same as Cast<T>",
+            "A Blueprint node type",
+            "A container for spawned actors"
+          ],
+          "correctAnswer": "A template for restricting UClass pointers to subclasses of T \u2014 used at compile time",
+          "explanation": "TSubclassOf<AActor> restricts a UClass* parameter to only accept classes derived from AActor. The compiler enforces this. Contrast with UClass* which accepts any class. Use TSubclassOf for function parameters when you want compile-time safety; Cast<T> for runtime type checking."
+        },
+        {
+          "question": "What does InterfaceCast<T> do?",
+          "correctAnswer": "Same as Cast<T> but specifically for interfaces \u2014 checks ImplementsInterface instead of IsA",
+          "acceptableAnswers": [
+            "Cast for interfaces",
+            "checks interface implementation"
+          ],
+          "explanation": "Cast<IMyInterface>(Object) internally does: Object->GetClass()->ImplementsInterface(UMyInterface::StaticClass()). This uses the interface bit-flag array (O(1)) rather than walking the IsA hierarchy. InterfaceCast is just an alias for Cast with explicit intent."
+        },
+        {
+          "question": "When should you use Cast vs IsA for type checking?",
+          "options": [
+            "Cast returns the typed pointer. IsA returns bool only. Use Cast when you need the typed result, IsA when you just need to check.",
+            "Always use Cast",
+            "Always use IsA \u2014 it's faster",
+            "They're interchangeable"
+          ],
+          "correctAnswer": "Cast returns the typed pointer. IsA returns bool only. Use Cast when you need the typed result, IsA when you just need to check.",
+          "explanation": "If (Object->IsA(AMyActor::StaticClass())) only checks type \u2014 no pointer returned. Cast<AMyActor>(Object) checks AND returns AMyActor*. If you're going to use the result, use Cast. If you only need a bool check, IsA is slightly faster (no pointer work). Both use the same O(1) bit-flag mechanism."
+        }
+      ]
+    },
+    "ApplyGameplayEffectSpec Pipeline": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "What is the first thing that happens when ApplyGameplayEffectSpec is called?",
+          "correctAnswer": "Scope lock (GAMEPLAYEFFECT_SCOPE_LOCK) and FlushNetDormancy \u2014 ensures concurrent safety and that the actor isn't dormant for replication",
+          "acceptableAnswers": [
+            "scope lock and flush net dormancy",
+            "concurrent safety lock and dormancy check"
+          ],
+          "explanation": "Step 0: GAMEPLAYEFFECT_SCOPE_LOCK for thread safety, then if authoritative, FlushNetDormancy ensures the actor wakes up from dormancy so replication works. Dormant actors skip replication entirely \u2014 this prevents silent failures."
+        },
+        {
+          "question": "At what point do MMCs run in the GE application pipeline?",
+          "correctAnswer": "During spec creation (step 2), before the spec is applied. MMCs calculate magnitudes that are baked into the spec.",
+          "acceptableAnswers": [
+            "during spec creation before application",
+            "before the spec is applied"
+          ],
+          "explanation": "MMCs run BEFORE ApplyGameplayEffectSpec. They compute magnitude values (step 2), then the spec is created with those values. EECs run DURING execution (step 6 for instant/periodic). This timing difference is why MMC results are baked in but EEC results are computed fresh each execution."
+        },
+        {
+          "question": "What happens to a stacking GE when a new stack is applied?",
+          "options": [
+            "It creates a new GE instance",
+            "It increments the stack count on the existing GE and recalculates duration",
+            "It replaces the existing GE entirely",
+            "Stacking is disabled by default"
+          ],
+          "correctAnswer": "It increments the stack count on the existing GE and recalculates duration",
+          "explanation": "Stacking: if a matching GE already exists, ApplyGameplayEffectSpec finds it (step 1) and increments the stack count. Duration may refresh or extend depending on the stacking policy. This avoids creating duplicate GE instances."
+        },
+        {
+          "question": "When are snapshots taken during GE application?",
+          "correctAnswer": "At application time (for duration/infinite) or at execution time (for instant/periodic) \u2014 depends on the capture policy (snapshot vs live)",
+          "acceptableAnswers": [
+            "depends on capture policy",
+            "at application or execution time based on snapshot setting"
+          ],
+          "explanation": "Snapshot capture: attribute values are captured once at application time and stored. Live capture: values are re-read each time the modifier evaluates. Use snapshot for 'damage based on attack power at the moment of hit.' Use live for 'healing over time based on current max health.'"
+        },
+        {
+          "question": "What does FlushNetDormancy do in the pipeline?",
+          "correctAnswer": "Wakes up a dormant actor so replication works. Without it, GEs applied to dormant actors might not replicate.",
+          "acceptableAnswers": [
+            "wakes dormant actors for replication",
+            "ensures actor is not dormant"
+          ],
+          "explanation": "Actors far from players can be set dormant (skip replication to save bandwidth). If a GE is applied to a dormant actor without FlushNetDormancy, the GE change won't replicate. The pipeline calls this at step 0 to prevent silent replication failures."
+        },
+        {
+          "question": "What is the Prediction Key's role in the Apply pipeline?",
+          "correctAnswer": "Links a client-predicted GE application to server confirmation. The server echoes back the same key so the client can reconcile.",
+          "acceptableAnswers": [
+            "links client prediction to server confirmation",
+            "identifies predicted applications"
+          ],
+          "explanation": "When a client predicts a GE, it generates a FPredictionKey. The server includes this key when applying the GE. The client sees the key in the server's response and knows which predicted GE was confirmed. If the key doesn't match, prediction was wrong."
+        },
+        {
+          "question": "At what step does the GE actually modify attributes?",
+          "options": [
+            "Step 2: magnitude calculation",
+            "Step 6: execution \u2014 only for Instant and Periodic GEs",
+            "Step 1: finding existing stacks",
+            "Immediately upon application"
+          ],
+          "correctAnswer": "Step 6: execution \u2014 only for Instant and Periodic GEs",
+          "explanation": "Duration and Infinite GEs store modifiers in the FAggregator at application (step 5) and the aggregator continuously applies them. Instant and Periodic GEs execute at step 6 \u2014 modifiers run, EECs fire, attributes change immediately. Execution is skipped entirely for Duration/Infinite."
+        },
+        {
+          "question": "What's the difference between the spec creation pipeline and the execution pipeline?",
+          "correctAnswer": "Creation: MMCs run, snapshots taken, spec built. Execution: modifiers applied, EECs run, attributes change. Duration/Infinite skip execution \u2014 they use the aggregator instead.",
+          "acceptableAnswers": [
+            "creation builds the spec, execution applies it",
+            "duration infinite skip execution"
+          ],
+          "explanation": "Creation (steps 0-5): validate, calculate, capture, build spec. Execution (step 6): for Instant/Periodic \u2014 apply modifiers, run EECs, fire cues. Duration/Infinite effects skip step 6 \u2014 their modifiers live in the FAggregator for continuous evaluation instead of one-time execution."
+        }
+      ]
+    },
+    "Attribute Capture System": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "What three layers make up the Attribute Capture system?",
+          "correctAnswer": "FGameplayEffectAttributeCaptureDefinition (what to capture), FGameplayEffectAttributeCaptureSpec (the captured snapshot), FGameplayEffectAttributeCaptureSpecContainer (holds all captures for a GE spec)",
+          "acceptableAnswers": [
+            "definition, spec, container",
+            "three layer capture system"
+          ],
+          "explanation": "Definition = 'capture Target's Health with Snapshot.' Spec = the actual captured value at capture time. Container = holds all captures for one GE spec. The three-layer design separates configuration from runtime state."
+        },
+        {
+          "question": "What's the difference between Snapshot and Live capture?",
+          "correctAnswer": "Snapshot = value captured once at application time and stored. Live = value re-read from the aggregator every time it's accessed.",
+          "acceptableAnswers": [
+            "snapshot captures once, live re-reads",
+            "snapshot is static, live is dynamic"
+          ],
+          "explanation": "EAttributeCaptureSource: Source/Target. Snapshot: taken once at spec creation, stored in the spec. Live: the capture spec holds a reference to the aggregator and reads the current value each time. Use Snapshot for 'damage based on stats at activation time.' Use Live for 'healing over time scales with current max HP.'"
+        },
+        {
+          "question": "How does FindCaptureSpecByDefinition match captures?",
+          "correctAnswer": "Matches by attribute, capture source (source/target), and snapshot flag. All three must match exactly.",
+          "acceptableAnswers": [
+            "matches by attribute, source, and snapshot flag",
+            "all three fields must match"
+          ],
+          "explanation": "The lookup iterates the capture container and returns the first spec matching: attribute UProperty, source/target enum, and snapshot bool. If any field differs, it won't match. This means two captures of the same attribute with different sources are separate entries."
+        },
+        {
+          "question": "What is a Linked Aggregator Callback?",
+          "correctAnswer": "A callback registered on the FAggregator that fires when the attribute value changes \u2014 used by live captures to stay in sync",
+          "acceptableAnswers": [
+            "callback on attribute change",
+            "notifies captures of value changes"
+          ],
+          "explanation": "Live captures register a callback on the FAggregator. When the attribute changes, the callback updates the capture spec's cached value. This means live captures don't poll \u2014 they're push-based. Snapshot captures don't register callbacks since they're frozen at capture time."
+        },
+        {
+          "question": "How do MMCs access captured attribute values?",
+          "options": [
+            "GetCapturedAttributeMagnitude(Spec)",
+            "AttemptCalculateCapturedAttributeMagnitude(Spec)",
+            "Both \u2014 GetCapturedAttributeMagnitude for required, AttemptCalculate for optional",
+            "MMCs can't access captures directly"
+          ],
+          "correctAnswer": "Both \u2014 GetCapturedAttributeMagnitude for required, AttemptCalculate for optional",
+          "explanation": "GetCapturedAttributeMagnitude asserts if the capture doesn't exist \u2014 use when the attribute MUST be captured. AttemptCalculateCapturedAttributeMagnitude returns false if the capture is missing \u2014 use when the attribute is optional (e.g., 'bonus damage if source has AttackPower')."
+        },
+        {
+          "question": "When does the capture system actually capture values?",
+          "correctAnswer": "At spec creation time for snapshots. On first access for live captures (lazy \u2014 they register the aggregator callback when first queried).",
+          "acceptableAnswers": [
+            "snapshots at creation, live on access",
+            "depends on capture type"
+          ],
+          "explanation": "Snapshots are captured during step 2 of ApplyGameplayEffectSpec. Live captures are lazy: they register with the aggregator when first accessed. This means live captures consume no CPU until they're actually read, but the first read may be slightly slower (callback registration + initial value fetch)."
+        },
+        {
+          "question": "What happens if you try to capture an attribute that doesn't exist on the target?",
+          "options": [
+            "Crash",
+            "The capture is created but has a default/zero value",
+            "The capture is skipped with a warning",
+            "The GE application fails"
+          ],
+          "correctAnswer": "The capture is created but has a default/zero value",
+          "explanation": "If the target ASC doesn't have the attribute (e.g., capturing Mana on a target with no Mana attribute), the capture spec is created with default values. GetCapturedAttributeMagnitude returns 0. AttemptCalculate returns false. This is safer than crashing \u2014 but check your captures are valid for the target type."
+        },
+        {
+          "question": "How do EECs differ from MMCs in how they access captures?",
+          "correctAnswer": "EECs use FGameplayEffectCustomExecutionParameters which provides direct access to captured attributes via GetCapturedAttributeMagnitude. MMCs use the capture spec passed to CalculateBaseMagnitude. Same system, different API entry points.",
+          "acceptableAnswers": [
+            "EECs have different API for captures",
+            "EEC uses execution parameters, MMC uses calculate base magnitude"
+          ],
+          "explanation": "EECs receive FGameplayEffectCustomExecutionParameters which wraps the capture container. MMCs receive FGameplayEffectSpec and FGameplayAttribute. Both ultimately call the same capture system \u2014 the API surface is different but the underlying captures are the same FGameplayEffectAttributeCaptureSpec objects."
+        }
+      ]
+    },
+    "GE Execution Flow": {
+      "poolSize": 8,
+      "questions": [
+        {
+          "question": "Which GE types go through the execution flow?",
+          "options": [
+            "All GE types",
+            "Instant and Periodic only \u2014 Duration and Infinite skip execution",
+            "Duration only",
+            "Only GEs with EECs"
+          ],
+          "correctAnswer": "Instant and Periodic only \u2014 Duration and Infinite skip execution",
+          "explanation": "Duration and Infinite GEs store modifiers in the FAggregator at application. The aggregator continuously evaluates them. Instant and Periodic GEs must execute: modifiers are applied once, EECs run, and the effect completes. Periodic GEs re-execute each period."
+        },
+        {
+          "question": "What does ExecuteActiveEffectsFrom do first?",
+          "correctAnswer": "Captures target tags (fresh snapshot) \u2014 ensures the execution sees the current tag state, not cached values",
+          "acceptableAnswers": [
+            "captures target tags",
+            "snapshots current tag state"
+          ],
+          "explanation": "Step 1: Spec.CapturedTargetTags.GetActorTags().Reset() then re-captures OwnerTags. This ensures modifier tag requirements are checked against the current tag state. Without this, a tag added/removed between application and execution wouldn't be reflected."
+        },
+        {
+          "question": "What is InternalExecuteMod?",
+          "options": [
+            "A debug function",
+            "The function that actually applies a single modifier's value to the FAggregator",
+            "A Blueprint-callable wrapper",
+            "The network replication step"
+          ],
+          "correctAnswer": "The function that actually applies a single modifier's value to the FAggregator",
+          "explanation": "InternalExecuteMod takes a modifier spec and applies it: checks tag requirements, applies coefficient/pre-add/post-add, evaluates channeling, applies curve lookup, then calls FAggregator::ApplyMod. This is the lowest-level modifier application \u2014 one modifier, one execution."
+        },
+        {
+          "question": "When are conditional Gameplay Effects fired during execution?",
+          "options": [
+            "Before modifiers are applied",
+            "After all modifiers have been applied \u2014 as a post-execution step",
+            "Before the GE is created",
+            "Conditional GEs are fired independently of execution"
+          ],
+          "correctAnswer": "After all modifiers have been applied \u2014 as a post-execution step",
+          "explanation": "Conditional GEs are fired after modifiers. This ensures the attribute values are updated before checking conditions. E.g., 'if target health dropped below 50%, apply execute buff.' If conditional GEs fired before modifiers, the health check would see the old value."
+        },
+        {
+          "question": "What does the FAggregator do during modifier application?",
+          "correctAnswer": "Evaluates all active modifiers on an attribute, applies new ones, and computes the final attribute value",
+          "acceptableAnswers": [
+            "evaluates active modifiers",
+            "computes final attribute value from all modifiers"
+          ],
+          "explanation": "The FAggregator manages all active modifiers on a single attribute. During InternalExecuteMod, it adds the new modifier and recalculates. It handles stacking, channeling, modifier ordering (additive before multiplicative), and back-channel for complex modifier interactions."
+        },
+        {
+          "question": "How does Periodic GE execution differ from Instant?",
+          "correctAnswer": "Periodic executes once per period (e.g., every 1 second). Instant executes once at application. Both go through the same execution pipeline \u2014 the difference is timing.",
+          "acceptableAnswers": [
+            "periodic executes repeatedly, instant once",
+            "both use same pipeline but periodic repeats"
+          ],
+          "explanation": "Periodic GEs set a Period value. Each period, ExecuteActiveEffectsFrom runs again with fresh tag captures and modifier evaluation. The Period starts from application time, not from last execution. If a periodic effect is removed mid-period, pending execution is cancelled."
+        },
+        {
+          "question": "Where does execution actually happen \u2014 on server, client, or both?",
+          "correctAnswer": "Server always executes authoritatively. Clients execute only for predicted instant GEs with matching Prediction Key. Duration/Infinite never execute on clients.",
+          "acceptableAnswers": [
+            "server always, clients only for predicted instants",
+            "client prediction only for instant GEs"
+          ],
+          "explanation": "Authority executes all GEs. Clients predict instant GEs with valid Prediction Keys. When the server's response arrives, the client reconciles: if prediction was correct, keep the values. If not, replace with server's authoritative values. Duration/Infinite never execute on clients \u2014 they're aggregator-managed and server-authoritative."
+        },
+        {
+          "question": "What's the role of gameplay cues in execution?",
+          "correctAnswer": "GameplayCues fire after execution \u2014 they're visual/audio feedback linked to the GE. Not part of the modifier pipeline.",
+          "acceptableAnswers": [
+            "visual audio feedback after execution",
+            "separate from modifier pipeline"
+          ],
+          "explanation": "After modifiers are applied, GameplayCues fire: AddGameplayCue for Instant/Duration start, RemoveGameplayCue for Duration end. Cues have their own tag-based routing (GameplayCue.{CueName}). They're cosmetic \u2014 they don't affect attributes and can be independently predicted/not predicted."
+        }
+      ]
+    },
+    "GameplayEffectExecutionCalculation": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What can an EEC do that an MMC cannot?",
+          "correctAnswer": "Emit multiple modifiers (different attributes), apply conditional GEs, access both source and target ASCs directly, and fire GameplayCues. MMC computes one magnitude for one modifier.",
+          "acceptableAnswers": [
+            "multiple modifiers, conditional GEs, direct ASC access",
+            "more control than MMC"
+          ],
+          "explanation": "MMC = one output (float). EEC = unlimited outputs: any number of modifiers, conditional GEs, direct ASC manipulation. Use MMC for 'damage = attack * multiplier.' Use EEC for 'deal damage, apply bleeding effect, steal life, and knock back if target is below 25% HP' \u2014 all in one execution."
+        },
+        {
+          "question": "What class does an EEC inherit from?",
+          "options": [
+            "UGameplayEffectExecutionCalculation",
+            "UGameplayEffectCalculation",
+            "UGameplayModMagnitudeCalculation",
+            "UAttributeSet"
+          ],
+          "correctAnswer": "UGameplayEffectExecutionCalculation",
+          "explanation": "UGameplayEffectExecutionCalculation inherits from UGameplayEffectCalculation. Override Execute_Implementation(). Note the underscore \u2014 the BlueprintNativeEvent pattern generates both Execute() and Execute_Implementation(). You implement the latter."
+        },
+        {
+          "question": "What parameters does Execute_Implementation receive?",
+          "correctAnswer": "FGameplayEffectCustomExecutionParameters (reads source/target ASCs, captured attributes) and FGameplayEffectCustomExecutionOutput (writes modifiers and conditional GEs)",
+          "acceptableAnswers": [
+            "ExecutionParameters and ExecutionOutput",
+            "input params and output writer"
+          ],
+          "explanation": "Parameters: allows reading source/target ASC attributes, tags, actor info. Output: AddOutputModifier(Attribute, Magnitude, ...) and MarkConditionalGameplayEffectsToTrigger(). Parameters are const \u2014 you can only read. Output is mutable \u2014 that's how you emit results."
+        },
+        {
+          "question": "How do you emit a modifier from an EEC?",
+          "correctAnswer": "OutExecutionOutput.AddOutputModifier(Attribute, Magnitude, Channel, ModifierOp) for each modifier you want to apply",
+          "acceptableAnswers": [
+            "AddOutputModifier for each modifier",
+            "use output to add modifiers"
+          ],
+          "explanation": "AddOutputModifier(FGameplayModifierEvaluatedData). You set: Attribute (e.g., HealthProperty), Magnitude (computed value), ModifierOp (Add, Multiply, Override), Channel (0-3, allows multiple modifiers on same attribute). Each call emits one modifier \u2014 call multiple times for multiple modifiers."
+        },
+        {
+          "question": "How do EECs handle prediction?",
+          "correctAnswer": "EECs run on both client and server for predicted abilities. The client computes predicted values; the server computes authoritative values. Reconciliation replaces predicted with authoritative if they differ.",
+          "acceptableAnswers": [
+            "EECs run on both client and server for prediction",
+            "client predicts, server authorizes, reconciliation fixes"
+          ],
+          "explanation": "For predicted abilities: client runs EEC with local (possibly predicted) attribute values. Server runs EEC with authoritative values. If client's computation matches server's (same inputs \u2192 same outputs), no reconciliation needed. If different, server values override."
+        },
+        {
+          "question": "What is the correct function signature for Execute_Implementation?",
+          "correctAnswer": "virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const;",
+          "acceptableAnswers": [
+            "void with const params and mutable output",
+            "ExecutionParams and OutExecutionOutput"
+          ],
+          "explanation": "The params are const \u2014 you can only read from them. OutExecutionOutput is non-const \u2014 you write to it. The function is const on the EEC itself (doesn't modify EEC state). Always call Super::Execute_Implementation first if your EEC inherits from another EEC."
+        },
+        {
+          "question": "How do you access captured attributes in an EEC?",
+          "correctAnswer": "ExecutionParams.GetCapturedAttributeMagnitude(CaptureDef, ...) \u2014 the same capture system as MMCs but accessed through ExecutionParams",
+          "acceptableAnswers": [
+            "GetCapturedAttributeMagnitude through ExecutionParams",
+            "same capture system as MMC"
+          ],
+          "explanation": "Declare captures using DECLARE_ATTRIBUTE_CAPTUREDEF macros in the header. Use DEFINE_ATTRIBUTE_CAPTUREDEF in the cpp. Then call ExecutionParams.GetCapturedAttributeMagnitude(YourCaptureDef) to get the captured float value. The capture policy (snapshot/live) is set in the GE asset, not in code."
+        },
+        {
+          "question": "When should you use an EEC vs an MMC?",
+          "correctAnswer": "MMC: one modifier output, simple math. EEC: multiple modifier outputs, conditional GEs, direct ASC access, or complex multi-attribute logic.",
+          "acceptableAnswers": [
+            "MMC for single output, EEC for complex or multiple",
+            "EEC when you need more than one modifier"
+          ],
+          "explanation": "MMC: perfect for 'damage scales with attack power.' EEC: needed for 'deal damage, lifesteal, apply bleed, and knockback if target is below 25%.' Rule of thumb: if your calculation produces ONE modifier, use MMC. If you're emitting multiple modifiers or conditional effects, use EEC."
+        },
+        {
+          "question": "How do conditional Gameplay Effects work in an EEC?",
+          "correctAnswer": "MarkConditionalGameplayEffectsToTrigger() with FGameplayTagContainer \u2014 the engine checks these tags against the GE asset's conditional effects and fires matching ones",
+          "acceptableAnswers": [
+            "MarkConditionalGameplayEffectsToTrigger with tags",
+            "tags determine which conditional GEs fire"
+          ],
+          "explanation": "In your EEC: OutExecutionOutput.MarkConditionalGameplayEffectsToTrigger(TagContainer). In your GE asset: add Conditional Gameplay Effects, each with RequiredSourceTags/RequiredTargetTags. The engine matches your emitted tags against these requirements and fires matching effects. Tags bridge the gap between your C++ logic and the data-asset GE configuration."
+        },
+        {
+          "question": "What's a common EEC mistake with transient aggregators?",
+          "correctAnswer": "EEC modifiers use transient aggregators \u2014 they don't persist. If you need a lasting effect, use a Duration GE alongside your EEC's Instant GE, or mark a conditional GE to apply.",
+          "acceptableAnswers": [
+            "EEC modifiers don't persist",
+            "transient aggregator values disappear after execution"
+          ],
+          "explanation": "EEC modifier values are applied to a temporary FAggregator that exists only during execution. After Execute returns, those modifiers are gone from the aggregator \u2014 the attribute change happens from the modifier application, not from ongoing aggregator evaluation. For lasting effects, emit a conditional GE of Duration type."
+        }
+      ]
+    },
+    "GameplayModMagnitudeCalculation": {
+      "poolSize": 10,
+      "questions": [
+        {
+          "question": "What does CalculateBaseMagnitude return?",
+          "correctAnswer": "A float \u2014 the base magnitude that gets fed into the GE's modifier pipeline (coefficient, pre-add, post-add, curve)",
+          "acceptableAnswers": [
+            "a float for the modifier magnitude",
+            "base magnitude before modifier pipeline"
+          ],
+          "explanation": "CalculateBaseMagnitude_Implementation returns float. This value passes through: Coefficient \u2192 PreMultiplyAdd \u2192 PostMultiplyAdd \u2192 Curve lookup. The final value is what gets applied to the attribute. Your MMC computes the BASE; the GE asset's modifier configuration handles the rest."
+        },
+        {
+          "question": "What parameters does CalculateBaseMagnitude receive?",
+          "correctAnswer": "const FGameplayEffectSpec& Spec (the GE being applied) and const FGameplayAttribute& Attribute (which attribute is being modified)",
+          "acceptableAnswers": [
+            "GameplayEffectSpec and GameplayAttribute",
+            "Spec and Attribute parameters"
+          ],
+          "explanation": "Spec: access captured attributes, source/target tags, level, duration, stack count. Attribute: tells you which attribute this modifier targets. Spec is const \u2014 you can only read from it. Return the computed float."
+        },
+        {
+          "question": "How do you access captured attributes in an MMC?",
+          "correctAnswer": "Spec.GetCapturedAttributeMagnitude(CaptureDef) \u2014 the same capture system, accessed through the Spec",
+          "acceptableAnswers": [
+            "GetCapturedAttributeMagnitude from Spec",
+            "through the GameplayEffectSpec"
+          ],
+          "explanation": "Declare captures with DECLARE_ATTRIBUTE_CAPTUREDEF. Define with DEFINE_ATTRIBUTE_CAPTUREDEF. Access: Spec.GetCapturedAttributeMagnitude(YourCaptureDef, ...). The captured values come from the capture system \u2014 same as EEC but accessed through the Spec rather than ExecutionParams."
+        },
+        {
+          "question": "When exactly does the MMC run?",
+          "options": [
+            "When the GE is applied to the target",
+            "When the GE spec is CREATED \u2014 before application. The magnitude is baked into the spec.",
+            "When the GE expires",
+            "Each time the modifier is evaluated"
+          ],
+          "correctAnswer": "When the GE spec is CREATED \u2014 before application. The magnitude is baked into the spec.",
+          "explanation": "MMCs run during spec creation (step 2 of ApplyGameplayEffectSpec). The computed magnitude is stored in the spec. When the GE is later applied (possibly to different targets), the same magnitude is used \u2014 unless the spec is recreated. This is different from EECs which run at execution time."
+        },
+        {
+          "question": "What's the difference between using AttributeBased float vs an MMC?",
+          "correctAnswer": "AttributeBased = simple 'use X% of attribute Y as magnitude.' MMC = full C++/Blueprint logic with captured attributes, branching, and external data.",
+          "acceptableAnswers": [
+            "AttributeBased is simpler, MMC has full logic",
+            "MMC for complex calculations"
+          ],
+          "explanation": "AttributeBased: 'damage = 50% of Attack.' Simple, data-driven, no code needed. MMC: 'damage = (Attack * 1.5 - Defense * 0.8) * LevelMultiplier.' Full control. Use AttributeBased when the formula is a simple coefficient of one attribute. Use MMC when you need multi-attribute math, conditions, or external data."
+        },
+        {
+          "question": "How does the modifier pipeline process your MMC's return value?",
+          "correctAnswer": "Return value \u2192 multiply by Coefficient \u2192 add PreMultiplyAdd \u2192 multiply by PostMultiplyAdd \u2192 apply Curve \u2192 result applied to FAggregator",
+          "acceptableAnswers": [
+            "coefficient, pre-add, post-add, curve",
+            "pipeline: coefficient then pre then post then curve"
+          ],
+          "explanation": "The GE modifier spec has: Coefficient (Scale), PreMultiplyAdd (offset before scale), PostMultiplyAdd (offset after scale), and Curve (CurveTable lookup). Your MMC returns the BASE. The pipeline transforms: Result = ((Base * Coeff) + PreAdd) * PostAdd + CurveEval. This gives designers final tuning control without changing C++ code."
+        },
+        {
+          "question": "Do the Magic Macros (ATTRIBUTE_ACCESSORS) work the same as manual capture definitions?",
+          "correctAnswer": "Yes \u2014 they generate the same DECLARE_ATTRIBUTE_CAPTUREDEF/DEFINE_ATTRIBUTE_CAPTUREDEF pattern with less boilerplate",
+          "acceptableAnswers": [
+            "yes, same underlying capture system",
+            "macros reduce boilerplate"
+          ],
+          "explanation": "The ATTRIBUTE_ACCESSORS macro family generates capture definitions from FGameplayAttribute properties. They produce the same capture infrastructure \u2014 just with less manual typing. The capture policy (snapshot/live) is still set in the GE asset, not in the macro."
+        },
+        {
+          "question": "Can MMCs be implemented in Blueprint?",
+          "options": [
+            "No \u2014 C++ only",
+            "Yes \u2014 override CalculateBaseMagnitude as BlueprintImplementableEvent or BlueprintNativeEvent",
+            "Only with the UGameplayEffectCalculation base class",
+            "Only for scalar values"
+          ],
+          "correctAnswer": "Yes \u2014 override CalculateBaseMagnitude as BlueprintImplementableEvent or BlueprintNativeEvent",
+          "explanation": "If declared BlueprintNativeEvent, you can implement in Blueprint (with optional C++ fallback via _Implementation). BlueprintImplementableEvent means BP-only implementation. The capture definitions still need to be declared in C++ headers, but the magnitude logic can be entirely in Blueprint."
+        },
+        {
+          "question": "What information can you NOT access from CalculateBaseMagnitude that an EEC can?",
+          "correctAnswer": "You can't emit multiple modifiers, fire conditional GEs, or access the target ASC directly. MMCs are scoped to a single modifier calculation.",
+          "acceptableAnswers": [
+            "multiple modifiers or conditional GEs",
+            "can't access target ASC directly"
+          ],
+          "explanation": "MMC is intentionally scoped: you get the Spec (with captures) and the attribute. You return one float. EECs get full source/target ASC access and can emit unlimited modifiers and conditional GEs. Choose MMC for simple single-modifier calculations. Choose EEC when you need more power."
+        },
+        {
+          "question": "What's the most common MMC mistake?",
+          "correctAnswer": "Forgetting to declare captures in the header (DECLARE_ATTRIBUTE_CAPTUREDEF) \u2014 without captures, GetCapturedAttributeMagnitude returns 0 silently",
+          "acceptableAnswers": [
+            "forgetting capture declarations",
+            "missing DECLARE_ATTRIBUTE_CAPTUREDEF"
+          ],
+          "explanation": "If you call GetCapturedAttributeMagnitude for a capture that wasn't declared, it returns 0 with no warning. The GE asset's capture configuration won't help \u2014 the MMC's C++ code ALSO needs the capture declared. Always verify captures are declared in both the MMC header AND the GE asset."
+        }
+      ]
     }
   },
   "quiz_notes": {
@@ -41732,7 +43565,30 @@
       "UHT, Macros & Reflection",
       "01 \u2014 Cast Internals & Variants",
       "02 \u2014 Interface Casting & References",
-      "03 \u2014 When to Use & Pitfalls"
+      "03 \u2014 When to Use & Pitfalls",
+      "ACharacter \u2014 Essential API",
+      "APawn \u2014 Essential API",
+      "UE Interfaces & Execute_ Dispatch",
+      "UPROPERTY \u2014 When and Why",
+      "Dot Product & Cross Product",
+      "Collision & Intersection Math",
+      "Curves, Ranges & Random",
+      "FVector, FRotator, FQuat \u2014 The Core Types",
+      "FMath \u2014 Interpolation & Utility",
+      "FTransform & FMatrix",
+      "DeltaTime & Interpolation",
+      "StaticClass \u2014 What It Returns",
+      "World & GameplayStatics \u2014 Essential Access Points",
+      "FFastArraySerializer \u2014 Fast TArray Replication",
+      "Replication Property Registration",
+      "Prediction & Networking",
+      "Tag System Internals",
+      "00 \u2014 Casting Overview",
+      "ApplyGameplayEffectSpec Pipeline",
+      "Attribute Capture System",
+      "GE Execution Flow",
+      "GameplayEffectExecutionCalculation",
+      "GameplayModMagnitudeCalculation"
     ],
     "ue-networking": [
       "GAS Networking & Prediction",
