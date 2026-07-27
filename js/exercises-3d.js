@@ -146,10 +146,10 @@ window.render3DGraph = function(containerEl, points, arrows) {
   }
   for (var t = -14; t <= 14; t += 2) {
     if (t === 0) continue;
-    var c = t > 0 ? 1 : 0.5; // dimmer for negative
-    tl(String(Math.abs(t)), new THREE.Vector3(t + (t>0?0.5:-0.5), -0.3, 0), t > 0 ? '#ff5555' : '#884444');
-    tl(String(Math.abs(t)), new THREE.Vector3(-0.4, t + (t>0?0.3:-0.3), 0), t > 0 ? '#55ff55' : '#448844');
-    tl(String(Math.abs(t)), new THREE.Vector3(-0.4, 0, t + (t>0?0.3:-0.3)), t > 0 ? '#5588ff' : '#444488');
+    var label = String(t); // keep the sign
+    tl(label, new THREE.Vector3(t + (t>0?0.5:-0.5), -0.3, 0), t > 0 ? '#ff5555' : '#884444');
+    tl(label, new THREE.Vector3(-0.4, t + (t>0?0.3:-0.3), 0), t > 0 ? '#55ff55' : '#448844');
+    tl(label, new THREE.Vector3(-0.4, 0, t + (t>0?0.3:-0.3)), t > 0 ? '#5588ff' : '#444488');
   }
   
   // Point spheres
