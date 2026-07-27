@@ -98,19 +98,58 @@ window.render3DGraph = function(containerEl, points, arrows) {
   var controls = _makeControls(camera, renderer.domElement);
   
   // Axes + grid
-  scene.add(new THREE.AxesHelper(15));
+  // Custom axes: positive half (solid, bright), negative half (dashed, dim)
+  var axisLen = 15;
+  function addAxisHalf(x1,y1,z1, x2,y2,z2, color, dashed) {
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array([x1,y1,z1, x2,y2,z2]), 3));
+    var mat;
+    if (dashed) {
+      mat = new THREE.LineDashedMaterial({ color: color, dashSize: 0.6, gapSize: 0.4, transparent: true, opacity: 0.35 });
+    } else {
+      mat = new THREE.LineBasicMaterial({ color: color, linewidth: 1 });
+    }
+    var line = new THREE.Line(geo, mat);
+    if (dashed) line.computeLineDistances();
+    scene.add(line);
+  }
+  
+  // Positive halves (solid)
+  addAxisHalf(0,0,0, axisLen,0,0, 0xf85149, false);
+  addAxisHalf(0,0,0, 0,axisLen,0, 0x3fb950, false);
+  addAxisHalf(0,0,0, 0,0,axisLen, 0x58a6ff, false);
+  
+  // Negative halves (dashed)
+  addAxisHalf(0,0,0, -axisLen,0,0, 0xf85149, true);
+  addAxisHalf(0,0,0, 0,-axisLen,0, 0x3fb950, true);
+  addAxisHalf(0,0,0, 0,0,-axisLen, 0x58a6ff, true);
+  
+  // Small spheres at axis tips (positive)
+  function tipDot(x,y,z,color) {
+    var g = new THREE.SphereGeometry(0.2, 8, 8);
+    var m = new THREE.MeshBasicMaterial({ color: color });
+    var d = new THREE.Mesh(g, m);
+    d.position.set(x, y, z);
+    scene.add(d);
+  }
+  tipDot(axisLen, 0, 0, 0xf85149);
+  tipDot(0, axisLen, 0, 0x3fb950);
+  tipDot(0, 0, axisLen, 0x58a6ff);
+  
   scene.add(new THREE.GridHelper(30, 15, 0x444444, 0x1a1a1a));
   
-  // Tick labels
+  // Tick labels on both positive and negative sides
   function tl(text, pos, color) {
     var s = _makeSpriteLabel(text, color, 1.6);
     s.position.copy(pos);
     scene.add(s);
   }
-  for (var t = 2; t <= 14; t += 2) {
-    tl(String(t), new THREE.Vector3(t + 0.5, -0.3, 0), '#ff5555');
-    tl(String(t), new THREE.Vector3(-0.4, t + 0.3, 0), '#55ff55');
-    tl(String(t), new THREE.Vector3(-0.4, 0, t + 0.3), '#5588ff');
+  for (var t = -14; t <= 14; t += 2) {
+    if (t === 0) continue;
+    var c = t > 0 ? 1 : 0.5; // dimmer for negative
+    tl(String(Math.abs(t)), new THREE.Vector3(t + (t>0?0.5:-0.5), -0.3, 0), t > 0 ? '#ff5555' : '#884444');
+    tl(String(Math.abs(t)), new THREE.Vector3(-0.4, t + (t>0?0.3:-0.3), 0), t > 0 ? '#55ff55' : '#448844');
+    tl(String(Math.abs(t)), new THREE.Vector3(-0.4, 0, t + (t>0?0.3:-0.3)), t > 0 ? '#5588ff' : '#444488');
   }
   
   // Point spheres
