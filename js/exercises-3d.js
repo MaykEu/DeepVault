@@ -190,7 +190,6 @@ window.render3DScene = function(containerEl, points, arrows) {
       }
     });
     renderer.dispose();
-    controls.dispose();
     if (renderer.domElement.parentNode) {
       renderer.domElement.parentNode.removeChild(renderer.domElement);
     }
