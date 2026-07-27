@@ -1,0 +1,187 @@
+<p><h1 id="hardware-security-side-channels-speculative-execution">Hardware Security — Side Channels &amp; Speculative Execution</h1>
+
+> [!info] Prerequisites: <span class="wiki-link-missing">04 — CPU Architecture <small>(coming soon)</small></span>, <span class="wiki-link-missing">RAM &amp; Virtual Memory/02 — Page Tables &amp; TLB <small>(coming soon)</small></span>
+
+<hr>
+
+<h2 id="why">Why</h2>
+
+The fastest code is code that runs correctly. The most dangerous code is code that runs correctly but leaks secrets through physics. Spectre and Meltdown (2018) showed that modern CPU optimizations — the same ones that make your game run at 144fps — can be weaponized to read kernel memory from user space. Understanding these attacks means understanding why CPUs are both brilliant and terrifying.
+
+<hr>
+
+<h2 id="speculative-execution-the-vulnerability">Speculative Execution — The Vulnerability</h2>
+
+Modern CPUs don't wait. When they hit a branch, they GUESS which way it goes and execute ahead speculatively. If the guess is wrong, they discard the results — but NOT the side effects on the microarchitecture:
+
+<pre><code class="language-cpp"><span class="syn-comment">// Spectre v1 — bounds check bypass:
+</span>
+<span class="syn-kw">if</span> (index &lt; array_size) {              <span class="syn-comment">// Branch: likely TRUE
+</span>
+ value = lookup_table[data[index]]; <span class="syn-comment">// Executed SPECULATIVELY before branch resolves
+</span>
+}
+<span class="syn-comment">// Attacker: make index = malicious_value
+</span>
+<span class="syn-comment">// CPU speculates index &lt; size (trained branch predictor)
+</span>
+<span class="syn-comment">// lookup_table[data[malicious_value]] is accessed — loads secret into cache
+</span>
+<span class="syn-comment">// Even though the branch was WRONG, the cache state was modified
+</span>
+<span class="syn-comment">// Attacker measures cache timing to extract the loaded value
+</span>
+```
+</p><p>---
+</p><p><span class="syn-pp">## Cache Timing — The Measurement Tool
+</span></p><p>```cpp
+<span class="syn-comment">// Flush+Reload: measure whether address X is cached
+</span>
+<span class="syn-type">uint64_t</span> before = __rdtsc();
+_mm_lfence();                      <span class="syn-comment">// Serialize — ensure RDTSC finishes before load (see below)
+</span>
+volatile <span class="syn-kw">int</span> tmp = probe_array[X * <span class="syn-num">64</span>];  <span class="syn-comment">// 64-byte stride avoids prefetcher
+</span>
+_mm_lfence();                      <span class="syn-comment">// Serialize — ensure load finishes before next RDTSC
+</span>
+<span class="syn-type">uint64_t</span> after = __rdtsc();
+<span class="syn-type">uint64_t</span> time = after - before;
+</p><p><span class="syn-kw">if</span> (time &lt; THRESHOLD) {
+ <span class="syn-comment">// X was CACHED — the secret accessed this index
+</span>
+ printf(<span class="syn-string">"Secret byte = %d\n"</span>, X);
+}
+```
+</p><p>[!warning] Why `_mm_lfence()` is needed
+`__rdtsc()` is not a serializing instruction on modern CPUs — the CPU can reorder it with surrounding loads. Without `_mm_lfence()`, the first `__rdtsc()` might execute AFTER the load has already started, and the second might execute BEFORE the load finishes. The fence forces instruction ordering, ensuring the timing measurement actually captures the load<span class="syn-string">'s cache hit/miss latency. `_mm_mfence()` also works but is heavier (flushes the store buffer too). Always fence RDTSC in timing side-channel code.
+</p><p>L1 cache hit: ~4 cycles. L3 hit: ~12 cycles. DRAM: ~100 cycles. The 25× difference is trivially measurable.
+</p><p>---
+</p><p>## Meltdown — Reading Kernel Memory
+</p><p>Meltdown exploits that Intel CPUs (pre-Cascade Lake) check page table permissions AFTER the speculative load:
+</p><p>```c
+// Kernel maps all physical memory in its address space (for efficiency)
+// User-space code:
+uint8_t secret = *(uint8_t*)kernel_address;  // #PF — page fault
+// BUT: speculative execution already loaded the value into a register
+// BEFORE the page fault was raised
+probe_array[secret * 64] = 1;  // Access probe array at index = secret
+// The page fault fires, the instruction is discarded...
+// ...but probe_array[secret * 64] is NOW IN CACHE
+</p><p>// Attacker: Flush+Reload every index of probe_array
+// The cached one is the secret value
+```
+</p><p>**Fix:** KPTI (Kernel Page Table Isolation) — kernel pages are unmapped in user-space page tables. The kernel has its own separate page table. Context switch between them on every syscall — ~5-30% performance hit.
+</p><p>---
+</p><p>## Spectre v1 — Bounds Check Bypass
+</p><p>Train the branch predictor to predict "in bounds." Then provide an out-of-bounds index. The speculative execution accesses the secret via `data[index]`, loads it, and leaks it through the cache:
+</p><p>```c
+// Mitigation: LFENCE (Load Fence) or conditional move:
+if (index &lt; size) {
+ _mm_lfence();  // Stall pipeline until branch resolved
+ value = lookup_table[data[index]];
+}
+</p><p>// Or compiler-level: -mindirect-branch=thunk (retpoline)
+```
+</p><p>---
+</p><p>## Spectre v2 — Branch Target Injection
+</p><p>Poison the indirect branch predictor (BTB — Branch Target Buffer) to make the CPU speculatively jump to an attacker-chosen gadget:
+</p><p>```c
+// Victim code at address VICTIM_ADDR:
+void victim(size_t index) {
+ if (index &lt; size) gadget(data[index]);
+}
+</p><p>// Attacker: train BTB to predict that an indirect call at ATTACKER_ADDR
+// will jump to VICTIM_ADDR
+// Then issue the indirect call with attacker-controlled index
+// CPU speculatively jumps to victim, executes gadget with attacker data
+```
+</p><p>**Fix:** Retpoline — replace indirect calls/jumps with a `return` trampoline that can'</span>t be speculatively redirected. Available as compiler flag `-mindirect-branch=thunk`.
+</p><p>---
+</p><p><span class="syn-pp">## Rowhammer — Flipping Bits in Someone Else's Memory
+</span></p><p>Repeatedly activate the same DRAM row (hammer it). Capacitive coupling causes charge to leak from adjacent rows — BIT FLIPS in memory you don<span class="syn-string">'t even own:
+</p><p>```c
+// Pseudocode:
+while (1) {
+ *row_A = 1;  // Activate row A
+ *row_B = 1;  // Activate row B (adjacent to A)
+ // After ~100,000 activations, bits in adjacent rows flip
+ // Including rows in OTHER processes'</span> memory
+ <span class="syn-comment">// Including kernel memory if the attacker knows the physical layout
+</span>
+}
+```
+</p><p>**Fix:** ECC memory (detects and corrects single-bit errors). DRAM refresh rate increase (from <span class="syn-num">64</span>ms to <span class="syn-num">32</span>ms). Target Row Refresh (TRR) in DDR4+ — the memory controller tracks highly-accessed rows and refreshes their neighbors.
+</p><p>---
+</p><p><span class="syn-pp">## Meltdown — When Speculation Bypasses Permission Checks
+</span></p><p>Spectre tricks a process into leaking ITS OWN memory. Meltdown (<span class="syn-num">2018</span>, CVE-<span class="syn-num">2017</span>-<span class="syn-num">5754</span>) is worse — it lets user code read KERNEL memory. The attack exploits a specific Intel microarchitectural bug: permission checks and speculative execution happen IN PARALLEL.
+</p><p>```cpp
+<span class="syn-comment">// Meltdown — user space reads kernel memory:
+</span>
+<span class="syn-type">uint8_t</span> kernel_addr = <span class="syn-num">0xFFFF888000000000</span>; <span class="syn-comment">// KERNEL address — user code can't read this
+</span></p><p><span class="syn-comment">// 1. Speculatively load from kernel address
+</span>
+<span class="syn-type">uint8_t</span> secret = *(<span class="syn-type">uint8_t</span>*)kernel_addr;  <span class="syn-comment">// FAULTS (page not present in user tables)
+</span>
+                                        <span class="syn-comment">// BUT: CPU has ALREADY speculatively loaded the value
+</span></p><p><span class="syn-comment">// 2. Use secret as index into a probe array (executed speculatively)
+</span>
+<span class="syn-type">uint8_t</span> probe_val = probe_array[secret * <span class="syn-num">4096</span>]; <span class="syn-comment">// 4096 = page size to avoid prefetcher
+</span></p><p><span class="syn-comment">// 3. Exception handler catches the fault, but cache is already modified
+</span>
+<span class="syn-comment">// 4. Flush+Reload: time access to probe_array[0], [4096], [8192], ...
+</span>
+<span class="syn-comment">//    One index is lightning-fast — that's the secret byte
+</span>
+```
+</p><p>**Why Intel specifically?** On affected Intel CPUs, when the MMU encounters a page with the supervisor bit set (kernel-only), it queues a page fault — but the pipeline CONTINUES executing with the loaded value. The fault handler eventually runs, but by then the cache side effects are permanent. AMD CPUs check permissions BEFORE forwarding the load result — no speculative access to kernel pages.
+</p><p><span class="syn-pp">### The Fixes — KPTI, Retpoline, and CET
+</span></p><p>**KPTI (Kernel Page Table Isolation):**
+</p><p>The root cause: kernel memory is mapped in every process<span class="syn-string">'s page table (for syscall performance — no TLB flush on context switch). KPTI unmaps kernel pages while user code runs:
+</p><p>```
+BEFORE KPTI:                    AFTER KPTI:
+┌───────────────────────┐      ┌───────────────────────┐
+│ FFFF... (Kernel pages) │      │ (unmapped — page fault)│
+│  kernel code &amp; data    │      │                        │
+├───────────────────────┤      ├───────────────────────┤
+│ 0000... (User pages)   │      │ 0000... (User pages)   │
+│  game code &amp; data      │      │  game code &amp; data      │
+└───────────────────────┘      └───────────────────────┘
+```
+</p><p>On syscall, the CPU switches to kernel page tables (with both kernel AND user pages mapped). On return, it switches back to the minimal page table. Cost: TLB flush on every syscall — ~100-300 cycles added to every `read()`, `write()`, `futex`.
+</p><p>**Retpoline (Return Trampoline) — Spectre v2 mitigation:**
+</p><p>Spectre v2 poisons the indirect branch predictor. Retpoline replaces indirect jumps/calls with a return-based sequence that can'</span>t be speculatively misdirected:
+</p><p>```asm
+; BEFORE (vulnerable):
+;   jmp *%rax               ; indirect jump — predictor can be poisoned
+</p><p>; AFTER (retpoline):
+ call load_label         ; push <span class="syn-kw">return</span> address, then...
+ pause; lfence           ; ...stall the pipeline
+load_label:
+ mov %rax, (%rsp)        ; overwrite <span class="syn-kw">return</span> address with target
+ ret                     ; <span class="syn-kw">return</span> — uses RET predictor (not poisoned)
+```
+</p><p>**CET (Control-flow Enforcement Technology) — Intel <span class="syn-num">11</span>th gen+:**
+</p><p>CET adds a SHADOW STACK in hardware. Every `call` pushes the <span class="syn-kw">return</span> address to BOTH the regular stack AND the shadow stack. Every `ret` compares the two — mismatch → #CP exception. ROP attacks that overwrite <span class="syn-kw">return</span> addresses on the stack are caught because the shadow stack still holds the original, correct <span class="syn-kw">return</span> address. The shadow stack lives in a separate page table region marked <span class="syn-string">"shadow stack"</span> — not writable by normal instructions, only by dedicated `WRSS`/`WRUSS` instructions.
+</p><p>---
+</p><p><span class="syn-pp">## Engine Connection
+</span></p><p><ul><li>**Web browsers:** First to deploy Spectre mitigations (site isolation, reduced timer precision)</li></ul>
+<ul><li>**Cloud providers:** Meltdown meant VMs could read the HYPERVISOR<span class="syn-string">'S memory — major security crisis</li></ul>
+<ul><li>**Game consoles:** Fixed hardware = known microarchitecture = can audit for these vulnerabilities. Console devkits often have debug registers to detect side-channel attacks</li></ul>
+<ul><li>**Anti-cheat:** Cheat engines use read/write process memory — similar to Meltdown in concept (accessing another process'</span>s memory). Hardware-enforced stack protection (CET — Control-flow Enforcement Technology) blocks ROP attacks</li></ul>
+</p><p><span class="syn-pp">## Two-Way Explanation
+</span></p><p><span class="syn-pp">### Simple
+</span>
+Your CPU is so impatient that it starts executing instructions BEFORE checking <span class="syn-kw">if</span> it<span class="syn-string">'s allowed to. It guesses which way a branch goes and races ahead. If the guess was wrong, it throws away the work — but it can'</span>t un-ring the bell. The speculative execution touched memory, and that memory is now in cache. A clever attacker measures which addresses are cached (fast to access) vs uncached (slow) and reconstructs the secret one bit at a time. It<span class="syn-string">'s like the CPU whispered the secret before the security guard could stop it, and you can tell what it whispered by how fast it is to repeat certain words.
+</p><p>### Technical
+Spectre v1: train branch predictor, then provide OOB index. CPU speculates past bounds check, loads secret via array[index], caches probe_array[secret]. Flush+Reload reveals secret. Mitigation: LFENCE serializes execution, retpolines for indirect branches. Meltdown: Intel'</span>s permission check happens in parallel with speculative load — KPTI unmaps kernel pages in user page tables to prevent the load entirely. Rowhammer: repeated DRAM row activation (tRAS) causes capacitive coupling to adjacent rows, flipping bits. ECC/TRR mitigations. Cache side channel: Prime+Probe, Flush+Reload, Evict+Time — all exploit cache timing differential (~<span class="syn-num">4</span> cycles L1 vs ~<span class="syn-num">100</span> cycles DRAM) or the <span class="syn-num">25</span>× ratio.
+</p><p>---
+</p><p><span class="syn-pp">## Exercises
+</span></p><p><span class="syn-num">1.</span> **Conceptual:** Spectre uses the branch predictor to speculatively execute code that loads a secret into cache. Meltdown exploits the fact that Intel CPUs don<span class="syn-string">'t check page-table permission bits until after the load retires. Why does Meltdown NOT affect AMD CPUs? What specific implementation difference in the permission check pipeline protects AMD?
+</p><p><ol><li>**Code:** Implement a Flush+Reload covert channel between two processes: Process A (sender) either accesses or doesn'</span>t access a shared memory page. Process B (receiver) uses `clflush` + timed reload to detect whether the page is in cache. Measure the timing difference. How many bits per second can <span class="syn-kw">this</span> channel transmit?</li></ol>
+</p><p><span class="syn-num">3.</span> **Analysis:** KPTI unmaps kernel pages from user-space page tables. Before KPTI, a user process<span class="syn-string">'s page table contained both user and kernel mappings (the top half of the address space). With KPTI, every syscall requires switching page tables. How many CR3 writes does this add per syscall? If your game makes 100,000 syscalls per second (a high number), how much overhead does KPTI add in cycles?
+</p><p><ol><li>**Real-world:** A cloud provider hosts VMs from different customers on the same physical machine. Customer A'</span>s VM uses a Rowhammer attack to flip bits in Customer B<span class="syn-string">'s VM. How is this possible — don'</span>t VMs have separate physical memory? What specific hardware feature (hint: DRAM rows are shared within a DIMM) enables <span class="syn-kw">this</span>, and what mitigation does DDR5<span class="syn-string">'s on-die ECC provide?</li></ol>
+</p><p><ol><li>**Design:** Anti-cheat engines must detect when a cheat program reads/writes the game'</span>s process memory. Design a detection scheme: <span class="syn-kw">if</span> you place a <span class="syn-string">"canary"</span> value at a known memory address and periodically check it, can you detect the cheat? How does the cheat evade <span class="syn-kw">this</span> by only reading memory (not writing)? What hardware feature could the anti-cheat use instead — hint: performance counters that count cache misses?</li></ol>
+</p><p><span class="syn-pp">## See Also
+</span></p><p><ul><li>[[<span class="syn-num">04</span> — CPU Architecture]] — The speculative execution engine being exploited</li></ul>
+<ul><li>[[RAM &amp; Virtual Memory/<span class="syn-num">01</span> — DRAM Cells &amp; Memory Physics]] — Why rowhammer works (capacitive coupling)</li></ul>
+<ul><li>[[../Concurrency/<span class="syn-num">04</span> — Data Races &amp; Mutexes]] — Timing side channels are a form of race condition</code></pre></li></ul></p>

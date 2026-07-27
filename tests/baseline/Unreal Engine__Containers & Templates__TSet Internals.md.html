@@ -1,0 +1,107 @@
+<p><h1 id="tset-internals">TSet Internals</h1>
+
+<h2 id="why-this-note-exists">Why This Note Exists</h2>
+
+TSet is UE's hash set — a collection of unique elements with O(1) add/remove/contains. It shares the same internal architecture as TMap, just without the value half of the key-value pair.
+
+> [!info] Source
+> <code>Containers/Set.h</code>, <code>Containers/SparseArray.h</code>
+
+> [!info] Prerequisites
+> <span class="wiki-link-missing">TMap Internals <small>(coming soon)</small></span> — TSet and TMap share the same internal structure.
+
+<hr>
+
+<h2 id="tset-s-internal-structure">TSet's Internal Structure</h2>
+
+TSet is essentially TMap<code><ElementType, void></code> — a TMap where the value doesn't exist:
+
+<pre><code class="language-cpp"><span class="syn-comment">// Source: Set.h
+</span></p><p><span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> ElementType&gt;
+<span class="syn-kw">class</span> <span class="syn-type">TSet</span> {
+ TSparseArray&lt;ElementType&gt; Elements;  <span class="syn-comment">// The actual elements
+</span>
+ THashTable Hash;                      <span class="syn-comment">// Maps hash → sparse array index
+</span>
+};
+```
+</p><p>**Compared to <span class="syn-type">TMap</span>:**
+<ul><li><span class="syn-type">TMap</span>: `TSparseArray&lt;TPair&lt;Key, Value&gt;&gt;` — stores key AND value</li></ul>
+<ul><li><span class="syn-type">TSet</span>: `TSparseArray&lt;ElementType&gt;` — stores only the element (it IS the key)</li></ul>
+</p><p>---
+</p><p><span class="syn-pp">## Core Operations
+</span></p><p>```cpp
+<span class="syn-type">TSet</span>&lt;<span class="syn-type">FName</span>&gt; ActiveTags;
+</p><p><span class="syn-comment">// Add — returns whether element was new
+</span>
+<span class="syn-kw">bool</span> bWasNew = ActiveTags.Add(<span class="syn-type">FName</span>(\<span class="syn-string">"Burning\"));  // true
+bool bWasDuplicate = ActiveTags.Add(FName(\"Burning\"));  // false — already present
+</p><p>// Emplace — construct in-place
+ActiveTags.Emplace(\"Frozen\");
+</p><p>// Containment check
+if (ActiveTags.Contains(FName(\"Burning\"))) { }
+</p><p>// Find — returns pointer or nullptr
+if (const FName* Found = ActiveTags.Find(FName(\"Burning\"))) {
+ UseTag(*Found);
+}
+</p><p>// Remove
+ActiveTags.Remove(FName(\"Burning\"));
+</p><p>// Set operations
+TSet&lt;int32&gt; A{1, 2, 3};
+TSet&lt;int32&gt; B{2, 3, 4};
+TSet&lt;int32&gt; Union = A.Union(B);            // {1, 2, 3, 4}
+TSet&lt;int32&gt; Intersection = A.Intersect(B);  // {2, 3}
+TSet&lt;int32&gt; Difference = A.Difference(B);   // {1}
+```
+</p><p>---
+</p><p>## Memory Layout
+</p><p>TSet has no value type — it stores elements directly:
+</p><p>```
+TSet&lt;int32&gt;:
+sizeof(TSet&lt;int32&gt;) = sizeof(TSparseArray&lt;int32&gt;) + sizeof(THashTable)
+                   = ~80 bytes (container metadata)
+</p><p>Each element: 4 bytes (int32)
+HashTable entry: 4 bytes (sparse array index)
+```
+</p><p>**Space efficiency:** TSet uses significantly less memory than TMap```&lt;K, bool&gt;` for flag sets because there's no dummy `bool` value stored.
+</p><p>---
+</p><p>## When to Use TSet vs TMap`&lt;K, bool&gt;`
+</p><p>| Scenario | Use | Why |
+|---|---|---|
+| Set of tags/IDs (presence only) | TSet | Cleaner, less memory, no dummy bool |
+| Count occurrences | TMap`&lt;K, int32&gt;` | You need the count |
+| Cached lookup results | TMap`&lt;K, bool&gt;` | You need to distinguish \"false\" from \"not checked\" |
+</p><p>```cpp
+// ❌ TMap as a set — wasteful:
+TMap&lt;FName, bool&gt; ActiveEffects;
+ActiveEffects.Add(FName(\"Burning\"), true);
+</p><p>// ✅ TSet — cleaner:
+TSet&lt;FName&gt; ActiveEffects;
+ActiveEffects.Add(FName(\"Burning\"));
+```
+</p><p>---
+</p><p>## Iteration and Invalidation
+</p><p>Same rules as TMap — iteration order is undefined (HashTable order), and rehashing invalidates iterators.
+</p><p>```cpp
+for (const FName&amp; Tag : ActiveTags) { }
+</p><p>// Safe removal during iteration:
+for (auto It = ActiveTags.CreateIterator(); It; ++It) {
+ if (ShouldExpire(*It))
+     It.RemoveCurrent();
+}
+```
+</p><p>---
+</p><p>## Performance Profile
+</p><p>| Operation | Average | Notes |
+|---|---|---|
+| Add(Element) | O(1) amortized | O(n) on rehash |
+| Remove(Element) | O(1) | Leaves hole in SparseArray |
+| Contains(Element) | O(1) | |
+| Find(Element) | O(1) | Returns pointer or nullptr |
+| Union / Intersect / Diff | O(n + m) | Allocates new TSet |
+| Iteration | O(n + capacity) | Includes hash table overhead |
+</p><p>---
+</p><p>## See Also
+</p><p><ul><li>[[TMap Internals]] — The key-value version built on the same internals</li></ul>
+<ul><li>[[TArray Internals]] — TSet is built on TSparseArray</li></ul>
+<ul><li>[[UE Templates &amp; T-Containers]] — All UE containers at a glance</span></code></pre></li></ul></p>

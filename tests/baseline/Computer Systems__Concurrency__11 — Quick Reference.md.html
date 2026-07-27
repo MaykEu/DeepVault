@@ -1,0 +1,79 @@
+<p><h1 id="quick-reference">Quick Reference</h1>
+
+> Problem → solution lookup table for concurrency. Print this or keep it pinned.
+
+<h2 id="problem-solution-matrix">Problem → Solution Matrix</h2>
+
+<table><tr><th>Problem</th><th>Hardware Cause</th><th>Solution</th><th>C++ Primitive</th><th>C++ Standard</th></tr></table>
+<table><tr><th>---------</th><th>---------------</th><th>----------</th><th>---------------</th><th>-------------</th></tr></table>
+<table><tr><th><strong>Data race</strong></th><th>Two cores' load-modify-store sequences interleave</th><th>Mutex, atomics, or redesign to avoid sharing</th><th><code>std::mutex</code>, <code>std::atomic<T></code></th><th>C++11</th></tr></table>
+<table><tr><th><strong>Deadlock</strong></th><th>Circular wait: each core blocked in FUTEX_WAIT on the other's lock</th><th>Consistent lock ordering, <code>std::scoped_lock</code></th><th><code>std::scoped_lock</code></th><th>C++17</th></tr></table>
+<table><tr><th><strong>Livelock</strong></th><th>Cores actively executing but constantly yielding</th><th>Random backoff, tiebreaker priority</th><th><code>std::this_thread::yield</code></th><th>C++11</th></tr></table>
+<table><tr><th><strong>Starvation</strong></th><th>Scheduler/hardware never gives one core the resource</th><th>Fair mutex, priority inheritance</th><th><code>std::mutex</code> with fair scheduler</th><th>—</th></tr></table>
+<table><tr><th><strong>False sharing</strong></th><th>Two cores write different bytes on same 64-byte cache line → MESI ping-pong</th><th><code>alignas(64)</code> per-thread data</th><th><code>alignas(64)</code></th><th>C++11</th></tr></table>
+<table><tr><th><strong>High lock contention</strong></th><th>Cores spending cycles in FUTEX_WAIT, not doing work</th><th>Reader-writer lock, lock-free structure, sharding</th><th><code>std::shared_mutex</code>, lock-free</th><th>C++17</th></tr></table>
+<table><tr><th><strong>Low lock contention (short CS)</strong></th><th>Futex overhead > critical section time</th><th>Spinlock for < 1 µs critical sections</th><th>Custom spinlock with <code>_mm_pause()</code></th><th>—</th></tr></table>
+<table><tr><th><strong>Spurious wakeup</strong></th><th>Kernel wakes FUTEX_WAIT without notify</th><th>Always use <code>cv.wait(lock, predicate)</code></th><th><code>std::condition_variable::wait</code></th><th>C++11</th></tr></table>
+<table><tr><th><strong>Relaxed ordering bug</strong></th><th>Store buffer reordering → consumer sees stale data</th><th><code>acquire</code> on read, <code>release</code> on write</th><th><code>std::memory_order</code></th><th>C++11</th></tr></table>
+<table><tr><th><strong>Priority inversion</strong></th><th>High-prio thread blocked by low-prio holder, preempted by medium</th><th>Priority inheritance mutex</th><th><code>FUTEX_LOCK_PI</code> (Linux)</th><th>—</th></tr></table>
+<table><tr><th><strong>ABA corruption</strong></th><th>Freed-and-reallocated pointer reuses address → CAS succeeds incorrectly</th><th>Tagged pointers, hazard pointers, RCU</th><th>Tagged <code>uintptr_t</code> or LL/SC</th><th>—</th></tr></table>
+<table><tr><th><strong>Thread oversubscription</strong></th><th>More active threads than physical cores → context switching overhead</th><th>Thread pool sized to physical cores</th><th><code>std::thread::hardware_concurrency()</code></th><th>C++11</th></tr></table>
+
+<h2 id="primitive-quick-cost-table">Primitive Quick-Cost Table</h2>
+
+<table><tr><th>Primitive</th><th>Fast Path (uncontended)</th><th>Slow Path (contended)</th><th>Kernel Involvement</th></tr></table>
+<table><tr><th>-----------</th><th>:----------------------:</th><th>:--------------------:</th><th>:------------------:</th></tr></table>
+<table><tr><th><code>std::mutex</code></th><th>~20 cycles (LOCK CMPXCHG)</th><th>~2000-10000 cycles (FUTEX_WAIT + switch)</th><th>On contention only</th></tr></table>
+<table><tr><th><code>std::shared_mutex</code> (read)</th><th>~30 cycles (atomic inc)</th><th>~2000+ cycles</th><th>On contention only</th></tr></table>
+<table><tr><th><code>std::shared_mutex</code> (write)</th><th>~50 cycles (CAS)</th><th>~2000+ cycles</th><th>On contention only</th></tr></table>
+<table><tr><th>Spinlock</th><th>~15 cycles (XCHG)</th><th>Burns full core (busy-wait)</th><th>Never</th></tr></table>
+<table><tr><th><code>std::atomic<T>::load</code> (relaxed)</th><th>~1 cycle (regular mov)</th><th>—</th><th>Never</th></tr></table>
+<table><tr><th><code>std::atomic<T>::load</code> (seq_cst)</th><th>~20 cycles (MFENCE on x86)</th><th>—</th><th>Never</th></tr></table>
+<table><tr><th><code>std::atomic<T>::fetch_add</code> (relaxed)</th><th>~15 cycles (LOCK XADD)</th><th>—</th><th>Never</th></tr></table>
+<table><tr><th><code>std::condition_variable::wait</code></th><th>—</th><th>~1000-3000 cycles</th><th>Always (syscall)</th></tr></table>
+<table><tr><th><code>std::counting_semaphore::acquire</code></th><th>~20 cycles (futex fast path)</th><th>~2000-5000 cycles</th><th>On contention</th></tr></table>
+<table><tr><th>Thread creation</th><th>—</th><th>~100000 cycles (~30 µs)</th><th>Always</th></tr></table>
+<table><tr><th>Thread context switch</th><th>—</th><th>~5000-25000 cycles (~1-5 µs)</th><th>Always</th></tr></table>
+
+<h2 id="decision-tree-text">Decision Tree (Text)</h2>
+
+``<code>
+Critical section < 1 µs?
+├── YES → Contention rare?
+│   ├── YES → std::mutex
+│   └── NO  → Spinlock or lock-free
+└── NO  → Read-mostly (writes < 10%)?
+    ├── YES → std::shared_mutex
+    └── NO  → std::mutex + fine-grained locks
+
+Need to wait for condition?
+└── YES → std::condition_variable (NOT spin-polling)
+
+Real-time thread (can't sleep)?
+└── YES → Lock-free structure (no kernel)
+
+Multiple independent atomic vars same cache line?
+└── YES → alignas(64) each var
+</code>`<code>
+
+<h2 id="ue5-primitive-map">UE5 Primitive Map</h2>
+
+<table><tr><th>UE Type</th><th>C++ Equivalent</th><th>Notes</th></tr></table>
+<table><tr><th>---------</th><th>---------------</th><th>-------</th></tr></table>
+<table><tr><th></code>FCriticalSection<code></th><th></code>std::mutex<code></th><th>Platform-critical-section wrapper</th></tr></table>
+<table><tr><th></code>FScopeLock<code></th><th></code>std::lock_guard<code></th><th>RAII lock</th></tr></table>
+<table><tr><th></code>FRWLock<code></th><th></code>std::shared_mutex<code></th><th>Reader-writer lock</th></tr></table>
+<table><tr><th></code>FEvent<code></th><th></code>std::condition_variable<code></th><th>Thread signaling</th></tr></table>
+<table><tr><th></code>FPlatformAtomics<code></th><th></code>std::atomic<T><code></th><th>Low-level atomic ops</th></tr></table>
+<table><tr><th></code>TAtomic<T><code></th><th></code>std::atomic<T><code></th><th>Deprecated; use std::atomic</th></tr></table>
+<table><tr><th></code>FThreadSafeCounter<code></th><th></code>std::atomic<int><code></th><th>Legacy counter</th></tr></table>
+<table><tr><th></code>FSystemWideCriticalSection` | Named mutex | Cross-process (rare) |</th></tr></table>
+
+<h2 id="see-also">See Also</h2>
+
+<ul><li><span class="wiki-link-missing">04 — Data Races &amp; Mutexes <small>(coming soon)</small></span> — The futex state machine and assembly interleaving</li></ul>
+<ul><li><span class="wiki-link-missing">05 — Deadlock, Livelock &amp; Starvation <small>(coming soon)</small></span> — When waiting becomes the bug</li></ul>
+<ul><li><span class="wiki-link-missing">06 — Atomics &amp; Memory Ordering <small>(coming soon)</small></span> — When to avoid mutexes entirely</li></ul>
+<ul><li><span class="wiki-link-missing">07 — Synchronization Patterns <small>(coming soon)</small></span> — Spinlock vs mutex vs RWLock decision tree</li></ul>
+<ul><li><span class="wiki-link-missing">09 — Lock-Free Programming <small>(coming soon)</small></span> — When the kernel is too slow</li></ul>
+<ul><li><span class="wiki-link-missing">10 — Practical Concurrency <small>(coming soon)</small></span> — UE-specific threading recipes</li></ul></p>

@@ -1,0 +1,279 @@
+<p><h1 id="multivectors-products">Multivectors &amp; Products</h1>
+
+> [!info] Part of the <span class="wiki-link-missing">Geometric Algebra <small>(coming soon)</small></span> learning path.
+
+> [!info] Prerequisites
+> <span class="wiki-link-missing">Trigonometry &amp; Vectors <small>(coming soon)</small></span> and <span class="wiki-link-missing">Matrices &amp; Coordinate Systems <small>(coming soon)</small></span>.
+
+
+<h3 id="analogy-the-lego-brick-taxonomy">Analogy: The Lego Brick Taxonomy</h3>
+
+Imagine Lego bricks sorted by how many \"dimensions\" they span:
+<ul><li><strong>Grade 0:</strong> The smooth flat tile \u2014 a point, a scalar (0 dimensions)</li></ul>
+<ul><li><strong>Grade 1:</strong> A 1x4 beam \u2014 spans a line, a vector (1 dimension)</li></ul>
+<ul><li><strong>Grade 2:</strong> A 2x4 flat plate \u2014 spans an area, a bivector (2 dimensions)</li></ul>
+<ul><li><strong>Grade 3:</strong> A 2x4 brick \u2014 spans a volume, a trivector (3 dimensions)</li></ul>
+
+A <strong>multivector</strong> is a Lego creation that combines pieces of different grades \u2014 like a house that has tiles (scalars), beams (vectors), plates (bivectors), and bricks (trivectors) all in one object. In GA, you can add a scalar to a vector to a bivector and it all makes sense \u2014 just like a single Lego model combining different piece types.
+
+<h3 id="grade-structure-of-a-multivector">Grade Structure of a Multivector</h3>
+
+In 3D Geometric Algebra, a full multivector has 8 components (2\u00b3):
+
+$$M = \\underbrace{a}_{\\text{grade 0}} + \\underbrace{b_1e_1 + b_2e_2 + b_3e_3}_{\\text{grade 1 (vector)}} + \\underbrace{c_1e_{12} + c_2e_{13} + c_3e_{23}}_{\\text{grade 2 (bivector)}} + \\underbrace{d e_{123}}_{\\text{grade 3 (trivector)}}$$
+
+<table><tr><th>Grade</th><th>Name</th><th>Count</th><th>Basis</th><th>What It Represents</th></tr></table>
+<table><tr><th>-------</th><th>------</th><th>-------</th><th>-------</th><th>-------------------</th></tr></table>
+<table><tr><th>0</th><th>Scalar</th><th>1</th><th><code>1</code></th><th>Magnitude, time, energy</th></tr></table>
+<table><tr><th>1</th><th>Vector</th><th>3</th><th><code>e\u2081, e\u2082, e\u2083</code></th><th>Direction, position, velocity</th></tr></table>
+<table><tr><th>2</th><th>Bivector</th><th>3</th><th><code>e\u2081\u2082, e\u2081\u2083, e\u2082\u2083</code></th><th>Oriented area, rotation plane, magnetic field</th></tr></table>
+<table><tr><th>3</th><th>Trivector</th><th>1</th><th><code>e\u2081\u2082\u2083</code></th><th>Oriented volume, pseudoscalar</th></tr></table>
+
+> [!tip] The Pascal's Triangle Pattern
+> The number of basis elements at each grade follows Pascal's triangle: 1, 3, 3, 1 (for n=3 dimensions). In 4D: 1, 4, 6, 4, 1. In 2D: 1, 2, 1. The total is always 2^n.
+
+<h3 id="basis-blades">Basis Blades</h3>
+
+Basis vectors e\u2081, e\u2082, e\u2083 are orthonormal: e\u1d62 \u00b7 e\u2c7c = 0 (i\u2260j), e\u1d62 \u00b7 e\u1d62 = 1.
+
+Higher-grade basis elements are formed by the wedge product:
+<ul><li><strong>e\u2081\u2082</strong> = e\u2081 \u2227 e\u2082 (the bivector spanning the xy-plane)</li></ul>
+<ul><li><strong>e\u2081\u2082\u2083</strong> = e\u2081 \u2227 e\u2082 \u2227 e\u2083 (the trivector spanning all of 3D space)</li></ul>
+
+The pseudoscalar <strong>I = e\u2081\u2082\u2083</strong> is special: multiplying by I maps a grade-k element to a grade-(n-k) element (this is the GA version of the Hodge dual / cross product).
+
+<pre><code class="language-cpp"><span class="syn-comment">// Hypothetical GA struct in C++ for 3D
+</span>
+<span class="syn-kw">struct</span> Multivector3D
+{
+ <span class="syn-comment">// Grade 0: scalar part
+</span>
+ <span class="syn-kw">float</span> s;
+ 
+ <span class="syn-comment">// Grade 1: vector part
+</span>
+ <span class="syn-kw">float</span> e1, e2, e3;
+ 
+ <span class="syn-comment">// Grade 2: bivector part
+</span>
+ <span class="syn-kw">float</span> e12, e13, e23;
+ 
+ <span class="syn-comment">// Grade 3: trivector part (pseudoscalar)
+</span>
+ <span class="syn-kw">float</span> e123;
+ 
+ <span class="syn-comment">// Total: 8 floats (same memory as an Vec34 + Vec34)
+</span>
+};
+```
+</p><p><span class="syn-pp">### Visual Description
+</span></p><p>```
+Grade <span class="syn-num">0</span> (Scalar):   \u2022         \u2014 a point, a number
+</p><p>Grade <span class="syn-num">1</span> (Vector):   \u2500\u2500\u2500\u2500&gt;     \u2014 a directed line segment
+                 e\u2081 (x-axis)
+</p><p>Grade <span class="syn-num">2</span> (Bivector): \u250c\u2500\u2500\u2500\u2500\u2510    \u2014 an oriented area (a plane patch with circulation)
+                 \u2502    \u2502    e\u2081\u2082 is the xy-plane, oriented counterclockwise
+                 \u2514\u2500\u2500\u2500\u2500\u2518
+</p><p>Grade <span class="syn-num">3</span> (Trivector): A cube   \u2014 an oriented volume
+                  with all edges labeled by circulation direction
+```
+</p><p>---
+</p><p><span class="syn-pp">### Analogy: The Two-Part Handshake
+</span></p><p>When two people meet, the handshake has two parts: the **squeeze** (symmetric \u2014 both hands apply the same pressure) and the **twist** (antisymmetric \u2014 one hand rotates the other). The geometric product is the mathematical handshake: it combines the symmetric dot product (the squeeze) with the antisymmetric wedge product (the twist) in one operation.
+</p><p>For vectors a and b:
+</p><p>$ab = a \\cdot b + a \\wedge b$
+</p><p><ul><li>**a \u00b7 b** (dot product) is the **symmetric** part: scalar, measures how parallel they are</li></ul>
+<ul><li>**a \u2227 b** (wedge product) is the **antisymmetric** part: bivector, measures how perpendicular they are and defines the plane they span</li></ul>
+</p><p>[!note] This Is NOT Just Notation
+The geometric product of two vectors produces a **multivector**: a scalar PLUS a bivector. Just like a complex number has a real part and an imaginary part: z = a + bi. The scalar is the \<span class="syn-string">"real\" part, the bivector is the \"imaginary\" part. This is why complex numbers ARE the even subalgebra of 2D GA.
+</p><p>### Recovering Dot and Wedge from the Geometric Product
+</p><p>```cpp
+// Dot product: symmetric part
+float dot = 0.5f * (a * b + b * a);  // grade-0 part of geometric product
+</p><p>// Wedge product: antisymmetric part
+Bivector wedge = 0.5f * (a * b - b * a);  // grade-2 part of geometric product
+```
+</p><p>In 3D, the wedge product of two vectors is a bivector with 3 components (e\u2081\u2082, e\u2081\u2083, e\u2082\u2083):
+</p><p>$a \\wedge b = (a_1b_2 - a_2b_1)e_{12} + (a_1b_3 - a_3b_1)e_{13} + (a_2b_3 - a_3b_2)e_{23}$
+</p><p>Notice: the coefficients look EXACTLY like the cross product components! The wedge product IS the cross product, but without the artificial restriction to 3D.
+</p><p>### Geometric Product Examples
+</p><p>```cpp
+// Example GA multiplication in 3D
+struct Vec3 { float e1, e2, e3; };
+struct Bivec3 { float e12, e13, e23; };
+struct Rotor3 { float s; float e12, e13, e23; }; // even subalgebra = quaternion!
+</p><p>void GeometricProduct(const Vec3&amp; a, const Vec3&amp; b,
+                   float&amp; out_scalar, Bivec3&amp; out_bivector)
+{
+ // Dot product (grade 0)
+ out_scalar = a.e1 * b.e1 + a.e2 * b.e2 + a.e3 * b.e3;
+ 
+ // Wedge product (grade 2) \u2014 these ARE the cross product components!
+ out_bivector.e12 = a.e1 * b.e2 - a.e2 * b.e1;  // \"z\" of cross product
+ out_bivector.e13 = a.e1 * b.e3 - a.e3 * b.e1;  // \"y\" of cross product
+ out_bivector.e23 = a.e2 * b.e3 - a.e3 * b.e2;  // \"x\" of cross product
+}
+```
+</p><p>---
+</p><p>### Analogy: The Expanding Broom
+</p><p>A single vector is a broomstick \u2014 it sweeps a line. Two vectors that aren't parallel sweep out a parallelogram area as one \"slides\" along the other \u2014 that's the wedge product. Three vectors sweep out a parallelepiped volume. The wedge product builds higher-dimensional \"oriented extents\" from lower-dimensional ones. It's like extruding a shape into a higher dimension.
+</p><p>### Formal Definition
+</p><p>The wedge product is:
+<ul><li>**Associative:** (a \u2227 b) \u2227 c = a \u2227 (b \u2227 c)</li></ul>
+<ul><li>**Anticommutative:** a \u2227 b = -(b \u2227 a)</li></ul>
+<ul><li>**Distributive:** a \u2227 (b + c) = a \u2227 b + a \u2227 c</li></ul>
+<ul><li>**Bilinear:** (\u03b1a) \u2227 b = \u03b1(a \u2227 b)</li></ul>
+</p><p>### Geometric Meaning
+</p><p>| Expression | Geometric Meaning | Magnitude |
+|-----------|-------------------|-----------|
+| a \u2227 b | Oriented parallelogram spanned by a and b | |a||b|sin(\u03b8) |
+| a \u2227 b = 0 | a and b are parallel (collinear) | \u2014 |
+| a \u2227 b \u2227 c | Oriented parallelepiped spanned by a, b, c | |det([a b c])| |
+| a \u2227 b \u2227 c = 0 | a, b, c are coplanar | \u2014 |
+</p><p>### Why Wedge Is More Powerful Than Cross Product
+</p><p>```cpp
+// Cross product: ONLY works in 3D, returns a vector
+Vec3 Cross3D = Vec3::CrossProduct(A, B);
+</p><p>// Wedge product: works in ANY dimension, returns a bivector
+// 2D: wedge product of two 2D vectors is a scalar (signed area)
+// 3D: wedge product of two 3D vectors is a bivector (3 components)
+// 4D: wedge product of two 4D vectors is a bivector (6 components)
+```
+</p><p>The cross product is the **Hodge dual** of the wedge product in exactly 3 dimensions. GA makes this explicit: a \u00d7 b = (a \u2227 b)* = (a \u2227 b) \u00b7 I\u207b\u00b9, where I is the pseudoscalar. This is why the cross product doesn't generalize to higher dimensions while the wedge product does.
+</p><p>### Visual Description: Building Up Grades
+</p><p>```
+Step 1: Vector a \u2500\u2500\u2500\u2500\u2192
+</p><p>Step 2: a \u2227 b (b swept along a)
+     b \u2191
+       \u2502  \u250c\u2500\u2500\u2500\u2500\u2510
+       \u2502  \u2502area\u2502  \u2190 oriented parallelogram
+       \u2502  \u2514\u2500\u2500\u2500\u2500\u2518
+       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 a
+</p><p>Step 3: (a \u2227 b) \u2227 c (parallelogram swept along c)
+        \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
+       /\u2502        /\u2502
+      / \u2502 volume/ \u2502  \u2190 oriented parallelepiped
+     /  \u2502      /  \u2502
+     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  /
+      \u2502  /     \u2502 /
+      \u2502 /      \u2502/
+      \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
+```
+</p><p>---
+</p><p>[!info] **Game Engine Connection**
+Every engine implements these concepts: Unity's Physics.Raycast, Godot's CollisionShape, Unreal's Box/Sphere/LineTrace. The math is identical — only the API wrapping changes. See [[../../Unreal Engine/Math/Collision &amp; Intersection Math]] and [[../../Unreal Engine/Math/Curves, Ranges &amp; Random]] for engine-specific implementations.
+## Exercises
+</p><p><ol><li>**Grade counting via Pascal's triangle:** In 4D Geometric Algebra, how many basis elements exist at each grade? Verify that the sum equals 2⁴ = 16. Write out the 4D multivector as a sum with all 16 terms labeled. Which grade is missing from the 3D multivector that appears in 4D? What geometric object does a grade-4 element represent in 4D?</li></ol>
+</p><p><ol><li>**Geometric product decomposition:** Given vectors a = (2, 0, 0) and b = (1, 3, 0), compute the full geometric product ab. Identify: the scalar part (dot product), and the bivector part (wedge product, with all three e₁₂, e₁₃, e₂₃ components). Verify that `0.5(ab + ba)` recovers the dot product and `0.5(ab - ba)` recovers the wedge product. Why does ab ≠ ba — what geometric property does the non-commutativity encode?</li></ol>
+</p><p><ol><li>**Wedge product zero test:** Three vectors a = (1,0,0), b = (0,1,0), c = (2,3,0). Compute a∧b∧c. The result is zero. Why? Now replace c with (2,3,1) and recompute. What does the non-zero trivector magnitude represent geometrically? How does this relate to the determinant of the 3×3 matrix [a b c]?</li></ol>
+</p><p><ol><li>**Cross product vs wedge product in code:** The note shows that wedge coefficients match cross product components: `a∧b = (a₁b₂-a₂b₁)e₁₂ + (a₁b₃-a₃b₁)e₁₃ + (a₂b₃-a₃b₂)e₂₃`. In 2D, vectors a=(a₁,a₂) and b=(b₁,b₂) have a wedge product a∧b = (a₁b₂-a₂b₁)e₁₂ — a single scalar (signed area). The 2D cross product doesn't exist (you can't cross two 2D vectors to get a vector perpendicular to the plane without leaving 2D). Explain why the wedge product is more honest: what does the 2D wedge return, and why is calling it a "</span>scalar<span class="syn-string">" geometrically correct?</li></ol>
+</p><p><ol><li>**Pseudoscalar I = e₁₂₃ properties:** Compute I² where I = e₁₂₃. (Hint: e₁₂₃ · e₁₂₃ = e₁e₂e₃e₁e₂e₃. Swap adjacent basis vectors one at a time — each swap flips sign. Count the swaps.) What does the result tell you about I? Now compute v·I for a vector v — what grade is the result? This is the Hodge dual: what well-known 3D operation does this correspond to?</li></ol>
+</p><p>## Two-Way Explanation
+</p><p>### Simple
+A multivector is the ultimate Swiss Army knife of geometry. Instead of carrying separate tools — a ruler for vectors, a protractor for angles, a compass for rotations — you carry one tool with different blades. Grade 0 is the "</span>number blade<span class="syn-string">" (scalars: "</span><span class="syn-num">5</span> meters<span class="syn-string">"). Grade 1 is the "</span>arrow blade<span class="syn-string">" (vectors: "</span>go east<span class="syn-string">"). Grade 2 is the "</span>area blade<span class="syn-string">" (bivectors: "</span>a <span class="syn-num">3</span>m×<span class="syn-num">4</span>m window facing north<span class="syn-string">"). Grade 3 is the "</span>volume blade<span class="syn-string">" (trivectors: "</span><span class="syn-kw">this</span> entire room<span class="syn-string">"). The geometric product is the "</span>handshake<span class="syn-string">" that combines two operations: the squeeze (dot — how parallel are they?) and the twist (wedge — what plane do they span?). The wedge product builds higher dimensions from lower ones: wedge two vectors to get the area they span, wedge three to get the volume. The cross product is a 3D-only special case — the wedge works in any dimension. The pseudoscalar I is the "</span>everything<span class="syn-string">" element: multiply anything by I and you flip its grade (vectors become bivectors, scalars become trivectors).
+</p><p>### Technical
+A multivector in Cl(3) (the 3D Geometric Algebra) is a grade-graded sum: scalar (grade 0, 1 component) + vector (grade 1, 3 components) + bivector (grade 2, 3 components) + trivector (grade 3, 1 component) = 2³ = 8 total components. Basis blades are orthonormal: e_i² = 1, e_i·e_j = 0 for i≠j. The geometric product ab = a·b + a∧b decomposes into the symmetric scalar (dot) and antisymmetric bivector (wedge) parts. The wedge product is associative, anticommutative (a∧b = -b∧a), and bilinear; a∧b = 0 iff vectors are collinear. In 3D, a∧b produces three bivector components numerically equal to the cross product components, but the wedge product is dimension-agnostic while the cross product is a 3D accident arising from Hodge duality: a×b = *(a∧b) = (a∧b)·I⁻¹. The pseudoscalar I = e₁₂₃ squares to -1 (in Euclidean Cl(3)), making it behave like the imaginary unit — this is why complex numbers (scalar+bivector in 2D) and quaternions (scalar+bivector in 3D) emerge naturally as the even subalgebras of GA. The geometric product is the fundamental operation: every reflection, rotation, and projection in GA is expressed as a sandwich product using it.
+</p><p># Rotors
+</p><p>[!info] Part of the [[00 — Geometric Algebra Overview|Geometric Algebra]] learning path.
+</p><p>[!info] Prerequisites
+[[01 — Multivectors, Products &amp; Rotors]].
+</p><p>
+### Analogy: The Sandwich Press
+</p><p>In GA, to rotate a vector v by a rotor R, you \"sandwich\" v between R and its reverse R\u0303:
+</p><p>$v' = R v \\tilde{R}$
+</p><p>This is exactly like making a grilled cheese sandwich: the bread (R and R\u0303) on the outside, the cheese (v) on the inside. The rotor is a special kind of multivector that lives entirely in the **even subalgebra** (scalar + bivectors). In 3D, a rotor has 4 components \u2014 exactly the same as a quaternion!
+</p><p>### Rotor Definition
+</p><p>A rotor R that rotates by angle \u03b8 in the plane defined by unit bivector B:
+</p><p>$R = \\cos(\\theta/2) - \\sin(\\theta/2)B = e^{-B\\theta/2}$
+</p><p>This looks exactly like the quaternion formula because **quaternions ARE rotors in 3D GA**:
+</p><p>| Rotor Component | Quaternion Equivalent |
+|----------------|----------------------|
+| s (scalar) | w |
+| e\u2081\u2082 (xy bivector) | z (k) |
+| e\u2081\u2083 (xz bivector) | -y (j) |
+| e\u2082\u2083 (yz bivector) | x (i) |
+</p><p>The signs differ by convention, but the algebra is identical.
+</p><p>```cpp
+// Constructing a rotor from axis and angle (identical to quaternion construction!)
+struct Rotor
+{
+ float s;       // cos(\u03b8/2)
+ float e12;     // xy-plane bivector
+ float e13;     // xz-plane bivector
+ float e23;     // yz-plane bivector
+ 
+ static Rotor FromAxisAngle(const Vec3&amp; Axis, float Angle)
+ {
+     float HalfAngle = Angle * 0.5f;
+     float SinHalf = Math::Sin(HalfAngle);
+     
+     Rotor R;
+     R.s    = Math::Cos(HalfAngle);
+     // The bivector plane dual to the axis
+     R.e23  = Axis.X * SinHalf;  // yz plane (dual to x axis)
+     R.e13  = -Axis.Y * SinHalf; // xz plane (dual to y axis, sign convention)
+     R.e12  = Axis.Z * SinHalf;  // xy plane (dual to z axis)
+     return R;
+ }
+ 
+ // The reverse (conjugate) flips bivector signs
+ Rotor Reverse() const
+ {
+     return { s, -e12, -e13, -e23 };
+ }
+};
+```
+</p><p>### Applying a Rotor to a Vector (The Sandwich Product)
+</p><p>```cpp
+Vec3 RotateVector(const Vec3&amp; V, const Rotor&amp; R)
+{
+ // In full GA, we'd do: R * V * R.reverse()
+ // But since we know the result is always a pure vector (grade 1),
+ // we can optimize. This IS the quaternion rotation formula.
+ 
+ Rotor Rv;
+ Rv.s = 0.0f;
+ Rv.e23 = V.X;
+ Rv.e13 = V.Y;  // Note sign conventions match quaternion convention
+ Rv.e12 = V.Z;
+ 
+ // Geometric product: R * V (left multiply)
+ Rotor RV = GeometricProduct_Rotor_Vector(R, Rv);
+ 
+ // Geometric product: (R*V) * R.reverse() (right multiply)
+ Rotor Result = GeometricProduct_Rotor_Rotor(RV, R.Reverse());
+ 
+ return Vec3(Result.e23, Result.e13, Result.e12);
+}
+```
+</p><p>### Why Rotors Are More General Than Quaternions
+</p><p><ol><li>**Dimension-independent:** A rotor in 2D has 2 components (complex number!); in 3D has 4 (quaternion!); in 4D has 8. Quaternions only work in 3D (and 2D via complex numbers).</li></ol>
+</p><p><ol><li>**Rotors handle reflections:** Multiply a vector v by a unit vector n on both sides: `-n v n`. This is a reflection across the plane perpendicular to n. Composing two reflections gives a rotation: `R = n\u2082n\u2081` and then `v' = R\u0303 v R`. Quaternions can't do reflections.</li></ol>
+</p><p><ol><li>**Rotors compose naturally:** R\u2083 = R\u2082 R\u2081 (geometric product, not quaternion multiplication \u2014 though in 3D they coincide).</li></ol>
+</p><p><ol><li>**Rotors can interpolate:** Rotor slerp is identical to quaternion slerp in 3D, but extends to any dimension.</li></ol>
+</p><p>```cpp
+// Rotor slerp (identical to quaternion slerp in 3D)
+Rotor Slerp(const Rotor&amp; A, const Rotor&amp; B, float t)
+{
+ // Compute cosine via scalar product
+ float cosOmega = A.s * B.s + A.e12 * B.e12 + A.e13 * B.e13 + A.e23 * B.e23;
+ 
+ if (Math::Abs(cosOmega) &gt; 0.9995f)
+     return Lerp(A, B, t);  // fall back to linear for small angles
+ 
+ float omega = Math::Acos(cosOmega);
+ float sinOmega = Math::Sin(omega);
+ float wA = Math::Sin((1.0f - t) * omega) / sinOmega;
+ float wB = Math::Sin(t * omega) / sinOmega;
+ 
+ Rotor Result;
+ Result.s   = wA * A.s   + wB * B.s;
+ Result.e12 = wA * A.e12 + wB * B.e12;
+ Result.e13 = wA * A.e13 + wB * B.e13;
+ Result.e23 = wA * A.e23 + wB * B.e23;
+ return Result;
+}
+```
+</p><p>---
+</p><p>## See Also
+</p><p><ul><li>[[01 — Multivectors, Products &amp; Rotors]] — Next in sequence</span></code></pre></li></ul></p>

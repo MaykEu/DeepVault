@@ -1,0 +1,54 @@
+<p><h1 id="from-trigonometry-to-3d-transformations-the-math-pipeline">From Trigonometry to 3D Transformations — The Math Pipeline</h1></p><p><h2 id="why-this-note-exists">Why This Note Exists</h2></p><p>The Game Math folder has 6 core notes. This note traces one 3D object — a sword swinging through the air — through the entire mathematical pipeline. Read this first.</p><p><blockquote class="callout callout-info"><strong>Prerequisites</strong><br>None. This is the entry point to Game Math.</blockquote></p><p><hr></p><p><h2 id="one-sword-every-math-concept">One Sword, Every Math Concept</h2></p><p><pre><code class="language-">A sword model (vertices in local space)
+ │
+ ▼  TRIGONOMETRY &amp; VECTORS
+ │  Each vertex is an (x,y,z) vector.
+ │  The sword's forward direction is a unit vector.
+ │  See: [[Trigonometry &amp; Vectors]]
+ │
+ ▼  MATRICES &amp; COORDINATE SYSTEMS
+ │  Scale → Rotate → Translate the sword into world space.
+ │  Then: World → Camera → Projection → Screen.
+ │  See: [[Matrices &amp; Coordinate Systems]]
+ │
+ ▼  QUATERNIONS &amp; 3D ROTATIONS
+ │  The sword swing blends between rotation keyframes.
+ │  Slerp interpolates quaternions — smooth, no gimbal lock.
+ │  See: [[Quaternions &amp; 3D Rotations]]
+ │
+ ▼  CURVES &amp; INTERPOLATION
+ │  The swing arc follows a Bézier curve for smooth motion.
+ │  The sword tip's path is traced via inverse kinematics.
+ │  See: [[00 — Curves Overview|Curves]]
+ │
+ ▼  COLLISION DETECTION
+ │  Does the sword hit the enemy? Ray cast from blade.
+ │  AABB overlap test → narrow phase SAT/GJK.
+ │  See: [[00 — Collision Detection Overview|Collision Detection]]
+ │
+ ▼  GEOMETRIC ALGEBRA (Advanced)
+ │  All of the above — vectors, quaternions, intersection
+ │  tests — unified into one mathematical framework.
+ │  See: [[00 — Geometric Algebra Overview|Geometric Algebra]]</code></pre></p><p><hr></p><p><h2 id="how-to-use-this-folder">How to Use This Folder</h2></p><p><table><tr><th>#</th><th>Read This</th><th>To Learn</th></tr><tr><td>1</td><td><span class="wiki-link-missing">Trigonometry &amp; Vectors <small>(coming soon)</small></span></td><td>Sin/cos, dot/cross product, vector operations</td></tr><tr><td>2</td><td><span class="wiki-link-missing">Matrices &amp; Coordinate Systems <small>(coming soon)</small></span></td><td>Translation, rotation, scale, MVP pipeline</td></tr><tr><td>3</td><td><span class="wiki-link-missing">Quaternions &amp; 3D Rotations <small>(coming soon)</small></span></td><td>Gimbal lock, Slerp, axis-angle</td></tr><tr><td>4</td><td><span class="wiki-link-missing">Curves <small>(coming soon)</small></span></td><td>Bézier, splines, easing, IK</td></tr><tr><td>5</td><td><span class="wiki-link-missing">Collision Detection <small>(coming soon)</small></span></td><td>AABB, ray casting, SAT, GJK</td></tr><tr><td>6</td><td><span class="wiki-link-missing">Geometric Algebra <small>(coming soon)</small></span></td><td>Multivectors, rotors, PGA (Advanced)</td></tr></table>
+<hr></p><p><h2 id="two-way-explanation">Two-Way Explanation</h2></p><p><h3 id="simple">Simple</h3>
+Game math is a pipeline — like an assembly line in a car factory. A 3D sword model enters as a raw steel sheet: a list of (x,y,z) points in "local space" — the sword's own coordinate system where the hilt is at origin. Trigonometry and vectors are the measuring tools: dot products measure "how similar is this direction to that one?", cross products find "what direction is perpendicular to both?" Matrices are the conveyor belts that move the sword through space: scale it bigger, rotate it to face the enemy, translate it to the character's hand. Quaternions are the special rotation tool that avoids gimbal lock — the dreaded "two axes align and you lose a degree of freedom" problem that matrices suffer from. Curves and interpolation fill in the gaps between keyframes: the sword doesn't teleport from frame A to frame B — it sweeps along a Bézier arc. Collision detection asks "did the sword hit the enemy?" — first with cheap bounding boxes (broad phase), then with precise geometry tests (narrow phase). Geometric Algebra is the unified factory blueprint that reveals all these tools are actually the SAME tool viewed from different angles. Each step feeds the next. The pipeline is the math.</p><p><h3 id="technical">Technical</h3>
+The game math pipeline transforms geometry through progressively higher-level representations. Vectors (R³ tuples) carry position and direction; dot products (a·b = |a||b|cos θ) measure alignment; cross products (a×b, 3D-only) produce perpendicular vectors. Matrices (4×4 homogeneous) encode affine transformations: translation, rotation, scale, shear — composed via multiplication, applied via M·v. The Model-View-Projection (MVP) pipeline transforms local-space vertices through world, camera, and clip space. Quaternions (unit 4-vectors on S³) represent rotations without gimbal lock; slerp interpolates along the hypersphere geodesic. Bézier curves (Bernstein polynomial basis) and Catmull-Rom splines (C¹ piecewise-cubic) define smooth trajectories. IK solvers (CCD, FABRIK) solve for joint angles given end-effector targets. Collision detection operates in two phases: broad phase (spatial partitioning via grids, octrees, DBVTs reduces O(n²) to O(n log n)) and narrow phase (geometric predicates: AABB interval overlap, SAT for convex polyhedra, GJK for arbitrary convex shapes). Geometric Algebra (Clifford algebra) unifies these under the geometric product ab = a·b + a∧b, where rotors (even subalgebra) generalize quaternions and PGA (projective GA) encodes points/lines/planes as multivectors with intersection as algebraic products.</p><p><h2 id="see-also">See Also</h2></p><p><ul><li><span class="wiki-link-missing">../Unreal Engine/Math/FVector, FRotator, FQuat — The Core Types <small>(coming soon)</small></span> — Engine-specific implementations (UE, Unity, Godot)</li><li><span class="wiki-link-missing">From Source to Running Program <small>(coming soon)</small></span> (Computer Systems) — The hardware beneath the math</li><li><span class="wiki-link-missing">DeepVault Guide <small>(coming soon)</small></span> — Full vault navigation</li></ul></p><p><h2 id="folder-map-complete-game-math-curriculum">Folder Map — Complete Game Math Curriculum</h2></p><p><h3 id="foundation-root">Foundation (root)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td><span class="wiki-link-missing">Trigonometry &amp; Vectors <small>(coming soon)</small></span></td><td>✓</td></tr><tr><td><span class="wiki-link-missing">Matrices &amp; Coordinate Systems <small>(coming soon)</small></span></td><td>✓</td></tr><tr><td><span class="wiki-link-missing">Quaternions &amp; 3D Rotations <small>(coming soon)</small></span></td><td>✓</td></tr></table>
+<h3 id="physics-physics-collision-detection">Physics (Physics/Collision Detection/)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>AABB &amp; Sphere</td><td>✓</td></tr><tr><td>Ray Casting</td><td>✓</td></tr><tr><td>Separating Axis Theorem (SAT)</td><td>✓</td></tr><tr><td>GJK Algorithm</td><td>✓</td></tr></table>
+<h3 id="physics-simulation-physics-simulation">Physics Simulation (Physics/Simulation/)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Rigid Body Dynamics</td><td>✓</td></tr><tr><td>Numerical Integration</td><td>✓</td></tr><tr><td>Constraints &amp; Contact</td><td>✓</td></tr><tr><td>Continuous Collision Detection</td><td>✓</td></tr></table>
+<h3 id="animation-animation-curves-interpolation">Animation (Animation/Curves &amp; Interpolation/)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Interpolation, Bezier &amp; Splines</td><td>✓</td></tr><tr><td>Slerp &amp; Kinematics</td><td>✓</td></tr></table>
+<h3 id="navigation">Navigation</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>A* &amp; Pathfinding</td><td>✓</td></tr><tr><td>Steering Behaviors</td><td>✓</td></tr><tr><td>Navmesh Generation</td><td>✓</td></tr></table>
+<h3 id="rendering">Rendering</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Projection &amp; Clip Space</td><td>✓</td></tr><tr><td>Barycentric Coordinates</td><td>✓</td></tr><tr><td>BRDF &amp; Lighting Models</td><td>✓</td></tr><tr><td>Spherical Harmonics</td><td>✓</td></tr><tr><td>Monte Carlo &amp; Path Tracing</td><td>✓</td></tr></table>
+<h3 id="procedural-generation">Procedural Generation</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Noise Generation</td><td>✓</td></tr><tr><td>Sampling &amp; Placement</td><td>✓</td></tr><tr><td>L-Systems &amp; Marching Cubes</td><td>✓</td></tr></table>
+<h3 id="audio-networking-math">Audio &amp; Networking Math</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Frequency Domain &amp; FFT</td><td>✓</td></tr><tr><td>Spatial Audio</td><td>✓</td></tr><tr><td>Network Interpolation</td><td>✓</td></tr></table>
+<h3 id="advanced-math-geometric-algebra">Advanced Math (Geometric Algebra/)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>Multivectors, Products &amp; Rotors</td><td>✓</td></tr><tr><td>PGA &amp; Applications</td><td>✓</td></tr></table>
+<h3 id="engine-bridge-ue-math">Engine Bridge (UE Math/)</h3>
+<table><tr><th>Note</th><th>Quiz</th></tr><tr><td>FVector, FRotator, FQuat</td><td>✓</td></tr><tr><td>FTransform &amp; FMatrix</td><td>✓</td></tr><tr><td>FMath — Interpolation &amp; Utility</td><td>✓</td></tr><tr><td>Collision &amp; Intersection Math</td><td>✓</td></tr><tr><td>Curves, Ranges &amp; Random</td><td>✓</td></tr></table>
+<hr></p><p><strong>Total: 34 notes — complete game math curriculum.</strong> From trigonometry to spherical harmonics. Read the <span class="wiki-link-missing">Game Math/Learning Path <small>(coming soon)</small></span> for the recommended order.</p>

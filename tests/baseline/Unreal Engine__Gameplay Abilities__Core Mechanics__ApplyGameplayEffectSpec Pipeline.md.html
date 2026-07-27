@@ -1,0 +1,359 @@
+<p><h1 id="applygameplayeffectspec-pipeline">ApplyGameplayEffectSpec Pipeline</h1>
+
+<h2 id="overview">Overview</h2>
+
+When a GameplayEffect is applied — whether from an ability, a hit event, or a GE component — the following happens in order. Understanding this pipeline is essential because it's where MMCs run, snapshots are taken, durations are set, and prediction keys are reconciled.
+
+> [!info] Source
+> <code>GameplayEffect.cpp:4171</code> — <code>FActiveGameplayEffectsContainer::ApplyGameplayEffectSpec</code>
+
+<hr>
+
+<h2 id="the-full-pipeline">The Full Pipeline</h2>
+
+``<code>
+ApplyGameplayEffectSpec(Spec, PredictionKey)
+│
+├── 0. Scope lock + FlushNetDormancy
+│   │    GAMEPLAYEFFECT_SCOPE_LOCK() — concurrent safety
+│   │    if (IsNetAuthority() &amp;&amp; OwnerActor) OwnerActor->FlushNetDormancy()
+│   │    (ensures the actor isn't dormant so replication works)
+│
+├── 1. Find existing stackable GE
+│   │    (if stacking, merge with existing)
+│   │
+├── 2. Create or update FActiveGameplayEffect
+│   │
+├── 3. Capture target tags          (line 4382)
+│   │    CapturedTargetTags.GetActorTags().Reset()
+│   │    Owner->GetOwnedGameplayTags(...)
+│   │
+├── 4. Capture target attributes    (line 4386)
+│   │    CaptureAttributeDataFromTarget(Owner)
+│   │    └── CapturedRelevantAttributes.CaptureAttributes(TargetASC, Target)
+│   │
+├── 5. Calculate modifier magnitudes  (line 4388) ← MMC RUNS HERE
+│   │    CalculateModifierMagnitudes()
+│   │    └── for each modifier:
+│   │        → ScalableFloat: resolve curve/level value
+│   │        → AttributeBased: evaluate captured attribute
+│   │        → CustomCalculationClass: call CalculateBaseMagnitude() ← YOUR MMC
+│   │        → SetByCaller: look up from spec's SetByCaller map
+│   │
+├── 6. Build ModifiedAttributes list  (line 4394)
+│   │    (for duration effects — stores total magnitude for GCs)
+│   │
+├── 7. Register linked aggregator callbacks  (line 4442)
+│   │    (live captures will auto-recalculate if attribute changes)
+│   │
+├── 8. Calculate duration  (line 4445)
+│   │    AttemptCalculateDurationFromDef() → SetDuration()
+│   │    Apply duration modifier mods
+│   │    Apply SetByCaller duration if applicable
+│   │    Clamp to MaxDuration
+│   │
+├── 9. Register duration timer  (line 4488)
+│   │    (for Duration effects — fires CheckDurationExpired)
+│   │
+├── 10. Register periodic timer  (line 4525)
+│   │     (for Periodic effects — fires ExecutePeriodicEffect)
+│   │     Optional: ExecutePeriodicEffectOnApplication for first tick
+│   │
+├── 11. Handle prediction key  (line 4543)
+│   │     Server: MarkItemDirty (replicates the new GE)
+│   │     Client: MarkArrayDirty + bind cleanup delegates
+│   │
+└── 12. Invoke GameplayCues  (line 4565+)
+          InternalOnActiveGameplayEffectAdded()
+</code>`<code>
+
+<hr>
+
+<h2 id="step-by-step-detail">Step-by-Step Detail</h2>
+
+<h3 id="step-1-2-stacking">Step 1-2: Stacking</h3>
+
+</code>ApplyGameplayEffectSpec<code> first checks if a stackable GE with the same definition already exists via </code>FindStackableActiveGameplayEffect(Spec)<code>.
+
+<strong>If a stackable GE exists:</strong>
+
+<ul><li><strong>Prediction CVar</strong>: If </code>bAllowPredictiveApplicationOfStackingGameplayEffects<code> is </code>false<code> (default) and the client is not authoritative, the stacking application is <strong>rejected</strong> (</code>return nullptr<code>). On the server, the prediction key is invalidated (</code>InPredictionKey = FPredictionKey()<code>).</li></ul>
+<ul><li></code>HandleActiveGameplayEffectStackOverflow<code> is called in two cases:</li></ul>
+  1. <strong>Legacy</strong> — if we've ALREADY reached the stack limit (</code>bStackCountAtLimit<code>)
+  2. <strong>Overflow</strong> — if the new total exceeds the limit AND </code>HasActiveGameplayEffectOverflowBehavior(EActiveGameplayEffectOverflowBehavior::HandleOverflowingStacksAlways)<code> is true
+  If overflow handling returns false, the application is denied.
+<ul><li>The existing GE's <strong>GrantedAbilitySpecs</strong> are preserved (swap out, replace Spec, swap back). Abilities are only granted on first application, not on stack.</li></ul>
+<ul><li>DynamicGrantedTags and DynamicAssetTags are </code>ensureMsgf<code>'ed to match between old and new stacks — mismatches are not properly resolved.</li></ul>
+<ul><li>Linked aggregator callbacks are <strong>unregistered</strong> before replacing the spec (they're re-registered later).</li></ul>
+<ul><li><strong>Duration extension</strong>: If </code>StackDurationRefreshPolicy == ExtendDuration<code>, the remaining time is cached (</code>CarryOverDuration<code>) and added to the new duration.</li></ul>
+<ul><li><strong>Duration refresh</strong>: If the prediction key is a locally-generated client key, OR the policy is </code>NeverRefresh<code>, the duration timer is NOT reset. Otherwise, </code>RestartActiveGameplayEffectDuration<code> is called.</li></ul>
+<ul><li><strong>Period reset</strong>: If </code>StackPeriodResetPolicy == NeverReset<code>, the period timer is NOT reset.</li></ul>
+
+<strong>If no stackable GE exists:</strong>
+<ul><li>A new </code>FActiveGameplayEffectHandle<code> is generated.</li></ul>
+<ul><li>The GE is added to the array — either in the main </code>GameplayEffects_Internal` array OR, if the array has 0 slack (full), allocated on the <strong>pending GE linked list</strong>:</li></ul>
+<pre><code class="language-cpp"><span class="syn-comment">// Pending GE mechanism:
+</span>
+<span class="syn-comment">// Each active GE has a PendingNext pointer forming a linked list.
+</span>
+<span class="syn-comment">// When the main array is full, new GEs are appended to this list.
+</span>
+<span class="syn-comment">// After the scope lock releases, the list is merged into the main array.
+</span>
+<span class="syn-comment">// This prevents reallocation of the array while iterating it.
+</span>
+```
+<ul><li>`HandleActiveGameplayEffectStackOverflow` is called with a temporary spec (count=<span class="syn-num">0</span>), then the <span class="syn-kw">new</span> stack count is clamped to `StackLimitCount`.</li></ul>
+</p><p><span class="syn-pp">### pending GE linked list
+</span></p><p>When `GameplayEffects_Internal.GetSlack() &lt;= <span class="syn-num">0</span>`, the container is scope-locked and can<span class="syn-string">'t reallocate. Instead of crashing, it uses a pre-allocated linked list:
+```
+check(PendingGameplayEffectNext);
+if (*PendingGameplayEffectNext == nullptr)
+ AppliedActiveGE = new FActiveGameplayEffect(NewHandle, Spec, ...)
+else
+ **PendingGameplayEffectNext = FActiveGameplayEffect(NewHandle, Spec, ...)  // move into existing allocation
+```
+The linked list is merged into the main array once the scope lock releases. This is purely an internal memory management detail — your code never sees this.
+</p><p>### Step 3-4: Target Tags and Attributes
+</p><p>These are captured from the **target'</span>s** ASC at the moment of application. Before that, a global callback fires:
+</p><p>```cpp
+<span class="syn-comment">// GameplayEffect.cpp:4378
+</span>
+UAbilitySystemGlobals::Get().SetCurrentAppliedGE(&amp;AppliedActiveGE-&gt;Spec);
+UAbilitySystemGlobals::Get().GlobalPreGameplayEffectSpecApply(AppliedEffectSpec, Owner);
+```
+</p><p>`GlobalPreGameplayEffectSpecApply` is a project-wide callback you can hook via `UAbilitySystemGlobals`. Default does nothing, but you can <span class="syn-kw">override</span> it to modify specs globally before they take effect.
+</p><p>Then:
+```cpp
+<span class="syn-comment">// GameplayEffect.cpp:4382-4388
+</span>
+AppliedEffectSpec.CapturedTargetTags.GetActorTags().Reset();
+Owner-&gt;GetOwnedGameplayTags(AppliedEffectSpec.CapturedTargetTags.GetActorTags());
+</p><p>AppliedEffectSpec.CaptureAttributeDataFromTarget(Owner);
+AppliedEffectSpec.CalculateModifierMagnitudes();
+```
+</p><p>`CaptureAttributeDataFromTarget` fills in the target-side capture specs with references to the actual FAggregators on the target<span class="syn-string">'s ASC.
+</p><p>Source-side captures were already filled in during spec creation (`MakeOutgoingSpec`).
+</p><p>### Step 5: CalculateModifierMagnitudes — Where MMC Runs
+</p><p>```cpp
+// GameplayEffect.cpp:2033
+void FGameplayEffectSpec::CalculateModifierMagnitudes()
+{
+ for (int32 ModIdx = 0; ModIdx &lt; Modifiers.Num(); ++ModIdx)
+ {
+     const FGameplayModifierInfo&amp; ModDef = Def-&gt;Modifiers[ModIdx];
+     FModifierSpec&amp; ModSpec = Modifiers[ModIdx];
+</p><p>     if (ModDef.ModifierMagnitude.AttemptCalculateMagnitude(*this, ModSpec.EvaluatedMagnitude) == false)
+     {
+         ModSpec.EvaluatedMagnitude = 0.f;
+     }
+ }
+}
+```
+</p><p>This iterates every modifier on the GE and evaluates:
+</p><p>| Magnitude Type | What happens | Evaluated when |
+|---|---|---|
+| **ScalableFloat** | `Coefficient.GetValueAtLevel(Level, Context)` → returns float | Now |
+| **AttributeBased** | Captures the attribute'</span>s current value from the aggregator | Now |
+| **CustomCalculationClass** | Calls `CalcCDO-&gt;CalculateBaseMagnitude(Spec)` — **your MMC** | Now |
+| **SetByCaller** | Looks up a tag/name from the spec<span class="syn-string">'s SetByCaller map | Now |
+</p><p>The result is stored in `FModifierSpec::EvaluatedMagnitude` and later used when the modifier actually applies to the FAggregator.
+</p><p>### Step 6: ModifiedAttributes List
+</p><p>For **duration effects with no period** and **instant effects with a period** (not standard, but possible), the system builds a `ModifiedAttributes` list **before registering callbacks**:
+</p><p>```cpp
+const bool HasModifiedAttributes = AppliedEffectSpec.ModifiedAttributes.Num() &gt; 0;
+const bool HasDurationAndNoPeriod = (DurationPolicy == HasDuration &amp;&amp; Period == NO_PERIOD);
+const bool HasPeriodAndNoDuration = (DurationPolicy == Instant &amp;&amp; Period &gt; NO_PERIOD);
+const bool ShouldBuild = !HasModifiedAttributes &amp;&amp; (HasDurationAndNoPeriod || HasPeriodAndNoDuration);
+```
+</p><p>If the conditions are met, the system iterates all modifier definitions and sums their evaluated magnitudes into a `ModifiedAttributes` array. Each entry is a `FGameplayEffectModifiedAttribute` with just the attribute and total magnitude.
+</p><p>This is used for:
+<ul><li>Generating `GameplayCue` parameters with magnitude info (e.g., a GC that shows the heal number)</li></ul>
+<ul><li>Tracking total modifier contributions per attribute</li></ul>
+</p><p>This happens **only once** per GE application, and only for durations that don'</span>t have periodic ticks (those use the execution flow<span class="syn-string">'s more thorough per-tick evaluation instead).
+</p><p>### Step 7: Linked Aggregator Callbacks
+</p><p>For LIVE (non-snapshot) captures, the spec registers callbacks so that if the captured attribute changes while the GE is active, the modifier magnitude can be recalculated:
+</p><p>```cpp
+// GameplayEffect.cpp:4442
+AppliedEffectSpec.CapturedRelevantAttributes.RegisterLinkedAggregatorCallbacks(AppliedActiveGE-&gt;Handle);
+```
+</p><p>This is what makes `Duration` and `Infinite` effects "respond" to attribute changes even after they'</span>ve been applied.
+</p><p><span class="syn-pp">### Step 8-9: Duration Calculation + Timer
+</span></p><p>Duration is evaluated in multiple stages:
+</p><p>**Stage <span class="syn-num">1</span>: Base duration from definition**
+```cpp
+<span class="syn-kw">float</span> DefCalcDuration = <span class="syn-num">0.</span>f;
+<span class="syn-kw">if</span> (AppliedEffectSpec.AttemptCalculateDurationFromDef(DefCalcDuration))
+{
+ AppliedEffectSpec.SetDuration(DefCalcDuration, <span class="syn-kw">false</span>);
+}
+<span class="syn-kw">else</span> <span class="syn-kw">if</span> (Def-&gt;DurationMagnitude.GetMagnitudeCalculationType() == SetByCaller)
+{
+ <span class="syn-comment">// Fallback: SetByCaller duration
+</span>
+ Def-&gt;DurationMagnitude.AttemptCalculateMagnitude(AppliedEffectSpec, AppliedEffectSpec.Duration);
+}
+```
+</p><p>**Stage <span class="syn-num">2</span>: Apply duration modifier mods**
+```cpp
+<span class="syn-kw">float</span> FinalDuration = AppliedEffectSpec.CalculateModifiedDuration();
+<span class="syn-comment">// Applies "duration +10%" type mods from other active GEs on this ASC
+</span></p><p><span class="syn-kw">if</span> (CarryOverDuration &gt; <span class="syn-num">0.0</span>f)
+ FinalDuration += CarryOverDuration;  <span class="syn-comment">// stacking extension
+</span>
+```
+</p><p>**Stage <span class="syn-num">3</span>: Clamp to MaxDuration**
+```cpp
+<span class="syn-kw">float</span> SpecMaxDuration = <span class="syn-num">0.0</span>f;
+<span class="syn-kw">if</span> (!AppliedEffectSpec.AttemptCalculateMaxDurationFromDef(SpecMaxDuration))
+{
+ <span class="syn-comment">// Fallback: SetByCaller max duration
+</span>
+ Def-&gt;MaxDurationMagnitude.AttemptCalculateMagnitude(AppliedEffectSpec, SpecMaxDuration);
+}
+</p><p><span class="syn-kw">if</span> (FinalDuration &lt;= <span class="syn-num">0.</span>f)
+ FinalDuration = <span class="syn-num">0.1</span>f;  <span class="syn-comment">// minimum clamp (logged as error)
+</span>
+<span class="syn-kw">else</span> <span class="syn-kw">if</span> (SpecMaxDuration &gt; <span class="syn-num">0.0</span>f &amp;&amp; FinalDuration &gt; SpecMaxDuration)
+ FinalDuration = SpecMaxDuration;
+</p><p>AppliedEffectSpec.SetDuration(FinalDuration, <span class="syn-kw">false</span>);
+OnDurationChange(*AppliedActiveGE);  <span class="syn-comment">// broadcast to listeners
+</span>
+```
+</p><p>**Stage <span class="syn-num">4</span>: Register timer**
+```cpp
+<span class="syn-kw">if</span> (Owner &amp;&amp; bSetDurationTimer)
+{
+ FTimerDelegate Delegate = FTimerDelegate::CreateUObject(Owner,
+     &amp;UAbilitySystemComponent::CheckDurationExpired, AppliedActiveGE-&gt;Handle);
+ TimerManager.SetTimer(AppliedActiveGE-&gt;DurationHandle, Delegate, FinalDuration, <span class="syn-kw">false</span>);
+</p><p> <span class="syn-kw">if</span> (!ensureMsgf(AppliedActiveGE-&gt;DurationHandle.IsValid(), ...))
+ {
+     <span class="syn-comment">// Fallback: force next tick
+</span>
+     TimerManager.SetTimerForNextTick(Delegate);
+ }
+}
+```
+</p><p>Duration magnitude supports the same types as modifiers: ScalableFloat, AttributeBased, Custom (MMC), or SetByCaller.
+</p><p><span class="syn-pp">### Step 10: Periodic Timer
+</span></p><p>If the GE has a `Period &gt; <span class="syn-num">0</span>`, a repeating timer is set to fire `ExecutePeriodicEffect`:
+</p><p>```cpp
+TimerManager.SetTimer(AppliedActiveGE-&gt;PeriodHandle, Delegate,
+ AppliedEffectSpec.GetPeriod(), <span class="syn-kw">true</span>);
+```
+</p><p>If `bExecutePeriodicEffectOnApplication` is <span class="syn-kw">true</span> (uncommon), the first tick fires on the next frame instead of waiting <span class="syn-kw">for</span> the full period.
+</p><p>Periodic timers are **server-only** — clients don<span class="syn-string">'t predict periodic ticks.
+</p><p>### Step 11: Prediction Key Handling
+</p><p>```cpp
+// GameplayEffect.cpp:4543
+if (InPredictionKey.IsLocalClientKey() == false || IsNetAuthority())
+{
+ MarkItemDirty(*AppliedActiveGE);    // Server: mark for replication
+}
+else
+{
+ MarkArrayDirty();                    // Client: rebuild internal map
+}
+```
+</p><p>**Server**: calls `MarkItemDirty` to replicate the new GE to clients.
+</p><p>**Client (predicting)**: calls `MarkArrayDirty` and binds **cleanup delegates** based on stack type:
+</p><p>**Non-stackable or first stack:**
+```cpp
+// Remove all stacks once server catches up
+if (!CVarFixPredictedTagApplication)
+{
+ // Separate delegates for caught-up and rejected:
+ InPredictionKey.NewCaughtUpDelegate().BindUObject(Owner,
+     &amp;UAbilitySystemComponent::OnCaughtUpActiveGameplayEffect,
+     AppliedActiveGE-&gt;Handle, RemoveAllStacks (-1));
+ InPredictionKey.NewRejectedDelegate().BindUObject(Owner,
+     &amp;UAbilitySystemComponent::OnRejectedActiveGameplayEffect,
+     AppliedActiveGE-&gt;Handle, RemoveAllStacks (-1));
+}
+else
+{
+ // Combined delegate (CVar fix):
+ InPredictionKey.NewRejectOrCaughtUpDelegate(
+     FPredictionKeyEvent::CreateUObject(Owner,
+         &amp;UAbilitySystemComponent::RemoveActiveGameplayEffect_AllowClientRemoval,
+         AppliedActiveGE-&gt;Handle, RemoveAllStacks (-1)));
+}
+```
+</p><p>**Stackable GE (additional stacks):**
+```cpp
+// OnCaughtUp or OnRejected, readjust the stack count:
+InPredictionKey.NewRejectOrCaughtUpDelegate(
+ FPredictionKeyEvent::CreateUObject(Owner,
+     &amp;UAbilitySystemComponent::OnPredictiveGameplayEffectStackCaughtUp,
+     AppliedActiveGE-&gt;Handle));
+```
+</p><p>The key difference: a non-stackable GE is **removed entirely** when caught up (the server'</span>s authoritative copy replaces it). A stackable GE only readjusts its stack count.
+</p><p><ul><li>**Server**: calls `MarkItemDirty` to replicate the <span class="syn-kw">new</span> GE to clients</li></ul>
+<ul><li>**Client (predicting)**: calls `MarkArrayDirty` and binds cleanup delegates. When the server<span class="syn-string">'s replication arrives with the matching prediction key, the predicted GE is removed and replaced with the server'</span>s authoritative version</li></ul>
+</p><p>For **instant effects** on a predicting client, the spec<span class="syn-string">'s duration is set to `INFINITE_DURATION` (the `bTreatAsInfiniteDuration` mechanism) so the GE can be stored in the ActiveGameplayEffects container for prediction tracking.
+</p><p>### Step 12: InternalOnActiveGameplayEffectAdded
+</p><p>```cpp
+// GameplayEffect.cpp:4565
+const bool bInvokePredictedEffects = (Spec.Def-&gt;DurationPolicy != EGameplayEffectDurationType::Instant);
+InternalOnActiveGameplayEffectAdded(*AppliedActiveGE, bInvokePredictedEffects);
+```
+</p><p><ul><li>**Duration/Infinite**: `bInvokePredictedEffects = true` — cues are invoked (OnActive, WhileActive) and are predicted on client</li></ul>
+<ul><li>**Instant**: `bInvokePredictedEffects = false` — cues are NOT invoked here. They fire during `ExecuteActiveEffectsFrom` instead</li></ul>
+</p><p>Inside `InternalOnActiveGameplayEffectAdded` (line 4572):
+</p><p>```cpp
+void FActiveGameplayEffectsContainer::InternalOnActiveGameplayEffectAdded(
+ FActiveGameplayEffect&amp; Effect, const bool bInvokePredictedEffects)
+{
+ // 1. Add external dependencies (MMC external dependency callbacks)
+ AddCustomMagnitudeExternalDependencies(Effect);
+</p><p> // 2. Notify GE components:
+ const bool bActive = EffectDef-&gt;OnAddedToActiveContainer(*this, Effect);
+</p><p> // 3. Effect starts INHIBITED — then the inhibition check runs
+ Effect.bIsInhibited = true;
+ Owner-&gt;SetActiveGameplayEffectInhibit(EffectHandle, !bActive, bInvokePredictedEffects);
+}
+```
+</p><p>The GE starts inhibited. `SetActiveGameplayEffectInhibit` runs the actual inhibition logic (tag checks, granted tags, gameplay cues), then the effect is uninhibited if bActive is true.
+</p><p>**For Stackable GEs**: `OnStackCountChange` is called instead, which fires stack-change delegates without re-running the full inhibition check.
+</p><p>---
+</p><p>## Execution Path (for Instant/Periodic)
+</p><p>For Instant and Periodic effects, the GE also enters the **execution** pipeline, which runs AFTER `ApplyGameplayEffectSpec`:
+</p><p>```
+ApplyGameplayEffectSpecToSelf()
+│
+├── ApplyGameplayEffectSpec()    ← (the pipeline above)
+│
+└── if Instant:
+     ExecuteGameplayEffect()    ← runs ExecuteActiveEffectsFrom
+         ├── CalculateModifierMagnitudes() again
+         ├── Apply modifiers to FAggregator (InternalExecuteMod)
+         ├── Execute EEC (if any) ← YOUR EEC RUNS HERE
+         ├── Apply conditional GEs
+         └── Invoke gameplay cues
+```
+</p><p>This is covered in detail in [[GE Execution Flow]].
+</p><p>---
+</p><p>## Key Timings
+</p><p>| Event | When it fires |
+|---|---|
+| Source attribute capture | During `MakeOutgoingSpec` |
+| Target attribute capture | During `ApplyGameplayEffectSpec` (line 4386) |
+| `CalculateModifierMagnitudes` | During `ApplyGameplayEffectSpec` (line 4388) |
+| MMC `CalculateBaseMagnitude` | Within `CalculateModifierMagnitudes` (step 5) |
+| FAggregator modifier update | After spec application, via `UpdateAllAggregatorModMagnitudes` |
+| EEC `Execute` | During `ExecuteActiveEffectsFrom` (instant/periodic only) |
+| Duration expiry | Via `FTimerHandle` set in step 9 |
+| Periodic tick | Via `FTimerHandle` set in step 10 |
+</p><p>---
+</p><p>## Source References
+</p><p>| File | Lines | Content |
+|---|---|---|
+| `GameplayEffect.cpp` | 4171-4175 | ApplyGameplayEffectSpec entry |
+| `GameplayEffect.cpp` | 4382-4388 | Target tag capture + attribute capture + CalculateModifierMagnitudes |
+| `GameplayEffect.cpp` | 4394-4440 | ModifiedAttributes list building |
+| `GameplayEffect.cpp` | 4442 | RegisterLinkedAggregatorCallbacks |
+| `GameplayEffect.cpp` | 4445-4488 | Duration calculation + timer |
+| `GameplayEffect.cpp` | 4525-4540 | Periodic timer setup |
+| `GameplayEffect.cpp` | 4510-4543 | Prediction key handling (`MarkItemDirty`, `MarkArrayDirty`, cleanup delegates) |
+| `GameplayEffect.h` | 2033-2040 | CalculateModifierMagnitudes040 | CalculateModifierMagnitudes |</span></code></pre></p>

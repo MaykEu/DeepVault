@@ -1,0 +1,113 @@
+<p><h1 id="exceptions-error-handling">Exceptions &amp; Error Handling</h1></p><p><blockquote class="callout callout-info"><strong>Prerequisites: <span class="wiki-link-missing">04 — RAII &amp; The Rule of Five <small>(coming soon)</small></span> — exceptions rely on destructors.</strong><br></blockquote></p><p><blockquote class="callout callout-note"><strong>UE: disables exceptions. This note explains what they are and why UE replaces them.</strong><br></blockquote></p><p><hr></p><p><h2 id="why">Why</h2></p><p>C error handling requires checking every return code. Forget one check = silent bug. C++ exceptions automate cleanup: when something fails, the stack UNWINDS through every function, calling destructors along the way, until a catch block handles the error. No ignored return code possible.</p><p><hr></p><p><h2 id="stack-unwinding">Stack Unwinding</h2></p><p><pre><code class="language-cpp"><span class="syn-kw">void</span> Level3() {
+ std::string data = <span class="syn-string">"important"</span>;  <span class="syn-comment">// has destructor</span>
+ <span class="syn-kw">throw</span> std::runtime_error(<span class="syn-string">"oops"</span>);
+ <span class="syn-comment">// data's destructor IS called during unwind</span>
+}</p><p><span class="syn-kw">void</span> Level2() { Level3(); }</p><p><span class="syn-kw">void</span> Level1() {
+ <span class="syn-kw">try</span> { Level2(); }
+ <span class="syn-kw">catch</span> (<span class="syn-kw">const</span> std::runtime_error&amp; e) {
+     <span class="syn-comment">// Level2+Level3 locals already destroyed</span>
+ }
+}</code></pre></p><p>Each frame's cleanup code runs destructors in reverse construction order. The runtime walks the stack using exception tables (<code>.eh_frame</code> on Linux, <code>.pdata</code>/<code>.xdata</code> on Windows) mapping PC addresses to cleanup actions.</p><p><hr></p><p><h2 id="throwing-and-catching">Throwing and Catching</h2></p><p><pre><code class="language-cpp"><span class="syn-kw">try</span> {
+ <span class="syn-kw">if</span> (x &lt; <span class="syn-num">0</span>) <span class="syn-kw">throw</span> std::invalid_argument(<span class="syn-string">"negative"</span>);
+ <span class="syn-kw">if</span> (x == <span class="syn-num">0</span>) <span class="syn-kw">throw</span> std::runtime_error(<span class="syn-string">"zero"</span>);
+} <span class="syn-kw">catch</span> (<span class="syn-kw">const</span> std::invalid_argument&amp; e) {
+ <span class="syn-comment">// specific</span>
+} <span class="syn-kw">catch</span> (<span class="syn-kw">const</span> std::runtime_error&amp; e) {
+ <span class="syn-comment">// general</span>
+} <span class="syn-kw">catch</span> (...) {
+ <span class="syn-comment">// catch-all (use sparingly)</span>
+}</code></pre></p><p><strong>Always catch by const reference</strong> — avoids slicing.</p><p>Exception hierarchy:
+<pre><code class="language-">std::exception
+├── std::logic_error (preventable)
+│   ├── invalid_argument, domain_error, out_of_range
+└── std::runtime_error (unpreventable)
+ ├── range_error, overflow_error, system_error</code></pre></p><p><hr></p><p><h2 id="exception-safety-guarantees">Exception Safety Guarantees</h2></p><p>The C++ standard defines three levels of exception safety. Every function falls into one of these categories — and the category determines how callers can use it safely.</p><p><h3 id="level-1-no-throw-guarantee">Level 1 — No-Throw Guarantee</h3></p><p><blockquote><p>The operation cannot fail. No exception will escape.</p></blockquote></p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u2705 NO-THROW: Operations guaranteed to succeed</span>
+~MyClass();                    <span class="syn-comment">// destructors are implicitly noexcept</span>
+<span class="syn-kw">int</span> x = <span class="syn-num">42</span>;                    <span class="syn-comment">// built-in operations never throw</span>
+std::swap(a, b);               <span class="syn-comment">// typically noexcept (uses move, not copy)</span>
+obj.swap(other);               <span class="syn-comment">// custom swap should always be noexcept</span></code></pre></p><p><strong>Rule:</strong> Destructors, move constructors, move assignment, and <code>swap()</code> should ALWAYS be <code>noexcept</code>. The standard library checks <code>noexcept</code> on move operations — if your move constructor can throw, <code>std::vector</code> will COPY instead of MOVE on reallocation, destroying performance.</p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u274c TRAP: Movable type without noexcept move</span>
+<span class="syn-kw">class</span> MyType {
+ std::string data;
+<span class="syn-kw">public</span>:
+ MyType(MyType&amp;&amp; other) : data(std::move(other.data)) {} <span class="syn-comment">// NOT noexcept by default!</span>
+ <span class="syn-comment">// std::vector&lt;MyType&gt; will COPY on reallocation, not MOVE</span>
+};</p><p><span class="syn-comment">// \\u2705 FIX: Explicit noexcept</span>
+MyType(MyType&amp;&amp; other) <span class="syn-kw">noexcept</span> : data(std::move(other.data)) {}</code></pre></p><p><h3 id="level-2-strong-guarantee-commit-or-rollback">Level 2 — Strong Guarantee (Commit-or-Rollback)</h3></p><p><blockquote><p>The operation succeeds completely OR fails and leaves the program state UNCHANGED.</p></blockquote></p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u2705 STRONG GUARANTEE: Copy-and-swap idiom</span>
+<span class="syn-kw">class</span> StringList {
+ std::vector&lt;std::string&gt; items;
+<span class="syn-kw">public</span>:
+ <span class="syn-kw">void</span> AddItem(<span class="syn-kw">const</span> std::string&amp; s) {
+     <span class="syn-kw">auto</span> temp = items;           <span class="syn-comment">// 1. Copy current state</span>
+     temp.push_back(s);           <span class="syn-comment">// 2. Modify COPY (may throw here)</span>
+     items = std::move(temp);     <span class="syn-comment">// 3. Commit — swap is noexcept</span>
+ }
+ <span class="syn-comment">// If push_back throws: temp and items are destroyed, items unchanged</span>
+};</code></pre></p><p>The copy-and-swap pattern: copy the state, modify the copy, noexcept-swap the copy into place. If the modification throws, the copy is destroyed and the original is untouched.</p><p><h3 id="level-3-basic-guarantee">Level 3 — Basic Guarantee</h3></p><p><blockquote><p>If an exception is thrown, no resources leak and objects remain in a VALID (but unspecified) state.</p></blockquote></p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u2705 BASIC GUARANTEE: No leaks, but state may have changed</span>
+<span class="syn-kw">void</span> SendMessages(<span class="syn-kw">const</span> std::vector&lt;Message&gt;&amp; msgs) {
+ <span class="syn-kw">for</span> (<span class="syn-kw">const</span> <span class="syn-kw">auto</span>&amp; m : msgs) {
+     socket.send(m); <span class="syn-comment">// If send() throws after 5 successes...</span>
+     <span class="syn-comment">// 5 messages sent, rest not sent. No leaks. State is valid, but partial.</span>
+     processed++;
+ }
+}</code></pre></p><p>The basic guarantee is the minimum acceptable level. After failure, you can safely destroy the object, but you can't assume any particular state was achieved.</p><p><h3 id="the-trap-exception-safety-is-transitive">The Trap — Exception Safety Is Transitive</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u274c TRAP: One non-safe function poisons its caller</span>
+<span class="syn-kw">void</span> UnsafeFunction() {
+ items[<span class="syn-num">0</span>].mutate(); <span class="syn-comment">// changes items[0]</span>
+ items[<span class="syn-num">1</span>].mutate(); <span class="syn-comment">// if this throws, items[0] is already mutated — no rollback</span>
+}</p><p><span class="syn-kw">void</span> Caller() {
+ UnsafeFunction(); <span class="syn-comment">// Caller's strong guarantee is GONE</span>
+}</code></pre></p><p>Exception safety is NOT compositional: one basic-guarantee function inside a strong-guarantee function makes the whole thing basic at best. You must audit the entire call chain.</p><p><h3 id="auditing-a-call-chain-concrete-example">Auditing a Call Chain — Concrete Example</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// We want SaveGame() to have the STRONG guarantee</span>
+<span class="syn-kw">bool</span> SaveGame(<span class="syn-kw">const</span> GameState&amp; state) {
+ <span class="syn-kw">auto</span> backup = m_CurrentFile;              <span class="syn-comment">// Step 1: copy path (noexcept)</span>
+ <span class="syn-kw">auto</span> tempFile = CreateTempFile(backup);    <span class="syn-comment">// Step 2: may throw (basic guarantee from OS)</span>
+ WriteHeader(tempFile, state.version);      <span class="syn-comment">// Step 3: may throw (basic)</span>
+ WriteBody(tempFile, state.data);           <span class="syn-comment">// Step 4: may throw (basic)</span>
+ AtomicReplace(backup, tempFile);           <span class="syn-comment">// Step 5: noexcept (OS atomic rename)</span>
+ m_CurrentFile = backup;                    <span class="syn-comment">// Step 6: noexcept</span>
+ <span class="syn-kw">return</span> <span class="syn-kw">true</span>;
+}</code></pre></p><p><strong>Audit:</strong> Step 2 throws → <code>backup</code> local variable destroyed, no harm. Step 3 or 4 throws → <code>tempFile</code> exists on disk but <code>backup</code> is untouched, <code>m_CurrentFile</code> unchanged. <strong>But:</strong> Step 4 succeeds, Step 5 throws → <code>tempFile</code> already contains correct data, Step 5 (atomic rename) fails because disk is full. The old save file is still intact (Step 5 is atomic). <strong>Result: strong guarantee achieved.</strong></p><p>Now the trap version:</p><p><pre><code class="language-cpp"><span class="syn-kw">bool</span> BadSaveGame(<span class="syn-kw">const</span> GameState&amp; state) {
+ TruncateFile(m_CurrentFile);  <span class="syn-comment">// Step 1: DESTROYS old data — cannot roll back!</span>
+ WriteBody(m_CurrentFile, state.data); <span class="syn-comment">// Step 2: if this throws, file is EMPTY</span>
+ <span class="syn-kw">return</span> <span class="syn-kw">true</span>;
+}</code></pre></p><p><strong>Audit:</strong> Step 1 destroys the old save. Step 2 throws. File is now truncated with no data. <strong>Result: NOT EVEN BASIC guarantee — state is corrupted.</strong> Fix: never mutate in-place. Always write to a temp, then atomically replace.</p><p><h3 id="when-to-use-each-level">When to Use Each Level</h3></p><p><table><tr><th>Level</th><th>When</th><th>Example</th></tr><tr><td>No-throw</td><td>Destructors, moves, swaps</td><td><code>~File()</code>, <code>unique_ptr::reset()</code></td></tr><tr><td>Strong</td><td>State-modifying operations where partial state is meaningless</td><td><code>Database::AddRecord()</code>, <code>GameState::ApplyPatch()</code></td></tr><tr><td>Basic</td><td>Streaming operations, loops where partial progress is acceptable</td><td><code>Logger::WriteBatch()</code>, <code>NetworkSocket::SendPackets()</code></td></tr></table>
+<blockquote class="callout callout-tip"><strong>The strong guarantee is expensive (copy entire state). Use it when partial state is genuinely unacceptable — saving a file, applying a configuration change, committing a database transaction. For most gameplay code, the basic guarantee is sufficient: a partially-updated particle system that gets destroyed next frame is fine.</strong><br></blockquote></p><p><h3 id="noexcept-as-a-compile-time-query">noexcept as a Compile-Time Query</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// noexcept operator: tells you if an expression can throw</span>
+static_assert(<span class="syn-kw">noexcept</span>(std::swap(a, b)));      <span class="syn-comment">// true — swap is noexcept</span>
+static_assert(!<span class="syn-kw">noexcept</span>(std::vector&lt;<span class="syn-kw">int</span>&gt;().push_back(<span class="syn-num">5</span>))); <span class="syn-comment">// false — may throw (bad_alloc)</span></p><p><span class="syn-comment">// noexcept specifier: PROMISES no exception escapes (violation → std::terminate)</span>
+<span class="syn-kw">void</span> CriticalPath() <span class="syn-kw">noexcept</span> {
+ <span class="syn-comment">// If an exception escapes here, std::terminate() is called immediately</span>
+}</code></pre></p><p><code>std::move_if_noexcept(obj)</code> returns an rvalue reference (enabling move) if <code>obj</code>'s move constructor is <code>noexcept</code>; otherwise returns an lvalue reference (forcing copy). This is how <code>std::vector</code> decides whether to move or copy during reallocation.</p><p><h3 id="designing-custom-exception-types">Designing Custom Exception Types</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// \\u2705 Custom exception with WHAT and WHERE</span>
+<span class="syn-kw">class</span> FileError : <span class="syn-kw">public</span> std::runtime_error {
+ std::filesystem::path m_path;
+ <span class="syn-kw">int</span> m_errno;
+<span class="syn-kw">public</span>:
+ FileError(std::filesystem::path p, <span class="syn-kw">int</span> err)
+     : std::runtime_error(buildMessage(p, err))
+     , m_path(std::move(p)), m_errno(err) {}
+ 
+ <span class="syn-kw">const</span> <span class="syn-kw">auto</span>&amp; path() <span class="syn-kw">const</span> <span class="syn-kw">noexcept</span> { <span class="syn-kw">return</span> m_path; }
+ <span class="syn-kw">int</span> errorCode() <span class="syn-kw">const</span> <span class="syn-kw">noexcept</span> { <span class="syn-kw">return</span> m_errno; }
+ 
+<span class="syn-kw">private</span>:
+ <span class="syn-kw">static</span> std::string buildMessage(<span class="syn-kw">const</span> std::filesystem::path&amp; p, <span class="syn-kw">int</span> err) {
+     <span class="syn-kw">return</span> std::format(<span class="syn-string">"File '{}': {} ({})"</span>, p.string(), std::strerror(err), err);
+ }
+};</p><p><span class="syn-comment">// Usage — catch for specific info, fall back to what() for log:</span>
+<span class="syn-kw">try</span> { <span class="syn-comment">/* ... */</span> }
+<span class="syn-kw">catch</span> (<span class="syn-kw">const</span> FileError&amp; e) {
+ std::cerr &lt;&lt; <span class="syn-string">"Failed to access "</span> &lt;&lt; e.path() &lt;&lt; <span class="syn-string">": "</span> &lt;&lt; e.what() &lt;&lt; <span class="syn-string">"\n"</span>;
+}
+<span class="syn-kw">catch</span> (<span class="syn-kw">const</span> std::exception&amp; e) {
+ std::cerr &lt;&lt; <span class="syn-string">"Unknown error: "</span> &lt;&lt; e.what() &lt;&lt; <span class="syn-string">"\n"</span>;
+}</code></pre></p><p><strong>Rules for custom exceptions:</strong>
+<ol><li><strong>Inherit from <code>std::runtime_error</code></strong> (not <code>std::exception</code> directly) — it provides the <code>what()</code> string infrastructure</li><li><strong>Store context in the exception object</strong> — file path, error code, line number. The <code>catch</code> site may need more than a string message</li><li><strong>Make accessors <code>noexcept</code></strong> — exception objects may be copied during unwinding; accessors must not throw</li><li><strong>Use <code>std::format</code> for messages</strong> — cleaner than <code>std::ostringstream</code></li><li><strong>Keep the hierarchy flat</strong> — deep exception hierarchies (<code>FileNotFoundError</code> → <code>FileError</code> → <code>IOError</code> → <code>RuntimeError</code>) sound elegant but catch sites rarely need that granularity. Two levels: your base domain error → specific error types.</li></ol>
+<hr></p><p><h2 id="why-ue-disables-exceptions">Why UE Disables Exceptions</h2></p><p><ol><li>Binary size: unwind tables add ~10-15%</li><li>Predictability: unwind time unbounded — bad for 60fps</li><li>Console platforms: historically broken exception support</li><li>Philosophy: prefer explicit: <code>check()</code>, <code>ensure()</code>, <code>verify()</code></li></ol>
+<pre><code class="language-cpp">check(ptr != <span class="syn-kw">nullptr</span>);           <span class="syn-comment">// crash debug, compile-out shipping</span>
+ensure(ptr != <span class="syn-kw">nullptr</span>);          <span class="syn-comment">// log + continue</span>
+verify(ptr != <span class="syn-kw">nullptr</span>);          <span class="syn-comment">// always evaluate</span>
+ensureMsgf(ptr, TEXT(<span class="syn-string">"null %d"</span>), line);</code></pre></p><p><hr></p><p><h2 id="exercises">Exercises</h2></p><p><ol><li><strong>Unwind trace:</strong> 3-level chain, each with destructor printing name. Throw from level 3. Which destructors fire? In what order? Why reverse?</li></ol>
+<ol><li><strong>Exception safety:</strong> Implement <code>Database::AddRecord()</code> with basic safety, then strong (rollback). Test both.</li></ol>
+<ol><li><strong>Constructor failure:</strong> Constructor throws after allocating resources. Do resources leak? Why not?</li></ol>
+<ol><li><strong>catch(...) rethrow:</strong> Catch any, log, rethrow. <code>throw;</code> vs <code>throw e;</code> — what's the difference?</li></ol>
+<ol><li><strong>UE comparison:</strong> Same function: once with try/catch, once with UE check/ensure. Which is clearer for file open? Which ships in a game?</li></ol>
+<h2 id="two-way-explanation">Two-Way Explanation</h2></p><p><h3 id="simple">Simple</h3>
+Exceptions are emergency parachutes. Normal code runs line by line (free fall). Something wrong → pull cord (throw) → float to ground (catch), passing every floor (stack unwinding) where cleanup crews work (destructors).</p><p><h3 id="technical">Technical</h3>
+<code>throw expr</code> copies exception to heap, triggers unwind via exception tables. Two-phase: search (find handler) → cleanup (run destructors + transfer). <code>catch(const T&amp;)</code> matches type — first match wins. <code>std::uncaught_exceptions()</code> returns in-flight count. Itanium C++ ABI uses <code>.eh_frame</code> for unwind info.</p><p><h2 id="see-also">See Also</h2></p><p><ul><li><span class="wiki-link-missing">04 — RAII &amp; The Rule of Five <small>(coming soon)</small></span></li><li><span class="wiki-link-missing">C++ vs UE <small>(coming soon)</small></span></li></ul></p>

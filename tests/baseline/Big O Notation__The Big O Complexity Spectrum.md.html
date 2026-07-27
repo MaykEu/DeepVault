@@ -1,0 +1,106 @@
+<p>This table ranks time complexities by how efficiently they scale as the input size ($n$) grows toward infinity.
+
+<table><tr><th><strong>Notation</strong></th><th><strong>Name</strong></th><th><strong>Growth Rate / Scaling Behavior</strong></th><th><strong>Game Dev / Systems Example</strong></th></tr></table>
+<table><tr><th>------------------</th><th>------------</th><th>---------------------------------------------------------------------------------------------------------------</th><th>-----------------------------------------------------------------------------------------------------</th></tr></table>
+<table><tr><th><strong>$O(1)$</strong></th><th>Constant</th><th><strong>Instant.</strong> Execution time remains identical regardless of input size.</th><th>Direct array index lookup; looking up an ability via <code>FGameplayAbilitySpecHandle</code>.</th></tr></table>
+<table><tr><th><strong>$O(\\log n)$</strong></th><th>Logarithmic</th><th><strong>Extremely Efficient.</strong> Input size doubles, but execution time only increases by a flat constant fraction.</th><th>Binary search; traversing down a balanced spatial partitioning tree (Octree / BVH).</th></tr></table>
+<table><tr><th><strong>$O(n)$</strong></th><th>Linear</th><th><strong>Proportional.</strong> Execution time scales 1:1 with input size. If input doubles, time doubles.</th><th>Linear scan through an array; searching for an ability by checking every item against a class type.</th></tr></table>
+<table><tr><th><strong>$O(n \\log n)$</strong></th><th>Linearithmic</th><th><strong>Moderate.</strong> Slightly worse than linear. The standard cost of efficiently organizing data.</th><th>Optimal sorting algorithms (e.g., <code>Algo::Sort</code> / QuickSort / MergeSort).</th></tr></table>
+<table><tr><th><strong>$O(n^2)$</strong></th><th>Quadratic</th><th><strong>Steep.</strong> Input doubles, execution time quadruples. Avoid this in performance-critical frames.</th><th>Naive brute-force collision checking (testing every single object against every other single object).</th></tr></table>
+<table><tr><th><strong>$O(2^n)$</strong></th><th>Exponential</th><th><strong>Explosive.</strong> Execution time doubles with _every single single addition_ to the input size.</th><th>Blind recursive algorithms without caching (e.g., raw recursive Fibonacci calculation).</th></tr></table>
+<table><tr><th><strong>$O(n!)$</strong></th><th>Factorial</th><th><strong>Catastrophic.</strong> Growth is so immense that even small inputs (e.g., $n = 20$) can permanently freeze a system.</th><th>Solving the Traveling Salesman problem via pure brute-force permutation checking.</th></tr></table>
+
+> [!note] Why This Matters
+> Every algorithm you write has a complexity. O(n) means your frame time scales with object count. O(n^2) means it scales with the square. This note explains what those symbols actually mean — and why they matter at 60 FPS.
+
+> [!info] Prerequisites
+> <span class="wiki-link-missing">Bits &amp; Bytes <small>(coming soon)</small></span> (Computer Systems) — understanding logarithms and powers helps, but isn't required.
+> [!info] Systems Connection
+> Big O ignores constant factors, but cache misses can make O(n) slower than O(n log n) for small n. See <span class="wiki-link-missing">05 — Memory Hierarchy <small>(coming soon)</small></span> for why iteration order matters and <span class="wiki-link-missing">04 — CPU Architecture <small>(coming soon)</small></span> for branch prediction effects on algorithm performance.
+
+<h2 id="deep-dive-what-to-know-how-to-remember">Deep Dive: What to Know &amp; How to Remember</h2>
+
+<h3 id="1-constant-time-o-1">1. Constant Time: $O(1)$</h3>
+
+<ul><li><strong>The Core Concept:</strong> The algorithm computes the exact memory address or value immediately. It doesn't look at \"the data set\"; it jumps straight to the target.</li></ul>
+    
+<ul><li><strong>Mental Hook for Active Recall:</strong> _The Teleporter._ It doesn't matter if the crowd has 10 people or 10 billion people; you teleport directly to your seat instantly.</li></ul>
+    
+
+<h3 id="2-logarithmic-time-o-log-n">2. Logarithmic Time: $O(\\log n)$</h3>
+
+<ul><li><strong>The Core Concept:</strong> Every single processing step cuts the remaining problem size exactly in half. It is the inverse of exponentiation.</li></ul>
+    
+<ul><li><strong>Mental Hook for Active Recall:</strong> _The Phone Book._ To find a name, you open to the exact middle. Is the name earlier or later? You throw away the useless half of the book. Repeat. A database of 4 billion items can be parsed in roughly 32 steps.</li></ul>
+    
+
+<h3 id="3-linear-time-o-n">3. Linear Time: $O(n)$</h3>
+
+<ul><li><strong>The Core Concept:</strong> You must touch, inspect, or process every single individual element in a collection exactly once.</li></ul>
+    
+<ul><li><strong>Mental Hook for Active Recall:</strong> _The Line Leader._ You walk down a row of lockers checking them one by one until you find your coat. If there are $n$ lockers, you might check all $n$.</li></ul>
+    
+
+<h3 id="4-linearithmic-time-o-n-log-n">4. Linearithmic Time: $O(n \\log n)$</h3>
+
+<ul><li><strong>The Core Concept:</strong> Occurs when you perform a logarithmic operation ($\\log n$) a linear number of times ($n$). This is the absolute mathematical speed limit for general comparison-based sorting.</li></ul>
+    
+<ul><li><strong>Mental Hook for Active Recall:</strong> _Divide and Conquer._ You chop a messy deck of cards in half repeatedly to sort smaller piles ($\\log n$ steps), but you still have to process all $n$ cards during the final merge phase.</li></ul>
+    
+
+<h3 id="5-quadratic-time-o-n-2">5. Quadratic Time: $O(n^2)$</h3>
+
+<ul><li><strong>The Core Concept:</strong> Nested loops. For every single item in data set A, you have to loop through and check every single item in data set B.</li></ul>
+    
+<ul><li><strong>Mental Hook for Active Recall:</strong> _The High Five Matrix._ If 10 people walk into a room and every person has to individually shake hands with or high-five every single other person there, the work scales quadratically.</li></ul>
+    
+
+<h2 id="practical-study-framework-code-heuristics">Practical Study Framework: Code Heuristics</h2>
+
+When reviewing architecture or analyzing structural logic, use these quick structural rules to identify complexity instantly:
+
+<h3 id="look-for-the-loop-structure">Look for the Loop Structure</h3>
+
+<ul><li><strong>No Loops:</strong> Straight lines of code, field assignments, math equations, or direct hash-map lookups are almost always <strong>$O(1)$</strong>.</li></ul>
+    
+<ul><li><strong>Single Iteration:</strong> A single <code>for</code> loop or <code>while</code> loop running from $0$ to $n$ is <strong>$O(n)$</strong>.</li></ul>
+    
+<ul><li><strong>Nested Iterations:</strong> A loop inside a loop, where both rely on the same scale factor ($n$), is <strong>$O(n^2)$</strong>.</li></ul>
+    
+
+<h3 id="look-at-the-divide-pattern">Look at the Divide Pattern</h3>
+
+<ul><li>If the control index multiplies or divides itself every step (e.g., <code>for (int i = 1; i < n; i *= 2)</code>), the problem space shrinks exponentially, indicating <strong>$O(\\log n)$</strong>.</li></ul>
+    
+
+<h3 id="drop-the-constants">Drop the Constants</h3>
+
+Big O notation only tracks <strong>long-term scaling trends</strong> as inputs approach infinity, meaning structural constants are discarded.
+
+<ul><li>A function with two independent linear loops back-to-back ($n + n = 2n$) scales as <strong>$O(n)$</strong>.</li></ul>
+    
+<ul><li>A function that processes an entire array 50 times ($50n$) is still fundamentally <strong>$O(n)$</strong>.</li></ul>
+    
+
+Would you like to run through a couple of conceptual system scenarios to practice identifying where these architectural bounds show up in system engine design?
+
+<hr>
+<h2 id="two-way-explanation">Two-Way Explanation</h2>
+
+<h3 id="simple">Simple</h3>
+Big O is a report card for algorithms. O(1) is instant — no matter how much data you have. O(n) is linear — double the data, double the time. O(n^2) is bad — double the data, quadruple the time. Game developers care because at 60 FPS, you have 16 ms per frame. An O(n^2) algorithm with 10,000 objects runs in 100 million operations — you're dead. Pick the right algorithm or your frame rate dies.
+
+<h3 id="technical">Technical</h3>
+Big O notation describes the asymptotic upper bound of an algorithm's time or space complexity as input size n approaches infinity. Formally: f(n) = O(g(n)) if there exist constants c and n0 such that f(n) <= c*g(n) for all n >= n0. Common complexities in ascending order: O(1), O(log n), O(n), O(n log n), O(n^2), O(2^n), O(n!). Game dev concerns: profile hot paths (not all code needs O(1)), avoid O(n^2) in Tick, use spatial partitioning to reduce collision from O(n^2) to O(n).## Exercises — Test Your Understanding
+
+<ol><li>What is the complexity of finding an element in a TArray by value? In a TMap by key? Why the difference?</li></ol>
+<ol><li>Write a function that has O(n^2) complexity. Now rewrite it to be O(n log n). What did you change?</li></ol>
+<ol><li>If a function takes 1ms with 100 objects at O(n^2), how long will it take with 1000 objects? 10,000?</li></ol>
+<ol><li>Why is O(2^n) considered intractable for game code? How big can n be before it takes >1ms?</li></ol>
+<ol><li><strong>Coding:</strong> Profile a nested loop over 1,000 objects in UE. Use FPlatformTime::Seconds(). What's the actual cost?</li></ol>
+<h2 id="see-also">See Also</h2>
+
+<ul><li><code>ANKI</code></li></ul>
+
+<ul><li><span class="wiki-link-missing">Applied Examples - Raw C++ vs Unreal Engine <small>(coming soon)</small></span></li></ul>
+<ul><li><span class="wiki-link-missing">Amortized Analysis &amp; Real Profiling Data <small>(coming soon)</small></span></li></ul></p>

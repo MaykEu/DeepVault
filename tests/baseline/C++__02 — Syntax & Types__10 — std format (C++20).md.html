@@ -1,0 +1,200 @@
+<p><h1 id="std-format-c-20">std::format (C++20)</h1>
+
+> [!note] Why This Matters
+> <code>printf</code> has been the formatting workhorse since 1972. It's also the #1 source of type-safety bugs in C and C++: pass <code>%d</code> with a <code>float</code>, and the runtime silently reads garbage from the stack. <code>std::cout <<</code> is type-safe but verbose — formatting a table requires a forest of <code><< std::setw()</code> manipulators. <code>std::format</code> (C++20, based on the <code>{fmt}</code> library) combines Python-like format strings with C++ type safety and zero-overhead compilation. Errors in your format string are caught at <strong>compile time</strong> — not at 3 AM when a player triggers a rare dialogue path. This note covers the format mini-language, compile-time validation, positional arguments, and custom formatters.
+
+> [!info] Prerequisites
+> <span class="wiki-link-missing">Variables &amp; Types <small>(coming soon)</small></span> — type safety, strings.
+> <span class="wiki-link-missing">String Types <small>(coming soon)</small></span> — <code>std::string</code>, <code>std::string_view</code>.
+
+<hr>
+
+<h2 id="the-problem-printf-is-unsafe-cout-is-verbose">The Problem — printf Is Unsafe, cout Is Verbose</h2>
+
+<pre><code class="language-cpp"><span class="syn-comment">// printf: type-unsafe, no compile-time checking
+</span>
+printf(<span class="syn-string">"Player %s has %d health (%.2f%%)\n"</span>, name.c_str(), health, percent);
+<span class="syn-comment">//                                                  ↑ forgot .c_str()? UB.
+</span>
+<span class="syn-comment">//                                                           ↑ health is float not int? UB.
+</span></p><p><span class="syn-comment">// iostream: type-safe but painfully verbose
+</span>
+std::cout &lt;&lt; <span class="syn-string">"Player "</span> &lt;&lt; name &lt;&lt; <span class="syn-string">" has "</span> &lt;&lt; health &lt;&lt; <span class="syn-string">" health ("</span>
+       &lt;&lt; std::fixed &lt;&lt; std::setprecision(<span class="syn-num">2</span>) &lt;&lt; percent &lt;&lt; <span class="syn-string">"%)\n"</span>;
+</p><p><span class="syn-comment">// std::format: type-safe AND concise
+</span>
+std::string msg = std::format(<span class="syn-string">"Player {} has {} health ({:.2f}%)\n"</span>, name, health, percent);
+```
+</p><p>`printf` passes arguments through `...` (C variadic) — all type information is lost. The format string is parsed at **runtime**; mismatches are undefined behavior. `std::cout` preserves types but scatters format logic across interleaved `&lt;&lt;` operators. `std::format` keeps the format string readable and validates types at compile time.
+</p><p>---
+</p><p><span class="syn-pp">## Basic Usage
+</span></p><p>```cpp
+<span class="syn-pp">#include &lt;format&gt;
+</span>
+<span class="syn-pp">#include &lt;string&gt;
+</span></p><p><span class="syn-comment">// Positional arguments: {} consumes next argument in order
+</span>
+std::string s1 = std::format(<span class="syn-string">"{} + {} = {}"</span>, <span class="syn-num">2</span>, <span class="syn-num">3</span>, <span class="syn-num">5</span>);  <span class="syn-comment">// "2 + 3 = 5"
+</span></p><p><span class="syn-comment">// Indexed arguments: {N} refers to the Nth argument (0-based)
+</span>
+std::string s2 = std::format(<span class="syn-string">"{1} + {0} = {2}"</span>, <span class="syn-num">3</span>, <span class="syn-num">2</span>, <span class="syn-num">5</span>);  <span class="syn-comment">// "2 + 3 = 5"
+</span></p><p><span class="syn-comment">// Named arguments (C++20 via fmt, C++23 standardized — use positional in C++20)
+</span>
+<span class="syn-comment">// std::format("{a} + {b} = {c}", fmt::arg("a", 2), ...); // fmt library only
+</span></p><p><span class="syn-comment">// Repeated arguments
+</span>
+std::string s3 = std::format(<span class="syn-string">"{0} {0} {0}"</span>, <span class="syn-string">"Go"</span>);  <span class="syn-comment">// "Go Go Go"
+</span></p><p><span class="syn-comment">// Output to iterator/stream
+</span>
+std::format_to(std::ostream_iterator&lt;<span class="syn-kw">char</span>&gt;(std::cout), <span class="syn-string">"FPS: {:.1f}\n"</span>, <span class="syn-num">59.94</span>f);
+```
+</p><p>---
+</p><p><span class="syn-pp">## Format Specifiers — The Mini-Language
+</span></p><p>The full syntax: `{ [index] : [fill][align][sign][#][<span class="syn-num">0</span>][width][.precision][type] }`
+</p><p>```cpp
+<span class="syn-comment">// Alignment and fill
+</span>
+std::format(<span class="syn-string">"{:*&gt;10}"</span>, <span class="syn-string">"hi"</span>);    <span class="syn-comment">// "********hi"   (right-align, * fill, width 10)
+</span>
+std::format(<span class="syn-string">"{:&lt;10}"</span>,  <span class="syn-string">"hi"</span>);    <span class="syn-comment">// "hi        "   (left-align)
+</span>
+std::format(<span class="syn-string">"{:^10}"</span>,  <span class="syn-string">"hi"</span>);    <span class="syn-comment">// "    hi    "   (center)
+</span></p><p><span class="syn-comment">// Integer types
+</span>
+std::format(<span class="syn-string">"{}"</span>,   <span class="syn-num">255</span>);        <span class="syn-comment">// "255"     (decimal)
+</span>
+std::format(<span class="syn-string">"{:x}"</span>, <span class="syn-num">255</span>);        <span class="syn-comment">// "ff"      (hex lowercase)
+</span>
+std::format(<span class="syn-string">"{:X}"</span>, <span class="syn-num">255</span>);        <span class="syn-comment">// "FF"      (hex uppercase)
+</span>
+std::format(<span class="syn-string">"{:#x}"</span>, <span class="syn-num">255</span>);       <span class="syn-comment">// "0xff"    (hex with prefix)
+</span>
+std::format(<span class="syn-string">"{:b}"</span>, <span class="syn-num">255</span>);        <span class="syn-comment">// "11111111"(binary)
+</span>
+std::format(<span class="syn-string">"{:o}"</span>, <span class="syn-num">255</span>);        <span class="syn-comment">// "377"     (octal)
+</span></p><p><span class="syn-comment">// Floating point
+</span>
+std::format(<span class="syn-string">"{}"</span>,    <span class="syn-num">3.14159</span>);   <span class="syn-comment">// "3.14159" (default)
+</span>
+std::format(<span class="syn-string">"{:.2f}"</span>, <span class="syn-num">3.14159</span>);  <span class="syn-comment">// "3.14"    (fixed, 2 decimal places)
+</span>
+std::format(<span class="syn-string">"{:.2e}"</span>, <span class="syn-num">3.14159</span>);  <span class="syn-comment">// "3.14e+00"(scientific)
+</span>
+std::format(<span class="syn-string">"{:.2g}"</span>, <span class="syn-num">3.14159</span>);  <span class="syn-comment">// "3.1"     (general — auto-choose)
+</span>
+std::format(<span class="syn-string">"{:010.2f}"</span>, <span class="syn-num">3.14</span>);  <span class="syn-comment">// "000003.14"(zero-padded width 10)
+</span></p><p><span class="syn-comment">// Sign control
+</span>
+std::format(<span class="syn-string">"{:+}"</span>, <span class="syn-num">42</span>);         <span class="syn-comment">// "+42"
+</span>
+std::format(<span class="syn-string">"{:+}"</span>, -<span class="syn-num">42</span>);        <span class="syn-comment">// "-42"
+</span>
+std::format(<span class="syn-string">"{: }"</span>, <span class="syn-num">42</span>);         <span class="syn-comment">// " 42"     (leading space for positive)
+</span>
+```
+</p><p>---
+</p><p><span class="syn-pp">## Compile-Time Format String Checking
+</span></p><p>This is `std::format`<span class="syn-string">'s killer feature. The format string is validated at compile time:
+</p><p>```cpp
+// ❌ Compile ERROR — caught before the binary exists
+// std::format("Player {} has {:d} health", name, 3.14f);
+//                                        ^^^^ type mismatch: :d expects integer, got float
+</p><p>// ❌ Compile ERROR — caught at compile time
+// std::format("{} {} {}", a, b);
+//                         ^ too few arguments
+</p><p>// printf equivalent — compiles fine, crashes at runtime
+printf("Player %s has %d health", name, 3.14f);  // %d with float — UB, no warning!
+```
+</p><p>How it works: `std::format_string&lt;Args...&gt; (a C++20 addition) uses `consteval` to enforce that the format string is valid for the given argument types. The compiler evaluates a consteval function at compile time that parses the format string and checks each `{}` replacement field against the corresponding argument type. If there'</span>s a mismatch → compile error with a descriptive message pointing to the exact position of the error.
+</p><p>This is a **zero-runtime-cost abstraction** — the check happens during compilation and adds nothing to the binary.
+</p><p>---
+</p><p><span class="syn-pp">## Custom Formatters
+</span></p><p>To make your own types work with `std::format`, specialize `std::formatter`:
+</p><p>```cpp
+<span class="syn-kw">struct</span> <span class="syn-type">FVector</span> { <span class="syn-kw">float</span> x, y, z; };
+</p><p><span class="syn-kw">template</span>&lt;&gt;
+<span class="syn-kw">struct</span> std::formatter&lt;<span class="syn-type">FVector</span>&gt; {
+ <span class="syn-comment">// Parse format specifiers (e.g., {:vec} vs {:default})
+</span>
+ <span class="syn-kw">constexpr</span> <span class="syn-kw">auto</span> parse(std::format_parse_context&amp; ctx) {
+     <span class="syn-kw">auto</span> it = ctx.begin();
+     <span class="syn-kw">if</span> (it != ctx.end() &amp;&amp; *it == <span class="syn-string">'}'</span>) <span class="syn-kw">return</span> it;
+     <span class="syn-comment">// Could parse custom specifiers like precision here
+</span>
+     <span class="syn-kw">return</span> it;
+ }
+</p><p> <span class="syn-comment">// Format the value
+</span>
+ <span class="syn-kw">auto</span> format(<span class="syn-kw">const</span> <span class="syn-type">FVector</span>&amp; v, std::format_context&amp; ctx) <span class="syn-kw">const</span> {
+     <span class="syn-kw">return</span> std::format_to(ctx.out(), <span class="syn-string">"({:.1f}, {:.1f}, {:.1f})"</span>, v.x, v.y, v.z);
+ }
+};
+</p><p>std::string s = std::format(<span class="syn-string">"Position: {}"</span>, <span class="syn-type">FVector</span>{<span class="syn-num">1.0</span>f, <span class="syn-num">2.0</span>f, <span class="syn-num">3.0</span>f});
+<span class="syn-comment">// "Position: (1.0, 2.0, 3.0)"
+</span>
+```
+</p><p>The `parse` method is `<span class="syn-kw">constexpr</span>` — called at compile time to validate any custom format specifiers. The `format` method does the actual output at runtime.
+</p><p>---
+</p><p><span class="syn-pp">## Comparison to printf and cout
+</span></p><p>| Aspect | `printf` | `std::cout` | `std::format` |
+|--------|----------|-------------|---------------|
+| Type safety | ❌ No (variadic) | ✅ Yes (overloaded &lt;&lt;) | ✅ Yes (compile-time checked) |
+| Format string errors | ❌ Runtime (UB) | N/A (no format string) | ✅ Compile-time error |
+| Readability | ✓ Concise | ❌ Verbose (manipulators) | ✅ Concise |
+| Performance | ✓ Fast | ⚠️ Slower (locale, sync) | ✅ Fast (comparable to printf) |
+| Custom types | ❌ No | ✅ via `<span class="syn-kw">operator</span>&lt;&lt;` | ✅ via `std::formatter&lt;T&gt;` |
+| Locale support | ✓ (`%<span class="syn-string">'d`) | ✅ (imbued locale) | ⚠️ Limited (C++20; C++23 improves) |
+| Positional args | ✓ (`%1$s`) | N/A | ✅ (`{0}`, `{1}`) |
+| Extensible format spec | ❌ No | ❌ No | ✅ Custom formatters parse specs |
+</p><p>---
+</p><p>## Performance — How format Beats iostream
+</p><p>`std::format` produces a `std::string` by writing into a pre-allocated buffer. Unlike `std::cout` which:
+</p><p><ol><li>Checks locale on every `&lt;&lt;` call.</li></ol>
+<ol><li>Synchronizes with `stdin` by default (`std::ios_base::sync_with_stdio`).</li></ol>
+<ol><li>Performs virtual dispatch via `std::streambuf`.</li></ol>
+<ol><li>Flushes on `std::endl` (common beginner mistake).</li></ol>
+</p><p>`std::format` does none of these. It computes the output size (via `std::formatted_size`), allocates once, and writes directly. For non-trivial formatting, `std::format` is typically **2-10× faster** than equivalent `std::ostringstream` code.
+</p><p>---
+</p><p>## `std::format_to` — Write to Any Output Iterator
+</p><p>```cpp
+// Format directly into a pre-allocated buffer (no allocation)
+char buffer[256];
+auto result = std::format_to_n(buffer, sizeof(buffer), "FPS: {:.1f}", 59.94f);
+// result.out points one past the last character written
+// result.size is the number of characters that WOULD have been written
+</p><p>// Format into a std::string (grows automatically)
+std::string s;
+std::format_to(std::back_inserter(s), "{} {}", "Hello", "World");
+</p><p>// Format directly to stdout (no intermediate string)
+std::format_to(std::ostreambuf_iterator(std::cout), "{}\n", 42);
+```
+</p><p>---
+</p><p>## UE Connection — FString::Printf vs std::format
+</p><p>```cpp
+// UE'</span>s printf-style formatting (still widely used)
+<span class="syn-type">FString</span> msg = <span class="syn-type">FString</span>::Printf(TEXT(<span class="syn-string">"Health: %d"</span>), Health);
+</p><p><span class="syn-comment">// std::format equivalent (type-safe, compile-time checked)
+</span>
+std::string msg = std::format(<span class="syn-string">"Health: {}"</span>, Health);
+<span class="syn-comment">// For UE FString: convert — UE doesn't have a native std::format equivalent yet
+</span>
+```
+</p><p>UE<span class="syn-string">'s `FString::Printf` uses the same unsafe `...` variadic mechanism as `printf`. `std::format` is the long-term replacement — type-safe, faster, and with compile-time validation. The `{fmt}` library (which `std::format` is based on) is already used internally by several UE plugins and tools.
+</p><p>---
+</p><p>## Exercises
+</p><p><ol><li>**Format string error comparison:** Write equivalent formatting for a player stat display using: (a) `printf`, (b) `std::cout` with manipulators, (c) `std::format`. Introduce a deliberate type mismatch in each (wrong specifier/type). Which version catches the error? At what stage (compile, run, or silently produces wrong output)?</li></ol>
+</p><p><ol><li>**Custom FVector3 formatter:** Implement `std::formatter&lt;FVector3&gt; that supports precision specifiers: `{:vec}` prints `(x, y, z)`, `{:.2vec}` prints with 2 decimal places. Parse the precision in `parse()` and apply it in `format()`. Test that `{:.2vec}` with `FVector3{1.2345f, 2.3456f, 3.4567f}` produces `"(1.23, 2.35, 3.46)"`.</li></ol>
+</p><p><ol><li>**Performance benchmark:** Generate 100,000 formatted strings like `"Frame 12345: 59.94 FPS, 1423 draw calls"` using (a) `sprintf` into a buffer, (b) `std::ostringstream`, (c) `std::format`, (d) `std::format_to` into a pre-allocated buffer. Measure wall-clock time. Which is fastest? How many allocations does each perform?</li></ol>
+</p><p><ol><li>**Compile-time format validation trace:** Write a program with a format string error: `std::format("{:d}", 3.14f)`. Compile and examine the error message. Where does it point? Now create a function template that chains `std::format` calls — how deep does the error trace go? Compare to what happens with the equivalent `printf` error at runtime.</li></ol>
+</p><p><ol><li>**Design a game log formatter:** Design a `LogEntry` struct with timestamp, severity (enum), subsystem (string), and message (string). Implement `std::formatter&lt;LogEntry&gt; that formats entries as: `[2025-07-03 14:32:01] [ERROR] [Physics] Collision mesh overflow`. Support severity colorization via format specs (`{:color}` wraps in ANSI codes). How would you handle the case where ANSI codes aren'</span>t desired (e.g., file output)?</li></ol>
+</p><p><span class="syn-pp">## Two-Way Explanation
+</span></p><p><span class="syn-pp">### Simple
+</span>
+`printf` is the old family recipe — <span class="syn-string">"add %d, a pinch of %s, and %f to taste."</span> But <span class="syn-kw">if</span> you accidentally swap the sugar and salt (pass a <span class="syn-kw">float</span> where an <span class="syn-kw">int</span> is expected), nobody notices until the dish is served. `std::cout` is the kitchen scale — every ingredient individually measured and verified, but the recipe takes a paragraph to write. `std::format` is the modern recipe card: concise like printf, but the card reader (compiler) checks all ingredients against the recipe BEFORE you start cooking. A `{:d}` with a `<span class="syn-kw">float</span>` gets caught when you<span class="syn-string">'re still holding the recipe, not when the guests are at the table.
+</p><p>### Technical
+`std::format` (C++20, `&lt;format&gt;`) uses a format string with `{}` replacement fields and a Python-like mini-language. `std::format_string&lt;Args...&gt;` is a `consteval` wrapper that parses and validates the format string against argument types at compile time — type errors become compilation errors with precise location reporting. Format specifiers follow `{[index]:[fill][align][sign][#][0][width][.precision][type]}`. Custom types integrate via template specialization of `std::formatter&lt;T&gt;` with a `constexpr parse()` method and a `format()` method receiving `std::format_context`. `std::format_to` writes to arbitrary output iterators; `std::formatted_size` computes output size without allocating. Performance is comparable to `printf` (2-10× faster than `std::ostringstream`) because format avoids per-character locale checks, `sync_with_stdio` overhead, and virtual dispatch through `std::streambuf`. Based on the `{fmt}` library by Victor Zverovich, now part of the C++20 standard.
+</p><p>## See Also
+</p><p><ul><li>[[../../Primer/01 — Variables, Types &amp; Memory|Variables &amp; Types]] — Type safety and why compile-time checking matters</li></ul>
+<ul><li>[[09 — String Types &amp; string_view|String Types]] — `std::string` and SSO — where format output lives</li></ul>
+<ul><li>[[../../04 — OOP &amp; Generics/05 — Templates &amp; Concepts|Templates &amp; Concepts]] — How `std::format_string` uses variadic templates and concepts</li></ul>
+<ul><li>[[../../../Computer Systems/Hardware/Storage/04 — Filesystems &amp; Page Cache|Filesystems &amp; Page Cache]] — Where formatted logs actually land on disk</span></code></pre></li></ul></p>

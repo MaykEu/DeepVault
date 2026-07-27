@@ -1,0 +1,340 @@
+<p><h1 id="practical-concurrency">Practical Concurrency</h1>
+
+> [!info] Part of the <span class="wiki-link-missing">Concurrency <small>(coming soon)</small></span> learning path.
+
+> [!info] Prerequisites
+> <span class="wiki-link-missing">07 — Synchronization Patterns <small>(coming soon)</small></span> — understand the primitives before seeing them applied in real structures.
+
+<h2 id="why-this-matters">Why This Matters</h2>
+
+You've read the theory. You understand atomics, mutexes, condition variables, and even lock-free CAS loops. Then you open your first Unreal Engine subsystem and see <code>FCriticalSection</code>, <code>FScopeLock</code>, and <code>FEvent</code> — names that look like <code>std::mutex</code> but aren't. Your game's <code>TMap</code> crashes in a packaged build when the render thread reads from it at the same moment the game thread writes. The callstack shows <code>FScopeLock</code> but the lock is held — so why is the map corrupt? Because <code>TMap</code> is NOT thread-safe, and <code>FScopeLock</code> on the outside doesn't make the inside thread-safe. You locked the wrong door.
+
+This note bridges the gap from concurrency primitives to real-world game engine code. After this note, you will understand how UE5's synchronization primitives map to standard C++ equivalents, how to structure concurrent data structures with per-bucket and per-subsystem locking, and how to choose the right granularity — not too coarse (bottleneck) and not too fine (deadlock from lock ordering bugs). You will also learn the approximate counter pattern (used by UE5's stats system), the hand-over-hand locking pattern (and why it's usually wrong), and the per-bucket hash table (the workhorse of concurrent data access in games).
+
+> [!info] Learning Objectives
+> After this note, you will: (1) apply the lock-granularity tradeoff to design concurrent game engine subsystems, (2) use per-thread counters with single atomic accumulation to avoid false-sharing bottlenecks, (3) implement UE5-compatible async task patterns using FAsyncTask, parallel for, and the TaskGraph system.
+>
+
+<hr>
+
+UE provides platform-abstracted synchronization primitives wrapping Windows <code>CRITICAL_SECTION</code> and Linux <code>pthread_mutex_t</code>:
+
+<pre><code class="language-cpp"><span class="syn-kw">class</span> FMyThreadSafeClass {
+ mutable FCriticalSection DataGuard;
+ <span class="syn-type">TArray</span>\\&lt;<span class="syn-type">FVector</span>\\&gt; SharedData;
+</p><p><span class="syn-kw">public</span>:
+ <span class="syn-kw">void</span> AddData(<span class="syn-kw">const</span> <span class="syn-type">FVector</span>&amp; Item) {
+     FScopeLock Lock(&amp;DataGuard);   <span class="syn-comment">// RAII: unlocks on scope exit
+</span>
+     SharedData.Add(Item);
+ }
+</p><p> int32 GetCount() <span class="syn-kw">const</span> {
+     FScopeLock Lock(&amp;DataGuard);   <span class="syn-comment">// 'mutable' allows const methods to lock
+</span>
+     <span class="syn-kw">return</span> SharedData.Num();
+ }
+};
+```
+</p><p><span class="syn-pp">### UE Synchronization Primitives Map
+</span></p><p>| UE Type | std Equivalent | Notes |
+|---------|---------------|-------|
+| `FCriticalSection` | `std::mutex` | Platform-critical-section wrapper |
+| `FScopeLock` | `std::lock_guard` | RAII lock |
+| `FRWLock` | `std::shared_mutex` | Reader-writer lock |
+| `FEvent` | `std::condition_variable` | Thread signaling |
+| `FPlatformAtomics` | `std::atomic&lt;T&gt;` | Low-level atomic ops |
+| `TAtomic&lt;T&gt; | `std::atomic`&lt;T&gt;` | Deprecated; use `std::atomic` |
+| `FThreadSafeCounter` | std::`atomic&lt;<span class="syn-kw">int</span>&gt;` | Legacy counter |
+| `FSystemWideCriticalSection` | Named mutex | Cross-process (rare) |
+</p><p><span class="syn-pp">### UE Threading Best Practices
+</span></p><p>```cpp
+<span class="syn-comment">// ✅ GOOD: Minimal critical section, fast operations only
+</span>
+<span class="syn-kw">void</span> UpdateScores(<span class="syn-kw">const</span> <span class="syn-type">TArray</span>`&lt;FPlayerScore&gt;`&amp; NewScores) {
+ FScopeLock Lock(&amp;ScoreGuard);
+ CachedScores = NewScores;  <span class="syn-comment">// Fast copy, no allocation, no I/O
+</span>
+}
+</p><p><span class="syn-comment">// ❌ BAD: Heavy work inside lock — blocks all other threads
+</span>
+<span class="syn-kw">void</span> BadUpdate() {
+ FScopeLock Lock(&amp;ScoreGuard);
+ CachedScores = LoadScoresFromDisk();  <span class="syn-comment">// File I/O! TERRIBLE.
+</span>
+}
+</p><p><span class="syn-comment">// ✅ GOOD: Async work marshaling — compute on worker, apply on game thread
+</span>
+AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [<span class="syn-kw">this</span>]() {
+ <span class="syn-type">TArray</span>`&lt;<span class="syn-type">FVector</span>&gt;` Results = ComputeExpensivePathfinding();  <span class="syn-comment">// No UObjects touched
+</span>
+ AsyncTask(ENamedThreads::GameThread, [<span class="syn-kw">this</span>, Results = MoveTemp(Results)]() {
+     FScopeLock Lock(&amp;DataGuard);
+     ApplyResultsToWorld(Results);  <span class="syn-comment">// Safe: game thread + lock
+</span>
+ });
+});
+```
+</p><p>---
+</p><p>Lock-free structures are elegant but terrifying to debug. The vast majority of real-world concurrent code uses plain mutexes — just carefully. The art is not \<span class="syn-string">"avoid locks\" but \"hold them for the minimum possible time and at the finest possible granularity.\"
+</p><p>### Approximate Counter — Per-Thread Local Counters
+</p><p>The simplest and most common pattern. Instead of one mutex-protected counter that every thread fights over, give each thread its own local counter. Only synchronize when reading the global total:
+</p><p>```cpp
+class ApproximateCounter {
+ static constexpr int NUM_CORES = 16;
+ 
+ struct PerCore {
+     std::atomic&lt;int&gt; count{0};  // Per-core counter — no mutex needed
+ };
+ PerCore cores[NUM_CORES];
+ 
+ // Threshold: flush local count to global after accumulating this many
+ static constexpr int FLUSH_THRESHOLD = 1024;
+ std::atomic&lt;int&gt; global{0};  // Snapshot of approximate total
+ 
+public:
+ void Increment(int coreId) {
+     auto&amp; local = cores[coreId];
+     int prev = local.count.fetch_add(1, std::memory_order_relaxed);
+     
+     if (prev + 1 &gt;= FLUSH_THRESHOLD) {
+         // Flush: atomically transfer local accumulation to global
+         int flushed = local.count.exchange(0, std::memory_order_relaxed);
+         global.fetch_add(flushed, std::memory_order_relaxed);
+     }
+ }
+ 
+ int ReadApproximate() {
+     // Snapshot: global + sum of all local counters.
+     // "</span>Approximate<span class="syn-string">" because locals may have unflushed counts.
+     // For most use cases (profiling, load estimation), close enough.
+     int total = global.load(std::memory_order_relaxed);
+     for (int i = 0; i &lt; NUM_CORES; i++) {
+         total += cores[i].count.load(std::memory_order_relaxed);
+     }
+     return total;
+ }
+};
+```
+</p><p>**Why this works:**
+<ul><li>Each core uses `fetch_add` on its own `std::atomic&lt;int&gt;`. 16 cores = 16 independent atomic counters. Zero contention — no locks at all.</li></ul>
+<ul><li>`FLUSH_THRESHOLD` amortizes the cost of flushing to the global counter. 1 atomic `fetch_add` per 1024 increments instead of per increment.</li></ul>
+<ul><li>Reads are approximate but bounded error: at most `NUM_CORES × FLUSH_THRESHOLD` stale counts. For profiling counters, this is perfectly acceptable. For exact counts, use a single `fetch_add` directly — ~15 cycles per increment, acceptable if not in the hottest path.</li></ul>
+</p><p>**UE pattern:** `FThreadSafeCounter` (atomic, exact) vs `FThreadSafeCounter64` vs rolling your own per-thread accumulator. The engine's stat system (`STAT_MyCounter`) uses per-thread accumulation with periodic flushing to the global stat manager — this exact pattern.
+</p><p>### Concurrent Linked List — Hand-over-Hand Locking
+</p><p>The problem: two threads want to traverse and modify a linked list. A single mutex for the entire list serializes all operations — fine for rare modifications, terrible for a hot data structure.
+</p><p>Hand-over-hand locking (also called \"lock coupling\") holds locks on only TWO nodes at a time — the current node and the next one:
+</p><p>```cpp
+template&lt;typename T&gt;
+class ConcurrentLinkedList {
+ struct Node {
+     T data;
+     Node* next = nullptr;
+     std::mutex m;  // One mutex PER NODE
+ };
+ 
+ Node head;  // Dummy head node
+ 
+public:
+ // Insert in sorted order (before the first node &gt;= value)
+ void Insert(const T&amp; value) {
+     Node* newNode = new Node{value};
+     
+     // Lock head first, then head-&gt;next
+     std::unique_lock headLock(head.m);
+     Node* current = &amp;head;
+     Node* next = head.next;
+     
+     while (next != nullptr) {
+         std::unique_lock nextLock(next-&gt;m);
+         
+         if (next-&gt;data &gt;= value) {
+             // Found insertion point between current and next
+             newNode-&gt;next = next;
+             current-&gt;next = newNode;
+             return;  // All locks released by destructors
+         }
+         
+         // Advance: unlock current, current becomes next
+         headLock = std::move(nextLock);
+         current = next;
+         next = current-&gt;next;
+     }
+     
+     // Insert at end
+     current-&gt;next = newNode;
+ }
+ 
+ bool Remove(const T&amp; value) {
+     std::unique_lock headLock(head.m);
+     Node* current = &amp;head;
+     Node* next = head.next;
+     
+     while (next != nullptr) {
+         std::unique_lock nextLock(next-&gt;m);
+         
+         if (next-&gt;data == value) {
+             current-&gt;next = next-&gt;next;
+             nextLock.unlock();
+             delete next;
+             return true;
+         }
+         
+         headLock = std::move(nextLock);
+         current = next;
+         next = current-&gt;next;
+     }
+     return false;
+ }
+};
+```
+</p><p>**The hand-over-hand invariant:** At every step, the thread holds locks on exactly TWO consecutive nodes — the node being modified (`current`) and the node being read (`next`). Before advancing, it acquires the next-next lock, then releases the old current lock. Two locks active at any time, regardless of how long the list is.
+</p><p>**Performance reality:** Hand-over-hand locking has been mostly abandoned. The lock/unlock overhead per node traversed (2 mutex ops × N steps) often exceeds the cost of just locking the entire list once for short lists. It wins only when:
+<ul><li>The list is very long (thousands of nodes)</li></ul>
+<ul><li>Operations are compute-heavy per node (not just pointer chasing)</li></ul>
+<ul><li>Traversals and modifications interleave heavily across threads</li></ul>
+</p><p>For most game engine use cases, a single mutex per data structure is fast enough. The overhead of fine-grained locking is rarely justified by measured contention.
+</p><p>### Concurrent Hash Table — Per-Bucket Locking
+</p><p>The most widely-used concurrent data structure in practice. Instead of one mutex for the entire table, give each hash bucket its own mutex:
+</p><p>```cpp
+template&lt;typename K, typename V&gt;
+class ConcurrentHashMap {
+ static constexpr int NUM_BUCKETS = 256;
+ 
+ struct Bucket {
+     std::vector&lt;std::pair&lt;K, V&gt;&gt; entries;
+     std::shared_mutex m;  // Read-write lock per bucket
+ };
+ Bucket buckets[NUM_BUCKETS];
+ 
+ size_t HashToBucket(const K&amp; key) {
+     return std::hash`&lt;K&gt;`{}(key) % NUM_BUCKETS;
+ }
+ 
+public:
+ // Multiple readers on DIFFERENT buckets → concurrent reads ✓
+ // Writer on bucket 5, reader on bucket 7 → concurrent ✓
+ // Two writers on same bucket → serialized (correct)
+ 
+ std::optional`&lt;V&gt;` Get(const K&amp; key) {
+     auto&amp; bucket = buckets[HashToBucket(key)];
+     std::shared_lock lock(bucket.m);  // Read lock — shared with other readers
+     
+     for (auto&amp; [k, v] : bucket.entries) {
+         if (k == key) return v;
+     }
+     return std::nullopt;
+ }
+ 
+ void Set(const K&amp; key, V value) {
+     auto&amp; bucket = buckets[HashToBucket(key)];
+     std::unique_lock lock(bucket.m);  // Write lock — exclusive
+     
+     for (auto&amp; [k, v] : bucket.entries) {
+         if (k == key) { v = std::move(value); return; }
+     }
+     bucket.entries.emplace_back(key, std::move(value));
+ }
+ 
+ // Resize is the hard part. Simple approach: lock ALL buckets.
+ // Production systems: use a separate resizing thread with copy-on-write.
+ void Resize(int newBucketCount) {
+     // Lock every bucket (in order to prevent deadlock!)
+     std::vector&lt;std::unique_lock&lt;std::shared_mutex&gt;&gt; locks;
+     for (int i = 0; i &lt; NUM_BUCKETS; i++) {
+         locks.emplace_back(buckets[i].m);
+     }
+     // ... redistribute entries across new buckets ...
+ }
+};
+```
+</p><p>**Why per-bucket locking scales:**
+<ul><li>With 256 buckets and uniform hash distribution, the probability of two random operations hitting the same bucket is 1/256 (~0.4%).</li></ul>
+<ul><li>Readers use `shared_lock` — multiple readers on the same bucket proceed concurrently. Only writers serialize.</li></ul>
+<ul><li>The lock ordering problem during resize is solved by locking all buckets in a fixed order (0 to N-1) — the same strategy from the [[Deadlock — The Four Conditions]] note.</li></ul>
+</p><p>**UE pattern:** `TMap` is NOT thread-safe by itself. But UE's gameplay systems use this exact pattern: `FCriticalSection` per subsystem (one for the actor list, one for the component registry, one for the asset cache). The granularity is \"one mutex per logical collection\" rather than per-bucket, but the principle is identical.
+</p><p>### Non-UE Examples
+</p><p>#### Godot Engine Thread-Safe Singleton
+```cpp
+// Godot's Mutex-based global state access
+class PhysicsServer3D {
+ static PhysicsServer3D* singleton;
+ mutable std::mutex mtx;
+ std::vector`&lt;RID&gt;` active_bodies;
+ 
+public:
+ static PhysicsServer3D* get_singleton() { return singleton; }
+ 
+ void AddBody(RID body) {
+     std::lock_guard lock(mtx);
+     active_bodies.push_back(body);
+ }
+ 
+ int GetBodyCount() const {
+     std::lock_guard lock(mtx);
+     return active_bodies.size();
+ }
+};
+```
+</p><p>#### C++20 Coroutine Async File Read (cross-engine)
+```cpp
+// Generic async asset loading using C++20 coroutines
+// Works in any engine with an async task system
+struct FileReadTask {
+ struct promise_type {
+     std::string result;
+     auto get_return_object() { return FileReadTask{this}; }
+     auto initial_suspend() { return std::suspend_never{}; }
+     auto final_suspend() noexcept { return std::suspend_always{}; }
+     void unhandled_exception() { std::terminate(); }
+     void return_value(std::string v) { result = std::move(v); }
+ };
+ std::string BlockingRead();  // Caller uses await
+};
+</p><p>// Usage — reads like synchronous code but doesn't block the calling thread:
+// auto data = co_await AsyncRead("</span>/path/to/mesh.obj<span class="syn-string">");
+```
+</p><p>#### Unity C# Job System — Per-Thread Native Containers
+```csharp
+// Unity's job system uses per-thread data containers (like approximate counters)
+struct ParticleJob : IJobParallelFor {
+ public NativeArray&lt;int&gt; perThreadCounts;  // One element per worker thread
+ public NativeArray&lt;int&gt; result;
+ 
+ public void Execute(int index) {
+     int threadIndex = Unity.Jobs.LowLevel.Unsafe.JobSystem.CurrentThreadIndex();
+     perThreadCounts[threadIndex]++;  // No atomic — thread owns its slot
+     Interlocked.Increment(ref result[0]);  // Single atomic for global
+ }
+}
+```
+</p><p>### The Granularity Tradeoff
+</p><p>| Strategy | Contention | Lock Overhead | Complexity |
+|---|---|---|---|
+| Single global mutex | High | 1 lock/unlock per op | Trivial |
+| Per-subsystem mutex | Low-Medium | 1 lock/unlock per op | Simple |
+| Per-bucket locking | Very low | 1 lock/unlock per op | Moderate |
+| Per-node locking (hand-over-hand) | Near zero | 2 lock/unlock per step | High |
+| Lock-free | None | CAS loop overhead | Extreme |
+</p><p>**The engineer's heuristic:** Start with a single mutex. Measure. If contention is visible in profiling (&gt;5% of frame time spent waiting on this lock), move to per-bucket or per-subsystem locking. If that's still insufficient, consider sharding or lock-free. Never start with the complex solution — you'll spend weeks debugging what a coarse mutex would have handled in 5 lines of code.
+</p><p>---
+</p><p>## Exercises — Test Your Understanding
+</p><p><ol><li>**Code-writing — Thread-safe `TMap` wrapper.** Write a `FThreadSafeMap&lt;K, V&gt; class in UE5 style that wraps a `TMap`&lt;K, V&gt;` with an `FCriticalSection` and `FScopeLock`. Show the correct pattern for `Find` (reader) and `Add` (writer). Now show a BAD pattern — code that compiles and seems correct but has a race. Explain what the race is and how the lock discipline prevents it.</li></ol>
+</p><p><ol><li>**Analysis — Approximate counter error.** In the `ApproximateCounter` with 16 cores and `FLUSH_THRESHOLD = 1024`, what is the theoretical maximum error in `ReadApproximate()`? Write the formula. Now consider: the stats system in your game displays "</span>Active Particles: <span class="syn-num">42</span>,<span class="syn-num">000</span><span class="syn-string">" but the approximate counter reads 39,500. Is this within the expected error bound? When would an approximate counter be unacceptable — give a concrete game engine example where approximation would cause a visible bug.</li></ol>
+</p><p><ol><li>**Design — Hand-over-hand reality check.** You have a sorted linked list with 10,000 nodes, accessed by 4 worker threads performing inserts and removals. Each traversal step is just a pointer chase (~5 cycles) plus a comparison. Should you use hand-over-hand locking or a single global mutex? Calculate the approximate cost per operation for both approaches. At what list length does hand-over-hand become worthwhile?</li></ol>
+</p><p><ol><li>**Code-writing — Deadlock-free hash table resize.** The `ConcurrentHashMap::Resize()` function locks all buckets in order 0 to N-1. Write a scenario — with specific thread interleavings — where locking buckets in REVERSE order (N-1 to 0) in a different function would cause deadlock. Then write a `ForEachInRange(int startBucket, int endBucket, auto fn)` function that locks a subset of buckets in the correct order and calls `fn` on each entry. How do you ensure this function can't deadlock with `Resize()`?</li></ol>
+</p><p><ol><li>**Analysis — Cross-thread flag pattern.** Your game has a `TArray&lt;FVector&gt; Paths` written by the game thread and read by the render thread. No mutex — the game thread writes to a `std::atomic&lt;bool&gt; pathsReady{false}` with `memory_order_release` after updating the array, and the render thread spins on `pathsReady.load(std::memory_order_acquire)` before reading. Is this correct? If yes, what specific property of the access pattern makes it safe? If no, what race remains and how do you fix it?</li></ol>
+</p><p>---
+</p><p>### Common Pitfalls
+</p><p><ol><li>**Locking on the game thread:** Any mutex acquire that blocks the game thread causes visible frame drops. Keep all blocking synchronization on background threads. Use `TryLock()` or lock-free data structures for game-thread-to-worker-thread communication.</li></ol>
+</p><p><ol><li>**Per-frame allocation storms:** Creating/destroying tasks every frame causes memory fragmentation and allocation cost. Pool your tasks and reuse them. The TaskGraph in UE5 pools internally, but user code can still leak task allocations.</li></ol>
+</p><p><ol><li>**Ignoring the Amdahl ceiling:** Profiling shows your parallel loop achieves 90% parallel efficiency. With the other 10% serial, Amdahl's Law caps maximum speedup at 10× regardless of cores. Optimize the serial path before parallelizing more.</li></ol>
+</p><p>## Two-Way Explanation
+</p><p>### Simple
+</p><p>Practical concurrency is about choosing the right amount of locking — not too much (one guard for the entire building, creating a line at the door) and not too little (no guards, items go missing). The art is matching the guard granularity to your traffic pattern. If 100 people all need different rooms, one guard is fine — they never conflict. If 100 people all need the same room, you need finer-grained control: a guard per floor, or per room. The approximate counter is a cheat: instead of queueing at one counter, everyone writes on their own sticky note and periodically adds their total to the whiteboard. The whiteboard total is slightly stale but "</span>good enough<span class="syn-string">" for profiling. Hand-over-hand locking is like passing a baton while walking down a hallway — you hold the baton for the room you're IN and the room you're about to ENTER, releasing the previous one as you step forward. It works but the baton-handoff overhead often costs more than just holding one baton for the whole walk, unless the hallway is miles long.
+</p><p>### Technical
+</p><p>UE5's synchronization layer (`FCriticalSection`, `FScopeLock`, `FRWLock`, `FEvent`) wraps platform primitives (Windows `CRITICAL_SECTION`/`SRWLOCK`, POSIX `pthread_mutex_t`/`pthread_cond_t`) in a consistent API with RAII semantics via `FScopeLock`. The approximate counter pattern exploits thread-local storage and a flush threshold to amortize atomic `fetch_add` cost: each core's local counter reaches `FLUSH_THRESHOLD` before atomically contributing to the global total, reducing contention from one atomic per increment to one per 1,024 increments — at the cost of bounded staleness (`NUM_CORES × FLUSH_THRESHOLD` maximum error). Hand-over-hand locking (lock coupling) maintains the invariant that at most two consecutive node locks are held at any point during linked-list traversal, using `std::move` to transfer lock ownership as the cursor advances, but the 2-mutex-ops-per-step overhead makes it a net loss for most practical list sizes. Per-bucket locking on hash tables with `std::shared_mutex` per bucket achieves near-linear read scaling: with 256 buckets and uniform hashing, the collision probability is 0.4%, and readers use shared locks for concurrent access. The resize operation acquires all bucket locks in a fixed global order (0 → N-1) to prevent deadlock with any other lock-ordering-compliant operation — the same total ordering principle from Coffman's fourth condition. The engineer's heuristic for granularity is empirical: start coarse (single mutex), profile for contention (&gt;5% of frame), then refine to per-subsystem or per-bucket — never begin with the complex solution.
+</p><p>---
+</p><p>## See Also
+</p><p><ul><li>[[11 — Quick Reference]] — Problem → solution cheat sheet</li></ul>
+<ul><li>[[08 — Condition Variables &amp; Semaphores]] — Used in producer-consumer patterns</li></ul>
+<ul><li>[[Deadlock — The Four Conditions]] — Lock ordering in hash table resize</span></code></pre></li></ul></p>

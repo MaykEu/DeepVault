@@ -1,0 +1,219 @@
+<p><h1 id="testing-quality">Testing &amp; Quality</h1>
+
+> [!info] Prerequisites: <span class="wiki-link-missing">RAII &amp; Rule of Five <small>(coming soon)</small></span> (test fixtures are RAII), <span class="wiki-link-missing">Exceptions &amp; Error Handling <small>(coming soon)</small></span> (testing exception safety). No prior testing framework experience assumed.
+
+> [!tip] Why This Matters
+> You've learned SOLID, patterns, templates, and concurrency. None of it matters if your code is wrong. Testing is not a post-development chore — it's the feedback loop that tells you whether your design works. A game shipped with a memory corruption bug loses players. A test suite that catches that bug in 2 seconds (instead of 2 weeks of player reports) pays for itself a thousand times over. This note teaches the C++ testing toolkit: Catch2 for unit tests, sanitizers for runtime bugs, and TDD as a design discipline.
+
+<hr>
+
+<h2 id="why-test-in-c">Why Test in C++?</h2>
+
+C++ gives you power and speed. It also gives you:
+<ul><li>Undefined behavior (use-after-free, buffer overflow, data races)</li></ul>
+<ul><li>Silent corruption (uninitialized variables, signed overflow, strict aliasing violations)</li></ul>
+<ul><li>Platform-dependent behavior (sizeof, alignment, endianness)</li></ul>
+
+The compiler won't catch these. Neither will code review (consistently). Only automated tests + sanitizers catch them reliably.
+
+<hr>
+
+<h2 id="catch2-modern-c-unit-testing">Catch2 — Modern C++ Unit Testing</h2>
+
+Catch2 is the most popular C++ test framework. Single header, no preprocessor magic, expressive syntax.
+
+<h3 id="basic-test">Basic Test</h3>
+
+<pre><code class="language-cpp"><span class="syn-pp">#define CATCH_CONFIG_MAIN
+</span>
+<span class="syn-pp">#include &lt;catch2/catch.hpp&gt;
+</span></p><p><span class="syn-kw">int</span> Add(<span class="syn-kw">int</span> a, <span class="syn-kw">int</span> b) { <span class="syn-kw">return</span> a + b; }
+</p><p>TEST_CASE(<span class="syn-string">"Addition works"</span>, <span class="syn-string">"[math]"</span>) {
+ REQUIRE(Add(<span class="syn-num">2</span>, <span class="syn-num">2</span>) == <span class="syn-num">4</span>);
+ REQUIRE(Add(-<span class="syn-num">1</span>, <span class="syn-num">1</span>) == <span class="syn-num">0</span>);
+ REQUIRE(Add(<span class="syn-num">0</span>, <span class="syn-num">0</span>) == <span class="syn-num">0</span>);
+}
+```
+</p><p>`REQUIRE` is a hard assertion — test stops on failure. `CHECK` is a soft assertion — test continues, reports all failures.
+</p><p><span class="syn-pp">### Sections — Isolated Sub-Tests
+</span></p><p>```cpp
+TEST_CASE(<span class="syn-string">"Vector operations"</span>, <span class="syn-string">"[vector]"</span>) {
+ std::vector&lt;<span class="syn-kw">int</span>&gt; v;
+ 
+ SECTION(<span class="syn-string">"Empty vector"</span>) {
+     REQUIRE(v.empty());
+     REQUIRE(v.size() == <span class="syn-num">0</span>);
+ }
+ 
+ SECTION(<span class="syn-string">"After push_back"</span>) {
+     v.push_back(<span class="syn-num">42</span>);
+     REQUIRE(v.size() == <span class="syn-num">1</span>);
+     REQUIRE(v[<span class="syn-num">0</span>] == <span class="syn-num">42</span>);
+ }
+ 
+ SECTION(<span class="syn-string">"After multiple push_backs"</span>) {
+     v.push_back(<span class="syn-num">1</span>);
+     v.push_back(<span class="syn-num">2</span>);
+     v.push_back(<span class="syn-num">3</span>);
+     REQUIRE(v.size() == <span class="syn-num">3</span>);
+ }
+}
+<span class="syn-comment">// Each SECTION runs with a FRESH 'v' — they don't interfere
+</span>
+```
+</p><p>Sections are NOT sequential — each section runs from the top of the TEST_CASE, re-executing the shared setup. Think of them as forking the test at each SECTION boundary.
+</p><p><span class="syn-pp">### Fixtures — Shared Setup/Teardown
+</span></p><p>```cpp
+<span class="syn-kw">class</span> DatabaseFixture {
+<span class="syn-kw">protected</span>:
+ Database db;
+ DatabaseFixture() : db(<span class="syn-string">":memory:"</span>) { db.Initialize(); } <span class="syn-comment">// setup
+</span>
+ ~DatabaseFixture() { db.Close(); }                       <span class="syn-comment">// teardown
+</span>
+};
+</p><p>TEST_CASE_METHOD(DatabaseFixture, <span class="syn-string">"Insert and query"</span>, <span class="syn-string">"[db]"</span>) {
+ REQUIRE(db.Insert(<span class="syn-string">"key"</span>, <span class="syn-string">"value"</span>));
+ REQUIRE(db.Query(<span class="syn-string">"key"</span>) == <span class="syn-string">"value"</span>);
+}
+<span class="syn-comment">// Fixture constructor runs before each TEST_CASE_METHOD, destructor after
+</span>
+```
+</p><p><span class="syn-pp">### When to Use Each
+</span></p><p>| Context | Use | Because |
+|---------|-----|---------|
+| Independent tests, no shared state | `TEST_CASE` | Simplest, fastest |
+| Tests with multiple scenarios from same setup | `SECTION` | Reuses setup, isolates scenarios |
+| Tests that need resource setup/teardown | `TEST_CASE_METHOD` | RAII-like lifecycle |
+| Parametric tests (same logic, different data) | Catch2 generators or `TEST_CASE` loop | Avoids copy-paste |
+</p><p>---
+</p><p><span class="syn-pp">## What to Test — The Testing Pyramid
+</span></p><p>```
+  ┌──────────┐
+  │   E2E    │  Few: full game loop, load level, complete match
+  ├──────────┤
+  │Integration│  Some: multiple systems interacting (physics + rendering)
+  ├──────────┤
+  │   Unit    │  Many: individual functions, classes, algorithms
+  └──────────┘
+```
+</p><p>**Unit tests:** Test ONE thing in isolation. `Vector3::Normalize()` returns unit vector. `Arena::Alloc()` returns non-overlapping memory. Fast (&lt;<span class="syn-num">1</span>ms), run on every compile.
+</p><p>**Integration tests:** Test interaction between units. `PhysicsSystem` applies forces → `RenderingSystem` sees updated transforms. Fewer, run on commit.
+</p><p>**E2E tests:** Test the whole program. Load level, play <span class="syn-num">60</span> frames, assert no crash. Very few, run on CI.
+</p><p><span class="syn-pp">### The Golden Rules of Unit Tests
+</span></p><p><span class="syn-num">1.</span> **Test behavior, not implementation.** Don<span class="syn-string">'t test that `m_count` is 5 — test that after 5 inserts, `size()` returns 5.
+<ol><li>**One logical assertion per test.** `TEST_CASE("Empty vector has size 0 and is empty")` — two assertions, ONE concept.</li></ol>
+<ol><li>**Tests must be deterministic.** No `rand()`, no `std::chrono::now()`, no thread scheduling dependency. Use fixed seeds and mocked time.</li></ol>
+<ol><li>**Tests must be fast.** A test suite that takes 10 minutes doesn'</span>t get run. Aim <span class="syn-kw">for</span> &lt;<span class="syn-num">1</span> second total unit test time.</li></ol>
+</p><p>---
+</p><p><span class="syn-pp">## Test-Driven Development — Tests Before Code
+</span></p><p>```
+RED → GREEN → REFACTOR
+│      │        │
+│      │        └─ Clean up code <span class="syn-kw">while</span> tests pass
+│      └─ Write MINIMAL code to pass
+└─ Write a FAILING test first
+```
+</p><p><span class="syn-pp">### TDD Workflow for a Vector3 Class
+</span></p><p>```cpp
+<span class="syn-comment">// STEP 1 — RED: write the test first (it won't compile — no Vector3 yet)
+</span>
+TEST_CASE(<span class="syn-string">"Vector3 length computes correctly"</span>, <span class="syn-string">"[math]"</span>) {
+ Vector3 v{<span class="syn-num">3.0</span>f, <span class="syn-num">4.0</span>f, <span class="syn-num">0.0</span>f};
+ REQUIRE(v.Length() == <span class="syn-num">5.0</span>f);
+}
+</p><p><span class="syn-comment">// STEP 2 — GREEN: write MINIMAL code to pass
+</span>
+<span class="syn-kw">struct</span> Vector3 {
+ <span class="syn-kw">float</span> x, y, z;
+ <span class="syn-kw">float</span> Length() <span class="syn-kw">const</span> { <span class="syn-kw">return</span> std::sqrt(x*x + y*y + z*z); }
+};
+</p><p><span class="syn-comment">// STEP 3 — REFACTOR: test still passes, improve code
+</span>
+<span class="syn-kw">struct</span> Vector3 {
+ <span class="syn-kw">float</span> x, y, z;
+ `[[nodiscard]]` <span class="syn-kw">float</span> Length() <span class="syn-kw">const</span> { <span class="syn-kw">return</span> std::sqrt(x*x + y*y + z*z); }
+ `[[nodiscard]]` <span class="syn-kw">float</span> LengthSquared() <span class="syn-kw">const</span> { <span class="syn-kw">return</span> x*x + y*y + z*z; }
+};
+```
+</p><p>**Why TDD works <span class="syn-kw">for</span> game code:** Game features have clear, testable behavior: <span class="syn-string">"player takes 10 damage at 5 health → health becomes 0, player dies."</span> Write that test, then implement. You now have a regression test forever.
+</p><p>---
+</p><p><span class="syn-pp">## Sanitizers — The Compiler As Detective
+</span></p><p>Sanitizers instrument your compiled code to detect bugs at runtime. Zero <span class="syn-kw">false</span> positives (by design). See [[../<span class="syn-num">06</span> — Build &amp; Debug Tools|Build &amp; Debug Tools]] <span class="syn-kw">for</span> setup. Here<span class="syn-string">'s the testing integration:
+</p><p>### AddressSanitizer (ASan) — Memory Errors
+</p><p>```bash
+g++ -fsanitize=address -g -O1 -o test test.cpp
+./test
+```
+</p><p>Catches: use-after-free, heap/stack buffer overflow, double-free, memory leaks (with `-fsanitize=leak`).
+</p><p>```cpp
+// ASan catches this:
+int* p = new int(42);
+delete p;
+*p = 10; // ⚡ ASan: heap-use-after-free at line X
+```
+</p><p>### UndefinedBehaviorSanitizer (UBSan) — Logic Errors
+</p><p>```bash
+g++ -fsanitize=undefined -o test test.cpp
+```
+</p><p>Catches: signed integer overflow, null pointer dereference, misaligned access, division by zero, out-of-bounds enum values, invalid `this` in member function.
+</p><p>```cpp
+int x = INT_MAX;
+x += 1; // ⚡ UBSan: signed integer overflow
+```
+</p><p>### ThreadSanitizer (TSan) — Data Races
+</p><p>```bash
+g++ -fsanitize=thread -o test test.cpp
+```
+</p><p>Catches: data races (unsynchronized concurrent access where at least one is a write).
+</p><p>**The testing pyramid with sanitizers:**
+</p><p>```
+Every commit:     Unit tests + ASan + UBSan  (fast, catch most bugs)
+Every PR:         Integration tests + TSan   (slower, catch threading bugs)
+Nightly:          E2E tests + full sanitizer matrix (slow, catch rare issues)
+```
+</p><p>---
+</p><p>## Structuring a C++ Test Suite
+</p><p>```
+project/
+├── src/           # production code
+├── include/       # headers
+├── test/          # test code
+│   ├── unit/      # unit tests (mirror src/ structure)
+│   ├── integration/
+│   └── CMakeLists.txt
+└── CMakeLists.txt
+```
+</p><p>### CMake Integration
+</p><p>```cmake
+# Fetch Catch2
+include(FetchContent)
+FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+                        GIT_TAG v3.4.0)
+FetchContent_MakeAvailable(Catch2)
+</p><p># Test executable
+add_executable(vector_tests test/unit/vector_tests.cpp)
+target_link_libraries(vector_tests PRIVATE Catch2::Catch2WithMain my_library)
+</p><p># Register with CTest
+include(CTest)
+add_test(NAME vector_tests COMMAND vector_tests)
+```
+</p><p>Run with: `cd build &amp;&amp; ctest --output-on-failure`
+</p><p>---
+</p><p>## Two-Way Explanation
+</p><p>**Beginner:** Testing is writing code that verifies your other code works. Catch2 lets you write `REQUIRE(Add(2,2) == 4)` — if it'</span>s wrong, the test fails and tells you exactly what went wrong. TDD means writing the test BEFORE the code: first you write a failing test, then you write just enough code to make it pass, then you clean up. Sanitizers are compiler flags (`-fsanitize=address`) that add runtime checks — they <span class="syn-kw">catch</span> memory bugs, undefined behavior, and data races that would otherwise silently corrupt your game.
+</p><p>**Experienced:** Catch2 provides a behavior-driven testing DSL with SECTION-based test isolation (each SECTION re-executes shared setup, enabling independent scenarios without fixture duplication). The testing pyramid guides investment: many fast unit tests at the base, fewer integration tests, very few E2E tests. TDD (Red→Green→Refactor) is a design discipline: tests are an executable specification that survives refactoring. The sanitizer suite (ASan, UBSan, TSan) should run on every CI pipeline — they<span class="syn-string">'re deterministic, zero-false-positive detectors for the three most common C++ bug categories (memory, UB, concurrency). CTest + CMake'</span>s `add_test()` integrate tests into the build system; `ctest --output-on-failure` provides CI-friendly output. Property-based testing (not covered in detail) generates random inputs and verifies invariants — complementary to example-based unit tests.
+</p><p>---
+</p><p><span class="syn-pp">## Exercises
+</span></p><p><span class="syn-num">1.</span> **Write tests <span class="syn-kw">for</span> your Vector <span class="syn-kw">class</span>:** Create a `Vec3` <span class="syn-kw">class</span>. Write Catch2 tests <span class="syn-kw">for</span>: construction, addition, normalization (including zero-vector edge <span class="syn-kw">case</span>), dot product, cross product. Run with `-fsanitize=address,undefined`.
+</p><p><span class="syn-num">2.</span> **TDD a Ring Buffer:** Write the test first: `RingBuffer&lt;<span class="syn-kw">int</span>&gt; buf(<span class="syn-num">3</span>); buf.Push(<span class="syn-num">1</span>); buf.Push(<span class="syn-num">2</span>); REQUIRE(buf.Pop() == <span class="syn-num">1</span>);`. Implement the minimal code. Add a test <span class="syn-kw">for</span> buffer-full behavior. Implement. Refactor. Run ASan on all tests.
+</p><p><span class="syn-num">3.</span> **ASan catching bugs:** Write a function that allocates an array, returns a pointer to it, and the caller uses it after the function returns (use-after-<span class="syn-kw">return</span>). Compile with and without ASan. Does ASan <span class="syn-kw">catch</span> it? What <span class="syn-kw">if</span> you use `-fsanitize=address` with `ASAN_OPTIONS=detect_stack_use_after_return=<span class="syn-num">1</span>`?
+</p><p><span class="syn-num">4.</span> **TSan data race:** Write a counter incremented by <span class="syn-num">2</span> threads without synchronization. Write a Catch2 test that runs the increment loop. Compile with TSan. Does the test always fail? Does TSan always report the race?
+</p><p><span class="syn-num">5.</span> **Testing pyramid design:** Your game has `Player::TakeDamage()`, `Enemy::UpdateAI()`, and a full `GameLoop::Tick()`. Propose: which level (unit/integration/E2E) <span class="syn-kw">for</span> each? What would each test verify? What sanitizers would you use <span class="syn-kw">for</span> each level?
+</p><p>---
+</p><p><span class="syn-pp">## See Also
+</span>
+<ul><li>[[../<span class="syn-num">06</span> — Build &amp; Debug Tools|Build &amp; Debug Tools]] — ASan, UBSan, TSan setup, GDB/LLDB</li></ul>
+<ul><li>[[../../<span class="syn-num">03</span> — Memory/<span class="syn-num">04</span> — RAII &amp; The Rule of Five|RAII &amp; The Rule of Five]] — Test fixtures mirror RAII lifecycle</li></ul>
+<ul><li>[[../../<span class="syn-num">06</span> — Bridge/<span class="syn-num">08</span> — Performance Optimization|Performance Optimization]] — Benchmarking as a form of testing (+ performance regression)</li></ul>
+<ul><li>[[../../<span class="syn-num">07</span> — Software Design/<span class="syn-num">01</span> — SOLID Principles|SOLID Principles]] — TDD reinforces SRP (single-responsibility classes are testable)</code></pre></li></ul></p>

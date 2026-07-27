@@ -1,0 +1,204 @@
+<p><h1 id="stack-vs-heap">Stack vs Heap</h1>
+
+<h2 id="the-two-memory-regions">The Two Memory Regions</h2>
+
+> [!info] Systems Connection
+> The stack and heap described here are the same regions shown in the <strong>Memory Map diagram</strong> in <span class="wiki-link-missing">04 — CPU Architecture <small>(coming soon)</small></span>. See <span class="wiki-link-missing">Function Calls <small>(coming soon)</small></span> for the CPU-level mechanics of how function calls create and destroy stack frames.
+
+Every C++ program has two fundamental memory regions. Understanding which one your data lives in determines its speed, lifetime, and who cleans it up.
+
+<table><tr><th>Stack</th><th>Heap</th></tr></table>
+<table><tr><th>---</th><th>---</th><th>---</th></tr></table>
+<table><tr><th><strong>Allocation</strong></th><th>Automatic, one CPU instruction (move stack pointer)</th><th>Manual via <code>new</code>/<code>malloc</code>, involves searching for free space</th></tr></table>
+<table><tr><th><strong>Cleanup</strong></th><th>Automatic — popped when function returns</th><th>Manual — <code>delete</code> or smart pointer destructor</th></tr></table>
+<table><tr><th><strong>Speed</strong></th><th>Very fast (L1/L2 cache hot)</th><th>Slower (cache-cold, fragmentation)</th></tr></table>
+<table><tr><th><strong>Max size</strong></th><th>~1-8 MB (platform-dependent)</th><th>Available RAM (gigabytes)</th></tr></table>
+<table><tr><th><strong>Variable size</strong></th><th>Must be known at compile time[^1]</th><th>Can be determined at runtime</th></tr></table>
+<table><tr><th><strong>Lifetime</strong></th><th>Tied to function scope (or block scope)</th><th>As long as you want — until <code>delete</code></th></tr></table>
+<table><tr><th><strong>Fragmentation</strong></th><th>None (LIFO)</th><th>Can fragment over time</th></tr></table>
+<table><tr><th><strong>Thread safety</strong></th><th>Per-thread (each thread has its own stack)</th><th>Shared across all threads</th></tr></table>
+
+<hr>
+
+<h2 id="the-stack">The Stack</h2>
+
+The stack is a contiguous block of memory. The CPU tracks the "top" with a register called the <strong>stack pointer</strong> (RSP on x86-64). Every function call pushes a new <strong>stack frame</strong> — the function's local variables, return address, and saved registers. When the function returns, the stack pointer snaps back — the entire frame is "gone" in one instruction.
+
+<pre><code class="language-cpp"><span class="syn-kw">void</span> Outer()
+{
+ <span class="syn-kw">int</span> a = <span class="syn-num">1</span>;          <span class="syn-comment">// Pushed to stack
+</span>
+ 
+ {
+     <span class="syn-kw">int</span> b = <span class="syn-num">2</span>;      <span class="syn-comment">// Pushed to stack (nested scope)
+</span>
+     <span class="syn-comment">// b lives here
+</span>
+ }                   <span class="syn-comment">// b popped — stack pointer adjusted
+</span>
+ 
+ <span class="syn-kw">int</span> c = <span class="syn-num">3</span>;          <span class="syn-comment">// b's old space reused — this is free
+</span>
+ 
+ <span class="syn-comment">// a and c still alive
+</span>
+}                       <span class="syn-comment">// a and c popped — stack frame gone
+</span>
+```
+</p><p>**Why it<span class="syn-string">'s fast:** Stack allocation is just `sub rsp, N` (subtract from stack pointer). Deallocation is `add rsp, N` (add to stack pointer). One instruction each. The stack is always cache-hot because you'</span>re constantly <span class="syn-kw">using</span> the top of it.
+</p><p>**The limit:** Stack size is fixed at thread creation — typically <span class="syn-num">1</span> MB on Windows, <span class="syn-num">8</span> MB on Linux. Large local arrays or deep recursion cause a **stack overflow** (program crash).
+</p><p>```cpp
+<span class="syn-kw">void</span> Overflow()
+{
+ <span class="syn-kw">int</span> huge[<span class="syn-num">1000000</span>];  <span class="syn-comment">// ~4 MB — might overflow the stack!
+</span>
+ <span class="syn-comment">// Use std::vector&lt;int&gt; huge(1000000) instead — heap allocation
+</span>
+}
+```
+</p><p>---
+</p><p><span class="syn-pp">## The Heap
+</span></p><p>The heap is a large, flexible pool of memory. Think of it like a parking lot: cars (allocated memory) come and go in any order. Empty spots appear where cars left — but they might be too small <span class="syn-kw">for</span> the next car that arrives. This is **fragmentation.**
+</p><p>```cpp
+<span class="syn-kw">void</span> Func()
+{
+ <span class="syn-kw">int</span>* a = <span class="syn-kw">new</span> <span class="syn-kw">int</span>(<span class="syn-num">1</span>);  <span class="syn-comment">// Car A parks — allocator finds 4 bytes
+</span>
+ <span class="syn-kw">int</span>* b = <span class="syn-kw">new</span> <span class="syn-kw">int</span>(<span class="syn-num">2</span>);  <span class="syn-comment">// Car B parks — allocator finds another 4 bytes
+</span>
+ 
+ <span class="syn-kw">delete</span> a;             <span class="syn-comment">// Car A leaves — 4-byte gap appears
+</span>
+ <span class="syn-kw">int</span>* c = <span class="syn-kw">new</span> <span class="syn-kw">int</span>[<span class="syn-num">3</span>];  <span class="syn-comment">// Car C needs 12 bytes — BUT the gap is only 4!
+</span>
+                       <span class="syn-comment">// Car C parks somewhere else. The 4-byte gap is wasted.
+</span>
+ 
+ <span class="syn-kw">delete</span> b;             <span class="syn-comment">// Car B leaves — another 4-byte gap
+</span>
+ <span class="syn-kw">delete</span> c;             <span class="syn-comment">// Car C leaves
+</span>
+ <span class="syn-comment">// Total free: 20 bytes. But in 4-byte fragments — can't fit a 12-byte car!
+</span>
+}
+```
+</p><p>The allocator maintains a **free list** — a linked list of empty blocks, sorted by size or address. When you call `<span class="syn-kw">new</span>`, the allocator walks <span class="syn-kw">this</span> list looking <span class="syn-kw">for</span> a block that fits. When you call `<span class="syn-kw">delete</span>`, it adds the freed block back to the list (and may merge it with adjacent free blocks to reduce fragmentation).
+</p><p>Modern allocators (jemalloc, mimalloc, tcmalloc) use **thread-local caches** and **size classes** — small allocations (<span class="syn-num">16</span>, <span class="syn-num">32</span>, <span class="syn-num">64</span> bytes) all come from the same pre-allocated pools, avoiding fragmentation entirely <span class="syn-kw">for</span> the most common allocation sizes. This is what UE<span class="syn-string">'s `TSizedDefaultAllocator&lt;32&gt; does for `FString` — dedicates entire pages to 32-byte allocations so they never fragment each other.
+</p><p>**The advantage over stack:** Size and lifetime. Allocate a million integers — no problem. Allocate data once and pass it around for the entire program — it stays alive until you `delete` it. The stack can'</span>t <span class="syn-kw">do</span> either of these.
+</p><p>---
+</p><p><span class="syn-pp">## Placement New — Constructing Objects in Raw Memory
+</span></p><p>A `<span class="syn-kw">new</span>` expression does TWO things: allocates memory AND constructs an object. Placement <span class="syn-kw">new</span> separates these — it constructs an object in memory you already control.
+</p><p>```cpp
+<span class="syn-pp">#include &lt;new&gt;  // Required for placement new — constructing an object at a specific memory address  // Required for placement new
+</span></p><p><span class="syn-comment">// Pre-allocate raw memory however you want
+</span>
+alignas(Widget) std::byte buffer[<span class="syn-kw">sizeof</span>(Widget) * <span class="syn-num">10</span>];
+</p><p><span class="syn-comment">// Construct a Widget in that memory — NO allocation
+</span>
+Widget* w = <span class="syn-kw">new</span> (buffer) Widget(args);
+</p><p><span class="syn-comment">// Use it normally
+</span>
+w-&gt;DoSomething();
+</p><p><span class="syn-comment">// Destroy it manually — the memory (buffer) stays available
+</span>
+std::destroy_at(w);
+<span class="syn-comment">// Or: w-&gt;~Widget(); — same thing
+</span>
+```
+</p><p>**This is what `emplace_back` does internally:**
+</p><p>```cpp
+<span class="syn-comment">// Simplified emplace_back implementation
+</span>
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span>... Args&gt;
+T&amp; emplace_back(Args&amp;&amp;... args)
+{
+ <span class="syn-comment">// 1. Check capacity, grow if needed (heap allocation, separate step)
+</span>
+ <span class="syn-comment">// 2. Construct element in the pre-allocated slot — placement new
+</span>
+ <span class="syn-kw">new</span> (data + size) T(std::forward&lt;Args&gt;(args)...);
+ ++size;
+ <span class="syn-kw">return</span> data[size - <span class="syn-num">1</span>];
+}
+```
+</p><p>The storage-vs-object distinction: `buffer` is **storage** (raw bytes, no object). Placement <span class="syn-kw">new</span> creates an **object** in that storage. `std::destroy_at` destroys the object but keeps the storage. You can reuse the storage <span class="syn-kw">for</span> another object.
+</p><p>**When you need <span class="syn-kw">this</span>:** Custom allocators, object pools, intrusive containers, serialization (reading objects from a network buffer), and any situation where you want to separate allocation from construction.
+</p><p>---
+</p><p><span class="syn-pp">## "Heap Is Always Slower" Is Wrong
+</span></p><p>Stack allocation is always faster — one instruction. But <span class="syn-kw">for</span> ACCESSING data after allocation, the difference blurs. A heap object that fits in L1 cache is just as fast to read as a stack object. The real enemy is **cache misses** — jumping to cold heap memory. Stack data is always hot because you just wrote it. Heap data might be cold.
+</p><p>For small, frequently-allocated objects, pool allocators bridge the gap: pre-allocate a big heap block, then hand out slots stack-style. This is what UE<span class="syn-string">'s `TSizedDefaultAllocator&lt;32&gt; does for `FString` — avoids general heap overhead for the most common allocation size.
+</p><p>---
+</p><p>## When to Use Which
+</p><p>```cpp
+// ✅ STACK: known size, short lifetime, small
+void ProcessData()
+{
+ int indices[100];           // Fixed small array
+ float matrix[16];           // 4x4 matrix
+ std::array&lt;Widget, 10&gt; ws;  // Fixed-size container
+}
+</p><p>// ✅ HEAP: unknown/dynamic size, long lifetime, large
+std::vector&lt;int&gt; LoadScores(const std::string&amp; path)  // Returns heap data
+{
+ std::vector&lt;int&gt; scores;    // Internal storage on heap
+ // Read from file, push_back as needed
+ return scores;              // NRVO — no copy. Ownership transferred.
+}
+</p><p>// ✅ HEAP: shared ownership
+auto w = std::make_shared&lt;Widget&gt;();
+RegisterWidget(w);     // Another reference
+KeepAliveForever(w);   // Yet another — shared_ptr handles cleanup
+```
+</p><p>---
+</p><p>## Two-Way Explanation
+</p><p>### Simple
+</p><p>The stack is a stack of sticky notes. Every function gets its own note — write variables on it, and when the function ends, the note is ripped up. Fast and automatic. The heap is a warehouse. You ask the warehouse manager for space, get a ticket with the address, and you'</span>re responsible <span class="syn-kw">for</span> returning the ticket when you<span class="syn-string">'re done. Lose the ticket, and the space is occupied forever. Smart pointers are a service that returns the ticket for you.
+</p><p>### Technical
+</p><p>The stack is a thread-local contiguous LIFO allocation arena addressed via RSP/RBP registers. Allocation/deallocation is a single add/sub to RSP with zero fragmentation. Heap allocation involves a general-purpose allocator (typically ptmalloc, jemalloc, or mimalloc on modern systems) that maintains free lists and must handle fragmentation, thread safety, and variable-size requests. Placement new (`operator new(std::size_t, void*)`) constructs an object at a given memory address without allocation, enabling the separation of storage management from object lifetime — the foundation of custom allocators, container internals, and high-performance memory strategies.
+</p><p>---
+</p><p>## Exercises — Test Your Understanding
+</p><p><ol><li>Write a function that causes a stack overflow. What happens? Why does infinite recursion crash but a `while(true)` loop doesn'</span>t?</li></ol>
+<span class="syn-num">2.</span> Why does `std::vector&lt;<span class="syn-kw">int</span>&gt; v(<span class="syn-num">10</span><span class="syn-string">'000'</span><span class="syn-num">000</span>);` work but `<span class="syn-kw">int</span> arr[<span class="syn-num">10</span><span class="syn-string">'000'</span><span class="syn-num">000</span>];` might crash? Where does each allocate?
+<span class="syn-num">3.</span> Write a program that implements placement <span class="syn-kw">new</span> — construct an object in a pre-allocated `<span class="syn-kw">char</span>` buffer. Call the destructor manually.
+<span class="syn-num">4.</span> What is the size (in bytes) of <span class="syn-kw">this</span> <span class="syn-kw">struct</span>? `<span class="syn-kw">struct</span> X { <span class="syn-kw">char</span> a; <span class="syn-kw">int</span> b; <span class="syn-kw">char</span> c; };` Now reorder to minimize size.
+<span class="syn-num">5.</span> Explain why a pointer member in a <span class="syn-kw">class</span> still leaks when the <span class="syn-kw">class</span> goes out of scope. What<span class="syn-string">'s the difference between destroying the pointer and destroying what it points to?
+</p><p>## std::allocator — The Bridge Between Containers and Memory
+</p><p>Every STL container has a hidden template parameter: `std::allocator&lt;T&gt;`. It'</span>s the default <span class="syn-kw">for</span> `std::vector&lt;T&gt;`, `std::map&lt;K,V&gt;`, etc. — but you can swap it <span class="syn-kw">for</span> your own.
+</p><p>```cpp
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> T&gt;
+<span class="syn-kw">struct</span> std::allocator {
+ <span class="syn-kw">using</span> value_type = T;
+ 
+ T* allocate(std::<span class="syn-type">size_t</span> n);            <span class="syn-comment">// Get raw memory for n objects (calls ::operator new)
+</span>
+ <span class="syn-kw">void</span> deallocate(T* p, std::<span class="syn-type">size_t</span> n);  <span class="syn-comment">// Return raw memory (calls ::operator delete)
+</span>
+ 
+ <span class="syn-comment">// Pre-C++17: construct/destroy objects in raw memory
+</span>
+ <span class="syn-kw">void</span> construct(T* p, <span class="syn-kw">const</span> T&amp; val);    <span class="syn-comment">// Placement new
+</span>
+ <span class="syn-kw">void</span> destroy(T* p);                    <span class="syn-comment">// Explicit destructor call
+</span>
+ 
+ <span class="syn-comment">// Post-C++17: construct/destroy removed — containers handle this themselves
+</span>
+};
+```
+</p><p>The allocator is the hook between containers and the heap. `std::vector&lt;<span class="syn-kw">int</span>&gt;` → `std::allocator&lt;<span class="syn-kw">int</span>&gt;` → `::<span class="syn-kw">operator</span> <span class="syn-kw">new</span>` → `malloc`. If you want a vector that allocates from a pre-allocated arena, a memory-mapped file, or shared memory, you write a custom allocator and pass it as the second <span class="syn-kw">template</span> argument:
+</p><p>```cpp
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> T&gt;
+<span class="syn-kw">struct</span> ArenaAllocator {
+ Arena* arena;
+ T* allocate(std::<span class="syn-type">size_t</span> n) { <span class="syn-kw">return</span> <span class="syn-kw">static_cast</span>&lt;T*&gt;(arena-&gt;alloc(n * <span class="syn-kw">sizeof</span>(T))); }
+ <span class="syn-kw">void</span> deallocate(T*, std::<span class="syn-type">size_t</span>) { <span class="syn-comment">/* Arena frees all at once */</span> }
+};
+</p><p>std::vector&lt;<span class="syn-kw">int</span>, ArenaAllocator&lt;<span class="syn-kw">int</span>&gt;&gt; v(ArenaAllocator&lt;<span class="syn-kw">int</span>&gt;{&amp;frameArena});
+```
+</p><p>This is what `std::pmr` does — it provides pre-built allocators (`monotonic_buffer_resource`, `unsynchronized_pool_resource`) that plug into `std::pmr::vector` via a type-erased `polymorphic_allocator`. The basic allocator model is the machinery underneath.
+<span class="syn-pp">## See Also
+</span></p><p><ul><li>[[<span class="syn-num">03</span> — Memory/<span class="syn-num">03</span> — Smart Pointers &amp; Ownership|Smart Pointers]] — `unique_ptr` and `shared_ptr` manage heap objects via RAII</li></ul>
+<ul><li>[[<span class="syn-num">04</span> — RAII &amp; The Rule of Five]] — Why destructors matter <span class="syn-kw">for</span> heap cleanup</li></ul>
+<ul><li>[[<span class="syn-num">03</span> — Memory/<span class="syn-num">06</span> — std vector &amp; Container Internals|std::vector]] — How `emplace_back` uses placement <span class="syn-kw">new</span></li></ul>
+<ul><li>[[<span class="syn-num">03</span> — Memory/<span class="syn-num">02</span> — Object Memory Layout|Object Memory Layout]] — Cache lines, SoA vs AoS, alignment</li></ul>
+</p><p>[^<span class="syn-num">1</span>]: Standard C++ does not support runtime-sized stack arrays (VLAs were rejected). GCC supports them as an extension and `alloca()` is available on most platforms, but both are discouraged in production code.</code></pre></p>

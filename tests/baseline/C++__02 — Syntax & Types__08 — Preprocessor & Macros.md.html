@@ -1,0 +1,176 @@
+<p><h1 id="preprocessor-macros">Preprocessor &amp; Macros</h1>
+
+<h2 id="what-is-the-preprocessor">What Is the Preprocessor?</h2>
+
+The preprocessor runs BEFORE the compiler. It's a text processing step — it doesn't understand C++. It finds directives starting with <code>#</code> and transforms the source text. The compiler never sees the original file — it sees the preprocessed result.
+
+<pre><code class="language-cpp"><span class="syn-comment">// Before preprocessing (what you write):
+</span>
+<span class="syn-pp">#include &lt;vector&gt;
+</span>
+<span class="syn-pp">#define MAX_HEALTH 100
+</span></p><p><span class="syn-comment">// After preprocessing (what the compiler sees):
+</span>
+<span class="syn-comment">// [entire contents of &lt;vector&gt; header, thousands of lines]
+</span>
+<span class="syn-comment">// Every MAX_HEALTH replaced with 100
+</span>
+```
+</p><p>**Analogy:** The preprocessor is like a secretary who prepares documents before the boss (compiler) reads them. The secretary does find-and-replace, copies in reference documents (`#include`), and redacts sections based on conditions (`#ifdef`).
+</p><p>---
+</p><p><span class="syn-pp">## `#include` — Copy-Pasting Files
+</span></p><p>```cpp
+<span class="syn-pp">#include &lt;vector&gt;      // Standard library — searches system include paths
+</span>
+<span class="syn-pp">#include "MyClass.h"   // Your header — searches current directory first, then system paths
+</span>
+```
+</p><p>`#include` literally copies the entire contents of the included file into the current file at the directive<span class="syn-string">'s position. This is why headers need **include guards.**
+</p><p>### Include Guards — Prevent Double Inclusion
+</p><p>```cpp
+// ❌ Without guards — if included twice, class defined twice = compile error
+// MyClass.h (no guard)
+class MyClass { };
+</p><p>// ✅ With traditional guard
+#ifndef MYCLASS_H         // If MYCLASS_H is not defined...
+#define MYCLASS_H         // ...define it...
+class MyClass { };
+#endif                    // ...end the conditional block
+// Second time: MYCLASS_H is already defined — skip everything
+</p><p>// ✅ With #pragma once (simpler, non-standard but universally supported)
+#pragma once
+class MyClass { };
+```
+</p><p>`#pragma once` is simpler and supported by every modern compiler (MSVC, GCC, Clang). UE uses a mix of both in its headers.
+</p><p>---
+</p><p>## `#define` — Text Substitution
+</p><p>```cpp
+#define PI 3.14159
+#define MAX(a, b) ((a) &gt; (b) ? (a) : (b))
+</p><p>float area = PI * radius * radius;  // Becomes: 3.14159 * radius * radius
+int m = MAX(3, 4);                   // Becomes: ((3) &gt; (4) ? (3) : (4))
+```
+</p><p>**`#define` is NOT C++ — it'</span>s text replacement.** The preprocessor doesn<span class="syn-string">'t know about types, scope, or syntax. It just replaces text before the compiler runs.
+</p><p>### The Macro Double-Evaluation Trap
+</p><p>```cpp
+#define MAX(a, b) ((a) &gt; (b) ? (a) : (b))
+</p><p>int x = 5;
+int y = MAX(++x, 10);
+// Expands to: ((++x) &gt; (10) ? (++x) : (10))
+// x is incremented TWICE! Once for the comparison, once for the result!
+// x is now 7, not 6. This is a subtle bug.
+</p><p>// Fix 1: Use parentheses defensively — doesn'</span>t help <span class="syn-kw">double</span>-evaluation
+<span class="syn-comment">// Fix 2: Use a function instead
+</span>
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> T&gt; T max(T a, T b) { <span class="syn-kw">return</span> a &gt; b ? a : b; }
+<span class="syn-comment">// Fix 3: Use std::max — already solved for you
+</span>
+```
+</p><p>[!danger] Never pass expressions with side effects to macros
+`++`, `--`, function calls, and assignments inside macro arguments are a recipe <span class="syn-kw">for</span> bugs. The macro expands them multiple times.
+</p><p>---
+</p><p><span class="syn-pp">## `#ifdef` / `#ifndef` — Conditional Compilation
+</span></p><p>```cpp
+<span class="syn-pp">#define DEBUG_MODE  // Comment out for release builds
+</span></p><p><span class="syn-pp">#ifdef DEBUG_MODE
+</span>
+ std::cout &lt;&lt; <span class="syn-string">"Debug info: x = "</span> &lt;&lt; x &lt;&lt; std::endl;
+<span class="syn-pp">#endif
+</span></p><p><span class="syn-pp">#ifndef NDEBUG  // If not defined — C++ standard way (release builds define NDEBUG)
+</span>
+ assert(ptr != <span class="syn-kw">nullptr</span>);
+<span class="syn-pp">#endif
+</span></p><p><span class="syn-pp">#if PLATFORM == WINDOWS
+</span>
+ <span class="syn-comment">// Windows-specific code
+</span>
+<span class="syn-pp">#elif PLATFORM == LINUX
+</span>
+ <span class="syn-comment">// Linux-specific code
+</span>
+<span class="syn-pp">#else
+</span>
+ <span class="syn-comment">// Fallback
+</span>
+<span class="syn-pp">#endif
+</span>
+```
+</p><p>The conditional block is either included or completely removed BEFORE compilation. Code <span class="syn-kw">for</span> other platforms doesn<span class="syn-string">'t even exist in the compiled binary.
+</p><p>---
+</p><p>## When Macros Are Necessary
+</p><p>| Use Case | Why Templates/Functions Can'</span>t Replace It |
+|---|---|
+| Include guards | Must happen before compilation |
+| Platform detection | `#<span class="syn-kw">if</span> PLATFORM_WINDOWS` — other platform code can<span class="syn-string">'t compile |
+| Reflection code generation | UE'</span>s `UCLASS()`, `UFUNCTION()`, `UPROPERTY()` macros generate reflection data |
+| Compile-time string concatenation | `<span class="syn-string">"Hello "</span> <span class="syn-string">"World"</span>` → `<span class="syn-string">"Hello World"</span>` (adjacent string literals) |
+| `__FILE__` and `__LINE__` | Only preprocessor has access to source location |
+</p><p>---
+</p><p><span class="syn-pp">## When Templates/constexpr Are Better
+</span></p><p>```cpp
+<span class="syn-comment">// ❌ Macro — no type checking, double evaluation, hard to debug
+</span>
+<span class="syn-pp">#define SQUARE(x) ((x) * (x))
+</span></p><p><span class="syn-comment">// ✅ Template function — type-safe, single evaluation, debuggable
+</span>
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> T&gt;
+<span class="syn-kw">constexpr</span> T Square(T x) { <span class="syn-kw">return</span> x * x; }
+</p><p><span class="syn-comment">// ❌ Macro — no scope, pollutes namespace
+</span>
+<span class="syn-pp">#define BUFFER_SIZE 1024
+</span></p><p><span class="syn-comment">// ✅ constexpr — scoped, typed
+</span>
+<span class="syn-kw">constexpr</span> <span class="syn-kw">int</span> BufferSize = <span class="syn-num">1024</span>;
+```
+</p><p>**The rule:** Always prefer `<span class="syn-kw">constexpr</span>`, templates, or inline functions over macros. Use macros only when nothing <span class="syn-kw">else</span> works.
+</p><p>---
+</p><p><span class="syn-pp">## Token Pasting (`##`) and Stringizing (`#`)
+</span></p><p>```cpp
+<span class="syn-comment">// Token pasting — combine two tokens into one identifier
+</span>
+<span class="syn-pp">#define MAKE_FUNC(name) void Process##name() { }
+</span>
+MAKE_FUNC(Enemy);   <span class="syn-comment">// Creates: void ProcessEnemy() { }
+</span>
+MAKE_FUNC(Player);  <span class="syn-comment">// Creates: void ProcessPlayer() { }
+</span></p><p><span class="syn-comment">// Stringizing — convert argument to string literal
+</span>
+<span class="syn-pp">#define STRINGIFY(x) #x
+</span>
+<span class="syn-kw">const</span> <span class="syn-kw">char</span>* str = STRINGIFY(hello);  <span class="syn-comment">// "hello"
+</span>
+```
+</p><p>These are advanced macro techniques used by code generators like UHT (Unreal Header Tool). You rarely write them yourself.
+</p><p>---
+</p><p><span class="syn-pp">## Two-Way Explanation
+</span></p><p><span class="syn-pp">### Simple
+</span></p><p>The preprocessor is a find-and-replace tool that runs before the compiler. `#include` copies files. `#define` creates shorthand that gets replaced everywhere. `#ifdef` lets you choose which code to include based on conditions. Macros are powerful but dangerous — they replace text blindly without understanding C++. Modern C++ provides safer alternatives (`<span class="syn-kw">constexpr</span>`, templates, inline functions) <span class="syn-kw">for</span> almost everything macros used to <span class="syn-kw">do</span>.
+</p><p><span class="syn-pp">### Technical
+</span></p><p>The preprocessor is a distinct translation phase (phase <span class="syn-num">4</span>) that operates on the token stream before compilation. Directives (`#include`, `#define`, `#ifdef`) are processed line-by-line in a single pass. Macro expansion performs token substitution with parameter replacement; the `##` and `#` operators enable token pasting and stringizing. Conditional compilation (`#<span class="syn-kw">if</span>`, `#ifdef`) evaluates constant expressions and includes or excludes entire blocks from the translation unit. Modern idiom prefers `<span class="syn-kw">constexpr</span>` variables, <span class="syn-kw">template</span> functions, and `<span class="syn-kw">if</span> <span class="syn-kw">constexpr</span>` over preprocessor macros <span class="syn-kw">for</span> type safety and debuggability.
+</p><p>---
+</p><p><span class="syn-pp">## Exercises
+</span></p><p><span class="syn-num">1.</span> **Double-evaluation:** `#define MAX(a,b) ((a)&gt;(b)?(a):(b))`. `MAX(i++, j++)`. Which increments twice? Rewrite as <span class="syn-kw">template</span>.
+</p><p><span class="syn-num">2.</span> **Stringizing:** `#define LOG_VAR(x) cout &lt;&lt; #x &lt;&lt; <span class="syn-string">" = "</span> &lt;&lt; x`. What does #x <span class="syn-kw">do</span>? Write CONCAT with ##.
+</p><p><span class="syn-num">3.</span> **UE<span class="syn-string">'s GENERATED_BODY:** What does it expand to? Why macros instead of standard reflection?
+</p><p><ol><li>**Conditional compilation:** `#ifdef DEBUG` logging. `#define ENABLE_METRICS 0` with `#if ENABLE_METRICS`.</li></ol>
+</p><p><ol><li>**X-Macro:** Generate enum and string rep from one X-macro table. How does UHT do this at scale?</li></ol>
+</p><p>
+## std::source_location — The Modern Replacement (C++20)
+</p><p>`__FILE__`, `__LINE__`, and `__FUNCTION__` have been the only way to get source location for 40 years. C++20 replaces them with `std::source_location`:
+</p><p>```cpp
+#include &lt;source_location&gt;
+</p><p>void log(const std::string&amp; msg,
+      std::source_location loc = std::source_location::current())
+{
+ std::cerr &lt;&lt; loc.file_name() &lt;&lt; '</span>:<span class="syn-string">' &lt;&lt; loc.line()
+           &lt;&lt; " (" &lt;&lt; loc.function_name() &lt;&lt; "): " &lt;&lt; msg &lt;&lt; '</span>
+<span class="syn-string">';
+}
+</p><p>log("something happened");  // main.cpp:42 (main): something happened
+```
+</p><p>Unlike macros, `source_location` is type-safe, can be a default argument, and doesn'</span>t require preprocessor magic. Use it everywhere you currently use `__FILE__`/`__LINE__`.
+<span class="syn-pp">## See Also
+</span></p><p><ul><li>[[../../<span class="syn-num">01</span> — Primer/<span class="syn-num">06</span> — Compiling &amp; Running Programs|Compiling &amp; Running]] — The full compilation pipeline</li></ul>
+<ul><li>[[../../<span class="syn-num">03</span> — Memory/<span class="syn-num">01</span> — Stack vs Heap|Stack vs Heap]] — Why macros can<span class="syn-string">'t see stack/heap (they'</span>re pre-compilation)</li></ul>
+<ul><li>[[../../<span class="syn-num">05</span> — Modern C++/<span class="syn-num">02</span> — <span class="syn-kw">constexpr</span>, consteval &amp; constinit|<span class="syn-kw">constexpr</span>]] — Compile-time alternatives to macros</li></ul>
+<ul><li>[[../../<span class="syn-num">06</span> — Bridge/<span class="syn-num">05</span> — CMake &amp; Build Systems|CMake]] — Build-system macro definitions</code></pre></li></ul></p>

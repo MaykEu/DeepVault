@@ -1,0 +1,571 @@
+<p><h1 id="memory-bugs-garbage-collection">Memory Bugs &amp; Garbage Collection</h1>
+
+> <strong>Why This Matters.</strong> Memory bugs are the #1 source of security vulnerabilities, crashes, and unreproducible "works on my machine" bugs in C and C++ programs. A single dangling pointer in a game can corrupt the physics state 10 frames later — long after the <code>free</code> call. This note catalogs the eight canonical memory bugs, teaches you to detect them with modern tools (ASan, Valgrind), then shows how managed languages solve the problem entirely with garbage collection. Understanding both sides — what goes wrong and how it's automated away — makes you a better C++ programmer AND a better user of GC'd languages (C#, Lua, JavaScript) because you know what the runtime is doing behind your back.
+
+> [!info] Prerequisites
+> Unknown acronym? Check the <span class="wiki-link-missing">Glossary <small>(coming soon)</small></span>.
+> You should understand stack vs heap allocation (<span class="wiki-link-missing">Memory Allocation <small>(coming soon)</small></span>), the virtual memory system (<span class="wiki-link-missing">RAM &amp; Virtual Memory <small>(coming soon)</small></span>), and function call mechanics including stack frames and buffer overflow (<span class="wiki-link-missing">Function Calls — Edge Cases &amp; Security <small>(coming soon)</small></span>).
+
+<hr>
+
+<h2 id="part-1-the-eight-canonical-memory-bugs">Part 1: The Eight Canonical Memory Bugs</h2>
+
+Each bug follows a template: what it is, what it looks like in code, why it's dangerous, and how to detect it.
+
+<hr>
+
+<h3 id="bug-1-dereferencing-a-bad-pointer">Bug 1: Dereferencing a Bad Pointer</h3>
+
+<strong>What it is:</strong> Reading or writing through a pointer that doesn't point to valid memory.
+
+<pre><code class="language-cpp"><span class="syn-comment">// ❌ Uninitialized pointer
+</span>
+<span class="syn-kw">int</span>* p;           <span class="syn-comment">// p contains whatever garbage was on the stack
+</span>
+*p = <span class="syn-num">42</span>;          <span class="syn-comment">// Writing to a random address → SIGSEGV or silent corruption
+</span></p><p><span class="syn-comment">// ❌ NULL pointer dereference
+</span>
+<span class="syn-kw">int</span>* p = <span class="syn-kw">nullptr</span>;
+*p = <span class="syn-num">42</span>;          <span class="syn-comment">// Guaranteed crash on modern OSes (page 0 is unmapped)
+</span></p><p><span class="syn-comment">// ❌ Pointer to freed memory (dangling pointer — see Bug 4)
+</span>
+<span class="syn-kw">int</span>* p = <span class="syn-kw">new</span> <span class="syn-kw">int</span>(<span class="syn-num">42</span>);
+<span class="syn-kw">delete</span> p;
+*p = <span class="syn-num">10</span>;          <span class="syn-comment">// Use-after-free — may work, may corrupt, may crash
+</span>
+```
+</p><p>**Why it<span class="syn-string">'s dangerous:** The first case (uninitialized pointer) is the worst — the address is random. If it happens to point into your heap, you silently corrupt data. If it points to unmapped memory, you get a clean crash. "Silent corruption" is much worse than "immediate crash" because you won'</span>t discover it until the corrupted data is used much later.
+</p><p>**Detection:** `-Wall -Wextra` catches many uninitialized reads. ASan catches use-after-free and NULL dereferences immediately with a detailed report.
+</p><p>---
+</p><p><span class="syn-pp">### Bug 2: Reading Uninitialized Memory
+</span></p><p>**What it is:** Reading a variable before it has been assigned a value.
+</p><p>```cpp
+<span class="syn-comment">// ❌ Stack variable — contains whatever was at that stack address before
+</span>
+<span class="syn-kw">int</span> LaunchMissiles() {
+ <span class="syn-kw">int</span> count;          <span class="syn-comment">// Uninitialized — contains garbage from a previous function call
+</span>
+ <span class="syn-comment">// ... some conditional logic that sometimes sets count ...
+</span>
+ <span class="syn-kw">return</span> count;       <span class="syn-comment">// If count was never set, returns garbage
+</span>
+}
+</p><p><span class="syn-comment">// ✅ Fix: always initialize
+</span>
+<span class="syn-kw">int</span> LaunchMissiles() {
+ <span class="syn-kw">int</span> count = <span class="syn-num">0</span>;      <span class="syn-comment">// Default value
+</span>
+ <span class="syn-comment">// ...
+</span>
+ <span class="syn-kw">return</span> count;
+}
+```
+</p><p>**Why it<span class="syn-string">'s dangerous:** The garbage value depends on what previous function calls left on the stack. The bug may reproduce only when functions are called in a specific order. It may work in Debug builds (where stack memory is often zeroed by the debug runtime) and fail in Release builds.
+</p><p>**Detection:** Valgrind'</span>s Memcheck tracks every byte<span class="syn-string">'s "definedness" — it flags reads from uninitialized memory. MSVC'</span>s `/RTCsu` (Runtime Checks — Stack/Uninitialized) does the same in Debug builds. ASan does NOT detect uninitialized reads (only MSan — MemorySanitizer — does).
+</p><p>---
+</p><p><span class="syn-pp">### Bug 3: Buffer Overflow
+</span></p><p>**What it is:** Writing past the end of an allocated buffer, corrupting adjacent memory.
+</p><p>```cpp
+<span class="syn-comment">// ❌ Stack buffer overflow — the classic
+</span>
+<span class="syn-kw">char</span> name[<span class="syn-num">16</span>];
+strcpy(name, <span class="syn-string">"Alexander the Great"</span>);  <span class="syn-comment">// 20 bytes → overwrites stack
+</span>
+<span class="syn-comment">// Corrupts: saved RBP, return address, or other local variables
+</span>
+<span class="syn-comment">// This is exactly how stack-smashing exploits work
+</span></p><p><span class="syn-comment">// ❌ Heap buffer overflow
+</span>
+<span class="syn-kw">int</span>* arr = <span class="syn-kw">new</span> <span class="syn-kw">int</span>[<span class="syn-num">10</span>];
+arr[<span class="syn-num">10</span>] = <span class="syn-num">42</span>;     <span class="syn-comment">// Off by one — corrupts the next heap block's header
+</span>
+<span class="syn-kw">delete</span>[] arr;     <span class="syn-comment">// Crash: allocator sees corrupted header
+</span>
+```
+</p><p>**Why it<span class="syn-string">'s dangerous:** Stack overflows overwrite the return address — the foundation of code-reuse attacks (ROP/JOP). Heap overflows corrupt allocator metadata — the crash happens later (in `free` or `malloc`), far from the actual bug.
+</p><p>**Detection:** ASan places **red zones** (poisoned memory pages) around every allocation on the stack and heap. Any access to a red zone is reported with the exact file and line. `-fstack-protector-strong` adds stack canaries to detect return address overwrites.
+</p><p>---
+</p><p>### Bug 4: Dangling Pointer (Use-After-Free)
+</p><p>**What it is:** Accessing memory after it has been freed.
+</p><p>```cpp
+// ❌ Classic use-after-free
+int* p = new int(42);
+int* alias = p;      // Second pointer to the same memory
+delete p;            // Memory freed — p and alias now dangling
+*alias = 10;         // Use-after-free — writes to freed memory
+</p><p>// ❌ Subtle: pointer stored in a container
+std::vector&lt;int*&gt; pointers;
+int* p = new int(5);
+pointers.push_back(p);
+delete p;            // Bug: container still holds the now-dangling pointer
+// ... 100 lines later ...
+*pointers[0] = 10;   // Use-after-free, far from the original delete
+```
+</p><p>**Why it'</span>s dangerous:** The freed memory may be reused <span class="syn-kw">for</span> a different allocation. Your write through the dangling pointer corrupts the <span class="syn-kw">new</span> owner<span class="syn-string">'s data. The symptoms are completely unrelated to the cause — debugging this is notoriously hard because the crash site has nothing to do with the bug site.
+</p><p>```cpp
+// The nightmare scenario:
+int* p = new int(5);
+delete p;
+// ... later, the allocator reuses that memory for a different object ...
+Enemy* e = new Enemy(100, 50);    // Enemy gets p'</span>s old address — same pointer value!
+*p = <span class="syn-num">0</span>;                            <span class="syn-comment">// Overwrites Enemy's vtable → crash on next virtual call
+</span>
+<span class="syn-comment">// Crash in Enemy::TakeDamage() — but the bug was the use-after-free 10 lines up
+</span>
+```
+</p><p>[!tip] How vtable corruption manifests
+A C++ object with <span class="syn-kw">virtual</span> functions stores a hidden **vtable pointer** (vptr) at offset <span class="syn-num">0</span> within the object. When a <span class="syn-kw">virtual</span> function is called, the compiler generates: `mov rax, [rdi]; call [rax + offset]` — load the vptr, then call through the vtable. If memory corruption overwrites the vptr, the CPU loads a garbage address and jumps to it. The resulting crash typically shows a nonsensical instruction address in the callstack, or <span class="syn-string">"pure virtual function call"</span> (the vptr points to the base <span class="syn-kw">class</span><span class="syn-string">'s vtable after destruction). If the overwritten vptr points to executable memory (e.g., a JIT region or mapped library), an attacker can redirect execution — this is the basis of **vtable hijacking** exploits.
+</p><p>**Detection:** ASan catches the initial use-after-free that corrupts the vptr. In debug builds, set a data breakpoint (`watch`) on the vptr address to find what modifies it.
+</p><p>**Detection:** ASan quarantines freed memory — instead of returning it to the allocator, it poisons the region. Any subsequent access through a dangling pointer hits the poisoned memory and ASan reports the exact location.
+</p><p>**Prevention:** Set pointers to `nullptr` after `delete`. Use `std::unique_ptr` and `std::shared_ptr` so the pointer goes out of scope automatically.
+</p><p>---
+</p><p>### Bug 5: Double Free
+</p><p>**What it is:** Calling `free` or `delete` on the same pointer twice.
+</p><p>```cpp
+int* p = new int(42);
+delete p;
+delete p;           // ❌ Double free — undefined behavior
+// The allocator'</span>s free list is now corrupted
+```
+</p><p>**Why it<span class="syn-string">'s dangerous:** After the first `free`, the memory may have been reallocated to another caller. The second `free` puts an already-used block back on the free list — now two different objects "own" the same memory. Subsequent allocations can return memory that'</span>s still in use, leading to hard-to-debug corruption.
+</p><p>```cpp
+<span class="syn-comment">// The allocator's nightmare:
+</span>
+<span class="syn-kw">int</span>* p = <span class="syn-kw">new</span> <span class="syn-kw">int</span>(<span class="syn-num">5</span>);
+<span class="syn-kw">delete</span> p;           <span class="syn-comment">// Block goes to free list
+</span>
+Enemy* e = <span class="syn-kw">new</span> Enemy();  <span class="syn-comment">// e gets p's old memory
+</span>
+<span class="syn-kw">delete</span> p;           <span class="syn-comment">// Double free: puts Enemy's block on free list
+</span>
+                 <span class="syn-comment">// Now e is a dangling pointer AND the free list is corrupted
+</span>
+```
+</p><p>**Detection:** ASan and Valgrind <span class="syn-kw">catch</span> <span class="syn-kw">this</span> immediately. ASan reports both the second free site AND the first free site.
+</p><p>**Prevention:** Set pointers to `<span class="syn-kw">nullptr</span>` after `<span class="syn-kw">delete</span>`. `<span class="syn-kw">delete</span> <span class="syn-kw">nullptr</span>` is a no-op. Or — better — use smart pointers which set themselves to null on destruction.
+</p><p>---
+</p><p><span class="syn-pp">### Bug 6: Memory Leak
+</span></p><p>**What it is:** Allocating memory and never freeing it, causing the process<span class="syn-string">'s Resident Set Size (RSS) to grow without bound.
+</p><p>```cpp
+// ❌ Leak in a loop — each iteration allocates and loses the pointer
+void ProcessFrames() {
+ for (int frame = 0; frame &lt; 1000000; frame++) {
+     FrameData* data = new FrameData();  // Allocate
+     Process(data);
+     // OOPS: forgot to delete data — each frame leaks
+ }
+ // After 1M frames: 1M × sizeof(FrameData) leaked
+}
+// ❌ Leak from early return
+void LoadAsset(const char* path) {
+ char* buffer = new char[FILE_SIZE];
+ if (!ReadFile(path, buffer)) {
+     return;  // ❌ Early return — buffer leaked!
+ }
+ ProcessBuffer(buffer);
+ delete[] buffer;
+}
+```
+</p><p>**Why it'</span>s dangerous:** A slow leak in a <span class="syn-kw">long</span>-running process (game server, editor) eventually exhausts RAM. The OS kills the process (OOM killer on Linux). Leaks also increase RSS, forcing the OS to swap out other processes — slowing the entire machine.
+</p><p>**Detection:** Valgrind<span class="syn-string">'s Memcheck reports leaked blocks at exit with allocation stacks. ASan reports leaks. In UE5: `obj list` console command shows all UObject instances; `memreport -full` dumps allocation statistics.
+</p><p>[!tip] Process-Leaks vs One-Allocation Leaks
+**Process-leak:** Memory that is intentionally allocated once and never freed until process exit (e.g., a global texture atlas, the command-line argument buffer). The OS reclaims all process memory on exit, so these are not harmful in practice.
+**One-allocation leak:** A single allocation that loses its pointer due to reassignment or early return without `delete`. Harmless individually but compounds over time.
+**Accumulating leak:** A leak in a loop or per-frame allocation — each iteration allocates without freeing. These are catastrophic — the process grows unbounded until OOM.
+</p><p>The debugging heuristic: if Valgrind reports 5 small leaks at exit from `_start`, they'</span>re likely one-time process-leaks from the runtime loader. If it reports <span class="syn-num">5</span>,<span class="syn-num">000</span> leaks from a game function, that<span class="syn-string">'s an accumulating leak.
+</p><p>Use `memreport -full` in UE5 to track allocation deltas between frames — a monotonically increasing counter is an accumulating leak.
+</p><p>---
+</p><p>### Bug 7: Off-By-One Error
+</p><p>**What it is:** Writing or reading exactly one element past (or before) the valid range.
+</p><p>```cpp
+// ❌ Off-by-one in array initialization
+int arr[10];
+for (int i = 0; i &lt;= 10; i++) {  // ❌ i goes 0..10 — writes arr[10] which doesn'</span>t exist
+ arr[i] = <span class="syn-num">0</span>;
+}
+</p><p><span class="syn-comment">// ❌ Off-by-one in string handling — forgetting the null terminator
+</span>
+<span class="syn-kw">char</span>* name = <span class="syn-kw">new</span> <span class="syn-kw">char</span>[strlen(input)];     <span class="syn-comment">// ❌ No room for '\0'
+</span>
+strcpy(name, input);                       <span class="syn-comment">// Writes '\0' one byte past the buffer
+</span></p><p><span class="syn-comment">// ✅ Fix
+</span>
+<span class="syn-kw">char</span>* name = <span class="syn-kw">new</span> <span class="syn-kw">char</span>[strlen(input) + <span class="syn-num">1</span>];  <span class="syn-comment">// +1 for null terminator
+</span>
+strcpy(name, input);
+```
+</p><p>**Why it<span class="syn-string">'s dangerous:** The overflow is just one byte — but that byte might be the allocator'</span>s header, a vtable pointer, or a <span class="syn-kw">return</span> address. One wrong byte is all it takes.
+</p><p>**Detection:** Same tools as buffer overflow (Bug <span class="syn-num">3</span>). ASan<span class="syn-string">'s red zones catch off-by-one writes into the padding after an allocation.
+</p><p>---
+</p><p>### Bug 8: Pointer Arithmetic Confusion
+</p><p>**What it is:** Miscalculating pointer offsets, especially when mixed with `sizeof` or array-to-pointer decay.
+</p><p>```cpp
+// ❌ sizeof(pointer) vs sizeof(array)
+void ClearBuffer(int* buf) {
+ // ❌ sizeof(buf) = 8 (pointer size on x64), NOT the array size!
+ memset(buf, 0, sizeof(buf));
+}
+</p><p>void Caller() {
+ int data[100];
+ ClearBuffer(data);  // ❌ Only clears 8 bytes of a 400-byte array!
+}
+</p><p>// ❌ Pointer subtraction with wrong types
+int* p = new int[10];
+int* end = p + 10;           // end points one-past-the-last
+size_t count = end - p;      // count = 10 (correct — pointer arithmetic divides by sizeof(int))
+// But:
+char* c_end = reinterpret_cast&lt;char*&gt;(end);
+char* c_p   = reinterpret_cast&lt;char*&gt;(p);
+size_t c_count = c_end - c_p;  // count = 40 (sizeof(int*) difference — 10 × 4 bytes)
+```
+</p><p>**Detection:** `-Wsizeof-pointer-memaccess` for the first trap. ASan for out-of-bounds access.
+</p><p>---
+</p><p>## Part 2: Detection Tools
+</p><p>### AddressSanitizer (ASan)
+</p><p>The gold standard for C++ memory bug detection. Compile with `-fsanitize=address` (GCC/Clang) or `/fsanitize=address` (MSVC):
+</p><p>```bash
+g++ -fsanitize=address -g -O1 mygame.cpp -o mygame
+./mygame
+# ASan catches: use-after-free, heap/stack/global buffer overflow,
+# double free, memory leaks (with -fsanitize=leak)
+# Performance cost: ~2× slowdown, ~2-3× memory overhead
+```
+</p><p>ASan works by **shadow memory** — it maintains a byte-for-byte shadow map of every 8 bytes of application memory. Each shadow byte records whether the corresponding 8 bytes are addressable. Every memory access is instrumented to check the shadow map. On violation, ASan prints the exact file, line, and a stack trace.
+</p><p>```cpp
+// ASan report example:
+// ==12345==ERROR: AddressSanitizer: heap-use-after-free on address 0x60300000eff0
+// READ of size 4 at 0x60300000eff0 thread T0
+//     #0 0x4567ab in use_after_free() /src/bug.cpp:15
+//  0x60300000eff0 is located 0 bytes inside of 4-byte region
+//     freed by thread T0 here:
+//     #0 0x412345 in operator delete(void*) /src/bug.cpp:12
+//     previously allocated by thread T0 here:
+//     #0 0x409876 in operator new(unsigned long) /src/bug.cpp:10
+```
+</p><p>### Valgrind (Memcheck)
+</p><p>Valgrind runs your program on a SYNTHESIZED CPU — it translates every x86 instruction into VEX IR (Valgrind'</span>s intermediate representation), instruments it, and recompiles back to x86. No recompilation needed, but ~<span class="syn-num">10</span>-<span class="syn-num">20</span>× slower than ASan:
+</p><p>```bash
+valgrind --leak-check=full --track-origins=yes ./mygame
+<span class="syn-pp"># Catches: uninitialized reads, use-after-free, buffer overflow,
+</span>
+<span class="syn-pp"># memory leaks, double free, bad frees, overlapping memcpy
+</span>
+```
+</p><p>**How Memcheck tracks state:** Every bit of memory and every CPU register carries a <span class="syn-string">"V-bit"</span> (validity bit). When memory is allocated, V-bits = <span class="syn-num">0</span> (undefined). When written, V-bits = <span class="syn-num">1</span> (defined). Memcheck flags any operation where undefined data affects a conditional branch, a syscall argument, or a pointer dereference.
+</p><p>**ASan vs Valgrind:**
+</p><p>| | AddressSanitizer | Valgrind |
+|---|---|---|
+| **Method** | Compile-time instrumentation | Binary translation (no recompile) |
+| **Slowdown** | ~<span class="syn-num">2</span>× | ~<span class="syn-num">10</span>-<span class="syn-num">20</span>× |
+| **Detection** | Spatial errors (OOB, UAF) | Spatial + uninitialized reads + data races (Helgrind) |
+| **False positives** | Near zero | Low but non-zero |
+| **Requires source?** | Yes (recompile) | No (works on any binary) |
+| **Best <span class="syn-kw">for</span>** | Development, CI, games | Legacy binaries, third-party libs, <span class="syn-kw">final</span> verification |
+</p><p>**The rule:** Use ASan during development (fast enough <span class="syn-kw">for</span> gameplay tests). Use Valgrind <span class="syn-kw">for</span> the <span class="syn-kw">final</span> shipping build verification (catches what ASan misses — uninitialized reads in third-party libs you can<span class="syn-string">'t recompile).
+</p><p>### UE5 Memory Validation
+</p><p>UE5 has built-in memory debugging that works WITHOUT external tools. These are game-engine-specific features that leverage UE'</span>s own allocator and object system:
+</p><p>```cpp
+<span class="syn-comment">// Console commands (type in editor console or pass as -ExecCmds):
+</span>
+-MemoryValidation           <span class="syn-comment">// Enables ASan-like checks within UE's allocator
+</span>
+obj list                    <span class="syn-comment">// List all live UObject instances (find leaks by class)
+</span>
+obj list <span class="syn-kw">class</span>=<span class="syn-type">AActor</span>       <span class="syn-comment">// Filter to specific class — "why are there 5000 actors?"
+</span>
+memreport -full             <span class="syn-comment">// Full allocation breakdown by category (Texture, Mesh, Audio...)
+</span>
+GC.Sweep                    <span class="syn-comment">// Force a garbage collection cycle — check what's collected
+</span>
+```
+</p><p>**What `-MemoryValidation` actually checks:**
+<ul><li>**Guard pages** around allocations — accessing memory just before/after an allocation triggers a page fault immediately (not <span class="syn-num">100</span> instructions later like a plain buffer overflow)</li></ul>
+<ul><li>**Freed memory poisoning** — fills freed memory with `<span class="syn-num">0xDEAD</span>` pattern so use-after-free reads <span class="syn-kw">return</span> garbage, not stale valid data</li></ul>
+<ul><li>**Allocator metadata integrity** — checks that free() is called with a pointer the allocator actually owns (catches <span class="syn-kw">double</span>-free and wild-pointer free)</li></ul>
+<ul><li>**Allocation tracking** — records file/line of every allocation, dumped in `memreport`</li></ul>
+</p><p>Unlike ASan, these are LIGHTWEIGHT — designed to run during actual gameplay without making the game unplayable. The performance hit is &lt;<span class="syn-num">10</span>% (vs ASan<span class="syn-string">'s ~100%).
+</p><p>---
+</p><p>### malloc/free Internals — How the Allocator Works
+</p><p>Understanding how `malloc` and `free` operate at the system level explains why certain memory bugs occur and why ASan catches them:
+</p><p>```
+Heap layout:
+┌──────────────────────────────────────────────────────────────┐
+│ [chunk header][user data][chunk header][user data]...        │
+│  ^-- size+flags   ^-- returned by malloc                      │
+└──────────────────────────────────────────────────────────────┘
+```
+</p><p>Each chunk has a **header** (8-16 bytes, depending on allocator) containing:
+<ul><li>**Size of this chunk** (including header, aligned to 16 bytes)</li></ul>
+<ul><li>**Flags:** Is the previous chunk free? Is this chunk mmap'</span>d? (glibc `malloc` uses `prev_inuse` bit)</li></ul>
+<ul><li>**Free list pointers:** When freed, the chunk<span class="syn-string">'s user data area stores `fd` (forward) and `bk` (back) pointers to the next/previous free chunk</li></ul>
+</p><p>```cpp
+// Simplified glibc malloc chunk header (32-bit):
+struct malloc_chunk {
+ size_t prev_size;   // Size of previous chunk (if prev is free)
+ size_t size;        // Size of this chunk + flags in low bits
+ // When free, these overlap with user data:
+ struct malloc_chunk* fd;  // Forward pointer in free list
+ struct malloc_chunk* bk;  // Back pointer in free list
+};
+```
+</p><p>**The allocation path:**
+<ol><li>`malloc(N)` → round N to aligned size, add header size → search free list for a chunk ≥ needed size</li></ol>
+<ol><li>If found: optionally split large chunk, return user data pointer</li></ol>
+<ol><li>If not found: call `brk()` (extend heap) or `mmap()` (for large allocations &gt; 128 KB) to get new memory from the OS</li></ol>
+</p><p>**The free path:**
+<ol><li>`free(ptr)` → subtract header offset to get chunk → check magic/poison → add to free list</li></ol>
+<ol><li>**Coalesce:** Check adjacent chunks — if the next chunk is also free, merge them (reduces fragmentation)</li></ol>
+<ol><li>If the freed chunk is at the end of the heap and large enough: call `brk()` to shrink the heap back</li></ol>
+</p><p>**Why this matters for memory bugs:**
+<ul><li>**Use-after-free:** The freed chunk'</span>s `fd`/`bk` pointers overwrite the original user data. Reading the old pointer returns garbage (or the allocator<span class="syn-string">'s internal pointers).</li></ul>
+<ul><li>**Double free:** The chunk is on the free list. `free()`ing it again adds it TWICE to the free list — next `malloc` returns it, and the same memory appears in two allocations, corrupting both users.</li></ul>
+<ul><li>**Buffer overflow:** Writing past the user data corrupts the NEXT chunk'</span>s header (size + flags). Next `free()` reads corrupted metadata → crash or wrong free list manipulation.</li></ul>
+</p><p>**ASan<span class="syn-string">'s approach:** Replace `malloc` with instrumented versions:
+<ul><li>Every allocation gets **red zones** (poisoned memory) on both sides — any access to them is caught immediately</li></ul>
+<ul><li>Freed memory is **quarantined** (not returned to the OS) — accessing it hits ASan'</span>s poisoned quarantine rather than valid memory</li></ul>
+<ul><li>Allocator metadata is stored in a separate region, so header corruption doesn<span class="syn-string">'t affect ASan'</span>s tracking)</li></ul>
+</p><p>---
+</p><p><span class="syn-pp">## Part 3: Garbage Collection — Automation
+</span></p><p>The eight bugs above all stem from one root cause: **manual memory management.** The programmer must track every object<span class="syn-string">'s lifetime and coordinate every `free` with every `new`. Garbage collection eliminates this entire class of bugs by automating deallocation — the runtime determines when an object is no longer reachable and reclaims it.
+</p><p>[!info] Analogy — The Janitor vs The Self-Cleaning Office
+Manual memory management is like an office where every employee must personally take their trash to the dumpster. If someone forgets, trash accumulates (memory leak). If someone takes someone else'</span>s trash that<span class="syn-string">'s still needed, documents go missing (dangling pointer). GC is a janitor who walks through the office at night, checks which documents anyone still has on their desk, and throws away only the ones nobody references anymore.
+</p><p>---
+</p><p>### Strategy 1: Reference Counting
+</p><p>Every object has a counter tracking how many pointers reference it. When the counter hits zero, the object is freed immediately.
+</p><p>```cpp
+// Simplified shared_ptr — reference counting in C++
+template&lt;typename T&gt;
+class RefCounted {
+ T* obj;
+ int* refs;
+public:
+ RefCounted(T* ptr) : obj(ptr), refs(new int(1)) {}
+ RefCounted(const RefCounted&amp; other) : obj(other.obj), refs(other.refs) {
+     (*refs)++;
+ }
+ ~RefCounted() {
+     if (--(*refs) == 0) {
+         delete obj;
+         delete refs;
+     }
+ }
+};
+```
+</p><p>**The cycle problem:** Two objects point to each other. Both have refcount = 1. Neither can ever reach 0. This is a **reference cycle leak:**
+</p><p>```cpp
+struct Node {
+ std::shared_ptr`&lt;Node&gt;` next;
+ std::shared_ptr`&lt;Node&gt;` prev;
+};
+auto a = std::make_shared`&lt;Node&gt;`();
+auto b = std::make_shared`&lt;Node&gt;`();
+a-&gt;next = b;  // b refcount = 2 (b + a-&gt;next)
+b-&gt;prev = a;  // a refcount = 2 (a + b-&gt;prev)
+// a and b go out of scope — refcount drops to 1 each
+// But neither can reach 0 — permanent leak!
+```
+</p><p>**The fix:** `std::weak_ptr` — a non-owning reference that doesn'</span>t increment the refcount. Used <span class="syn-kw">for</span> back-references and observer patterns:
+</p><p>```cpp
+<span class="syn-kw">struct</span> Node {
+ std::shared_ptr`&lt;Node&gt;` next;   <span class="syn-comment">// Owns — keeps alive
+</span>
+ std::weak_ptr`&lt;Node&gt;` prev;     <span class="syn-comment">// Observes — doesn't keep alive
+</span>
+};
+<span class="syn-comment">// No cycle — when a and b go out of scope, refcounts reach 0
+</span>
+```
+</p><p>**Where it<span class="syn-string">'s used:**
+<ul><li>**C++:** `std::shared_ptr` / `std::weak_ptr` — opt-in, explicit.</li></ul>
+<ul><li>**Swift:** Automatic Reference Counting (ARC) — compiler inserts retain/release calls automatically.</li></ul>
+<ul><li>**Objective-C:** ARC, same principle.</li></ul>
+<ul><li>**COM (Windows):** `AddRef()` / `Release()` — the original reference counting API.</li></ul>
+</p><p>**Pros:** Deterministic destruction (objects freed immediately when unreachable), no GC pauses, works with RAII and destructors naturally.
+**Cons:** Cycle detection requires `weak_ptr`, thread-safe refcount updates need atomic operations (overhead on every copy), can'</span>t handle very large object graphs efficiently.
+</p><p>---
+</p><p><span class="syn-pp">### Strategy 2: Mark-and-Sweep
+</span></p><p>The classic GC algorithm. Two phases:
+</p><p>**Mark phase:** Start from **roots** — global variables, stack variables, CPU registers. Recursively traverse every pointer reachable from roots, marking objects as <span class="syn-string">"live."</span>
+</p><p>**Sweep phase:** Walk the entire heap. Any object NOT marked is garbage — reclaim it.
+</p><p>```
+Roots: [stack vars, globals, registers]
+      │
+ ┌────┴────┐
+ │  mark   │
+ │ object A│────→ object B ────→ object D
+ └─────────┘     (marked)       (marked)
+                          
+                 object C      object E
+                 (NOT marked)  (NOT marked) → GARBAGE → SWEEP
+```
+</p><p>**UE5<span class="syn-string">'s UObject GC:** Unreal Engine uses a mark-and-sweep collector for `UObject` instances. Roots include: the global `GUObjectArray`, objects referenced by loaded levels, objects pinned by `UPROPERTY()` macros, and objects explicitly added via `AddToRoot()`. The GC runs periodically (not continuously) — typically between levels or when the engine detects memory pressure.
+</p><p>```cpp
+// UE5 — prevent an object from being garbage collected
+MyObject-&gt;AddToRoot();   // Pin it — won'</span>t be collected
+<span class="syn-comment">// ... use MyObject ...
+</span>
+MyObject-&gt;RemoveFromRoot();  <span class="syn-comment">// Unpin — now eligible for collection
+</span></p><p><span class="syn-comment">// UE5 — force collection
+</span>
+GEngine-&gt;ForceGarbageCollection(<span class="syn-kw">true</span>);
+```
+</p><p>**Pros:** Handles cycles naturally (only reachability matters, not count). No per-operation overhead — only cost is during GC runs.
+**Cons:** GC pauses — the program must stop <span class="syn-kw">while</span> marking and sweeping (UE5 mitigates <span class="syn-kw">this</span> with incremental collection). Non-deterministic destruction — you don<span class="syn-string">'t know exactly when an object'</span>s destructor will run.
+</p><p>---
+</p><p><span class="syn-pp">### Strategy 3: Copying Collectors
+</span></p><p>Instead of marking and sweeping in place, a copying collector moves live objects to a <span class="syn-kw">new</span> memory region, then frees the entire old region at once.
+</p><p>```
+BEFORE GC:                          AFTER GC:
+┌──┬──┬──┬──┬──┬──┬──┐            ┌──┬──┬──┬──┬─────────────┐
+│A │B*│C*│D │E*│F │G │            │B │C │E │  FREE SPACE   │
+└──┴──┴──┴──┴──┴──┴──┘            └──┴──┴──┴───────────────┘
+  * = live                            ↑
+                                   compacted — no fragmentation!
+```
+</p><p>**Why it<span class="syn-string">'s brilliant:** After copying, all free memory is contiguous — zero external fragmentation, and allocation is a simple pointer bump (like a stack allocator). This is called a **bump allocator** and it'</span>s the fastest possible allocation strategy.
+</p><p>**How it works — Cheney<span class="syn-string">'s Algorithm:**
+</p><p>```cpp
+// Conceptual model of a copying collector:
+struct Heap {
+ char* from_space; // old region (being collected)
+ char* to_space;   // new region (receiving live objects)
+ char* free_ptr;   // points to next free byte in to_space
+ 
+ // Copy a live object from from_space to to_space
+ Object* Forward(Object* obj) {
+     if (obj == nullptr) return nullptr;
+     if (IsInToSpace(obj)) return obj; // already forwarded
+     
+     // Copy object to to_space...
+     size_t size = obj-&gt;Size();
+     Object* copy = (Object*)free_ptr;
+     memcpy(copy, obj, size);
+     free_ptr += size;
+     
+     // ...and leave a FORWARDING POINTER at the old location
+     obj-&gt;SetForwardingAddress(copy);
+     return copy;
+ }
+ 
+ // The collector: scan to_space breadth-first
+ void Collect(char* roots[], int root_count) {
+     free_ptr = to_space;
+     char* scan_ptr = to_space; // objects BELOW scan_ptr are fully scanned
+     
+     // 1. Copy all roots from from_space to to_space
+     for (int i = 0; i &lt; root_count; i++) {
+         roots[i] = (char*)Forward((Object*)roots[i]);
+     }
+     
+     // 2. Breadth-first scan: process each copied object, forwarding its fields
+     while (scan_ptr &lt; free_ptr) {
+         Object* obj = (Object*)scan_ptr;
+         // For each pointer field in obj, forward the pointed-to object
+         for (auto&amp; field : obj-&gt;PointerFields()) {
+             field = Forward(field);
+         }
+         scan_ptr += obj-&gt;Size();
+     }
+     // Done: all live objects in to_space, from_space can be reused
+ }
+};
+```
+</p><p>**The forwarding pointer** is the key: when an object is first visited, it'</span>s copied to to_space AND a forwarding address is left behind at the old location. Every subsequent reference to the same object finds the forwarding address and uses the <span class="syn-kw">new</span> copy — no duplicate copying.
+</p><p>**The cost:** Copying large objects is expensive (though most objects are small). The heap is split in half — you can only use <span class="syn-num">50</span>% of your memory at any time. Modern collectors use **generational collection** (next strategy) to avoid copying <span class="syn-kw">long</span>-lived objects repeatedly.
+</p><p>**The benefit:** Allocation is O(<span class="syn-num">1</span>) pointer bump. Deallocation is O(<span class="syn-num">1</span>) — just reset free_ptr to to_space start. No fragmentation ever. No free lists. No metadata per object. For functional languages (Haskell, OCaml) that allocate and discard millions of small objects, <span class="syn-kw">this</span> is dramatically faster than malloc/free.
+</p><p>---
+</p><p><span class="syn-pp">### Strategy 4: Generational Collection
+</span></p><p>[!abstract] Deep Dive — Can skip on first read
+</p><p>**The empirical observation:** Most objects die young. A study of Java programs found that <span class="syn-num">90</span>%+ of objects die within the first few MB of allocation. This is the **weak generational hypothesis.**
+</p><p>Generational collectors exploit <span class="syn-kw">this</span> by dividing the heap into generations:
+</p><p>```
+┌──────────────────────────────────────────┐
+│          YOUNG GENERATION (Nursery)       │
+│  ┌──────────────────┐  ┌───────────────┐ │
+│  │   Eden Space     │  │ Survivor      │ │
+│  │  (<span class="syn-kw">new</span> objects)   │→ │ Spaces (S0,S1)│ │
+│  │                  │  │ objects that  │ │
+│  │   Fast bump      │  │ survived one  │ │
+│  │   allocation     │  │ GC cycle      │ │
+│  └──────────────────┘  └───────────────┘ │
+│     Collect frequently — cheap!           │
+└──────────────────────────────────────────┘
+                   │
+                   ▼ (promotion)
+┌──────────────────────────────────────────┐
+│           OLD GENERATION (Tenured)        │
+│  ┌──────────────────────────────────────┐ │
+│  │   Long-lived objects                 │ │
+│  │   (<span class="syn-kw">static</span> data, caches, singletons)  │ │
+│  │   Collect rarely — expensive          │ │
+│  └──────────────────────────────────────┘ │
+└──────────────────────────────────────────┘
+```
+</p><p>**The algorithm:**
+<span class="syn-num">1.</span> New objects are allocated in Eden (young generation, bump-allocated — extremely fast).
+<span class="syn-num">2.</span> When Eden fills up, a **minor GC** runs: copy live objects from Eden to a Survivor space. Dead objects are simply abandoned (Eden is reclaimed wholesale).
+<span class="syn-num">3.</span> Objects that survive multiple minor GCs are **promoted** to the old generation.
+<span class="syn-num">4.</span> When the old generation fills up, a **major GC** runs: mark-and-sweep or mark-and-compact on the entire heap. Major GCs are expensive but rare.
+</p><p>**Where it<span class="syn-string">'s used:** Java HotSpot VM, .NET CLR, V8 (JavaScript), Python (CPython 3.11+ uses generational GC).
+</p><p>**The write barrier:** Generational GC has one complication — an old-generation object might contain a pointer to a young-generation object. During a minor GC (which only scans young objects), this pointer from old → young would be invisible, causing the young object to be incorrectly collected. The solution: a **write barrier** — every time the program stores a pointer into an old-generation object, the collector records it in a **remembered set**. During minor GC, the remembered set is scanned as additional roots.
+</p><p>---
+</p><p>### Strategy 5: GC in Game Engines
+</p><p>Game engines have a complex relationship with garbage collection:
+</p><p>| Engine | GC Strategy | Notes |
+|--------|------------|-------|
+| **UE5** | Incremental mark-and-sweep (UObject only) | C++ objects use manual memory or smart pointers. Only `UObject`-derived classes (reflected, serializable) are GC'</span>d. GC runs between frames, not during gameplay. |
+| **Unity (Mono/IL2CPP)** | Boehm-Demers-Weiser conservative GC + incremental | All C# objects are GC<span class="syn-string">'d. IL2CPP converts C# to C++ but retains a garbage collector for managed objects. |
+| **Godot** | Reference counting (RefCounted) + manual | Reference-counted for most nodes; manual memory for performance-critical paths. |
+</p><p>**Why game engines avoid full GC during gameplay:**
+<ul><li>GC pauses cause frame hitches. Even a 5 ms pause at 60 FPS misses 1/3 of a frame.</li></ul>
+<ul><li>Object pools eliminate the need for GC: pre-allocate objects, never free them, reset and reuse.</li></ul>
+<ul><li>UE5'</span>s incremental collector spreads work across frames to avoid hitches.</li></ul>
+</p><p>**The object pool pattern (GC alternative):**
+</p><p>```cpp
+<span class="syn-comment">// Instead of new/delete or relying on GC:
+</span>
+<span class="syn-kw">template</span>&lt;<span class="syn-kw">typename</span> T&gt;
+<span class="syn-kw">class</span> ObjectPool {
+ std::vector`&lt;T&gt;` objects;     <span class="syn-comment">// Pre-allocated — never freed
+</span>
+ std::vector&lt;T*&gt; free_list;  <span class="syn-comment">// Pointers to unused objects
+</span>
+<span class="syn-kw">public</span>:
+ T* Acquire() {
+     <span class="syn-kw">if</span> (free_list.empty()) <span class="syn-kw">return</span> <span class="syn-kw">nullptr</span>;  <span class="syn-comment">// Pool exhausted
+</span>
+     T* obj = free_list.back();
+     free_list.pop_back();
+     <span class="syn-kw">return</span> obj;  <span class="syn-comment">// No allocation — O(1)
+</span>
+ }
+ <span class="syn-kw">void</span> Release(T* obj) {
+     obj-&gt;Reset();     <span class="syn-comment">// Reset to default state
+</span>
+     free_list.push_back(obj);  <span class="syn-comment">// Return to pool — O(1), no free
+</span>
+ }
+};
+```
+</p><p>---
+</p><p><span class="syn-pp">## Two-Way Explanation
+</span></p><p><span class="syn-pp">### Simple
+</span>
+Memory bugs are what happen when you manage memory by hand. The eight classic bugs: <span class="syn-kw">using</span> a pointer before giving it a value, writing past the end of an array, <span class="syn-kw">using</span> memory after freeing it, freeing the same memory twice, forgetting to free (a leak), counting wrong by one, and getting confused by pointer math. Tools like AddressSanitizer <span class="syn-kw">catch</span> these the moment they happen. Garbage collection solves all of them by removing the programmer from the deallocation decision entirely — the runtime figures out what<span class="syn-string">'s still in use and frees the rest automatically. Reference counting (shared_ptr) is the simplest form: each object tracks how many pointers point to it. Mark-and-sweep (UE5'</span>s <span class="syn-type">UObject</span> GC) traces all live objects from root references. Copying collectors move live objects together so free space is one big block. Generational collectors put <span class="syn-kw">new</span> objects in a nursery and only scan <span class="syn-kw">long</span>-lived objects rarely.
+</p><p><span class="syn-pp">### Technical
+</span>
+Memory bugs are violations of the C++ abstract machine<span class="syn-string">'s object lifetime model: accessing storage after its lifetime ends (use-after-free), accessing storage before its lifetime begins (uninitialized read), accessing outside storage bounds (buffer overflow), or mismanaging the allocator'</span>s metadata (<span class="syn-kw">double</span> free, invalid free). Detection tools use shadow memory (ASan — <span class="syn-num">1</span> byte per <span class="syn-num">8</span> bytes of application memory, tracking addressability) or binary instrumentation (Valgrind — VEX IR translation with definedness tracking). Garbage collection algorithms determine object reachability from a root set: reference counting (O(<span class="syn-num">1</span>) deallocation, cannot handle cycles without weak references), mark-and-sweep (traces object graph from roots, O(live_objects) marking + O(heap_size) sweeping, handles cycles, non-deterministic pauses), copying collection (Cheney<span class="syn-string">'s algorithm — from-space to to-space traversal with forwarding pointers, compacts and eliminates fragmentation, O(live_objects), doubles memory footprint), and generational collection (splits heap into young/old generations, exploits the weak generational hypothesis that most objects die young, uses write barriers to track inter-generational pointers via card marking or remembered sets).
+</p><p>---
+</p><p>## Exercises
+</p><p><ol><li>**ASan in action:** Write a program with a use-after-free bug (allocate, free, then read). Compile with `-fsanitize=address -g`. Run it. Read the ASan report: find the allocation site, the free site, and the access site. How far apart are they in lines? Would you have found this bug by reading the code?</li></ol>
+</p><p><ol><li>**Cycle leak:** Write a doubly-linked list using `std::shared_ptr&lt;Node&gt;` for both `next` and `prev`. Create a 2-node cycle, then let the head pointer go out of scope. Use Valgrind (`--leak-check=full`) — does it report a leak? Now replace `prev` with `std::weak_ptr`. Does the leak go away? Why?</li></ol>
+</p><p><ol><li>**Mark-and-sweep by hand:** Given an object graph: A→B→C, A→D, D→E, and roots={A}. Walk through the mark phase (which objects are reached?) and the sweep phase (which objects are collected?). Now add a cycle: C→A. Does mark-and-sweep handle it? Does reference counting?</li></ol>
+</p><p><ol><li>**Object pool benchmark:** Write an object pool for a fake `Particle` struct (position, velocity, lifetime). Allocate 1M particles using `new`/`delete` vs your pool'</span>s Acquire/Release. Measure cycles per acquire/release pair. How much faster is the pool? Why?</li></ol>
+</p><p><span class="syn-num">5.</span> **UE5 GC design:** UE5<span class="syn-string">'s UObject GC must handle assets that reference each other (a Material referencing a Texture, a Blueprint referencing a Mesh). Why does UE use mark-and-sweep rather than reference counting? What problem would `shared_ptr` cause when a ULevel references thousands of UObjects?
+</p><p>---
+</p><p>## See Also
+</p><p><ul><li>[[../Hardware/06 — Memory Allocation|Memory Allocation]] — How malloc/free work internally, buddy system, jemalloc</li></ul>
+<ul><li>[[Function Calls/03 — Edge Cases &amp; Security|Function Calls — Edge Cases &amp; Security]] — Stack canaries, ASLR, ROP, buffer overflow exploits</li></ul>
+<ul><li>[[../Hardware/07 — Virtual Memory — The Full Picture|Virtual Memory — The Full Picture]] — Page faults when accessing unmapped memory</li></ul>
+<ul><li>[[04 — Syscalls &amp; Kernel|Syscalls &amp; Kernel]] — How ASan intercepts malloc/free via interposition</li></ul>
+<ul><li>[[02 — Compiler Pipeline|Compiler Pipeline]] — `-fsanitize=address` adds instrumentation during compilation</span></code></pre></li></ul></p>

@@ -1,0 +1,164 @@
+<p><h1 id="c-concurrency-api">C++ Concurrency API</h1></p><p><blockquote class="callout callout-info"><strong>This note bridges the C++ standard library concurrency API to the theory covered in <span class="wiki-link-missing">Concurrency Overview <small>(coming soon)</small></span>. The Computer Systems notes teach WHAT threads, mutexes, and atomics ARE. This note teaches HOW to use the C++ types: <code>std::thread</code>, <code>std::mutex</code>, <code>std::future</code>, <code>std::async</code>, and friends.</strong><br></blockquote></p><p><blockquote class="callout callout-tip"><strong>Why This Matters</strong><br>The C++ standard library provides a complete concurrency toolkit. <code>std::thread</code> launches threads. <code>std::mutex</code> + <code>std::lock_guard</code> protects shared data. <code>std::async</code> + <code>std::future</code> return values from background work. <code>std::atomic</code> enables lock-free programming. You can write threaded code with pthreads or Win32 threads — but <code>std::</code> types are portable, RAII-safe, and compose with the rest of the standard library. Every game engine eventually wraps these in its own abstractions (UE5's <code>FRunnableThread</code>, <code>FCriticalSection</code>), but the primitives underneath are these.</blockquote></p><p><blockquote class="callout callout-info"><strong>Prerequisites: <span class="wiki-link-missing">Processes &amp; Threads <small>(coming soon)</small></span>, <span class="wiki-link-missing">Data Races &amp; Mutexes <small>(coming soon)</small></span>, <span class="wiki-link-missing">Atomics &amp; Memory Ordering <small>(coming soon)</small></span>, <span class="wiki-link-missing">RAII &amp; Rule of Five <small>(coming soon)</small></span> (mutex locking IS RAII).</strong><br></blockquote></p><p><hr></p><p><h2 id="std-thread-launching-and-joining"><code>std::thread</code> — Launching and Joining</h2></p><p><pre><code class="language-cpp"><span class="syn-pp">#include &lt;thread&gt;</span>
+<span class="syn-pp">#include &lt;iostream&gt;</span></p><p><span class="syn-kw">void</span> Worker(<span class="syn-kw">int</span> id, <span class="syn-kw">const</span> std::string&amp; msg) {
+ std::cout &lt;&lt; <span class="syn-string">"Thread "</span> &lt;&lt; id &lt;&lt; <span class="syn-string">": "</span> &lt;&lt; msg &lt;&lt; <span class="syn-string">'\n'</span>;
+}</p><p><span class="syn-kw">int</span> main() {
+ std::thread t1(Worker, <span class="syn-num">1</span>, <span class="syn-string">"hello"</span>);  <span class="syn-comment">// launches immediately</span>
+ std::thread t2(Worker, <span class="syn-num">2</span>, <span class="syn-string">"world"</span>);</p><p> t1.join();  <span class="syn-comment">// wait for t1 to finish</span>
+ t2.join();  <span class="syn-comment">// wait for t2 to finish</span>
+ <span class="syn-comment">// After join: thread has completed. Safe to destroy.</span>
+}</code></pre></p><p><h3 id="the-join-detach-rule">The Join/Detach Rule</h3></p><p>Every <code>std::thread</code> MUST be either <code>join()</code>ed or <code>detach()</code>ed before it's destroyed. Destroying an unjoined, undetached thread calls <code>std::terminate()</code> — instant death.</p><p><pre><code class="language-cpp"><span class="syn-comment">// ❌ UB — thread destroyed without join or detach</span>
+{
+ std::thread t(Worker, <span class="syn-num">1</span>, <span class="syn-string">"oops"</span>);
+} <span class="syn-comment">// std::terminate() called!</span></p><p><span class="syn-comment">// ✅ join: wait for completion</span>
+<span class="syn-kw">void</span> WaitForThread() {
+ std::thread t(Worker, <span class="syn-num">1</span>, <span class="syn-string">"ok"</span>);
+ t.join(); <span class="syn-comment">// block until t finishes</span>
+}</p><p><span class="syn-comment">// ✅ detach: let it run independently (rarely correct)</span>
+<span class="syn-kw">void</span> FireAndForget() {
+ std::thread t(Worker, <span class="syn-num">1</span>, <span class="syn-string">"background"</span>);
+ t.detach(); <span class="syn-comment">// t runs independently — you can't join it later</span>
+ <span class="syn-comment">// Dangerous: Worker may access destroyed stack variables of FireAndForget</span>
+}</code></pre></p><p><blockquote class="callout callout-warning"><strong><code>detach()</code> is almost always wrong. If the detached thread accesses local variables of the spawning function, those variables may be destroyed before the thread finishes. Prefer <code>join()</code> or <code>std::async</code>.</strong><br></blockquote></p><p><h3 id="passing-arguments">Passing Arguments</h3></p><p>Arguments are COPIED (or moved) into the thread's storage. To pass by reference, use <code>std::ref</code>:</p><p><pre><code class="language-cpp"><span class="syn-kw">void</span> Modify(<span class="syn-kw">int</span>&amp; value) { value = <span class="syn-num">42</span>; }</p><p><span class="syn-kw">int</span> x = <span class="syn-num">0</span>;
+std::thread t(Modify, std::ref(x)); <span class="syn-comment">// pass by reference</span>
+t.join();
+<span class="syn-comment">// x == 42</span></code></pre></p><p>Without <code>std::ref</code>, <code>x</code> would be copied and <code>Modify</code> would mutate the copy — not <code>x</code>. The original stays unchanged.</p><p><h3 id="exception-safety-for-threads">Exception Safety for Threads</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// ❌ If DoWork() throws, join() is never called → terminate()</span>
+<span class="syn-kw">void</span> UnsafeThread() {
+ std::thread t(Worker, <span class="syn-num">1</span>, <span class="syn-string">"data"</span>);
+ DoWork(); <span class="syn-comment">// may throw</span>
+ t.join(); <span class="syn-comment">// NEVER REACHED if DoWork throws</span>
+}</p><p><span class="syn-comment">// ✅ RAII wrapper pattern</span>
+<span class="syn-kw">class</span> ThreadGuard {
+ std::thread&amp; t;
+<span class="syn-kw">public</span>:
+ <span class="syn-kw">explicit</span> ThreadGuard(std::thread&amp; thread) : t(thread) {}
+ ~ThreadGuard() { <span class="syn-kw">if</span> (t.joinable()) t.join(); }
+ ThreadGuard(<span class="syn-kw">const</span> ThreadGuard&amp;) = <span class="syn-kw">delete</span>;
+};</p><p><span class="syn-kw">void</span> SafeThread() {
+ std::thread t(Worker, <span class="syn-num">1</span>, <span class="syn-string">"data"</span>);
+ ThreadGuard guard(t); <span class="syn-comment">// join on scope exit, even via exception</span>
+ DoWork(); <span class="syn-comment">// may throw — guard's destructor still calls join()</span>
+}</code></pre></p><p><hr></p><p><h2 id="mutexes-and-lock-guards-protecting-shared-data">Mutexes and Lock Guards — Protecting Shared Data</h2></p><p><pre><code class="language-cpp"><span class="syn-pp">#include &lt;mutex&gt;</span></p><p>std::mutex m;
+<span class="syn-kw">int</span> shared_counter = <span class="syn-num">0</span>;</p><p><span class="syn-kw">void</span> Increment() {
+ m.lock();
+ ++shared_counter;
+ m.unlock(); <span class="syn-comment">// ❌ What if ++shared_counter throws? Unlock never called!</span>
+}</p><p><span class="syn-comment">// ✅ RAII lock — never forgets to unlock</span>
+<span class="syn-kw">void</span> IncrementSafe() {
+ std::lock_guard&lt;std::mutex&gt; lock(m);
+ ++shared_counter;
+} <span class="syn-comment">// lock destroyed here → m.unlock() called automatically</span></code></pre></p><p><h3 id="the-mutex-family">The Mutex Family</h3></p><p><table><tr><th>Type</th><th>When to Use</th></tr><tr><td><code>std::mutex</code></td><td>Default — simple mutual exclusion</td></tr><tr><td><code>std::recursive_mutex</code></td><td>Same thread can lock multiple times (rarely needed, often a design smell)</td></tr><tr><td><code>std::timed_mutex</code></td><td>Supports <code>try_lock_for()</code> and <code>try_lock_until()</code> with timeouts</td></tr><tr><td><code>std::shared_mutex</code> (C++17)</td><td>Multiple readers OR one writer</td></tr></table>
+<h3 id="the-lock-guard-family">The Lock Guard Family</h3></p><p><table><tr><th>Type</th><th>Behavior</th></tr><tr><td><code>std::lock_guard<Mutex></code></td><td>Locks on construction, unlocks on destruction. Simplest.</td></tr><tr><td><code>std::unique_lock<Mutex></code></td><td>Deferrable lock, transferable ownership, manual unlock/re-lock. More flexible, slightly heavier.</td></tr><tr><td><code>std::scoped_lock<Mutex...></code> (C++17)</td><td>Locks MULTIPLE mutexes atomically — prevents deadlock from lock ordering.</td></tr><tr><td><code>std::shared_lock<SharedMutex></code> (C++17)</td><td>Shared (read) lock on a <code>shared_mutex</code>.</td></tr></table>
+<h3 id="locking-multiple-mutexes-std-scoped-lock">Locking Multiple Mutexes — <code>std::scoped_lock</code></h3></p><p><pre><code class="language-cpp">std::mutex m1, m2;</p><p><span class="syn-comment">// ❌ DEADLOCK POTENTIAL: Thread A locks m1 then m2. Thread B locks m2 then m1.</span>
+<span class="syn-kw">void</span> Transfer_Bad(Account&amp; from, Account&amp; to, <span class="syn-kw">int</span> amount) {
+ std::lock_guard lock1(from.m);
+ std::lock_guard lock2(to.m); <span class="syn-comment">// DEADLOCK if another thread locks to.m then from.m</span>
+ from.balance -= amount;
+ to.balance += amount;
+}</p><p><span class="syn-comment">// ✅ std::scoped_lock: atomically locks ALL mutexes in a deadlock-free order</span>
+<span class="syn-kw">void</span> Transfer_Safe(Account&amp; from, Account&amp; to, <span class="syn-kw">int</span> amount) {
+ std::scoped_lock lock(from.m, to.m); <span class="syn-comment">// both locked atomically</span>
+ from.balance -= amount;
+ to.balance += amount;
+}</code></pre></p><p><h3 id="std-unique-lock-deferred-locking"><code>std::unique_lock</code> — Deferred Locking</h3></p><p><pre><code class="language-cpp">std::mutex m;</p><p><span class="syn-comment">// Defer lock acquisition — lock later manually</span>
+std::unique_lock&lt;std::mutex&gt; lock(m, std::defer_lock);
+<span class="syn-comment">// ... do work that doesn't need the lock ...</span>
+lock.lock();   <span class="syn-comment">// now acquire</span>
+<span class="syn-comment">// ... critical section ...</span>
+lock.unlock(); <span class="syn-comment">// release early</span>
+<span class="syn-comment">// ... more non-critical work ...</span>
+lock.lock();   <span class="syn-comment">// re-acquire if needed</span></code></pre></p><p>Unique to <code>unique_lock</code>: you can defer lock, unlock early, transfer ownership via move. Its destructor unlocks only if locked.</p><p><hr></p><p><h2 id="std-condition-variable-signaling-between-threads"><code>std::condition_variable</code> — Signaling Between Threads</h2></p><p>Condition variables let one thread WAIT until another thread signals that work is ready or data is available. They're used with a mutex and a predicate — never signal alone.</p><p><h3 id="the-pattern">The Pattern</h3></p><p><pre><code class="language-cpp">std::mutex m;
+std::condition_variable cv;
+std::queue&lt;<span class="syn-kw">int</span>&gt; workQueue;
+<span class="syn-kw">bool</span> done = <span class="syn-kw">false</span>;</p><p><span class="syn-comment">// Consumer thread: wait for work</span>
+<span class="syn-kw">void</span> Consumer() {
+ <span class="syn-kw">while</span> (<span class="syn-kw">true</span>) {
+     std::unique_lock&lt;std::mutex&gt; lock(m);
+     cv.wait(lock, [] { <span class="syn-kw">return</span> !workQueue.empty() || done; });
+     <span class="syn-comment">// wait() atomically: unlocks m, sleeps, re-locks m on wakeup</span>
+     
+     <span class="syn-kw">if</span> (done &amp;&amp; workQueue.empty()) <span class="syn-kw">break</span>;
+     
+     <span class="syn-kw">int</span> item = workQueue.front();
+     workQueue.pop();
+     lock.unlock(); <span class="syn-comment">// release lock before processing</span>
+     ProcessItem(item);
+ }
+}</p><p><span class="syn-comment">// Producer thread: add work and signal</span>
+<span class="syn-kw">void</span> Producer() {
+ <span class="syn-kw">for</span> (<span class="syn-kw">int</span> i = <span class="syn-num">0</span>; i &lt; <span class="syn-num">100</span>; ++i) {
+     {
+         std::lock_guard&lt;std::mutex&gt; lock(m);
+         workQueue.push(i);
+     }
+     cv.notify_one(); <span class="syn-comment">// wake ONE waiting consumer</span>
+ }
+ {
+     std::lock_guard&lt;std::mutex&gt; lock(m);
+     done = <span class="syn-kw">true</span>;
+ }
+ cv.notify_all(); <span class="syn-comment">// wake ALL consumers (for shutdown)</span>
+}</code></pre></p><p><h3 id="why-the-predicate-is-not-optional">Why the Predicate Is NOT Optional</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// ❌ WRONG: wait without predicate — spurious wakeup will proceed</span>
+cv.wait(lock); <span class="syn-comment">// MAY return even if condition is false!</span></p><p><span class="syn-comment">// ✅ CORRECT: wait with predicate — loop until condition is true</span>
+cv.wait(lock, [] { <span class="syn-kw">return</span> !workQueue.empty(); });
+<span class="syn-comment">// Equivalent to: while (!pred()) { cv.wait(lock); }</span></code></pre></p><p>Spurious wakeups are real — the OS or hardware may wake a waiting thread for no reason. The predicate loop is NOT optional.</p><p><h3 id="notify-one-vs-notify-all"><code>notify_one</code> vs <code>notify_all</code></h3></p><p><table><tr><th>Function</th><th>Use When</th></tr><tr><td><code>notify_one()</code></td><td>One waiting thread will handle the work — wake one, avoid thundering herd</td></tr><tr><td><code>notify_all()</code></td><td>All waiting threads need to react — shutdown, state change affecting everyone</td></tr></table>
+<strong>The trap:</strong> Notifying BEFORE releasing the mutex may cause the woken thread to immediately block waiting for the mutex (pointless wakeup). Notifying AFTER releasing the mutex is usually better:</p><p><pre><code class="language-cpp"><span class="syn-comment">// ✅ Better: unlock first, then notify</span>
+{
+ std::lock_guard lock(m);
+ workQueue.push(item);
+} <span class="syn-comment">// lock released here</span>
+cv.notify_one(); <span class="syn-comment">// woken thread can immediately acquire the mutex</span></code></pre></p><p><hr></p><p><h2 id="std-once-flag-and-std-call-once-thread-safe-initialization"><code>std::once_flag</code> and <code>std::call_once</code> — Thread-Safe Initialization</h2></p><p><pre><code class="language-cpp">std::once_flag init_flag;
+ExpensiveResource* resource = <span class="syn-kw">nullptr</span>;</p><p><span class="syn-kw">void</span> Initialize() {
+ resource = <span class="syn-kw">new</span> ExpensiveResource(<span class="syn-comment">/* ... */</span>);
+}</p><p><span class="syn-kw">void</span> ThreadFunc() {
+ std::call_once(init_flag, Initialize); <span class="syn-comment">// called exactly ONCE across all threads</span>
+ resource-&gt;Use(); <span class="syn-comment">// guaranteed initialized before any thread reaches here</span>
+}</code></pre></p><p>Before C++11, this was the "double-checked locking pattern" — notoriously difficult to get right. <code>call_once</code> solves it definitively.</p><p><hr></p><p><h2 id="futures-and-promises-returning-values-from-threads">Futures and Promises — Returning Values from Threads</h2></p><p><code>std::thread</code> doesn't return values. <code>std::async</code> + <code>std::future</code> does.</p><p><h3 id="std-async-the-simplest-way-to-run-work-in-background"><code>std::async</code> — The Simplest Way to Run Work in Background</h3></p><p><pre><code class="language-cpp"><span class="syn-pp">#include &lt;future&gt;</span></p><p><span class="syn-comment">// Launch background work, get a future for the result</span>
+std::future&lt;<span class="syn-kw">int</span>&gt; result = std::async(std::launch::async, [] {
+ <span class="syn-kw">return</span> ComputeExpensiveValue(); <span class="syn-comment">// runs on another thread</span>
+});</p><p><span class="syn-comment">// Do other work while computation runs...</span>
+DoOtherWork();</p><p><span class="syn-comment">// Block until result is ready, then get the value</span>
+<span class="syn-kw">int</span> value = result.get(); <span class="syn-comment">// blocks if not ready; throws if the task threw</span></code></pre></p><p><h3 id="std-future-lifetime-the-std-async-trap"><code>std::future</code> Lifetime — The <code>std::async</code> Trap</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// ❌ BLOCKS DESTRUCTOR: std::async future blocks in destructor if not consumed</span>
+{
+ std::async(std::launch::async, WorkerFunc);
+} <span class="syn-comment">// future's destructor BLOCKS until WorkerFunc completes — defeats the purpose</span></p><p><span class="syn-comment">// ✅ Keep the future alive until you're ready to wait:</span>
+<span class="syn-kw">auto</span> fut = std::async(std::launch::async, WorkerFunc);
+DoOtherWork();
+fut.get(); <span class="syn-comment">// explicit: "I'm ready to wait now"</span></code></pre></p><p>The destructor of a <code>std::future</code> from <code>std::async(std::launch::async, ...)</code> blocks until the task completes. This is the #1 <code>std::async</code> gotcha.</p><p><h3 id="std-promise-manual-future-production"><code>std::promise</code> — Manual Future Production</h3></p><p><pre><code class="language-cpp">std::promise&lt;<span class="syn-kw">int</span>&gt; promise;
+std::future&lt;<span class="syn-kw">int</span>&gt; future = promise.get_future();</p><p>std::thread worker([&amp;promise] {
+ <span class="syn-kw">try</span> {
+     <span class="syn-kw">int</span> result = ComputeExpensiveValue();
+     promise.set_value(result); <span class="syn-comment">// fulfill the promise → future.get() unblocks</span>
+ } <span class="syn-kw">catch</span> (...) {
+     promise.set_exception(std::current_exception()); <span class="syn-comment">// propagate exception to future</span>
+ }
+});</p><p><span class="syn-kw">int</span> value = future.get(); <span class="syn-comment">// blocks until promise is fulfilled</span>
+worker.join();</code></pre></p><p><code>std::async</code> is <code>std::promise</code> + <code>std::thread</code> bundled together. Use <code>std::async</code> when you can. Use <code>std::promise</code> when you need manual control over when the value is produced.</p><p><h3 id="std-packaged-task-a-future-wrapped-callable"><code>std::packaged_task</code> — A Future-Wrapped Callable</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// Wrap a callable into a future-returning object</span>
+std::packaged_task&lt;<span class="syn-kw">int</span>(<span class="syn-kw">int</span>, <span class="syn-kw">int</span>)&gt; task([](<span class="syn-kw">int</span> a, <span class="syn-kw">int</span> b) { <span class="syn-kw">return</span> a + b; });
+std::future&lt;<span class="syn-kw">int</span>&gt; result = task.get_future();</p><p><span class="syn-comment">// Execute the task anywhere — another thread, or even the same thread</span>
+task(<span class="syn-num">40</span>, <span class="syn-num">2</span>); <span class="syn-comment">// execute now</span>
+<span class="syn-kw">int</span> answer = result.get(); <span class="syn-comment">// 42 — no blocking, already ready</span></code></pre></p><p><code>std::packaged_task</code> is a callable wrapper that produces a <code>std::future</code>. It's <code>std::promise</code> + <code>std::function</code> in one. Use it in thread pools and task queues.</p><p><h3 id="std-shared-future-multiple-waiters"><code>std::shared_future</code> — Multiple Waiters</h3></p><p><pre><code class="language-cpp">std::future&lt;<span class="syn-kw">int</span>&gt; fut = std::async(std::launch::async, [] { <span class="syn-kw">return</span> <span class="syn-num">42</span>; });
+std::shared_future&lt;<span class="syn-kw">int</span>&gt; shared = fut.share(); <span class="syn-comment">// transfers ownership</span></p><p><span class="syn-comment">// Multiple threads can now call shared.get() — each gets the same result</span>
+<span class="syn-kw">auto</span> t1 = std::thread([shared] { <span class="syn-kw">int</span> v = shared.get(); });
+<span class="syn-kw">auto</span> t2 = std::thread([shared] { <span class="syn-kw">int</span> v = shared.get(); });</code></pre></p><p><code>std::future::get()</code> can only be called ONCE. <code>std::shared_future::get()</code> can be called many times — useful for broadcasting a result to multiple consumers.</p><p><hr></p><p><h2 id="std-atomic-lock-free-primitives"><code>std::atomic<T></code> — Lock-Free Primitives</h2></p><p>See <span class="wiki-link-missing">Atomics &amp; Memory Ordering <small>(coming soon)</small></span> for the full theory. Here's the C++ API mapping:</p><p><pre><code class="language-cpp"><span class="syn-pp">#include &lt;atomic&gt;</span></p><p>std::atomic&lt;<span class="syn-kw">int</span>&gt; counter{<span class="syn-num">0</span>};</p><p><span class="syn-comment">// Basic operations — all atomic, all lock-free on modern CPUs</span>
+counter.store(<span class="syn-num">42</span>);                    <span class="syn-comment">// write</span>
+<span class="syn-kw">int</span> val = counter.load();             <span class="syn-comment">// read</span>
+<span class="syn-kw">int</span> old = counter.fetch_add(<span class="syn-num">1</span>);       <span class="syn-comment">// read-modify-write (returns old value)</span>
+<span class="syn-kw">int</span> old = counter++;                   <span class="syn-comment">// same as fetch_add(1)</span>
+<span class="syn-kw">bool</span> success = counter.compare_exchange_strong(expected, desired);</p><p><span class="syn-comment">// Memory ordering (default is seq_cst — safest, slowest):</span>
+counter.store(<span class="syn-num">42</span>, std::memory_order_release);
+<span class="syn-kw">int</span> val = counter.load(std::memory_order_acquire);</code></pre></p><p><table><tr><th><code>std::atomic<T></code></th><th>Typical Use</th></tr><tr><td><code>std::atomic<bool></code></td><td>Flags, spinlocks</td></tr><tr><td><code>std::atomic<int></code> / <code><unsigned></code></td><td>Counters, indices</td></tr><tr><td><code>std::atomic<T*></code></td><td>Lock-free linked structures</td></tr><tr><td><code>std::atomic<std::shared_ptr<T>></code> (C++20)</td><td>Reference-counted shared state</td></tr><tr><td><code>std::atomic<std::weak_ptr<T>></code> (C++20)</td><td>Weak references in concurrent structures</td></tr></table>
+<hr></p><p><h2 id="parallel-algorithms-c-17">Parallel Algorithms (C++17)</h2></p><p><pre><code class="language-cpp"><span class="syn-pp">#include &lt;algorithm&gt;</span>
+<span class="syn-pp">#include &lt;execution&gt;</span></p><p>std::vector&lt;<span class="syn-kw">int</span>&gt; data(<span class="syn-num">1000000</span>);</p><p><span class="syn-comment">// Sequential sort</span>
+std::sort(std::execution::seq, data.begin(), data.end());</p><p><span class="syn-comment">// Parallel sort (C++17)</span>
+std::sort(std::execution::par, data.begin(), data.end());</p><p><span class="syn-comment">// Parallel + vectorized (C++17)</span>
+std::sort(std::execution::par_unseq, data.begin(), data.end());</code></pre></p><p><table><tr><th>Execution Policy</th><th>Behavior</th><th>When to Use</th></tr><tr><td><code>std::execution::seq</code></td><td>Sequential — same as no policy</td><td>Single-threaded or small data</td></tr><tr><td><code>std::execution::par</code></td><td>Parallel — multiple threads</td><td>Large data, work per element is significant</td></tr><tr><td><code>std::execution::par_unseq</code></td><td>Parallel + SIMD vectorized</td><td>Maximum throughput, no synchronization in element ops</td></tr></table>
+<blockquote class="callout callout-warning"><strong>Parallel algorithms do NOT guarantee speedup. They guarantee ATTEMPTS to parallelize. Thread creation overhead, false sharing, and data contention can make them SLOWER than sequential. Always measure.</strong><br></blockquote></p><p><hr></p><p><h2 id="thread-local-storage">Thread-Local Storage</h2></p><p><pre><code class="language-cpp">thread_local <span class="syn-kw">int</span> perThreadCounter = <span class="syn-num">0</span>;</p><p><span class="syn-kw">void</span> Worker() {
+ perThreadCounter++; <span class="syn-comment">// each thread has its OWN counter</span>
+}</code></pre></p><p><code>thread_local</code> creates one instance of a variable PER THREAD. In UE5, this is how stat counters accumulate per-thread before flushing to global stats.</p><p><hr></p><p><h2 id="c-vs-ue5-concurrency-api">C++ vs UE5 Concurrency API</h2></p><p><table><tr><th>C++ Standard</th><th>UE5 Equivalent</th></tr><tr><td><code>std::thread</code></td><td><code>FRunnableThread::Create()</code></td></tr><tr><td><code>std::mutex</code></td><td><code>FCriticalSection</code></td></tr><tr><td><code>std::lock_guard</code></td><td><code>FScopeLock</code></td></tr><tr><td><code>std::unique_lock</code></td><td>Manual <code>Lock()</code>/<code>Unlock()</code> on <code>FCriticalSection</code></td></tr><tr><td><code>std::condition_variable</code></td><td><code>FEvent</code></td></tr><tr><td><code>std::atomic<T></code></td><td><code>std::atomic<T></code> (UE5 uses it directly)</td></tr><tr><td><code>std::async</code></td><td><code>AsyncTask()</code> / <code>FAsyncTask</code></td></tr><tr><td><code>std::future</code></td><td><code>TFuture<T></code> / <code>TPromise<T></code></td></tr><tr><td><code>thread_local</code></td><td><code>thread_local</code> (compiler feature, same)</td></tr><tr><td><code>std::call_once</code></td><td><code>FCriticalSection</code> + manual flag</td></tr></table>
+<hr></p><p><h2 id="two-way-explanation">Two-Way Explanation</h2></p><p><strong>Beginner:</strong> Threads let your program do multiple things at once. <code>std::thread</code> starts a new thread. <code>std::mutex</code> protects shared data — only one thread can hold the lock at a time. <code>std::lock_guard</code> locks on creation and unlocks automatically when it goes out of scope (RAII). <code>std::async</code> runs work in the background and gives you a <code>std::future</code> — call <code>.get()</code> on the future to wait for the result. <code>std::atomic</code> enables lock-free counters and flags — no mutex needed for simple operations.</p><p><strong>Experienced:</strong> The C++ Thread Library (<code><thread></code>, <code><mutex></code>, <code><future></code>, <code><atomic></code>, <code><condition_variable></code>) provides a portable, RAII-guaranteed concurrency API. <code>std::thread</code> models OS threads; its destructor enforces the join-or-detach invariant via <code>std::terminate()</code>. <code>std::scoped_lock</code> (C++17) applies a deadlock-avoidance algorithm (<code>std::lock</code>) to acquire multiple mutexes atomically — the canonical solution to the lock-ordering problem. <code>std::async</code> with <code>std::launch::async</code> guarantees a new thread; without the policy, the implementation MAY run synchronously. The <code>std::future</code> destructor from <code>std::launch::async</code> blocks ([futures.async]/5) — the most commonly missed behavior. <code>std::atomic</code> provides hardware-backed atomic operations with six memory orderings; the default <code>seq_cst</code> is the safest and most expensive. Parallel algorithms (<code>std::execution::par</code>) delegate to the implementation's thread pool — they're advisory, not guaranteed, and must be benchmarked. <code>thread_local</code> storage is per-thread; on access, the variable's initializer runs once per thread (lazy initialization with a hidden guard variable).</p><p><hr></p><p><h2 id="exercises">Exercises</h2></p><p><ol><li><strong>Thread join/detach:</strong> Write a program that creates 3 threads, each printing its ID. Use <code>join()</code>. What happens if you forget <code>join()</code>? Now try <code>detach()</code> — can you guarantee the threads finished before <code>main</code> exits?</li></ol>
+<ol><li><strong>Mutex guard:</strong> Write a <code>Counter</code> class with <code>Increment()</code> and <code>Get()</code> methods protected by <code>std::mutex</code> + <code>std::lock_guard</code>. What would break if you used <code>std::unique_lock</code> without calling <code>.lock()</code>? What if you forgot the lock entirely?</li></ol>
+<ol><li><strong>Scoped lock:</strong> Write <code>Transfer(Account&amp; from, Account&amp; to, int amount)</code> using <code>std::scoped_lock</code>. Create two threads that transfer in opposite directions. Does the code deadlock? Why not?</li></ol>
+<ol><li><strong>Future result:</strong> Use <code>std::async</code> to compute the sum of a large vector in a background thread. While it runs, print progress dots to <code>std::cout</code>. When the future is ready, print the result. What happens if you call <code>fut.get()</code> twice?</li></ol>
+<ol><li><strong>Atomic vs mutex benchmark:</strong> Implement a shared counter incremented by 4 threads, 1,000,000 times each. First with <code>std::mutex</code> + <code>lock_guard</code>. Then with <code>std::atomic<int>::fetch_add</code>. Time both. Which is faster? Why? At what contention level does the mutex approach break even?</li></ol>
+<hr></p><p><h2 id="see-also">See Also</h2>
+<ul><li><span class="wiki-link-missing">Processes &amp; Threads <small>(coming soon)</small></span> — What threads ARE at the OS level</li><li><span class="wiki-link-missing">Data Races &amp; Mutexes <small>(coming soon)</small></span> — Why mutexes are necessary, deadlock theory</li><li><span class="wiki-link-missing">Atomics &amp; Memory Ordering <small>(coming soon)</small></span> — Memory ordering in depth</li><li><span class="wiki-link-missing">Practical Concurrency <small>(coming soon)</small></span> — Per-bucket locking, concurrent hash tables, UE5 patterns</li><li><span class="wiki-link-missing">RAII &amp; Rule of Five <small>(coming soon)</small></span> — Why lock guards are RAII</li><li><span class="wiki-link-missing">noexcept &amp; Move Semantics <small>(coming soon)</small></span> — Why move constructors must be noexcept for vector reallocation</li></ul></p>

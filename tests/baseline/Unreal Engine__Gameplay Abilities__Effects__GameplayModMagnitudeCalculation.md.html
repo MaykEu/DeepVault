@@ -1,0 +1,623 @@
+<p><h1 id="gameplaymodmagnitudecalculation">GameplayModMagnitudeCalculation</h1>
+
+<h2 id="overview">Overview</h2>
+
+An MMC is a class that computes the magnitude of a single gameplay effect modifier using custom logic. Instead of using a fixed number, ScalableFloat, or AttributeBased float, you write C++ or Blueprint code that runs every time the effect applies, giving you full control over the math while staying inside a single modifier slot.
+
+The engine calls your calculation, then feeds the result through the standard modifier pipeline — coefficient, pre-add, post-add, curve lookup — and applies it to the target attribute.
+
+> [!info] Source
+> <code>Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/GameplayModMagnitudeCalculation.h</code>
+
+<hr>
+
+<h2 id="class-hierarchy">Class Hierarchy</h2>
+
+``<code>
+UObject
+ └── UGameplayEffectCalculation       (GameplayEffectCalculation.h)
+      └── UGameplayModMagnitudeCalculation   (THIS CLASS)
+</code>`<code>
+
+The base class </code>UGameplayEffectCalculation` provides one thing — a place to declare which attributes you want captured:
+
+<pre><code class="language-cpp"><span class="syn-comment">// GameplayEffectCalculation.h:24
+</span>
+UCLASS(BlueprintType, Blueprintable, Abstract, MinimalAPI)
+<span class="syn-kw">class</span> UGameplayEffectCalculation : <span class="syn-kw">public</span> <span class="syn-type">UObject</span>
+{
+ <span class="syn-comment">// ...
+</span>
+<span class="syn-kw">protected</span>:
+ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Attributes)
+ <span class="syn-type">TArray</span>&lt;FGameplayEffectAttributeCaptureDefinition&gt; RelevantAttributesToCapture;
+};
+```
+</p><p>The MMC inherits <span class="syn-kw">this</span> and adds the actual calculation function.
+</p><p>---
+</p><p><span class="syn-pp">## The Core Function — `CalculateBaseMagnitude`
+</span></p><p>```cpp
+<span class="syn-comment">// GameplayModMagnitudeCalculation.h:30
+</span>
+UFUNCTION(BlueprintNativeEvent, Category=<span class="syn-string">"Calculation"</span>)
+UE_API <span class="syn-kw">float</span> CalculateBaseMagnitude(<span class="syn-kw">const</span> FGameplayEffectSpec&amp; Spec) <span class="syn-kw">const</span>;
+```
+</p><p>This is the only function you **must** <span class="syn-kw">override</span>. It receives the full `FGameplayEffectSpec` and returns a <span class="syn-kw">float</span> — your computed magnitude.
+</p><p>In C++ you <span class="syn-kw">override</span> the `_Implementation` version:
+```cpp
+<span class="syn-kw">virtual</span> <span class="syn-kw">float</span> CalculateBaseMagnitude_Implementation(<span class="syn-kw">const</span> FGameplayEffectSpec&amp; Spec) <span class="syn-kw">const</span> <span class="syn-kw">override</span>;
+```
+</p><p>In Blueprint you <span class="syn-kw">override</span> the `CalculateBaseMagnitude` event node.
+</p><p>**What you get access to from the `FGameplayEffectSpec`:**
+<ul><li>All captured attributes (via helper functions)</li></ul>
+<ul><li>SetByCaller magnitudes</li></ul>
+<ul><li>Source and Target tags</li></ul>
+<ul><li>Effect level (`Spec.GetLevel()`)</li></ul>
+<ul><li>Effect context (instigator, causer actors)</li></ul>
+<ul><li>Duration, period, stack count</li></ul>
+</p><p>**What you <span class="syn-kw">return</span>** — a single <span class="syn-kw">float</span>. That <span class="syn-kw">float</span> is the <span class="syn-string">"base magnitude"</span> that the modifier pipeline then processes further (see The Pipeline section).
+</p><p>---
+</p><p><span class="syn-pp">## Attribute Capture System
+</span></p><p><span class="syn-pp">### FGameplayEffectAttributeCaptureDefinition
+</span></p><p>Each capture definition tells the GAS system: *<span class="syn-string">"capture this attribute from this source, either snapshotted or live."</span>*
+</p><p>```cpp
+<span class="syn-kw">struct</span> FGameplayEffectAttributeCaptureDefinition
+{
+ FProperty* AttributeToCapture;        <span class="syn-comment">// Which attribute property
+</span>
+ EGameplayEffectAttributeCaptureSource AttributeSource;   <span class="syn-comment">// Source or Target
+</span>
+ <span class="syn-kw">bool</span> bSnapshot;                       <span class="syn-comment">// Snapshot at spec creation, or live at execution?
+</span>
+};
+```
+</p><p><span class="syn-pp">### Three Fields
+</span></p><p>| Field                | Options                                         | Meaning                                                     |
+| -------------------- | ----------------------------------------------- | ----------------------------------------------------------- |
+| `AttributeToCapture` | `UMyAttributeSet::GetAttributeNameAttribute()`  | The specific attribute property to capture                  |
+| `AttributeSource`    | `EGameplayEffectAttributeCaptureSource::Source` | Read from the ASC that *applied* the effect                 |
+| `AttributeSource`    | `EGameplayEffectAttributeCaptureSource::Target` | Read from the ASC the effect is *applied to*                |
+| `bSnapshot`          | `<span class="syn-kw">true</span>`                                          | Value captured when GE spec is *created* (locked in)        |
+| `bSnapshot`          | `<span class="syn-kw">false</span>`                                         | Value captured when GE *executes* (live, up-to-date)        |
+</p><p>For the full capture system — how definitions become specs, how `FindCaptureSpecByDefinition` works, and the source vs target timing — see [[Core Mechanics/Attribute Capture System]].
+</p><p><span class="syn-pp">### Snapshot vs Live — When to Use Each
+</span></p><p>| Scenario | bSnapshot | Why |
+|---|---|---|
+| Melee damage on hit | `<span class="syn-kw">false</span>` (live) | Use current defense value at moment of impact |
+| Projectile damage | `<span class="syn-kw">true</span>` (snapshot) | Remember the attacker<span class="syn-string">'s stats when the projectile was fired, even if they buff between launch and hit |
+| DOT periodic tick | `false` (live) | Each tick reads the current state — might change over time |
+| Buff that counts initial stat | `true` (snapshot) | "Grant 50% of current Strength" — fix the Strength value at cast time |
+| Posture damage | `false` (live) | Posture changes as damage accumulates, want current value |
+</p><p>### Registering Captures
+</p><p>You must add every capture definition to `RelevantAttributesToCapture` in your constructor. If you read an attribute in `CalculateBaseMagnitude` but didn'</span>t register it, `GetCapturedAttributeMagnitude` returns `<span class="syn-kw">false</span>` and logs an error.
+</p><p>**Manual method (cleaner):**
+```cpp
+UMyMMC::UMyMMC()
+{
+ StrengthDef.AttributeToCapture = UMyAttributeSet::GetStrengthAttribute();
+ StrengthDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Source;
+ StrengthDef.bSnapshot = <span class="syn-kw">false</span>;
+ RelevantAttributesToCapture.Add(StrengthDef);
+</p><p> DefenseDef.AttributeToCapture = UMyAttributeSet::GetDefenseAttribute();
+ DefenseDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+ DefenseDef.bSnapshot = <span class="syn-kw">false</span>;
+ RelevantAttributesToCapture.Add(DefenseDef);
+}
+```
+</p><p>**Macro method (common in engine examples):**
+```cpp
+<span class="syn-comment">// Header
+</span>
+DECLARE_ATTRIBUTE_CAPTUREDEF(Strength);
+DECLARE_ATTRIBUTE_CAPTUREDEF(Defense);
+</p><p><span class="syn-comment">// Constructor
+</span>
+DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Strength, Source, <span class="syn-kw">false</span>);
+DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Defense, Target, <span class="syn-kw">false</span>);
+```
+</p><p>The macros expand (from `GameplayEffectExecutionCalculation.h:<span class="syn-num">320</span>-<span class="syn-num">337</span>`):
+```cpp
+<span class="syn-pp">#define DECLARE_ATTRIBUTE_CAPTUREDEF(P) \
+</span>
+ FProperty* P##Property; \
+ FGameplayEffectAttributeCaptureDefinition P##Def;
+</p><p><span class="syn-pp">#define DEFINE_ATTRIBUTE_CAPTUREDEF(S, P, T, B) \
+</span>
+{ \
+ P##Property = FindFieldChecked&lt;FProperty&gt;(S::StaticClass(), GET_MEMBER_NAME_CHECKED(S, P)); \
+ P##Def = FGameplayEffectAttributeCaptureDefinition(P##Property, \
+     EGameplayEffectAttributeCaptureSource::T, B); \
+}
+```
+</p><p>The macro also stores the `FProperty*` (e.g. `StrengthProperty`) — useful <span class="syn-kw">if</span> you later upgrade to an ExecutionCalculation where you need the property handle to emit output modifiers.
+</p><p>---
+</p><p><span class="syn-pp">## The Pipeline — What Happens to Your Return Value
+</span></p><p>From `GameplayEffect.cpp:<span class="syn-num">1143</span>` — `FCustomCalculationBasedFloat::CalculateMagnitude`:
+</p><p>```cpp
+<span class="syn-comment">// GameplayEffect.cpp:1143-1160
+</span>
+<span class="syn-kw">float</span> FCustomCalculationBasedFloat::CalculateMagnitude(<span class="syn-kw">const</span> FGameplayEffectSpec&amp; InRelevantSpec) <span class="syn-kw">const</span>
+{
+ <span class="syn-kw">const</span> UGameplayModMagnitudeCalculation* CalcCDO = 
+     CalculationClassMagnitude-&gt;GetDefaultObject&lt;UGameplayModMagnitudeCalculation&gt;();
+ check(CalcCDO);
+</p><p> <span class="syn-comment">// 1. Your function runs — this is what comes back
+</span>
+ <span class="syn-kw">float</span> CustomBaseValue = CalcCDO-&gt;CalculateBaseMagnitude(InRelevantSpec);
+</p><p> <span class="syn-kw">const</span> <span class="syn-kw">float</span> SpecLvl = InRelevantSpec.GetLevel();
+ <span class="syn-type">FString</span> ContextString = ...;
+</p><p> <span class="syn-comment">// 2. Pipeline applies: Coeff * (YourValue + PreAdd) + PostAdd
+</span>
+ <span class="syn-kw">float</span> FinalValue = ((Coefficient.GetValueAtLevel(SpecLvl, &amp;ContextString) 
+     * (CustomBaseValue + PreMultiplyAdditiveValue.GetValueAtLevel(SpecLvl, &amp;ContextString))) 
+     + PostMultiplyAdditiveValue.GetValueAtLevel(SpecLvl, &amp;ContextString));
+</p><p> <span class="syn-comment">// 3. Optional curve table lookup on the final result
+</span>
+ <span class="syn-kw">if</span> (FinalLookupCurve.IsValid(ContextString))
+ {
+     FinalValue = FinalLookupCurve.Eval(FinalValue, ContextString);
+ }
+</p><p> <span class="syn-kw">return</span> FinalValue;  <span class="syn-comment">// This is what actually modifies the target attribute
+</span>
+}
+```
+</p><p><span class="syn-pp">### The Fields in the GE Asset
+</span></p><p>All of these are `FScalableFloat` (supports curve table scaling by level):
+</p><p>| Field | Formula Role | Default | Use Case |
+|---|---|---|---|
+| **Coefficient** | `Coeff * (YourValue + PreAdd)` | <span class="syn-num">1.0</span> | Global multiplier — let designers tune damage |
+| **PreMultiplyAdditiveValue** | Added to your value *before* coeff | <span class="syn-num">0.0</span> | Flat bonus that scales with the formula |
+| **PostMultiplyAdditiveValue** | Added *after* coeff multiplication | <span class="syn-num">0.0</span> | Flat bonus that bypasses scaling |
+| **FinalLookupCurve** | Curve table mapping <span class="syn-kw">final</span> value → output | None | Soft-cap, hard-cap, or non-linear mapping |
+</p><p>**Designer-friendly:** You write the complex math in C++, designers tune with Coefficient/PostMultiply in the data asset.
+</p><p>**Example:** Your MMC returns `BaseDamage * StrengthMultiplier`. The designer can set `Coefficient = <span class="syn-num">0.5</span>` in a <span class="syn-string">"Easy Mode"</span> GE and `Coefficient = <span class="syn-num">1.2</span>` in a <span class="syn-string">"Hard Mode"</span> GE — same MMC, different tuning.
+</p><p>---
+</p><p><span class="syn-pp">## When Does the MMC Actually Run?
+</span></p><p>Your `CalculateBaseMagnitude` is called every time `FGameplayEffectSpec::CalculateModifierMagnitudes()` runs. The key question is *when* that happens, and it depends on the effect<span class="syn-string">'s duration policy.
+</p><p>### `CalculateModifierMagnitudes()` — the call sites
+</p><p>| Call site (line) | When it fires | Effect types affected |
+|---|---|---|
+| `GameplayEffect.cpp:4388` | During **initial GE application**, before the effect becomes active | ALL types |
+| `GameplayEffect.cpp:3229` | **ExecuteActiveEffectsFrom** — the instant/periodic execution path | Instant, Periodic |
+| `GameplayEffect.cpp:4784` | **On each periodic tick** — re-execution of the periodic effect | Duration+Periodic, Instant+Periodic |
+| `GameplayEffect.cpp:3870` | When **SetByCaller** values are updated on an active GE | Duration, Infinite, Periodic |
+| `GameplayEffect.cpp:3883` | When **SetByCaller** values are updated via tag map | Duration, Infinite, Periodic |
+| `GameplayEffect.cpp:3898` | When the effect'</span>s **level changes** via `SetActiveGameplayEffectLevel` | Duration, Infinite, Periodic |
+</p><p><span class="syn-pp">### What this means per effect type
+</span></p><p>| Duration Policy | MMC runs at application? | MMC re-runs later? | Details |
+|---|---|---|---|
+| **Instant** | ✅ Once | ❌ No | MMC runs during application + execution (same frame), effect is gone. The modifier is applied immediately. |
+| **Duration** (no periodic) | ✅ Once | ❌ No | MMC runs at application, magnitude is stored in `ModSpec.EvaluatedMagnitude`, that value persists in the FAggregator <span class="syn-kw">for</span> the full duration. MMC doesn<span class="syn-string">'t re-run unless you manually call `CalculateModifierMagnitudes` or change a SetByCaller. |
+| **Duration + Periodic** | ✅ Once at start | ✅ **Every tick** | MMC runs at application for the initial modifier, then **re-runs on each periodic tick** (`ExecuteActiveEffectsFrom` → `CalculateModifierMagnitudes()`). Each tick evaluates fresh live captured attributes. |
+| **Instant + Periodic** | ✅ Once at start | ✅ **Every tick** | Same as above — periodic ticks recalculate each time. |
+| **Infinite** | ✅ Once | ❌ No | Same behavior as Duration. Magnitude is frozen at application time. |
+</p><p>### Practical consequences
+</p><p>**For Duration/Infinite effects**, your MMC runs exactly once — at the moment the effect is applied. The magnitude value is locked in. If the target'</span>s stats change mid-effect, the modifier value stays the same. This is intentional — it<span class="syn-string">'s a "snapshot of the formula at cast time" behavior.
+</p><p>If you need a Duration/Infinite effect to **recalculate its magnitude while active**, you have two options:
+</p><p><ol><li>**Make it periodic** — add a period (even a long one like every 1.0s). The MMC re-runs each tick, letting you recalculate with fresh captured values.</li></ol>
+<ol><li>**Use `GetExternalModifierDependencyMulticast`** — return a delegate that fires when external conditions change. When it fires, GAS recalculates the modifier magnitude and updates the FAggregator. This is the efficient option (only recalculates when needed, not on a timer).</li></ol>
+</p><p>**For periodic effects**, the MMC re-runs every tick. Each tick gets fresh captured attribute values, current tags, etc. This is where `bSnapshot` vs `bLive` matters most — if you snapshot, the captured values are still from the initial spec creation, not the current tick.
+</p><p>**For Instant effects**, the MMC runs, the modifier is applied, the effect is removed. Single-shot.
+</p><p>### What about `bSnapshot` in context?
+</p><p>| Duration Policy | With `bSnapshot=true` | With `bSnapshot=false` |
+|---|---|---|
+| Instant | Same frame, no difference | Same frame, no difference |
+| Duration | Captured at spec creation | Captured at spec creation (MMC only runs once, so same thing) |
+| Duration + Periodic | **Captured at spec creation** — every tick uses the stale snapshot | **Captured live each tick** — recalculated every period |
+| Infinite | Captured at spec creation | Captured at spec creation (MMC only runs once) |
+</p><p>**Key insight:** For non-periodic Duration/Infinite effects, `bSnapshot` has no effect because the MMC only runs once — at application time — and that'</span>s the same time the snapshot is taken. Snapshot vs live only matters <span class="syn-kw">for</span> periodic effects where the MMC runs multiple times and needs fresh data.
+</p><p>---
+</p><p><span class="syn-pp">## Do the Macros Do the Same Thing?
+</span></p><p>Yes — they expand to identical code. The macros are just shorthand.
+</p><p>```cpp
+<span class="syn-comment">// Header: DECLARE_ATTRIBUTE_CAPTUREDEF(Strength)
+</span>
+<span class="syn-comment">// Expands to:
+</span>
+FProperty* StrengthProperty;
+FGameplayEffectAttributeCaptureDefinition StrengthDef;
+</p><p><span class="syn-comment">// Constructor: DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Strength, Source, false)
+</span>
+<span class="syn-comment">// Expands to:
+</span>
+{
+ StrengthProperty = FindFieldChecked&lt;FProperty&gt;(
+     UMyAttributeSet::StaticClass(),
+     GET_MEMBER_NAME_CHECKED(UMyAttributeSet, Strength));
+ StrengthDef = FGameplayEffectAttributeCaptureDefinition(
+     StrengthProperty,
+     EGameplayEffectAttributeCaptureSource::Source,
+     <span class="syn-kw">false</span>);  <span class="syn-comment">// bSnapshot
+</span>
+}
+```
+</p><p>[!info] Source
+`GameplayEffectExecutionCalculation.h:<span class="syn-num">328</span>-<span class="syn-num">332</span>`
+</p><p>```cpp
+<span class="syn-pp">#define DEFINE_ATTRIBUTE_CAPTUREDEF(S, P, T, B) \
+</span>
+{ \
+ P##Property = FindFieldChecked&lt;FProperty&gt;(S::StaticClass(), GET_MEMBER_NAME_CHECKED(S, P)); \
+ P##Def = FGameplayEffectAttributeCaptureDefinition(P##Property, EGameplayEffectAttributeCaptureSource::T, B); \
+}
+```
+</p><p>**One important detail:** The macro creates the `CaptureDefinition` but does **NOT** add it to `RelevantAttributesToCapture`. You must still <span class="syn-kw">do</span>:
+```cpp
+RelevantAttributesToCapture.Add(StrengthDef);
+```
+</p><p>Both methods produce the same result. The only practical difference is that the macro also stores the `FProperty*` (e.g. `StrengthProperty`), which you can use <span class="syn-kw">if</span> you later upgrade to a `GameplayEffectExecutionCalculation` where you need the raw property handle <span class="syn-kw">for</span> `FGameplayModifierEvaluatedData` output. With the manual method you<span class="syn-string">'d need to store your own `FProperty*` variable separately.
+</p><p>[!warning] The macro'</span>s `P` parameter is NOT a custom alias
+`DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Posture, Target, <span class="syn-kw">false</span>)` — the second parameter `Posture` is used as **both** the variable name suffix **and** the actual attribute property lookup (`GET_MEMBER_NAME_CHECKED`). It must match the exact property name in your AttributeSet <span class="syn-kw">class</span>.
+</p><p>If the attribute is called `Posture` in the set, you write `Posture`. If it<span class="syn-string">'s called `PostureDamage`, you write `PostureDamage`. You cannot invent a custom nickname — the compiler will reject it because the property doesn'</span>t exist in the <span class="syn-kw">class</span>.
+</p><p>With the manual method there<span class="syn-string">'s no such constraint — your `CaptureDefinition` variable can be named anything.
+</p><p>---
+</p><p>## Evaluation Parameters — FAggregatorEvaluateParameters
+</p><p>When you call `GetCapturedAttributeMagnitude`, you pass an `FAggregatorEvaluateParameters` struct. This controls *which* of the attribute'</span>s modifiers count when computing its current value.
+</p><p>```cpp
+<span class="syn-comment">// GameplayEffectAggregator.h
+</span>
+<span class="syn-kw">struct</span> FAggregatorEvaluateParameters
+{
+ <span class="syn-kw">const</span> FGameplayTagContainer* SourceTags;      <span class="syn-comment">// Your current source tags
+</span>
+ <span class="syn-kw">const</span> FGameplayTagContainer* TargetTags;      <span class="syn-comment">// Your current target tags
+</span>
+ <span class="syn-type">TArray</span>&lt;FActiveGameplayEffectHandle&gt; IgnoreHandles;  <span class="syn-comment">// Specific GE mods to skip
+</span>
+ FGameplayTagContainer AppliedSourceTagFilter;  <span class="syn-comment">// Extra filter: only mods with source tags matching ALL
+</span>
+ FGameplayTagContainer AppliedTargetTagFilter;  <span class="syn-comment">// Extra filter: only mods with target tags matching ALL
+</span>
+ <span class="syn-kw">bool</span> IncludePredictiveMods;                    <span class="syn-comment">// Include client-predicted mods?
+</span>
+};
+```
+</p><p><span class="syn-pp">### How Attributes Are Actually Stored
+</span></p><p>Every attribute in GAS has an internal **FAggregator** that tracks every modifier from every active GE affecting it. Each modifier has optional **tag requirements** set in the GE:
+</p><p>```
+Attribute: <span class="syn-string">"Strength"</span>
+├── Modifier: +<span class="syn-num">50</span> from GE_BattleCry (Requires: source has <span class="syn-string">"State.Raging"</span>)
+├── Modifier: -<span class="syn-num">20</span> from GE_Weaken  (Requires: target has <span class="syn-string">"State.Cursed"</span>)
+├── Modifier: +<span class="syn-num">10</span> from GE_RingOfPower (No tag requirements — always applies)
+└── Modifier: +<span class="syn-num">30</span> from GE_BaseStats (No tag requirements — always applies)
+```
+</p><p>When you ask <span class="syn-string">"what is the current Strength value?"</span>, the FAggregator evaluates all modifiers... but it needs to know: **what tags does the source have right now?** And **what tags does the target have right now?**
+</p><p><span class="syn-pp">### What SourceTags and TargetTags Actually Do
+</span></p><p>The `SourceTags` and `TargetTags` you pass are matched against each modifier<span class="syn-string">'s tag requirements:
+</p><p>```
+You pass: SourceTags = [State.Raging]
+</p><p>GE_BattleCry modifier checks:
+"Does the source have my required tags?" → Yes (State.Raging matches) → INCLUDED (+50)
+</p><p>GE_Weaken modifier checks:
+"Does the target have my required tags?" → Depends on what you passed as TargetTags → ?
+```
+</p><p><ul><li>**If SourceTags/TargetTags are nullptr** (or empty containers): **No tag filtering happens.** All modifiers are evaluated regardless of their requirements. The attribute returns the raw sum of everything.</li></ul>
+<ul><li>**If SourceTags/TargetTags contain your current tags**: Only modifiers whose requirements are satisfied by those tags are counted. Modifiers whose requirements aren'</span>t met are excluded.</li></ul>
+</p><p><span class="syn-pp">### Concrete Example
+</span></p><p>You have two GEs active on your character:
+</p><p>| GE | Modifier | SourceTagRequirements | TargetTagRequirements |
+|---|---|---|---|
+| GE_Berserk | +<span class="syn-num">50</span> Strength | Source has `State.Berserk` | None |
+| GE_DefaultStats | +<span class="syn-num">20</span> Strength | None | None |
+</p><p>**Scenario A — you set SourceTags correctly:**
+```cpp
+EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();  <span class="syn-comment">// contains "State.Berserk"
+</span>
+```
+Result: `Strength = <span class="syn-num">70</span>` (both mods count — Berserk<span class="syn-string">'s requirement is met)
+</p><p>**Scenario B — you pass nullptr or empty SourceTags:**
+```cpp
+EvalParams.SourceTags = nullptr;
+```
+Result: `Strength = 20` (Berserk is excluded — its requirement wasn'</span>t satisfied). Wait — **actually <span class="syn-kw">this</span> is wrong.** When SourceTags is `<span class="syn-kw">nullptr</span>`, the aggregator does NOT filter by tag requirements at all. So:
+</p><p>Actually, the behavior is:
+<ul><li>**<span class="syn-kw">nullptr</span>/empty SourceTags → no tag filtering → ALL mods counted**</li></ul>
+<ul><li>**SourceTags with specific tags → only mods whose requirements are a subset are counted**</li></ul>
+</p><p>So scenario B would give `Strength = <span class="syn-num">70</span>` because without tag filtering, everything counts. This is why it<span class="syn-string">'s dangerous: if you forget to set the tags, you might overcount.
+</p><p>**To be exact**, the tag check works like this:
+```cpp
+// Pseudocode of what the aggregator does internally
+bool ModifierShouldCount(const FAggregatorMod&amp; Mod, const FAggregatorEvaluateParameters&amp; Params)
+{
+ // If the GE has TagRequirements and we have explicit tags to check against
+ if (Mod.SourceTagReqs.IsSet() &amp;&amp; Params.SourceTags != nullptr)
+ {
+     // Only include if our source tags satisfy the mod'</span>s requirements
+     <span class="syn-kw">if</span> (!Params.SourceTags-&gt;HasAll(Mod.SourceTagReqs.GetValue()))
+         <span class="syn-kw">return</span> <span class="syn-kw">false</span>;  <span class="syn-comment">// Exclude this mod
+</span>
+ }
+ <span class="syn-kw">if</span> (Mod.TargetTagReqs.IsSet() &amp;&amp; Params.TargetTags != <span class="syn-kw">nullptr</span>)
+ {
+     <span class="syn-kw">if</span> (!Params.TargetTags-&gt;HasAll(Mod.TargetTagReqs.GetValue()))
+         <span class="syn-kw">return</span> <span class="syn-kw">false</span>;
+ }
+ <span class="syn-kw">return</span> <span class="syn-kw">true</span>;  <span class="syn-comment">// Include this mod
+</span>
+}
+```
+</p><p>Key rule: **If there are tag requirements AND you set a non-null tag container, the check runs. If you pass <span class="syn-kw">nullptr</span>, the check is skipped entirely and the mod counts regardless.**
+</p><p><span class="syn-pp">### What `GetAggregatedTags()` Returns
+</span></p><p>```cpp
+Spec.CapturedSourceTags.GetAggregatedTags()
+```
+</p><p>This returns a **`<span class="syn-kw">const</span> FGameplayTagContainer*`** (pointer, can be null) that is the <span class="syn-kw">union</span> of:
+</p><p>| Source | Example |
+|---|---|
+| **Actor Tags** on the source<span class="syn-string">'s ASC owner (`AActor::Tags`) | `Character.Player`, `Faction.Heroes` |
+| **Spec Tags** set on the current GE spec | `Effect.AppliedByBerserk` |
+| **ASC Owned Tags** on the source'</span>s AbilitySystemComponent | `State.Alive`, `Combat.InCombat` |
+| **Ability Tags** from the ability that applied the GE | `Ability.Slot1` |
+| **GameplayCue Tags** currently active | `Cue.FireAura` |
+</p><p>It<span class="syn-string">'s called "aggregated" because it collects tags from ALL sources — not just one.
+</p><p>Similarly for the target:
+```cpp
+Spec.CapturedTargetTags.GetAggregatedTags()
+```
+</p><p>### How to Set It Up
+</p><p>```cpp
+FAggregatorEvaluateParameters EvalParams;
+</p><p>// Always set these — they'</span>re the context <span class="syn-kw">for</span> the current GE execution
+EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();  <span class="syn-comment">// tags of the instigator
+</span>
+EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();  <span class="syn-comment">// tags of the target
+</span>
+```
+</p><p><span class="syn-pp">### AppliedSourceTagFilter vs SourceTags — What's the Difference?
+</span></p><p>This is a common point of confusion.
+</p><p>| Field | What it filters | How |
+|---|---|---|
+| **SourceTags** | The modifier<span class="syn-string">'s **SourceTagRequirements** | "Does the source have the tags this mod needs?" |
+| **AppliedSourceTagFilter** | The modifier'</span>s **owner GE<span class="syn-string">'s source tags** | "Does this mod'</span>s GE have the tags I<span class="syn-string">'m looking for?" |
+</p><p>`SourceTags` answers: "does the current context satisfy this mod'</span>s requirements?<span class="syn-string">"
+</p><p>`AppliedSourceTagFilter` answers: "</span>among all mods, only look at ones whose GE has specific source tags.<span class="syn-string">"
+</p><p>Example:
+```cpp
+EvalParams.AppliedSourceTagFilter.AddTag(FGameplayTag::RequestGameplayTag("</span>Effect.Type.Buff<span class="syn-string">"));
+```
+</p><p>This says: "</span>Only count modifiers that come from GEs that have the `Effect.Type.Buff` tag on their source.<span class="syn-string">" All other mods (from debuffs, passives, etc.) are ignored, regardless of whether their tag requirements are met.
+</p><p>Use `AppliedSourceTagFilter` when you want to evaluate "</span>what would my Strength be <span class="syn-kw">if</span> only buffs counted?<span class="syn-string">" — useful for tooltips, UI displays, or calculations that need a partial view.
+</p><p>---
+</p><p>## Helper Functions
+</p><p>### C++ Helper (protected)
+</p><p>| Function | Signature | Returns | Notes |
+|---|---|---|---|
+| **GetCapturedAttributeMagnitude** | `(CaptureDef, Spec, EvalParams, OUT float&amp; Magnitude)` | `bool` (false if capture not found) | The C++ workhorse. Always check the return value in debug builds. |
+</p><p>Implementation (`GameplayModMagnitudeCalculation.cpp:30`):
+```cpp
+bool UGameplayModMagnitudeCalculation::GetCapturedAttributeMagnitude(
+ const FGameplayEffectAttributeCaptureDefinition&amp; Def, 
+ const FGameplayEffectSpec&amp; Spec, 
+ const FAggregatorEvaluateParameters&amp; EvaluationParameters, 
+ OUT float&amp; Magnitude) const
+{
+ const FGameplayEffectAttributeCaptureSpec* CaptureSpec = 
+     Spec.CapturedRelevantAttributes.FindCaptureSpecByDefinition(Def, true);
+ if (CaptureSpec == nullptr) { /* error log */ return false; }
+ if (CaptureSpec-&gt;AttemptCalculateAttributeMagnitude(EvaluationParameters, Magnitude) == false) { /* error log */ return false; }
+ return true;
+}
+```
+</p><p>### Blueprint Functions (all BlueprintCallable)
+</p><p>| Blueprint Name (C++ Name) | Input | Returns | What for |
+|---|---|---|---|
+| **Get Captured Attribute Magnitude** (`K2_GetCapturedAttributeMagnitude`) | `EffectSpec, FGameplayAttribute, SourceTags, TargetTags` | `float` | BP equivalent of GetCapturedAttributeMagnitude |
+| **Get SetByCaller Magnitude by Tag** (`GetSetByCallerMagnitudeByTag`) | `EffectSpec, FGameplayTag` | `float` | Read a SetByCaller value keyed by tag |
+| **Get SetByCaller Magnitude by Name** (`GetSetByCallerMagnitudeByName`) | `EffectSpec, FName` | `float` | Read a SetByCaller value keyed by name |
+| **Get Source Aggregated Tags** (`GetSourceAggregatedTags`) | `EffectSpec` | `FGameplayTagContainer` | All tags from source |
+| **Get Source Actor Tags** (`GetSourceActorTags`) | `EffectSpec` | `FGameplayTagContainer&amp;` | Source's actor tags (no copy) |
+| **Get Source Spec Tags** (`GetSourceSpecTags`) | `EffectSpec` | `FGameplayTagContainer&amp;` | Source's spec tags (no copy) |
+| **Get Target Aggregated Tags** (`GetTargetAggregatedTags`) | `EffectSpec` | `FGameplayTagContainer` | All tags from target |
+| **Get Target Actor Tags** (`GetTargetActorTags`) | `EffectSpec` | `FGameplayTagContainer&amp;` | Target's actor tags (no copy) |
+| **Get Target Spec Tags** (`GetTargetSpecTags`) | `EffectSpec` | `FGameplayTagContainer&amp;` | Target's spec tags (no copy) |
+</p><p>**Aggregated vs Actor vs Spec tags:**
+<ul><li>**Actor tags** — tags on the ASC's owner actor (persistent, from `AActor::Tags`)</li></ul>
+<ul><li>**Spec tags** — tags on the *current gameplay effect spec* (temporary, set per-GE application)</li></ul>
+<ul><li>**Aggregated tags** — union of both, plus anything added by the ASC or ability</li></ul>
+</p><p>---
+</p><p>## External Dependencies &amp; Networking
+</p><p>### Prediction Behavior
+</p><p>MMCs run on **both** the client and server when the GE is predicted (applied with a valid prediction key from a predicted ability). Your `CalculateBaseMagnitude` executes on the client to compute the modifier magnitude immediately — no server round trip needed.
+</p><p>For the full prediction system — including `HasAuthority` vs `HasAuthorityOrPredictionKey`, the `bTreatAsInfiniteDuration` mechanism for instant effects, reconciliation, and how each GE type behaves — see [[Prediction &amp; Networking]].
+</p><p>### GetExternalModifierDependencyMulticast
+</p><p>```cpp
+virtual FOnExternalGameplayModifierDependencyChange* GetExternalModifierDependencyMulticast(
+ const FGameplayEffectSpec&amp; Spec, UWorld* World) const;
+```
+</p><p>If your MMC depends on something outside the ability system (a game state variable, a buff on another actor, a world condition), override this to return a delegate. When that delegate fires, the GAS system recalculates the effect's magnitude automatically.
+</p><p>**Return `nullptr` (default)** if you have no external dependencies.
+</p><p>### bAllowNonNetAuthorityDependencyRegistration
+</p><p>```cpp
+UPROPERTY(EditDefaultsOnly, Category=ExternalDependencies, AdvancedDisplay)
+bool bAllowNonNetAuthorityDependencyRegistration;
+</p><p>/** Accessor — validates that bAllowNonNetAuthorityDependencyRegistration is compatible with attribute captures */
+UE_API bool ShouldAllowNonNetAuthorityDependencyRegistration() const;
+```
+</p><p>[!warning] Advanced Networking
+From the source comment: "</span>This is an advanced use <span class="syn-kw">case</span> that should only be enabled under very specific circumstances.<span class="syn-string">"
+</p><p>**What it does:** Allows clients (non-authoritative) to register and respond to the external dependency delegate. This lets clients update MMC-based attributes without causing a network dormancy flush.
+</p><p>**Requirements:**
+<ul><li>Your game **must** be using network dormancy (otherwise this does nothing useful)</li></ul>
+<ul><li>Your MMC **must NOT** use attribute capture (`RelevantAttributesToCapture.Num() == 0`) — the engine asserts/ensures this</li></ul>
+<ul><li>The external delegate must come from something guaranteed to exist on the client (not a GameState, which has timing issues)</li></ul>
+</p><p>**Default:** `false` — leave it alone unless you know you need it.
+</p><p>---
+</p><p>## Blueprint Usage
+</p><p>You can create an MMC entirely in Blueprint:
+</p><p><ol><li>Create a Blueprint class derived from `GameplayModMagnitudeCalculation`</li></ol>
+<ol><li>Set **Relevant Attributes to Capture** in the Class Defaults (array of capture definitions)</li></ol>
+<ol><li>Override **Calculate Base Magnitude** — an event node that receives `EffectSpec`</li></ol>
+<ol><li>Use **Get Captured Attribute Magnitude** to read attributes</li></ol>
+<ol><li>Return the computed float</li></ol>
+<ol><li>In your GE, set Magnitude → **Custom Calculation Class** → pick your Blueprint</li></ol>
+</p><p>**Blueprint limitations:**
+<ul><li>Cannot use `DECLARE_ATTRIBUTE_CAPTUREDEF` macros (C++ only)</li></ul>
+<ul><li>Tag container filters in `FAggregatorEvaluateParameters` are harder to customize</li></ul>
+<ul><li>No access to the `GetExternalModifierDependencyMulticast` override (must be C++)</li></ul>
+</p><p>---
+</p><p>## C++ Quick Start Template
+</p><p>```cpp
+// PostureDamageMMC.h
+#pragma once
+</p><p>#include "</span>CoreMinimal.h<span class="syn-string">"
+#include "</span>GameplayModMagnitudeCalculation.h<span class="syn-string">"
+#include "</span>PostureDamageMMC.generated.h<span class="syn-string">"
+</p><p>UCLASS()
+class UPostureDamageMMC : public UGameplayModMagnitudeCalculation
+{
+ GENERATED_BODY()
+</p><p>public:
+ UPostureDamageMMC();
+</p><p> virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec&amp; Spec) const override;
+</p><p>protected:
+ FGameplayEffectAttributeCaptureDefinition CurrentPostureDef;
+ FGameplayEffectAttributeCaptureDefinition MaxPostureDef;
+ FGameplayEffectAttributeCaptureDefinition IncomingDamageDef;
+};
+```
+</p><p>```cpp
+// PostureDamageMMC.cpp
+#include "</span>PostureDamageMMC.h<span class="syn-string">"
+#include "</span>YourAttributeSet.h<span class="syn-string">"
+</p><p>UPostureDamageMMC::UPostureDamageMMC()
+{
+ // Register captures in constructor
+ CurrentPostureDef.AttributeToCapture = UMyAttributeSet::GetCurrentPostureAttribute();
+ CurrentPostureDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+ CurrentPostureDef.bSnapshot = false;  // live
+ RelevantAttributesToCapture.Add(CurrentPostureDef);
+</p><p> MaxPostureDef.AttributeToCapture = UMyAttributeSet::GetMaxPostureAttribute();
+ MaxPostureDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+ MaxPostureDef.bSnapshot = false;
+ RelevantAttributesToCapture.Add(MaxPostureDef);
+</p><p> IncomingDamageDef.AttributeToCapture = UMyAttributeSet::GetIncomingDamageAttribute();
+ IncomingDamageDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Source;
+ IncomingDamageDef.bSnapshot = false;
+ RelevantAttributesToCapture.Add(IncomingDamageDef);
+}
+</p><p>float UPostureDamageMMC::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec&amp; Spec) const
+{
+ FAggregatorEvaluateParameters EvalParams;
+ EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+ EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+</p><p> float CurrentPosture = 0.f;
+ GetCapturedAttributeMagnitude(CurrentPostureDef, Spec, EvalParams, CurrentPosture);
+</p><p> float MaxPosture = 0.f;
+ GetCapturedAttributeMagnitude(MaxPostureDef, Spec, EvalParams, MaxPosture);
+</p><p> float IncomingDamage = 0.f;
+ GetCapturedAttributeMagnitude(IncomingDamageDef, Spec, EvalParams, IncomingDamage);
+</p><p> // Formula: more current posture = more vulnerable to posture damage
+ float PostureRatio = CurrentPosture / FMath::Max(1.f, MaxPosture);
+ float Result = IncomingDamage * (1.0f + PostureRatio * 0.5f);
+</p><p> return FMath::Max(0.f, Result);
+}
+```
+</p><p>
+### Macro Version
+</p><p>If you prefer the `DECLARE_ATTRIBUTE_CAPTUREDEF` / `DEFINE_ATTRIBUTE_CAPTUREDEF` macros (which also store the `FProperty*` for potential ExecutionCalculation use):
+</p><p>```cpp
+// PostureDamageMMC.h — add inside class body
+protected:
+ DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentPosture);
+ DECLARE_ATTRIBUTE_CAPTUREDEF(MaxPosture);
+ DECLARE_ATTRIBUTE_CAPTUREDEF(IncomingDamage);
+```
+</p><p>```cpp
+// PostureDamageMMC.cpp – constructor
+UPostureDamageMMC::UPostureDamageMMC()
+{
+ DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, CurrentPosture, Target, false);
+ RelevantAttributesToCapture.Add(CurrentPostureDef);
+</p><p> DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, MaxPosture, Target, false);
+ RelevantAttributesToCapture.Add(MaxPostureDef);
+</p><p> DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, IncomingDamage, Source, false);
+ RelevantAttributesToCapture.Add(IncomingDamageDef);
+}
+```
+</p><p>[!tip]
+`DECLARE_ATTRIBUTE_CAPTUREDEF(CurrentPosture)` creates two variables: `CurrentPostureProperty` (the `FProperty*`) and `CurrentPostureDef` (the `FGameplayEffectAttributeCaptureDefinition`). You use `CurrentPostureDef` to reference the capture and `CurrentPostureProperty` if you need the raw property for output modifiers.
+</p><p>The macros expand to the same code as the manual version. The only extra benefit is they keep the `FProperty*` around — you'd need to store it manually otherwise.
+</p><p>---
+</p><p>## Setting It Up in the GE Asset
+</p><p><ol><li>Create a Gameplay Effect</li></ol>
+<ol><li>Add a **Modifier** in the `Modifiers` array:</li></ol>
+<ul><li>**Attribute**: pick your attribute (e.g., `PostureDamage`)</li></ul>
+<ul><li>**Modifier Op**: `Add` (for damage) or `Override` (for setting values)</li></ul>
+<ul><li>**Magnitude**: `Custom Calculation Class`</li></ul>
+<ol><li>Pick your MMC class (or Blueprint)</li></ol>
+<ol><li>Optionally set **Coefficient**, **PreMultiplyAdditiveValue**, **PostMultiplyAdditiveValue**</li></ol>
+<ol><li>Done — the engine calls `CalculateBaseMagnitude` every time this effect applies</li></ol>
+</p><p>---
+</p><p>## Common Mistakes &amp; Pitfalls
+</p><p>### 1. Reading an attribute you never captured
+```cpp
+// ❌ GetCapturedAttributeMagnitude returns false silently
+float Val = 0.f;
+GetCapturedAttributeMagnitude(SomeDef, Spec, EvalParams, Val);
+</p><p>// ✅ Add to constructor:
+SomeDef.AttributeToCapture = UMyAttributeSet::GetSomeValueAttribute();
+SomeDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Source;
+SomeDef.bSnapshot = false;
+RelevantAttributesToCapture.Add(SomeDef);
+```
+</p><p>### 2. Forgetting the `_Implementation` suffix
+`BlueprintNativeEvent` functions use a pattern where the engine generates the plain function and you override `_Implementation`.
+```cpp
+// ❌ Won't override
+float CalculateBaseMagnitude(const FGameplayEffectSpec&amp; Spec) const;
+</p><p>// ✅ Correct
+float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec&amp; Spec) const override;
+```
+</p><p>### 3. Using snapshot when you mean live
+Snapshot captures the attribute value at *spec creation time*. For instant effects (frame-zero execution), snapshot vs live doesn't matter. For delayed/projectile/periodic effects, it does:
+</p><p>| Timing | Snapshot captures at | Live captures at |
+|---|---|---|
+| Instant GE | Same frame | Same frame |
+| Projectile (shot → hit) | When shot | When hit |
+| DOT tick N | When effect was created | Right now at tick N |
+</p><p>### 4. Not setting SourceTags / TargetTags in EvalParams
+If you leave `EvalParams.SourceTags` and `TargetTags` as `nullptr`, the captured attribute evaluation will not filter modifiers by tags. This means all mods that affect the attribute count, even ones that don't apply to the current source/target context.
+</p><p>```cpp
+// ❌ Misses tag filtering
+FAggregatorEvaluateParameters EvalParams;
+// SourceTags and TargetTags are nullptr — includes ALL mods
+</p><p>// ✅ Correct
+FAggregatorEvaluateParameters EvalParams;
+EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+```
+</p><p>### 5. Assuming IncludePredictiveMods is true
+Default is `false`. If your game uses prediction and you want client-predicted mods to count in the captured value, set it to `true`.
+</p><p>### 6. Using MMC when you need multiple modifier outputs
+An MMC returns ONE float for ONE modifier. If you need to modify multiple attributes from a single effect execution, use `GameplayEffectExecutionCalculation` instead — it can emit any number of `FGameplayModifierEvaluatedData` outputs.
+</p><p>### 7. Not checking the return of GetCapturedAttributeMagnitude
+The function returns `false` if the capture spec doesn't exist. In development, log the error:
+```cpp
+float Val = 0.f;
+if (!GetCapturedAttributeMagnitude(Def, Spec, EvalParams, Val))
+{
+ UE_LOG(LogTemp, Warning, TEXT("</span>PostureDamageMMC: Failed to capture attribute<span class="syn-string">"));
+ return 0.f;
+}
+```
+</p><p>### 8. DELEGATE vs DECLARE typo in macros
+The macro is `DECLARE_ATTRIBUTE_CAPTUREDEF(P)` — many developers type `DELEGATE` out of habit from other UE macros. The compiler catches this, but it's a common frustration.
+</p><p>---
+</p><p>## When to Use vs Not Use
+</p><p>| Use MMC When | Use ExecutionCalculation When |
+|---|---|
+| One modifier output | Multiple modifier outputs |
+| Complex math but single result | Need to apply conditional GEs |
+| Designer-friendly tuning via Coefficient | Need direct ASC access for complex logic |
+| Clean capture → formula → result | Multiple outputs with runtime branching |
+</p><p>---
+</p><p>## Source References
+</p><p>| File | Lines | Content |
+|---|---|---|
+| `GameplayModMagnitudeCalculation.h` | Full header | MMC class definition |
+| `GameplayModMagnitudeCalculation.cpp` | 30-45 | `GetCapturedAttributeMagnitude` implementation |
+| `GameplayEffectCalculation.h` | Full | Base class with `RelevantAttributesToCapture` |
+| `GameplayEffect.h` | 199-235 | `FCustomCalculationBasedFloat` struct |
+| `GameplayEffect.cpp` | 1143-1160 | The pipeline formula — Coefficient, Pre/PostAdd |
+| `GameplayEffectAggregator.h` | Full | `FAggregatorEvaluateParameters` struct |
+| `GameplayEffectExecutionCalculation.h` | 320-337 | `DECLARE_ATTRIBUTE_CAPTUREDEF` / `DEFINE_ATTRIBUTE_CAPTUREDEF` macros |</span></code></pre></p>

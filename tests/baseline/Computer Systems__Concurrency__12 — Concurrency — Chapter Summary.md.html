@@ -1,0 +1,145 @@
+<p><h1 id="concurrency-chapter-summary">Concurrency — Chapter Summary</h1>
+
+> <strong>Why This Matters.</strong> This summary consolidates every concurrency concept into a single reference: the hardware costs of each operation, Amdahl vs Gustafson ceilings, and the key tables for quick lookup. Use it after working through notes 00-11 as a refresher before interviews, engine architecture decisions, or porting to a new platform.
+
+> [!info] Learning Objectives
+> After reviewing this summary, you will: (1) recall the key concepts from all 12 concurrency notes in a single structured overview, (2) apply Amdahl's and Gustafson's Laws to estimate the ideal speedup of parallel game subsystems, (3) trace the full path from <code>std::mutex::lock()</code> to the x86 <code>LOCK CMPXCHG</code> to the Windows futex or ARM64 <code>ldaxr</code>/<code>stlxr</code>.
+
+> [!info] Prerequisites
+> Read all Concurrency notes (01–11) before this summary.
+
+<h2 id="why-this-chapter-matters">Why This Chapter Matters</h2>
+
+Modern CPUs have more cores than ever, but a single-core game runs at exactly 1/N of the available performance. Concurrency is the art of splitting work across cores — and not corrupting your data in the process. This chapter covers every tool in the toolbox: threads, mutexes, atomics, lock-free data structures, condition variables, work stealing, and the OS scheduler that makes it all possible.
+
+<hr>
+
+<h2 id="the-concurrency-ladder">The Concurrency Ladder</h2>
+
+``<code>
+Level 1: No concurrency — single-threaded, simple, slow
+Level 2: Job system — fire-and-forget tasks, no shared state
+Level 3: Mutexes — protect shared data, careful of deadlocks
+Level 4: Atomics — lock-free counters, flags, SPSC queues
+Level 5: Lock-free structures — CAS loops, hazard pointers
+Level 6: Full parallelization — work stealing, NUMA-aware
+</code>`<code>
+
+Each level trades simplicity for performance. Most game engines operate at Level 3-4: a job system for parallel work, mutexes for shared resources, and atomics for performance-critical counters.
+
+<hr>
+
+<h2 id="the-core-concepts">The Core Concepts</h2>
+
+<table><tr><th>Concept</th><th>Note</th><th>One-Liner</th></tr></table>
+<table><tr><th>---------</th><th>------</th><th>-----------</th></tr></table>
+<table><tr><th><strong>Processes</strong></th><th>01 — Processes &amp; Threads</th><th>A process is an address space. A thread is a flow of execution within that address space.</th></tr></table>
+<table><tr><th><strong>Scheduler</strong></th><th>02 — The OS Scheduler</th><th>The kernel's CPU multiplexer — decides which thread runs when</th></tr></table>
+<table><tr><th><strong>Hardware</strong></th><th>03 — SMT, Affinity &amp; Thread Pools</th><th>Hyper-Threading shares a core; affinity pins threads to specific cores</th></tr></table>
+<table><tr><th><strong>Data Races</strong></th><th>04 — Data Races &amp; Mutexes</th><th>Undefined behavior from unsynchronized access; mutexes serialize access</th></tr></table>
+<table><tr><th><strong>Deadlock</strong></th><th>05 — Deadlock, Livelock &amp; Starvation</th><th>Four conditions: mutual exclusion, hold-and-wait, no preemption, circular wait</th></tr></table>
+<table><tr><th><strong>Atomics</strong></th><th>06 — Atomics &amp; Memory Ordering</th><th></code>std::atomic<code> with relaxed/acquire/release/seq_cst semantics</th></tr></table>
+<table><tr><th><strong>Patterns</strong></th><th>07 — Synchronization Patterns</th><th>Producer-consumer, reader-writer, barrier, fork-join</th></tr></table>
+<table><tr><th><strong>CV &amp; Sem</strong></th><th>08 — Condition Variables &amp; Semaphores</th><th>Thread parking, notify/wait, semaphore counters</th></tr></table>
+<table><tr><th><strong>Lock-Free</strong></th><th>09 — Lock-Free Programming</th><th>CAS loops, ABA problem, hazard pointers, RCU</th></tr></table>
+<table><tr><th><strong>Practice</strong></th><th>10 — Practical Concurrency</th><th>Amdahl's Law, false sharing, contention, thread pools</th></tr></table>
+<table><tr><th><strong>Reference</strong></th><th>11 — Quick Reference</th><th>Cheat sheet of all primitives</th></tr></table>
+
+<hr>
+
+<h2 id="deadlock-prevention-checklist">Deadlock Prevention Checklist</h2>
+
+Deadlock requires all four conditions simultaneously. Break any one:
+
+<table><tr><th>Condition</th><th>How to Break It</th></tr></table>
+<table><tr><th>-----------</th><th>----------------</th></tr></table>
+<table><tr><th>Mutual exclusion</th><th>Use lock-free structures or transactional memory</th></tr></table>
+<table><tr><th>Hold and wait</th><th>Acquire all locks at once (</code>std::lock<code>/</code>std::scoped_lock<code>)</th></tr></table>
+<table><tr><th>No preemption</th><th>Use </code>try_lock<code> with backoff and retry</th></tr></table>
+<table><tr><th>Circular wait</th><th>Enforce a global lock ordering</th></tr></table>
+
+<hr>
+
+<h2 id="performance-rules-of-thumb">Performance Rules of Thumb</h2>
+
+<table><tr><th>Operation</th><th>Approximate Cost</th><th>Notes</th></tr></table>
+<table><tr><th>-----------</th><th>-----------------</th><th>-------</th></tr></table>
+<table><tr><th>Uncontended mutex lock</th><th>~25 ns</th><th>Fast path — atomic CAS</th></tr></table>
+<table><tr><th>Contended mutex lock</th><th>~5 µs</th><th>Futex syscall — thread blocks</th></tr></table>
+<table><tr><th></code>std::atomic<code> load (relaxed)</th><th>~1 cycle</th><th>Same as regular load on x86</th></tr></table>
+<table><tr><th></code>std::atomic<code> load (seq_cst)</th><th>~20 cycles</th><th>Memory fence on x86</th></tr></table>
+<table><tr><th>Context switch</th><th>~1-5 µs</th><th>Save/restore registers, TLB flush</th></tr></table>
+<table><tr><th>Thread creation</th><th>~10-50 µs</th><th></code>clone<code> syscall + stack allocation</th></tr></table>
+<table><tr><th>False sharing (cache line)</th><th>50-200 cycles</th><th>Two cores fighting over the same 64-byte line</th></tr></table>
+
+<hr>
+
+<h2 id="the-game-engine-concurrency-model">The Game Engine Concurrency Model</h2>
+
+Most game engines use a hybrid approach:
+
+</code>`<code>
+Main Thread (Game Thread)
+  │
+  ├── Render Thread (command generation)
+  │     └── GPU (async compute + graphics)
+  │
+  ├── Job System (thread pool, work stealing)
+  │     ├── Physics jobs
+  │     ├── Animation jobs
+  │     ├── Audio jobs
+  │     └── Asset streaming jobs
+  │
+  └── Network Thread (send/recv, message serialization)
+</code>`<code>
+
+Rule: the game thread updates game state; worker threads process data; lock-free queues communicate between them. Shared mutable state is the enemy — minimize it.
+
+<hr>
+
+<h2 id="two-way-explanation">Two-Way Explanation</h2>
+
+<h3 id="simple">Simple</h3>
+
+Concurrency is having multiple cooks in the same kitchen. Each cook (thread) can work independently on their own task — chopping vegetables, boiling water, seasoning sauce. But if two cooks reach for the same knife (shared data) at the same time, you get chaos. A mutex is a "one cook at a time" rule for a specific tool. Atomics are special tools that are safe to grab without rules — like a self-stirring pot. The scheduler is the head chef deciding who works on which station. Deadlock is when Cook A is waiting for the knife Cook B has, and Cook B is waiting for the pan Cook A has — neither can proceed. The fix: always grab tools in the same order, or grab all tools at once. Lock-free programming is designing tools so no one ever has to wait — like a conveyor belt (SPSC queue) where one person places items and another takes them, never colliding.
+
+<h3 id="technical">Technical</h3>
+
+A process's threads share the same virtual address space but have independent register state and stack. The OS scheduler (</code>CFS<code> on Linux, </code>ntoskrnl<code> on Windows) implements preemptive multitasking via timer interrupts: the scheduler tick fires, the current thread context is saved (registers, PC, stack pointer), and the scheduler selects the next thread from the runqueue. SMT (Hyper-Threading) exposes two logical cores per physical core sharing execution units — good for hiding memory latency, bad for compute-bound threads that fight over ALUs. Mutual exclusion: </code>std::mutex<code> uses a futex (Linux) or </code>SRWLOCK<code> (Windows) — an atomic variable in user space with kernel fallback on contention. </code>std::atomic<code> provides lock-free operations with configurable memory ordering: relaxed (no ordering), acquire/release (one-way ordering for message passing), and sequentially consistent (total global order, default — and expensive). Deadlock prevention: </code>std::lock<code> uses a try-and-backoff algorithm to acquire multiple mutexes atomically. Lock-free data structures use CAS (</code>compare_exchange_strong<code>) loops: read current value, compute new value, atomically swap if unchanged. The ABA problem arises when a pointer is freed and reallocated between read and CAS — solved with tagged pointers or hazard pointers. False sharing: two independent variables on the same 64-byte cache line cause cache-coherency traffic between cores — fix with padding (</code>alignas(64)<code>) or per-core data. Amdahl's Law: speedup = 1 / (S + (1-S)/N), where S is the serial fraction — even with infinite cores, a program with 5% serial code maxes out at 20× speedup.
+
+<hr>
+
+<h2 id="exercises">Exercises</h2>
+
+<ol><li><strong>Amdahl's Law applied:</strong> Your game loop is: 2 ms serial (game state update), 8 ms parallel (physics on 8 cores), 2 ms serial (render command generation). What's the maximum speedup if you had infinite cores? How many cores do you need to reach 90% of that maximum?</li></ol>
+
+<ol><li><strong>False sharing detector:</strong> Write two counters in adjacent bytes. Have thread A increment counter 1 (1 billion times) and thread B increment counter 2 (1 billion times). Measure time. Then add </code>alignas(64)<code> padding between them and measure again. Explain the difference — what's happening on the cache coherence bus?</li></ol>
+
+<ol><li><strong>Lock-free SPSC queue:</strong> Implement a bounded single-producer, single-consumer queue using </code>std::atomic<size_t><code> for head and tail indices. The producer writes to </code>buffer[tail]<code> and advances tail; the consumer reads </code>buffer[head]<code> and advances head. What memory ordering do you need for head and tail? Test with one producer and one consumer thread transferring 10 million items.</li></ol>
+
+<ol><li><strong>Deadlock construction:</strong> Write a program with two mutexes and two threads. Thread A locks mutex1 then mutex2. Thread B locks mutex2 then mutex1. Deliberately trigger deadlock. Then fix it with </code>std::lock<code> or by enforcing a lock ordering. How does </code>std::lock<code> avoid deadlock?</li></ol>
+
+<ol><li><strong>Design:</strong> Design a job system for 16 cores. Jobs have dependencies (Job B depends on Job A). Jobs are submitted to per-thread queues and idle threads steal from busy queues. How do you handle dependency resolution? What happens if a thread is waiting on a dependency — should it spin or sleep? How does UE4's </code>FQueuedThreadPool<code> and </code>TaskGraph` system handle this?</li></ol>
+
+<h3 id="synthesis-questions">Synthesis Questions</h3>
+
+<ol><li><strong>System design:</strong> You're building a game engine for 16-core CPUs. Your profiling shows the main thread is 60% busy (serial), parallel workers are 95% busy, and there's a 2% lock contention rate on the shared task queue. Using Amdahl's Law, what's the maximum speedup from parallelization? What bottlenecks would you address first?</li></ol>
+
+<ol><li><strong>Cross-layer analysis:</strong> A player reports that their game hitches every 30 seconds. Using perf/VTune, you see a burst of 200+ context switches within 50 ms, followed by a mutex contention spike. Trace the chain: which OS scheduler behavior causes the context switches? Which mutex pattern causes the contention? How does cache warmup after rescheduling make the hitch worse?</li></ol>
+
+<ol><li><strong>Lock-free vs mutex tradeoff:</strong> Your audio thread (SCHED_FIFO, priority 80) reads from a ring buffer filled by the game thread (SCHED_OTHER, priority 0). Under what exact conditions does a mutex-protected buffer cause priority inversion? Why does an SPSC lock-free ring buffer eliminate this risk entirely?</li></ol>
+
+<h3 id="common-pitfalls">Common Pitfalls</h3>
+
+<ol><li><strong>Tuning without profiling:</strong> Never guess where the contention is. Use VTune, perf, or Tracy to measure actual lock contention, cache misses, and context switch rates.</li></ol>
+
+<ol><li><strong>Copy-pasting synchronization patterns:</strong> What works for a job system (lock-free SPSC queue) doesn't work for a shared game state (mutex or RWLock). Understand the access pattern before choosing the primitive.</li></ol>
+
+<ol><li><strong>Assuming SMT gives 2× throughput:</strong> Hyperthreading shares execution units. Two threads on one core rarely exceed 1.3× a single thread. Sizing thread pools requires accounting for physical cores, not logical threads.</li></ol>
+
+<h2 id="see-also">See Also</h2>
+
+<ul><li><span class="wiki-link-missing">../Hardware/Hardware — Chapter Summary <small>(coming soon)</small></span> — The CPU cores running your threads</li></ul>
+<ul><li><span class="wiki-link-missing">../Hardware/04 — CPU Architecture <small>(coming soon)</small></span> — SMT, cache coherence, and the hardware behind parallelism</li></ul>
+<ul><li><span class="wiki-link-missing">../System Software/04 — Syscalls &amp; Kernel <small>(coming soon)</small></span> — The scheduler and futex internals</li></ul>
+<ul><li><span class="wiki-link-missing">../Learning Path <small>(coming soon)</small></span> — Where to go next</li></ul></p>

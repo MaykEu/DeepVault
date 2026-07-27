@@ -1,0 +1,453 @@
+<p><h1 id="gameplayeffectexecutioncalculation">GameplayEffectExecutionCalculation</h1>
+
+<h2 id="overview">Overview</h2>
+
+An ExecutionCalculation gives you <strong>complete control</strong> over what happens when a Gameplay Effect executes. Unlike an MMC which computes a single modifier magnitude, an EEC can:
+
+<ul><li>Emit <strong>any number of modifiers</strong> affecting different attributes</li></ul>
+<ul><li>Apply <strong>conditional Gameplay Effects</strong> based on runtime logic</li></ul>
+<ul><li>Access <strong>both</strong> the source and target AbilitySystemComponents</li></ul>
+<ul><li>Iterate over every qualified modifier affecting captured attributes</li></ul>
+<ul><li>Control GameplayCue firing and stack count handling</li></ul>
+
+The cost is complexity — you write all the math yourself, no Coefficient/PreMultiply/PostMultiply pipeline. If you need one modifier output with simple math, use an MMC. If you need multiple outputs, conditional branching, or direct ASC access, use an EEC.
+
+> [!info] Source
+> <code>Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Public/GameplayEffectExecutionCalculation.h</code>
+
+<hr>
+
+<h2 id="class-hierarchy">Class Hierarchy</h2>
+
+``<code>
+UObject
+ └── UGameplayEffectCalculation       (GameplayEffectCalculation.h)
+      └── UGameplayModMagnitudeCalculation   (MMC)
+      └── UGameplayEffectExecutionCalculation (EEC — THIS CLASS)
+</code>`<code>
+
+Both MMC and EEC share the same base — </code>RelevantAttributesToCapture<code> and </code>GetAttributeCaptureDefinitions()`. The base class is identical; the differences are in what each subclass exposes.
+
+<hr>
+
+<h2 id="the-execute-function">The Execute Function</h2>
+
+<pre><code class="language-cpp"><span class="syn-comment">// GameplayEffectExecutionCalculation.h:310
+</span>
+UFUNCTION(BlueprintNativeEvent, Category=<span class="syn-string">"Calculation"</span>)
+UE_API <span class="syn-kw">void</span> Execute(<span class="syn-kw">const</span> FGameplayEffectCustomExecutionParameters&amp; ExecutionParams,
+                  FGameplayEffectCustomExecutionOutput&amp; OutExecutionOutput) <span class="syn-kw">const</span>;
+```
+</p><p>This is the only function you **must** <span class="syn-kw">override</span>. In C++:
+</p><p>```cpp
+<span class="syn-kw">virtual</span> <span class="syn-kw">void</span> Execute_Implementation(
+ <span class="syn-kw">const</span> FGameplayEffectCustomExecutionParameters&amp; ExecutionParams,
+ FGameplayEffectCustomExecutionOutput&amp; OutExecutionOutput) <span class="syn-kw">const</span> <span class="syn-kw">override</span>;
+```
+</p><p>**Note:** Like MMC<span class="syn-string">'s `CalculateBaseMagnitude`, the `_Implementation` suffix is mandatory because this is a `BlueprintNativeEvent`.
+</p><p>---
+</p><p>## FGameplayEffectCustomExecutionParameters — What You Can Read
+</p><p>This struct is your window into the execution context. Passed by const reference — you can read but not modify through it (except through `GetOwningSpecForPreExecuteMod`).
+</p><p>### Core Access
+</p><p>| Function | Returns | What it gives you |
+|---|---|---|
+| `GetOwningSpec()` | `const FGameplayEffectSpec&amp;` | The GE spec being executed |
+| `GetOwningSpecForPreExecuteMod()` | `FGameplayEffectSpec*` | Non-const spec — modify BEFORE execution |
+| `GetTargetAbilitySystemComponent()` | `UAbilitySystemComponent*` | The ASC the GE is applied to |
+| `GetSourceAbilitySystemComponent()` | `UAbilitySystemComponent*` | The ASC that applied the GE (can be null!) |
+| `GetPassedInTags()` | `const FGameplayTagContainer&amp;` | Tags from the GE'</span>s `PassedInTags` config |
+| `GetPredictionKey()` | `FPredictionKey` | The prediction key (valid <span class="syn-kw">if</span> predicted) |
+| `GetIgnoreHandles()` | `<span class="syn-type">TArray</span>&lt;FActiveGameplayEffectHandle&gt;` | GEs to ignore during evaluation |
+</p><p><span class="syn-pp">### Attribute Capture Methods
+</span></p><p>| Function | Purpose |
+|---|---|
+| `AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvalParams, OUT Magnitude)` | Get current value of a captured attribute |
+| `AttemptCalculateCapturedAttributeMagnitudeWithBase(CaptureDef, EvalParams, BaseValue, OUT Magnitude)` | Same, starting from a custom base |
+| `AttemptCalculateCapturedAttributeBaseValue(CaptureDef, OUT BaseValue)` | Get the base value only |
+| `AttemptCalculateCapturedAttributeBonusMagnitude(CaptureDef, EvalParams, OUT Bonus)` | Get bonus magnitude only |
+| `AttemptGetCapturedAttributeAggregatorSnapshot(CaptureDef, OUT Aggregator)` | Snapshot the entire aggregator |
+| `AttemptGatherAttributeMods(CaptureDef, EvalParams, OUT ModMap)` | Get all qualified modifiers affecting the attribute |
+| `ForEachQualifiedAttributeMod(CaptureDef, EvalParams, Func)` | Iterate every qualified modifier with a callback |
+</p><p><span class="syn-pp">### Transient Aggregator Methods
+</span></p><p>These let you work with scoped modifier <span class="syn-string">"temporary variables"</span> — see the Scoped Modifiers section below.
+</p><p>| Function | Purpose |
+|---|---|
+| `AttemptCalculateTransientAggregatorMagnitude(Tag, EvalParams, OUT Magnitude)` | Read a transient aggregator<span class="syn-string">'s value |
+| `AttemptCalculateTransientAggregatorBaseValue(Tag, OUT BaseValue)` | Base value only |
+| `AttemptCalculateTransientAggregatorBonusMagnitude(Tag, EvalParams, OUT Bonus)` | Bonus magnitude only |
+</p><p>### FAggregatorEvaluateParameters
+</p><p>Same as in the MMC system. Controls which modifiers count when evaluating captured attributes:
+</p><p>```cpp
+FAggregatorEvaluateParameters EvalParams;
+EvalParams.SourceTags = ExecutionParams.GetOwningSpec().CapturedSourceTags.GetAggregatedTags();
+EvalParams.TargetTags = ExecutionParams.GetOwningSpec().CapturedTargetTags.GetAggregatedTags();
+```
+</p><p>---
+</p><p>## FGameplayEffectCustomExecutionOutput — What You Can Write
+</p><p>This is an OUT parameter. Everything you emit goes through this struct.
+</p><p>### Emitting Modifiers
+</p><p>```cpp
+// Add a single modifier
+OutExecutionOutput.AddOutputModifier(
+ FGameplayModifierEvaluatedData(MyAttributeProperty, EGameplayModOp::Additive, CalculatedDamage));
+```
+</p><p>| `FGameplayModifierEvaluatedData` field | Type | Description |
+|---|---|---|
+| `Attribute` | `FGameplayAttribute` | The FProperty for the attribute |
+| `ModifierOp` | `EGameplayModOp::Type` | `Additive`, `Multiplicitive`, `Division`, `Override` |
+| `Magnitude` | `float` | The magnitude to apply |
+| `Handle` | `FActiveGameplayEffectHandle` | Optional — if set, only modifies that specific GE'</span>s contribution |
+</p><p><span class="syn-pp">#### Reading Output Modifiers
+</span></p><p>After execution, the system reads your modifiers via:
+```cpp
+<span class="syn-kw">const</span> <span class="syn-type">TArray</span>&lt;FGameplayModifierEvaluatedData&gt;&amp; GetOutputModifiers() <span class="syn-kw">const</span>;      <span class="syn-comment">// const access
+</span>
+<span class="syn-kw">void</span> GetOutputModifiers(OUT <span class="syn-type">TArray</span>&lt;FGameplayModifierEvaluatedData&gt;&amp; Out) <span class="syn-kw">const</span>;  <span class="syn-comment">// copy-out
+</span>
+<span class="syn-type">TArray</span>&lt;FGameplayModifierEvaluatedData&gt;&amp; GetOutputModifiersRef();                 <span class="syn-comment">// direct ref (avoid copy)
+</span>
+```
+`GetOutputModifiersRef()` is used internally by the engine at `GameplayEffect.cpp:<span class="syn-num">3155</span>` to iterate your output — it avoids making a copy.
+| `Handle` | `FActiveGameplayEffectHandle` | Optional — <span class="syn-kw">if</span> set, only modifies that specific GE<span class="syn-string">'s contribution |
+</p><p>The engine iterates your output modifiers and calls `InternalExecuteMod` for each one (line 3163 in `GameplayEffect.cpp`).
+</p><p>### Automatic Stack Count Scaling
+</p><p>By default, each output modifier is multiplied by the GE'</span>s stack count:
+</p><p>```cpp
+<span class="syn-comment">// GameplayEffect.cpp:3161
+</span>
+<span class="syn-kw">if</span> (bApplyStackCountToEmittedMods &amp;&amp; SpecStackCount &gt; <span class="syn-num">1</span>)
+{
+ CurExecMod.Magnitude = GameplayEffectUtilities::ComputeStackedModifierMagnitude(
+     CurExecMod.Magnitude, SpecStackCount, CurExecMod.ModifierOp);
+}
+```
+</p><p>If you<span class="syn-string">'ve already accounted for stack count in your math, call:
+```cpp
+OutExecutionOutput.MarkStackCountHandledManually();
+```
+This suppresses the automatic stack scaling.
+</p><p>### Conditional Gameplay Effects
+</p><p>```cpp
+// By default, conditional GEs from the GE'</span>s ExecutionDefinition fire automatically.
+<span class="syn-comment">// Mark them NOT to fire if the execution determines they shouldn't:
+</span>
+<span class="syn-kw">if</span> (bPostureNotBroken)
+{
+ <span class="syn-comment">// Don't fire unconditional effects
+</span>
+ <span class="syn-comment">// (by NOT calling MarkConditionalGameplayEffectsToTrigger, they are suppressed)
+</span></p><p> <span class="syn-comment">// But the GE's ConditionalGameplayEffects ALWAYS fire by default.
+</span>
+ <span class="syn-comment">// To stop them: simply don't call MarkConditionalGameplayEffectsToTrigger,
+</span>
+ <span class="syn-comment">// and the system checks ShouldTriggerConditionalGameplayEffects() which defaults to false.
+</span>
+}
+```
+</p><p>Wait — let me clarify the actual source behavior (line <span class="syn-num">3285</span>):
+</p><p>```cpp
+bRunConditionalEffects = ExecutionOutput.ShouldTriggerConditionalGameplayEffects();
+```
+</p><p>`ShouldTriggerConditionalGameplayEffects()` checks `bTriggerConditionalGameplayEffects` which is `<span class="syn-kw">false</span>` by default. If the execution doesn<span class="syn-string">'t explicitly call `MarkConditionalGameplayEffectsToTrigger()`, conditional GEs from the execution definition are **NOT** applied.
+</p><p>This is the opposite of what you might expect — **conditional GEs are opt-in**. You must call:
+```cpp
+OutExecutionOutput.MarkConditionalGameplayEffectsToTrigger();
+```
+</p><p>### Controlling GameplayCues
+</p><p>```cpp
+// Prevent automatic GameplayCue execution (you handle it manually)
+OutExecutionOutput.MarkGameplayCuesHandledManually();
+```
+</p><p>If you call this, the engine skips its automatic GameplayCue invocation (`InvokeGameplayCueExecuted_FromSpec` at line 3356). You'</span>re responsible <span class="syn-kw">for</span> invoking cues yourself.
+</p><p>---
+</p><p><span class="syn-pp">## Attribute Captures
+</span></p><p>The capture system is **identical to MMC** — see [[Core Mechanics/Attribute Capture System]] <span class="syn-kw">for</span> the full details on capture definitions, the spec container, `FindCaptureSpecByDefinition`, and snapshot vs live timing. Use the same setup in your constructor:
+</p><p>```cpp
+<span class="syn-comment">// Header
+</span>
+DECLARE_ATTRIBUTE_CAPTUREDEF(Health);
+DECLARE_ATTRIBUTE_CAPTUREDEF(Strength);
+</p><p><span class="syn-comment">// Constructor
+</span>
+DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Health, Target, <span class="syn-kw">false</span>);
+DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Strength, Source, <span class="syn-kw">false</span>);
+RelevantAttributesToCapture.Add(HealthDef);
+RelevantAttributesToCapture.Add(StrengthDef);
+```
+</p><p>[!note]
+In an EEC, the macros are especially useful because they give you the `FProperty*` (e.g. `HealthProperty`), which you use when constructing `FGameplayModifierEvaluatedData` <span class="syn-kw">for</span> output.
+</p><p>---
+</p><p><span class="syn-pp">## Emitting Output Modifiers — The Real Work
+</span></p><p>```cpp
+<span class="syn-kw">void</span> UMyDamageExec::Execute_Implementation(
+ <span class="syn-kw">const</span> FGameplayEffectCustomExecutionParameters&amp; ExecParams,
+ FGameplayEffectCustomExecutionOutput&amp; OutExecOutput) <span class="syn-kw">const</span>
+{
+ <span class="syn-comment">// 1. Set up evaluation parameters
+</span>
+ FAggregatorEvaluateParameters EvalParams;
+ <span class="syn-kw">const</span> FGameplayEffectSpec&amp; Spec = ExecParams.GetOwningSpec();
+ EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+ EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+</p><p> <span class="syn-comment">// 2. Read captured attributes
+</span>
+ <span class="syn-kw">float</span> AttackPower = <span class="syn-num">0.</span>f;
+ ExecParams.AttemptCalculateCapturedAttributeMagnitude(AttackPowerDef, EvalParams, AttackPower);
+</p><p> <span class="syn-kw">float</span> Defense = <span class="syn-num">0.</span>f;
+ ExecParams.AttemptCalculateCapturedAttributeMagnitude(DefenseDef, EvalParams, Defense);
+</p><p> <span class="syn-comment">// 3. Calculate
+</span>
+ <span class="syn-kw">float</span> Damage = FMath::Max(<span class="syn-num">1.</span>f, AttackPower * <span class="syn-num">2.0</span>f - Defense * <span class="syn-num">0.5</span>f);
+ <span class="syn-kw">float</span> Lifesteal = Damage * <span class="syn-num">0.3</span>f;
+</p><p> <span class="syn-comment">// 4. Emit output modifiers
+</span>
+ OutExecOutput.AddOutputModifier(
+     FGameplayModifierEvaluatedData(HealthProperty, EGameplayModOp::Additive, -Damage));
+</p><p> OutExecOutput.AddOutputModifier(
+     FGameplayModifierEvaluatedData(ManaProperty, EGameplayModOp::Additive, Lifesteal));
+</p><p> <span class="syn-comment">// Optional: fire conditional GEs if the execution warrants it
+</span>
+ OutExecOutput.MarkConditionalGameplayEffectsToTrigger();
+}
+```
+</p><p>---
+</p><p><span class="syn-pp">## The Execution Flow — When Your EEC Runs
+</span></p><p>From `GameplayEffect.cpp` — the execution pipeline in `ExecuteActiveEffectsFrom`:
+</p><p>```
+ExecuteActiveEffectsFrom()
+│
+├─ <span class="syn-num">1.</span> Calculate modifier magnitudes (regular modifiers + MMC)
+│
+├─ <span class="syn-num">2.</span> Execute regular modifiers via InternalExecuteMod
+│
+├─ <span class="syn-num">3.</span> For each ExecutionDefinition:
+│     ├─ Create FGameplayEffectCustomExecutionParameters
+│     │    (Spec, ScopedMods, TargetASC, PassedInTags, PredictionKey)
+│     ├─ Create FGameplayEffectCustomExecutionOutput (empty)
+│     ├─ Call ExecCDO-&gt;Execute(Params, Output) ← YOUR CODE RUNS HERE
+│     ├─ Check ShouldTriggerConditionalGameplayEffects()
+│     ├─ Iterate output modifiers, apply stack scaling, call InternalExecuteMod
+│     └─ Check AreGameplayCuesHandledManually()
+│
+├─ <span class="syn-num">4.</span> Apply conditional GEs (<span class="syn-kw">if</span> any were triggered)
+│
+├─ <span class="syn-num">5.</span> Invoke gameplay cues (unless handled manually)
+│
+└─ <span class="syn-num">6.</span> Notify GE components (OnExecuted)
+```
+</p><p>**When EEC runs:**
+<ul><li>**Instant GE**: During `ExecuteGameplayEffect` → `ExecuteActiveEffectsFrom`</li></ul>
+<ul><li>**Periodic tick**: During `InternalExecutePeriodicGameplayEffect` → `ExecuteActiveEffectsFrom`</li></ul>
+<ul><li>**Duration/Infinite**: EEC does NOT fire. Only Instant and Periodic GEs trigger executions.</li></ul>
+</p><p>The EEC runs INSIDE `ExecuteActiveEffectsFrom`, **after** regular modifiers have been applied and **before** GameplayCues and conditional effects.
+</p><p>---
+</p><p><span class="syn-pp">## Scoped Modifiers &amp; Transient Aggregators
+</span></p><p>The full execution flow — including when EEC runs, how stack scaling works, and how conditional GEs are applied — is covered in [[Core Mechanics/GE Execution Flow]].
+</p><p><span class="syn-pp">### What Scoped Modifiers Do
+</span></p><p>The `CalculationModifiers` array on `FGameplayEffectExecutionDefinition` applies modifiers **during** the execution — before you read captured attributes and before your Execute function<span class="syn-string">'s output modifiers are applied.
+</p><p>This lets the data designer tune the context your EEC sees:
+</p><p>```
+GE_Attack:
+├── Executions[0]:
+│   ├── CalculationClass: UMyDamageExec
+│   ├── CalculationModifiers[0]:
+│   │   Attribute: EnemyArmor
+│   │   ModifierOp: Additive
+│   │   Magnitude: -50  (armor piercing = reduces enemy armor by 50)
+│   │
+│   │   → When EEC reads EnemyArmor, it sees (CurrentArmor - 50)
+│   │   → Scoped modifier is applied "in-place" before EEC runs
+│   │   → The actual EnemyArmor on the target is NOT modified — scoped only
+```
+</p><p>Scoped modifiers create a temporary override of the captured attribute inside the execution context. They don'</span>t persist.
+</p><p><span class="syn-pp">### Transient Aggregators
+</span></p><p>A special type of scoped modifier that doesn<span class="syn-string">'t back onto any real attribute. It'</span>s a **temporary numeric variable** scoped to <span class="syn-kw">this</span> execution:
+</p><p>```cpp
+<span class="syn-comment">// GE asset config:
+</span>
+<span class="syn-comment">// CalculationModifiers[0]:
+</span>
+<span class="syn-comment">//   TransientAggregatorIdentifier: "Temp.DamageMultiplier"
+</span>
+<span class="syn-comment">//   ModifierOp: Additive
+</span>
+<span class="syn-comment">//   Magnitude: 1.5 (data-defined multiplier)
+</span></p><p><span class="syn-comment">// In your EEC:
+</span>
+<span class="syn-kw">float</span> Multiplier = <span class="syn-num">0.</span>f;
+ExecParams.AttemptCalculateTransientAggregatorMagnitude(
+ FGameplayTag::RequestGameplayTag(<span class="syn-string">"Temp.DamageMultiplier"</span>),
+ EvalParams, Multiplier);
+<span class="syn-comment">// Multiplier is 1.5 — passed through the scoped modifier system
+</span>
+```
+</p><p>Transient aggregators must be declared in `ValidTransientAggregatorIdentifiers` (Editor-only list) <span class="syn-kw">for</span> the GE editor to show them.
+</p><p><span class="syn-pp">### bRequiresPassedInTags
+</span></p><p>```cpp
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Attributes)
+<span class="syn-kw">bool</span> bRequiresPassedInTags;
+</p><p>UE_API <span class="syn-kw">bool</span> DoesRequirePassedInTags() <span class="syn-kw">const</span>;
+```
+</p><p>Set `bRequiresPassedInTags = <span class="syn-kw">true</span>` in your EEC constructor <span class="syn-kw">if</span> your `Execute` function uses the `PassedInTags` from the GE<span class="syn-string">'s ExecutionDefinition. The editor can use this to validate asset configurations.
+</p><p>---
+</p><p>### InvalidScopedModifierAttributes
+</p><p>Some attributes you capture for internal calculation but don'</span>t want exposed as tweakable scoped modifiers. Add them to `InvalidScopedModifierAttributes`:
+</p><p>```cpp
+<span class="syn-comment">// In the EEC's header/defaults:
+</span>
+<span class="syn-comment">// RelevantAttributesToCapture: [Health, MaxHealth, Strength]
+</span>
+<span class="syn-comment">// InvalidScopedModifierAttributes: [MaxHealth]  ← not exposed to scoped modifiers
+</span>
+```
+</p><p>The editor filters these out from the scoped modifier dropdown.
+</p><p>---
+</p><p><span class="syn-pp">## Conditional Gameplay Effects
+</span></p><p>Configured on the GE<span class="syn-string">'s `FGameplayEffectExecutionDefinition` — these are GEs that fire after the EEC runs, IF the execution opts in:
+</p><p>```
+GE_Attack:
+├── Executions[0]:
+│   ├── CalculationClass: UMyDamageExec
+│   └── ConditionalGameplayEffects[0]:
+│       ├── EffectClass: GE_Bleed
+│       └── RequiredSourceTags: [State.BleedingWeapon]
+```
+</p><p>In your EEC:
+```cpp
+void UMyDamageExec::Execute_Implementation(...) const
+{
+ // ... calculate damage, emit modifiers ...
+</p><p> // Opt-in: fire the conditional GEs defined on this execution
+ OutExecOutput.MarkConditionalGameplayEffectsToTrigger();
+}
+```
+</p><p>The conditional GE'</span>s `CanApply(SourceTags, SourceLevel)` is checked. If `RequiredSourceTags` is empty, the GE always applies (when triggered). If tags are set, the source must have ALL of them.
+</p><p>[!warning]
+Conditional GEs are **opt-in** — the output<span class="syn-string">'s `bTriggerConditionalGameplayEffects` defaults to `false`. Calling `MarkConditionalGameplayEffectsToTrigger()` is required.
+</p><p>---
+</p><p>## Full Template
+</p><p>```cpp
+// MyDamageExec.h
+#pragma once
+</p><p>#include "CoreMinimal.h"
+#include "GameplayEffectExecutionCalculation.h"
+#include "MyDamageExec.generated.h"
+</p><p>UCLASS()
+class UMyDamageExec : public UGameplayEffectExecutionCalculation
+{
+ GENERATED_BODY()
+</p><p>public:
+ UMyDamageExec();
+</p><p> virtual void Execute_Implementation(
+     const FGameplayEffectCustomExecutionParameters&amp; ExecParams,
+     FGameplayEffectCustomExecutionOutput&amp; OutExecOutput) const override;
+</p><p>protected:
+ DECLARE_ATTRIBUTE_CAPTUREDEF(AttackPower);
+ DECLARE_ATTRIBUTE_CAPTUREDEF(Defense);
+ DECLARE_ATTRIBUTE_CAPTUREDEF(Health);
+};
+```
+</p><p>```cpp
+// MyDamageExec.cpp
+#include "MyDamageExec.h"
+#include "MyAttributeSet.h"
+</p><p>UMyDamageExec::UMyDamageExec()
+{
+ DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, AttackPower, Source, false);
+ DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Defense, Target, false);
+ DEFINE_ATTRIBUTE_CAPTUREDEF(UMyAttributeSet, Health, Target, false);
+</p><p> RelevantAttributesToCapture.Add(AttackPowerDef);
+ RelevantAttributesToCapture.Add(DefenseDef);
+ RelevantAttributesToCapture.Add(HealthDef);
+}
+</p><p>void UMyDamageExec::Execute_Implementation(
+ const FGameplayEffectCustomExecutionParameters&amp; ExecParams,
+ FGameplayEffectCustomExecutionOutput&amp; OutExecOutput) const
+{
+ // 1. Eval params
+ FAggregatorEvaluateParameters EvalParams;
+ const FGameplayEffectSpec&amp; Spec = ExecParams.GetOwningSpec();
+ EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
+ EvalParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+</p><p> // 2. Read capturess
+ float Attack = 0.f, Defense = 0.f;
+ ExecParams.AttemptCalculateCapturedAttributeMagnitude(AttackPowerDef, EvalParams, Attack);
+ ExecParams.AttemptCalculateCapturedAttributeMagnitude(DefenseDef, EvalParams, Defense);
+</p><p> // 3. Formula
+ float Damage = FMath::Max(1.f, Attack * 2.0f - Defense * 0.5f);
+</p><p> // 4. Emit modifiers
+ OutExecOutput.AddOutputModifier(
+     FGameplayModifierEvaluatedData(HealthProperty, EGameplayModOp::Additive, -Damage));
+</p><p> // 5. Optionally fire conditional GEs
+ OutExecOutput.MarkConditionalGameplayEffectsToTrigger();
+}
+```
+</p><p>---
+</p><p>## EEC vs MMC — Decision Guide
+</p><p>| Use MMC | Use EEC |
+|---|---|
+| ONE modifier output | TWO OR MORE modifier outputs |
+| Simple formula → single result | Need to apply conditional GEs based on result |
+| Want Coefficient/PreMultiply/PostMultiply pipeline | Want full manual control over every modifier |
+| Don'</span>t need Source ASC access | Need Source ASC (e.g., <span class="syn-kw">for</span> actor info, abilities) |
+| Blueprint-friendly (simpler set up) | Need `ForEachQualifiedAttributeMod` iteration |
+| Posture damage, heal amount, buff | Life steal, execute, explosion, parry, combo system |
+</p><p>---
+</p><p><span class="syn-pp">## Networking &amp; Prediction
+</span></p><p>EECs are **never executed on the client** <span class="syn-kw">for</span> predicted effects. The `bTreatAsInfiniteDuration` mechanism (which handles predicted instant GEs) skips the `ExecuteGameplayEffect` call entirely (line <span class="syn-num">1148</span>-<span class="syn-num">1162</span> in `AbilitySystemComponent.cpp`), which means EEC<span class="syn-string">'s `Execute` runs on the server only.
+</p><p>For periodic effects, periodic ticks only execute on the server (line 1022-1031 blocks client-side periodic ticks).
+</p><p>**What this means:**
+<ul><li>Any logic inside your EEC'</span>s `Execute` is server-authoritative only</li></ul>
+<ul><li>Output modifiers from the EEC are replicated through the normal attribute system</li></ul>
+<ul><li>If you need client-side visual feedback, use GameplayCues (not EEC logic)</li></ul>
+<ul><li>Conditional GEs triggered by the EEC are applied server-side and replicated</li></ul>
+</p><p>See [[Prediction &amp; Networking]] <span class="syn-kw">for</span> the full prediction system.
+</p><p>---
+</p><p><span class="syn-pp">## Common Mistakes
+</span></p><p><span class="syn-pp">### 1. Forgetting the `_Implementation` suffix
+</span>
+```cpp
+<span class="syn-comment">// ❌ Won't override
+</span>
+<span class="syn-kw">void</span> Execute(<span class="syn-kw">const</span> FGameplayEffectCustomExecutionParameters&amp;, ...) <span class="syn-kw">const</span>;
+</p><p><span class="syn-comment">// ✅ Correct
+</span>
+<span class="syn-kw">void</span> Execute_Implementation(<span class="syn-kw">const</span> FGameplayEffectCustomExecutionParameters&amp;, ...) <span class="syn-kw">const</span> <span class="syn-kw">override</span>;
+```
+</p><p><span class="syn-pp">### 2. Not calling `MarkConditionalGameplayEffectsToTrigger()`
+</span>
+Conditional GEs are opt-in. If you forget <span class="syn-kw">this</span> call, none of your conditional effects fire.
+</p><p><span class="syn-pp">### 3. Double-counting stack count
+</span>
+By default, each output modifier is multiplied by the GE<span class="syn-string">'s stack count. If you'</span>ve already multiplied by stack count in your math, call `MarkStackCountHandledManually()`.
+</p><p><span class="syn-pp">### 4. Reading captured attributes without FAggregatorEvaluateParameters
+</span>
+Without proper SourceTags/TargetTags, the attribute evaluation skips tag filtering and returns ALL modifiers — potentially overcounting.
+</p><p><span class="syn-pp">### 5. Using EEC when MMC would suffice
+</span>
+If you only need ONE modifier output, an MMC is simpler, gives you the Coefficient pipeline, and is Blueprint-friendlier. Don<span class="syn-string">'t use EEC for single-modifier formulas.
+</p><p>### 6. Assuming EEC runs for Duration/Infinite effects
+Duration and Infinite GEs do NOT execute EECs. Only Instant and Periodic effects trigger executions. Even if you add an Execution to a Duration GE, it won'</span>t run unless the GE<span class="syn-string">'s `DurationPolicy` is Instant and `Period` is set.
+</p><p>### 7. Capturing the wrong attribute direction
+Using `EGameplayEffectAttributeCaptureSource::Source` when you mean `Target` is a common source of wrong values. For damage: attacker'</span>s stats are `Source`, defender<span class="syn-string">'s stats are `Target`.
+</p><p>### 8. Not building the output modifier with the correct property
+```cpp
+// ❌ Using the UPROPERTY name instead of the FProperty*
+FGameplayModifierEvaluatedData("Health", ...);  // Wrong — won'</span>t compile properly
+</p><p><span class="syn-comment">// ✅ Using the macro-generated property
+</span>
+FGameplayModifierEvaluatedData(HealthProperty, EGameplayModOp::Additive, -Damage);
+```
+</p><p>---
+</p><p><span class="syn-pp">## Source References
+</span></p><p>| File | Lines | Content |
+|---|---|---|
+| `GameplayEffectExecutionCalculation.h` | <span class="syn-num">260</span>-<span class="syn-num">315</span> | EEC <span class="syn-kw">class</span> definition, Execute function |
+| `GameplayEffectExecutionCalculation.cpp` | <span class="syn-num">383</span>-<span class="syn-num">408</span> | GetValidScopedModifierAttributeCaptureDefinitions, Execute_Implementation |
+| `GameplayEffectExecutionCalculation.h` | <span class="syn-num">323</span>-<span class="syn-num">332</span> | DECLARE_ATTRIBUTE_CAPTUREDEF / DEFINE_ATTRIBUTE_CAPTUREDEF macros |
+| `GameplayEffect.h` | <span class="syn-num">420</span>-<span class="syn-num">460</span> | FGameplayEffectExecutionScopedModifierInfo <span class="syn-kw">struct</span> |
+| `GameplayEffect.h` | <span class="syn-num">529</span>-<span class="syn-num">556</span> | FGameplayEffectExecutionDefinition <span class="syn-kw">struct</span> |
+| `GameplayEffect.h` | <span class="syn-num">494</span>-<span class="syn-num">522</span> | FConditionalGameplayEffect <span class="syn-kw">struct</span> |
+| `GameplayEffect.cpp` | <span class="syn-num">3140</span>-<span class="syn-num">3170</span> | EEC execution — parameters, Execute call, stack handling |
+| `GameplayEffect.cpp` | <span class="syn-num">3280</span>-<span class="syn-num">3320</span> | Conditional GE triggering after execution |
+| `GameplayEffect.cpp` | <span class="syn-num">3340</span>-<span class="syn-num">3369</span> | Conditional GE application + gameplay cues |</code></pre></p>

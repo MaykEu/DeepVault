@@ -1,0 +1,77 @@
+<p><h1 id="sampling-placement">Sampling &amp; Placement</h1></p><p><blockquote class="callout callout-note"><strong>Why This Matters (Engine Context)</strong><br>Scatter 10,000 trees on a landscape. Pure random: some trees clump, some areas are bare. A uniform grid: looks artificial, no variation. Poisson disc sampling: every tree is at least X meters from every other tree, and the distribution is maximally dense — natural-looking coverage with no overlap. Blue noise sampling: the frequency spectrum has minimal low-frequency energy, reducing visible clumping. These sampling patterns are used everywhere in rendering — scattering foliage with <code>FoliageTool</code>, placing SSR ray directions without banding artifacts, generating shadow map sample points, and distributing sound emitters. Good sampling is the difference between "procedural" looking fake and looking like an artist placed every object by hand.</blockquote></p><p><hr></p><p><h2 id="the-problem-random-vs-uniform-vs-optimal">The Problem — Random vs Uniform vs Optimal</h2></p><p><pre><code class="language-">Random:    ·  ··   ·   ··    ·     — Clumps and gaps. High variance.
+Uniform:   ·  ·  ·  ·  ·  ·  ·  ·  — No clumps, but grid-aligned. Visually harsh.
+Jittered:  · ·  · ·  ·  ·  ·   ·   — Grid + random offset. Better but still grid-structured.
+Poisson:   · ·  ·  · · · ·  · ·    — Maximal packing, min distance enforced, natural.
+Blue noise:· · ·  ·· ·  · ·· ·     — No low-frequency clumping, even in frequency domain.</code></pre></p><p><hr></p><p><h2 id="poisson-disc-sampling-the-classic">Poisson Disc Sampling — The Classic</h2></p><p>Goal: place N points in a region such that every pair is at least distance <code>r</code> apart, and the packing is maximal (no point can be added without violating the distance constraint).</p><p>The <strong>dart-throwing algorithm</strong> (simplest, O(N²) worst case):</p><p><pre><code class="language-cpp">std::vector&lt;float2&gt; PoissonDisc2D(<span class="syn-kw">float</span> width, <span class="syn-kw">float</span> height, <span class="syn-kw">float</span> r, <span class="syn-kw">int</span> maxAttempts = <span class="syn-num">30</span>) {
+ std::vector&lt;float2&gt; points;
+ std::vector&lt;float2&gt; active;  <span class="syn-comment">// "Active list" — points to generate candidates from</span></p><p> <span class="syn-comment">// Seed with a random point</span>
+ float2 first = float2(Random() * width, Random() * height);
+ points.push_back(first);
+ active.push_back(first);</p><p> <span class="syn-kw">while</span> (!active.empty()) {
+     <span class="syn-comment">// Pick random active point</span>
+     <span class="syn-kw">int</span> idx = RandomInt(<span class="syn-num">0</span>, active.size() - <span class="syn-num">1</span>);
+     float2 center = active[idx];
+     <span class="syn-kw">bool</span> found = <span class="syn-kw">false</span>;</p><p>     <span class="syn-comment">// Try k random candidates in annulus [r, 2r]</span>
+     <span class="syn-kw">for</span> (<span class="syn-kw">int</span> k = <span class="syn-num">0</span>; k &lt; maxAttempts; k++) {
+         <span class="syn-kw">float</span> angle = Random() * <span class="syn-num">2.0</span> * PI;
+         <span class="syn-kw">float</span> dist = r + Random() * r;  <span class="syn-comment">// Annulus: [r, 2r]</span>
+         float2 candidate = center + float2(cos(angle), sin(angle)) * dist;</p><p>         <span class="syn-kw">if</span> (candidate.x &lt; <span class="syn-num">0</span> || candidate.x &gt; width) <span class="syn-kw">continue</span>;
+         <span class="syn-kw">if</span> (candidate.y &lt; <span class="syn-num">0</span> || candidate.y &gt; height) <span class="syn-kw">continue</span>;</p><p>         <span class="syn-comment">// Check distance to ALL existing points (can optimize with spatial grid)</span>
+         <span class="syn-kw">bool</span> valid = <span class="syn-kw">true</span>;
+         <span class="syn-kw">for</span> (<span class="syn-kw">auto</span>&amp; p : points) {
+             <span class="syn-kw">if</span> (distance(candidate, p) &lt; r) { valid = <span class="syn-kw">false</span>; <span class="syn-kw">break</span>; }
+         }</p><p>         <span class="syn-kw">if</span> (valid) {
+             points.push_back(candidate);
+             active.push_back(candidate);
+             found = <span class="syn-kw">true</span>;
+             <span class="syn-kw">break</span>;
+         }
+     }</p><p>     <span class="syn-kw">if</span> (!found) {
+         active.erase(active.begin() + idx);  <span class="syn-comment">// Remove exhausted point</span>
+     }
+ }
+ <span class="syn-kw">return</span> points;
+}</code></pre></p><p>The annulus [r, 2r] is the sweet spot: closer than r is invalid, further than 2r wastes effort.</p><p><strong>Spatial grid optimization:</strong> Divide space into cells of size r/√2. Each cell can contain at most 1 point. Distance check only needs to examine neighboring cells — O(1) per check instead of O(N).</p><p><hr></p><p><h2 id="blue-noise-the-frequency-domain-approach">Blue Noise — The Frequency Domain Approach</h2></p><p>Poisson disc produces good spatial distribution. Blue noise goes further: it optimizes the <strong>frequency spectrum</strong> of the point set.</p><p>A point set's power spectrum is its Fourier transform. Blue noise has:
+<ul><li>Low energy at low frequencies → no large-scale clumping (the "blue" in blue noise)</li><li>A sharp peak at the mean sampling frequency</li><li>Low energy beyond the peak → minimal aliasing</li></ul>
+This makes blue noise ideal for:
+<ul><li><strong>Rendering:</strong> blue noise sample patterns for SSR, SSAO, and shadow maps produce less visible banding than white noise</li><li><strong>Dithering:</strong> blue noise dither hides quantization in HDR→LDR tone mapping</li><li><strong>Foliage:</strong> blue noise distribution looks natural — no clumps, no grids</li></ul>
+<pre><code class="language-cpp"><span class="syn-comment">// Blue noise generation (simplified void-and-cluster algorithm)</span>
+<span class="syn-comment">// 1. Start with random white noise</span>
+<span class="syn-comment">// 2. Find "voids" — largest gaps between points → place new points there</span>
+<span class="syn-comment">// 3. Find "clusters" — tightest groups → remove points from there</span>
+<span class="syn-comment">// 4. Repeat until convergence</span>
+<span class="syn-comment">// Modern: pre-computed blue noise textures (64×64, 128×128) tiled at runtime</span></code></pre></p><p>Most game engines use <strong>pre-computed blue noise textures</strong> — a 128×128 RGBA texture where each pixel's RG channels encode a 2D blue noise sample. Tile it across the screen, sample per-pixel for cheap, high-quality random numbers.</p><p><hr></p><p><h2 id="stratified-jittered-sampling">Stratified / Jittered Sampling</h2></p><p>Divide the domain into N equal strata (grid cells), place one random sample per stratum:</p><p><pre><code class="language-cpp"><span class="syn-kw">for</span> (<span class="syn-kw">int</span> x = <span class="syn-num">0</span>; x &lt; gridW; x++) {
+ <span class="syn-kw">for</span> (<span class="syn-kw">int</span> y = <span class="syn-num">0</span>; y &lt; gridH; y++) {
+     <span class="syn-kw">float</span> sx = (x + Random()) / gridW;
+     <span class="syn-kw">float</span> sy = (y + Random()) / gridH;
+     samples.push_back(float2(sx, sy));
+ }
+}</code></pre></p><p>Guarantees one sample per grid cell — no large gaps. Variance is lower than pure random (stratification reduces variance by removing inter-stratum variation). Used in:
+<ul><li>Shadow map sampling (stratified Poisson disc)</li><li>SSAO sample directions</li><li>Temporal anti-aliasing jitter offsets</li></ul>
+<hr></p><p><h2 id="importance-sampling-for-placement">Importance Sampling for Placement</h2></p><p>When the density should vary (more trees near water, fewer on rocks), use importance sampling:</p><p><pre><code class="language-cpp"><span class="syn-comment">// Rejection sampling: sample uniformly, accept with probability = density(x,y)</span>
+float2 SampleWithDensity(Texture2D densityMap) {
+ <span class="syn-kw">while</span> (<span class="syn-kw">true</span>) {
+     float2 candidate = float2(Random(), Random());
+     <span class="syn-kw">float</span> density = densityMap.Sample(candidate);
+     <span class="syn-kw">if</span> (Random() &lt; density) <span class="syn-kw">return</span> candidate;  <span class="syn-comment">// Accept</span>
+ }
+ <span class="syn-comment">// Higher density → more likely to accept → more points placed there</span>
+}</code></pre></p><p>For large density variations, rejection sampling wastes many attempts. Better: inverse CDF sampling or Metropolis-Hastings for arbitrary density functions.</p><p><hr></p><p><h2 id="foliage-scattering-in-ue">Foliage Scattering in UE</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// UE FoliageTool: Poisson disc with density map</span>
+FFoliageInstance PlaceFoliage(UStaticMesh* Mesh, ULandscape* Landscape) {
+ <span class="syn-comment">// 1. Generate Poisson disc samples on landscape surface</span>
+ <span class="syn-type">TArray</span>&lt;FVector2D&gt; Samples = PoissonDisc(Landscape-&gt;GetSize(), MinDistance);</p><p> <span class="syn-comment">// 2. Filter by density map</span>
+ Samples = Samples.FilterByPredicate([&amp;](FVector2D p) {
+     <span class="syn-kw">float</span> density = Landscape-&gt;GetDensityAtLocation(p);
+     <span class="syn-kw">return</span> Random() &lt; density;
+ });</p><p> <span class="syn-comment">// 3. Align to surface normal, apply random rotation/scale</span>
+ <span class="syn-kw">for</span> (FVector2D p : Samples) {
+     <span class="syn-type">FVector</span> WorldPos = Landscape-&gt;GetWorldPosition(p);
+     <span class="syn-type">FVector</span> Normal = Landscape-&gt;GetSurfaceNormal(p);</p><p>     FFoliageInstance Instance;
+     Instance.Location = WorldPos;
+     Instance.Rotation = <span class="syn-type">FRotator</span>::MakeFromX(Normal) + RandomYaw();
+     Instance.Scale = Lerp(<span class="syn-num">0.8</span>f, <span class="syn-num">1.2</span>f, Random());
+     AddInstance(Instance);
+ }
+}</code></pre></p><p><hr></p><p><h2 id="two-way-explanation">Two-Way Explanation</h2></p><p><h3 id="simple">Simple</h3>
+Randomly scattering 10,000 trees gives you clumps and bare patches — nature isn't purely random, trees compete for space. A grid is too perfect — nature isn't a chessboard either. Poisson disc is the Goldilocks solution: every tree is at least X meters from every other tree (no overlap), and the placement is as dense as possible (no wasted space). The result looks hand-placed. Blue noise goes further: it mathematically eliminates visible clumping patterns across all scales. Think of it as the difference between a poorly-shuffled deck (clumps of same suit) and perfectly-shuffled (evenly mixed). Pre-computed blue noise textures give you this perfect randomness for free — just sample the texture.</p><p><h3 id="technical">Technical</h3>
+Poisson disc sampling enforces a minimum distance r between all points while maximizing density. The dart-throwing algorithm generates candidates in annuli [r, 2r] around active points; spatial grid acceleration (cell size r/√2) achieves O(N) performance. Blue noise optimizes the Fourier power spectrum: minimal low-frequency energy (no clumping), peak at the mean sampling frequency, and low energy beyond the peak (anti-aliasing). The void-and-cluster algorithm iteratively fills gaps and breaks clusters. Pre-computed blue noise textures (e.g., 128×128 RGBA) are tiled for runtime use. Stratified sampling divides the domain into equal strata for guaranteed coverage. Importance sampling (rejection, inverse CDF, Metropolis-Hastings) varies density according to an input map. UE FoliageTool uses Poisson disc + density maps for natural-looking object scattering.</p><p><h2 id="see-also">See Also</h2></p><p><ul><li><span class="wiki-link-missing">01 — Noise Generation <small>(coming soon)</small></span> — Noise functions provide the density maps that drive sampling</li><li><span class="wiki-link-missing">Monte Carlo &amp; Path Tracing <small>(coming soon)</small></span> — Importance sampling for rendering integrals</li><li><span class="wiki-link-missing">../Trigonometry &amp; Vectors <small>(coming soon)</small></span> — Distance calculations for the Poisson disc constraint check</li></ul></p>

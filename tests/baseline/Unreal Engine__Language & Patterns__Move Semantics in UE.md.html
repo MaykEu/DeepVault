@@ -1,0 +1,187 @@
+<p><h1 id="move-semantics-in-ue">Move Semantics in UE</h1></p><p><h2 id="the-core-idea">The Core Idea</h2>
+<blockquote class="callout callout-info"><strong>C++ Connection</strong><br><code>MoveTemp<T>()</code> is UE's equivalent of <code>std::move</code>. It's stricter — it static_asserts against const and rvalue arguments, catching mistakes that <code>std::move</code> would silently accept. See <span class="wiki-link-missing">Move Semantics <small>(coming soon)</small></span> for the standard C++ version.</blockquote></p><p>
+Move semantics is <strong>\"stealing resources instead of copying them.\"</strong> When you have an object you're about to discard, you can transfer its internal resources (heap allocations, file handles, etc.) to a new owner instead of doing a deep copy followed by destruction.</p><p><pre><code class="language-cpp"><span class="syn-comment">// Without move: allocate, copy, destroy original → 2x heap work</span>
+<span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` NewArray = OldArray;  <span class="syn-comment">// deep copy every string</span></p><p><span class="syn-comment">// With move: steal the pointer, leave husk → 0 heap work</span>
+<span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` NewArray = MoveTemp(OldArray);  <span class="syn-comment">// pointer theft</span></code></pre></p><p>In standard C++ this is <code>std::move</code>. UE uses <code>MoveTemp</code> — same idea, engine-specific name, with extra compile-time safety.</p><p><blockquote class="callout callout-tip"><strong>Key insight</strong><br><code>MoveTemp</code> doesn't move anything. It's a <strong>cast</strong> — it turns an lvalue into an rvalue reference so the <em>move constructor</em> or <em>move assignment operator</em> gets called. The actual moving is done by the type's move constructor.</blockquote></p><p><hr></p><p><h2 id="lvalue-vs-rvalue-reference-basics">Lvalue vs Rvalue Reference Basics</h2></p><p><table><tr><th>Term</th><th>What it is</th><th>Example</th></tr><tr><td><strong>Lvalue</strong></td><td>Has a name, has an address, can appear on left side of <code>=</code></td><td><code>int x;</code> — <code>x</code> is an lvalue</td></tr><tr><td><strong>Rvalue</strong></td><td>Temporary, no persistent address, about to die</td><td><code>GetString()</code> return value, <code>FString(TEXT(\"hi\"))</code></td></tr><tr><td><strong>Lvalue reference</strong> (<code>T&amp;</code>)</td><td>Binds to lvalues only</td><td><code>void Foo(FString&amp; Str)</code></td></tr><tr><td><strong>Const lvalue ref</strong> (<code>const T&amp;</code>)</td><td>Binds to everything</td><td><code>void Foo(const FString&amp; Str)</code></td></tr><tr><td><strong>Rvalue reference</strong> (<code>T&amp;&amp;</code>)</td><td>Binds to rvalues only</td><td><code>void Foo(FString&amp;&amp; Str)</code></td></tr></table>
+The magic: an <strong>rvalue reference overload</strong> gets selected when the argument is a temporary. That overload can pilfer the temporary's guts because nobody else needs it.</p><p><hr></p><p><h2 id="movetemp-verified-against-ue-5-8-source">MoveTemp — Verified Against UE 5.8 Source</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h, lines 524-539</span></p><p><span class="syn-comment">/**
+<ul><li>MoveTemp will cast a reference to an rvalue reference.</li><li>This is UE's equivalent of std::move except that it will not compile when passed an rvalue or</li><li>const object, because we would prefer to be informed when MoveTemp will have no effect.</li></ul>*/</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_INTRINSIC_CAST UE_REWRITE <span class="syn-kw">constexpr</span> std::remove_reference_t`&lt;T&gt;`&amp;&amp; MoveTemp(T&amp;&amp; Obj) <span class="syn-kw">noexcept</span>
+{
+ <span class="syn-kw">using</span> CastType = std::remove_reference_t`&lt;T&gt;`;</p><p> <span class="syn-comment">// Validate that we're not being passed an rvalue or a const object</span>
+ <span class="syn-comment">// - the former is redundant, the latter is almost certainly a mistake</span>
+ static_assert(std::is_lvalue_reference_v`&lt;T&gt;`, \<span class="syn-string">"MoveTemp called on an rvalue\");
+ static_assert(!std::is_same_v&lt;CastType&amp;, const CastType&amp;&gt;, \"MoveTemp called on a const object\");</p><p> return (CastType&amp;&amp;)Obj;
+}</span></code></pre></p><p><h3 id="how-it-works-line-by-line">How it works (line by line)</h3></p><p><ol><li><strong><code>T&amp;&amp; Obj</code></strong> — universal/forwarding reference. When called with an lvalue of type <code>X</code>, <code>T</code> deduces to <code>X&amp;</code> and <code>T&amp;&amp;</code> collapses to <code>X&amp;</code>. When called with an rvalue, <code>T</code> deduces to <code>X</code> and <code>T&amp;&amp;</code> is <code>X&amp;&amp;</code>.</li></ol>
+<ol><li><strong><code>static_assert(std::is_lvalue_reference_v<T>, ...)</code></strong> — blasts you at compile time if you pass an rvalue. <code>MoveTemp(someRvalue)</code> is a no-op (it's already movable); UE wants you to know.</li></ol>
+<ol><li><strong><code>static_assert(!std::is_same_v<CastType&amp;, const CastType&amp;>, ...)</code></strong> — blasts you if you pass a <code>const</code> object. You can't move from const — that defeats the purpose. This catches the surprisingly common mistake of <code>MoveTemp(SomeConstThing)</code>.</li></ol>
+<ol><li><strong><code>return (CastType&amp;&amp;)Obj;</code></strong> — the actual cast. Strips the reference from <code>T</code>, then applies <code>&amp;&amp;</code>. If <code>Obj</code> was <code>FString&amp;</code>, <code>CastType</code> is <code>FString</code>, return type is <code>FString&amp;&amp;</code>.</li></ol>
+<h3 id="why-two-static-asserts">Why two static_asserts?</h3></p><p><code>std::move</code> silently accepts rvalues and const objects — it always returns an rvalue reference, even when that's meaningless. UE took a stricter stance:</p><p><pre><code class="language-cpp"><span class="syn-kw">const</span> <span class="syn-type">FString</span> Name = TEXT(\<span class="syn-string">"ReadOnly\");
+// std::move(Name) → compiles fine, does nothing useful
+// MoveTemp(Name)  → static_assert FAILS: \"MoveTemp called on a const object\"</p><p>FString&amp;&amp; Ref = GetSomeString();
+// std::move(Ref) → compiles fine, redundant
+// MoveTemp(Ref)  → static_assert FAILS: \"MoveTemp called on an rvalue\"</span></code></pre></p><p><blockquote class="callout callout-warning"><strong>Epic's philosophy</strong><br>If <code>MoveTemp</code> would have no effect, they'd rather the code not compile at all. This forces you to confront whether you actually meant to move or made a mistake.</blockquote></p><p><hr></p><p><h2 id="movetempifpossible-the-i-don-t-know-variant">MoveTempIfPossible — The \"I Don't Know\" Variant</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h, lines 541-552</span></p><p><span class="syn-comment">/**
+<ul><li>MoveTempIfPossible will cast a reference to an rvalue reference.</li><li>This is UE's equivalent of std::move. It doesn't static assert like MoveTemp,</li><li>because it is useful in templates or macros where it's not obvious what the</li><li>argument is, but you want to take advantage of move semantics where you can</li><li>but not stop compilation.</li></ul>*/</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_INTRINSIC_CAST UE_REWRITE <span class="syn-kw">constexpr</span> std::remove_reference_t`&lt;T&gt;`&amp;&amp; MoveTempIfPossible(T&amp;&amp; Obj) <span class="syn-kw">noexcept</span>
+{
+ <span class="syn-kw">using</span> CastType = std::remove_reference_t`&lt;T&gt;`;
+ <span class="syn-kw">return</span> (CastType&amp;&amp;)Obj;
+}</code></pre></p><p><h3 id="when-does-it-fall-back-to-copy">When does it fall back to copy?</h3></p><p><code>MoveTempIfPossible</code> is the <em>actual</em> equivalent of <code>std::move</code>. It's used inside container implementations where the template doesn't know if the user passed an lvalue or rvalue:</p><p><pre><code class="language-cpp"><span class="syn-comment">// From TArray::Add (Array.h line 2948-2951)</span>
+SizeType Add(ElementType&amp;&amp; Item)
+{
+ CheckAddress(&amp;Item);
+ <span class="syn-kw">return</span> Emplace(MoveTempIfPossible(Item));  <span class="syn-comment">// ← uses IfPossible variant</span>
+}</code></pre></p><p>The \"fallback\" happens naturally:
+<ul><li>If <code>Item</code> is actually an lvalue → <code>MoveTempIfPossible</code> returns an rvalue ref → <strong>move constructor</strong> fires</li><li>If <code>Item</code> is a const lvalue → the cast still produces <code>const T&amp;&amp;</code> → no move constructor matches → <strong>copy constructor</strong> fires as fallback</li></ul>
+No explicit <code>if</code> statement. It's the overload resolution doing the work.</p><p><hr></p><p><h2 id="copytemp-the-opposite-of-movetemp">CopyTemp — The Opposite of MoveTemp</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h, lines 554-587</span></p><p><span class="syn-comment">/**
+<ul><li>CopyTemp will enforce the creation of a prvalue which can bind to rvalue reference</li><li>parameters. Unlike MoveTemp, a source lvalue will never be modified.</li></ul>*/</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_REWRITE T CopyTemp(T&amp; Val)
+{
+ <span class="syn-kw">return</span> <span class="syn-kw">const_cast</span>&lt;<span class="syn-kw">const</span> T&amp;&gt;(Val);
+}</p><p><span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_REWRITE T CopyTemp(<span class="syn-kw">const</span> T&amp; Val)
+{
+ <span class="syn-kw">return</span> Val;
+}</p><p><span class="syn-comment">/**
+<ul><li>CopyTempIfNecessary will enforce the creation of a prvalue.</li><li>It doesn't static assert like CopyTemp, because it is useful in</li><li>templates or macros where it's not obvious what the argument is.</li></ul>*/</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_REWRITE <span class="syn-kw">constexpr</span> std::decay_t`&lt;T&gt;` CopyTempIfNecessary(T&amp;&amp; Val)
+{
+ <span class="syn-kw">return</span> (T&amp;&amp;)Val;
+}</code></pre></p><p><code>CopyTemp</code> guarantees a copy even when you have an rvalue — useful when you need to preserve the source. There is no <code>std::</code> equivalent; the closest is the exposition-only <code>std::decay-copy</code>.</p><p><hr></p><p><h2 id="forward-ue-s-std-forward">Forward — UE's std::forward</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h, lines 590-603</span></p><p><span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_INTRINSIC_CAST UE_REWRITE <span class="syn-kw">constexpr</span> T&amp;&amp; Forward(std::remove_reference_t`&lt;T&gt;`&amp; Obj) <span class="syn-kw">noexcept</span>
+{
+ <span class="syn-kw">return</span> (T&amp;&amp;)Obj;
+}</p><p><span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> T&gt;
+UE_INTRINSIC_CAST UE_REWRITE <span class="syn-kw">constexpr</span> T&amp;&amp; Forward(std::remove_reference_t`&lt;T&gt;`&amp;&amp; Obj) <span class="syn-kw">noexcept</span>
+{
+ <span class="syn-kw">return</span> (T&amp;&amp;)Obj;
+}</code></pre></p><p>Used in <code>TArray::Emplace</code> to perfectly forward constructor arguments — preserving lvalue/rvalue-ness of each argument independently.</p><p><hr></p><p><h2 id="tarray-emplace-vs-add-verified-source">TArray::Emplace vs Add — Verified Source</h2></p><p><h3 id="emplace-construct-in-place">Emplace — Construct In-Place</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Containers/Array.h, lines 2812-2856</span></p><p><span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span>... ArgsType&gt;
+UE_FORCEINLINE_HINT SizeType Emplace(ArgsType&amp;&amp;... Args)
+{
+ <span class="syn-comment">// If this fails to compile when trying to call Emplace with a non-public</span>
+ <span class="syn-comment">// constructor, do not make TArray a friend.</span>
+ <span class="syn-comment">// [...comment about FPrivateToken pattern...]</span></p><p> <span class="syn-comment">// Reallocate if needed (sensitive code block)</span>
+ <span class="syn-kw">if</span> (ArrayNum == ArrayMax)
+ {
+     <span class="syn-kw">if</span> <span class="syn-kw">constexpr</span> (<span class="syn-kw">sizeof</span>(ElementType) &lt;= <span class="syn-num">255</span> &amp;&amp; <span class="syn-kw">alignof</span>(ElementType) &lt;= <span class="syn-num">255</span>)
+     {
+         ArrayNum = UE::Core::Private::ReallocGrow1_DoAlloc_Tiny&lt;...&gt;(...);
+     }
+     <span class="syn-kw">else</span>
+     {
+         ArrayNum = UE::Core::Private::ReallocGrow1_DoAlloc&lt;...&gt;(...);
+     }
+ }
+ SizeType OldArrayNum = ArrayNum;
+ ArrayNum++;
+ <span class="syn-kw">void</span>* Ptr = (<span class="syn-kw">char</span>*)AllocatorInstance.GetAllocation() + <span class="syn-kw">sizeof</span>(ElementType) * OldArrayNum;
+ (<span class="syn-kw">void</span>)<span class="syn-kw">new</span> (Ptr) ElementType(Forward&lt;ArgsType&gt;(Args)...);  <span class="syn-comment">// ← placement new!</span>
+ <span class="syn-kw">return</span> OldArrayNum;
+}</code></pre></p><p><h3 id="add-construct-then-move-or-copy">Add — Construct Then Move (or Copy)</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Containers/Array.h, lines 2948-2965</span></p><p><span class="syn-comment">// Move semantics version</span>
+SizeType Add(ElementType&amp;&amp; Item)
+{
+ CheckAddress(&amp;Item);
+ <span class="syn-kw">return</span> Emplace(MoveTempIfPossible(Item));  <span class="syn-comment">// delegates to Emplace!</span>
+}</p><p><span class="syn-comment">// Copy version</span>
+SizeType Add(<span class="syn-kw">const</span> ElementType&amp; Item)
+{
+ CheckAddress(&amp;Item);
+ <span class="syn-kw">return</span> Emplace(Item);  <span class="syn-comment">// delegates to Emplace!</span>
+}</code></pre></p><p><h3 id="push-stack-interface">Push — Stack Interface</h3></p><p><pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Containers/Array.h, lines 1463-1479</span></p><p><span class="syn-kw">void</span> Push(ElementType&amp;&amp; Item)
+{
+ Add(MoveTempIfPossible(Item));  <span class="syn-comment">// delegates to Add, which delegates to Emplace</span>
+}</p><p><span class="syn-kw">void</span> Push(<span class="syn-kw">const</span> ElementType&amp; Item)
+{
+ Add(Item);
+}</code></pre></p><p><h3 id="when-emplace-is-better">When Emplace Is Better</h3></p><p><table><tr><th>Scenario</th><th>Use</th><th>Why</th></tr><tr><td><strong>Constructing from constructor args</strong></td><td><code>Emplace</code></td><td>Zero copies/moves. Object is born directly in array memory.</td></tr><tr><td><strong>You already have the object</strong></td><td><code>Add</code> with <code>MoveTemp</code></td><td>One move into the array. Same as Emplace but clearer intent.</td></tr><tr><td><strong>You have a const ref</strong></td><td><code>Add</code></td><td>One copy. Emplace would also copy.</td></tr><tr><td><strong>Complex multi-arg constructor</strong></td><td><code>Emplace</code></td><td>Avoids temporary + move. <code>Emplace(A, B, C)</code> vs <code>Add(FMyType(A, B, C))</code></td></tr></table>
+<blockquote class="callout callout-example"><strong>Before/After: Emplace saves a temporary</strong><br></blockquote>
+<pre><code class="language-cpp"><span class="syn-kw">struct</span> FWeaponInfo
+{
+ <span class="syn-type">FString</span> Name;
+ int32 Damage;
+ <span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` Tags;</p><p> FWeaponInfo(<span class="syn-type">FString</span> InName, int32 InDamage, <span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` InTags)
+     : Name(MoveTemp(InName)), Damage(InDamage), Tags(MoveTemp(InTags))
+ {}
+};</p><p><span class="syn-type">TArray</span>`&lt;FWeaponInfo&gt;` Weapons;</p><p><span class="syn-comment">// ❌ With Add: construct temporary, move into array, destroy temporary</span>
+<span class="syn-comment">//    1 construction + 1 move + 1 destruction = 3 operations</span>
+Weapons.Add(FWeaponInfo(TEXT(\<span class="syn-string">"Sword\"), 50, {TEXT(\"melee\"), TEXT(\"sharp\")}));</p><p>// ✅ With Emplace: construct directly in array memory
+//    1 construction = 1 operation
+Weapons.Emplace(TEXT(\"Sword\"), 50, TArray`&lt;FString&gt;`{TEXT(\"melee\"), TEXT(\"sharp\")});
+``</p><p>For a simple `int` this doesn't matter. For types with heap allocations (`FString`, `TArray` members), Emplace skips the temporary's heap allocation + deallocation.</p><p>---</p><p>## TMap::Add, Emplace, and FindOrAdd — Verified Source</span></code></pre>
+<pre><code class="language-cpp"><span class="syn-comment">// Source: Engine/Source/Runtime/Core/Public/Containers/Map.h.inl</span></p><p><span class="syn-comment">// Add — 4 overloads covering all key/value ref combos (lines 323-326)</span>
+ValueType&amp; Add(<span class="syn-kw">const</span> KeyType&amp;  InKey, <span class="syn-kw">const</span> ValueType&amp;  InValue) { <span class="syn-kw">return</span> Emplace(InKey, InValue); }
+ValueType&amp; Add(<span class="syn-kw">const</span> KeyType&amp;  InKey,       ValueType&amp;&amp; InValue) { <span class="syn-kw">return</span> Emplace(InKey, MoveTempIfPossible(InValue)); }
+ValueType&amp; Add(      KeyType&amp;&amp; InKey, <span class="syn-kw">const</span> ValueType&amp;  InValue) { <span class="syn-kw">return</span> Emplace(MoveTempIfPossible(InKey), InValue); }
+ValueType&amp; Add(      KeyType&amp;&amp; InKey,       ValueType&amp;&amp; InValue) { <span class="syn-kw">return</span> Emplace(MoveTempIfPossible(InKey), MoveTempIfPossible(InValue)); }</p><p><span class="syn-comment">// Emplace — delegates to TSet::Emplace (lines 363-392)</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> InitKeyType = KeyType, <span class="syn-kw">typename</span> InitValueType = ValueType&gt;
+ValueType&amp; Emplace(InitKeyType&amp;&amp; InKey, InitValueType&amp;&amp; InValue)
+{
+ <span class="syn-kw">const</span> FSetElementId PairId = Pairs.Emplace(
+     TPairInitializer&lt;InitKeyType&amp;&amp;, InitValueType&amp;&amp;&gt;(
+         Forward&lt;InitKeyType&gt;(InKey), Forward&lt;InitValueType&gt;(InValue)
+     )
+ );
+ <span class="syn-kw">return</span> Pairs[PairId].Value;
+}</p><p><span class="syn-comment">// FindOrAdd — find existing or construct default (lines 564-627)</span>
+<span class="syn-kw">template</span> &lt;<span class="syn-kw">typename</span> InitKeyType&gt;
+`[[nodiscard]]` ValueType&amp; FindOrAddImpl(uint32 KeyHash, InitKeyType&amp;&amp; Key)
+{
+ <span class="syn-kw">if</span> (<span class="syn-kw">auto</span>* Pair = Pairs.FindByHash(KeyHash, Key))
+ {
+     <span class="syn-kw">return</span> Pair-&gt;Value;  <span class="syn-comment">// found — return existing</span>
+ }
+ <span class="syn-kw">return</span> AddByHash(KeyHash, Forward&lt;InitKeyType&gt;(Key));  <span class="syn-comment">// not found — add default</span>
+}</code></pre></p><p><h3 id="findoradd-vs-emplace-for-maps">FindOrAdd vs Emplace for Maps</h3></p><p><table><tr><th>Approach</th><th>When to use</th><th>What happens</th></tr><tr><td><strong><code>FindOrAdd(Key)</code></strong></td><td>You want the value to exist, don't care if it's new or existing</td><td>Finds and returns existing, <strong>or</strong> default-constructs and returns new</td></tr><tr><td><strong><code>FindOrAdd(Key, Value)</code></strong></td><td>You have a value ready, want find-or-create</td><td>Finds and returns existing, <strong>or</strong> copies/moves your value in</td></tr><tr><td><strong><code>Emplace(Key, Args...)</code></strong></td><td>You always want to set/replace</td><td>Always inserts. Overwrites if key exists.</td></tr></table>
+<blockquote class="callout callout-warning"><strong><code>FindOrAdd</code> vs <code>Emplace</code> semantics differ</strong><br><code>FindOrAdd</code> will <strong>not</strong> overwrite an existing value. It returns the existing one.<br><code>Emplace</code> (via <code>Add</code>) <strong>will</strong> overwrite. Use the right one for your intent.</blockquote></p><p><hr></p><p><h2 id="rvo-and-when-not-to-use-movetemp">RVO and When NOT to Use MoveTemp</h2></p><p><h3 id="return-value-optimization-rvo">Return Value Optimization (RVO)</h3></p><p>The compiler is <strong>required</strong> to elide copies/moves when returning a local temporary — since C++17:</p><p><pre><code class="language-cpp"><span class="syn-type">FString</span> BuildName()
+{
+ <span class="syn-type">FString</span> Result = TEXT(\<span class="syn-string">"Hello\");
+ Result += TEXT(\" World\");
+ return Result;  // ✅ RVO applies — no copy, no move. Object constructed in caller's frame.
+}</span></code></pre>
+<pre><code class="language-cpp"><span class="syn-type">FString</span> BuildName()
+{
+ <span class="syn-type">FString</span> Result = TEXT(\<span class="syn-string">"Hello\");
+ Result += TEXT(\" World\");
+ return MoveTemp(Result);  // ❌ PESSIMIZATION! MoveTemp DISABLES RVO
+                            // RVO requires the return expression to be the exact local
+                            // variable name. MoveTemp(Result) is a cast expression,
+                            // forcing a move constructor call.
+}</span></code></pre></p><p><blockquote class="callout callout-danger"><strong>Never MoveTemp a return value</strong><br><code>return MoveTemp(x);</code> is strictly worse than <code>return x;</code>. The compiler elides <code>return x;</code> entirely. Forcing a move guarantees at least a move constructor call that would otherwise be zero-cost.</blockquote></p><p><h3 id="when-not-to-movetemp">When NOT to MoveTemp</h3></p><p><table><tr><th>Situation</th><th>Why not</th><th>What to do</th></tr><tr><td><strong>Returning a local variable</strong></td><td>Kills RVO</td><td><code>return x;</code> — compiler handles it</td></tr><tr><td><strong>Const object</strong></td><td>Can't move from const — falls back to copy anyway. MoveTemp static_asserts on it.</td><td>Don't mark things const if you intend to move them later</td></tr><tr><td><strong>You still need the source</strong></td><td>Moving leaves the source in a valid-but-unspecified state</td><td>Copy or restructure code</td></tr><tr><td><strong>Trivial types</strong> (<code>int</code>, <code>float</code>, <code>enum</code>)</td><td>Moving a trivial type is a copy. No performance benefit.</td><td>Just assign normally</td></tr><tr><td><strong>Before the last use</strong></td><td>If you MoveTemp then access the variable, you're reading a moved-from husk</td><td>MoveTemp only on the <strong>last use</strong></td></tr></table>
+<hr></p><p><h2 id="common-anti-patterns">Common Anti-Patterns</h2></p><p><h3 id="-anti-pattern-1-moving-then-using">❌ Anti-Pattern 1: Moving then using</h3></p><p><pre><code class="language-cpp"><span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` Items = BuildItems();
+ProcessItems(MoveTemp(Items));  <span class="syn-comment">// Items is now empty/unspecified</span>
+UE_LOG(LogTemp, Log, TEXT(\<span class="syn-string">"Processed %d items\"), Items.Num());  // BUG: reads 0!</span></code></pre></p><p><strong>Fix:</strong> Move on the last use, or log before moving.</p><p><h3 id="-anti-pattern-2-forgetting-movetemp-on-last-use">❌ Anti-Pattern 2: Forgetting MoveTemp on last use</h3></p><p><pre><code class="language-cpp"><span class="syn-type">TArray</span>`&lt;<span class="syn-type">FString</span>&gt;` Items = BuildItems();
+ProcessItems(Items);  <span class="syn-comment">// Copies the whole array (expensive!)</span>
+Items.Empty();        <span class="syn-comment">// Then empties the original — copy was pointless</span></code></pre></p><p><strong>Fix:</strong> <code>ProcessItems(MoveTemp(Items));</code> — one move, no deep copy.</p><p><h3 id="-anti-pattern-3-movetemp-on-const">❌ Anti-Pattern 3: MoveTemp on const</h3></p><p><pre><code class="language-cpp"><span class="syn-kw">const</span> <span class="syn-type">FString</span> Name = GetName();
+SomeMap.Add(MoveTemp(Name), Value);  <span class="syn-comment">// COMPILE ERROR: \"MoveTemp called on a const object\"</span></code></pre></p><p><strong>Fix:</strong> Don't mark variables <code>const</code> if you plan to move them. Or use <code>CopyTemp</code>.</p><p><h3 id="-anti-pattern-4-moving-from-a-reference-you-don-t-own">❌ Anti-Pattern 4: Moving from a reference you don't own</h3></p><p><pre><code class="language-cpp"><span class="syn-kw">void</span> ProcessWeapons(<span class="syn-kw">const</span> <span class="syn-type">TArray</span>`&lt;FWeaponInfo&gt;`&amp; Weapons)
+{
+ <span class="syn-comment">// ...</span>
+ GlobalList.Append(MoveTemp(Weapons));  <span class="syn-comment">// BUG: const ref can't be moved</span>
+}</code></pre></p><p>The compiler catches this — <code>const T&amp;</code> → <code>MoveTemp</code> → static_assert fail.</p><p><hr></p><p><h2 id="two-way-explanation">Two-Way Explanation</h2></p><p><h3 id="for-someone-new-to-c">For someone new to C++</h3></p><p>Imagine two people holding a heavy box.</p><p><strong>Copying</strong>: You look at the box, go buy identical materials, build a new box, fill it with the same items, then hand it to your friend. The original person still has their box. Slow and expensive.</p><p><strong>Moving</strong>: The person holding the box says \"here, take it.\" They hand it over. Now you have the box, they have empty hands. Fast — just a change of ownership.</p><p><code>MoveTemp</code> is you telling the compiler: \"This person is done with the box. Take it from them.\" The compiler, being cautious, asks: \"Are you sure they're done? Are you sure it's not a const box they can't give away?\" The <code>static_assert</code>s are that double-check.</p><p><code>Emplace</code> is even better: instead of building the box somewhere else and moving it into the truck, you build it directly in the truck bed. Zero handoffs.</p><p><h3 id="for-someone-who-knows-c">For someone who knows C++</h3></p><p><code>MoveTemp<T>(Obj)</code> is a conditional <code>static_cast<T&amp;&amp;>(Obj)</code> with two compile-time guards. Template argument deduction through a forwarding reference collapses <code>T</code> to either <code>X&amp;</code> (lvalue) or <code>X</code> (rvalue). The first <code>static_assert</code> only passes when <code>T</code> is a reference type — meaning the argument was an lvalue. The second checks that <code>remove_reference_t<T></code> is not const-qualified.</p><p><code>Emplace</code> uses placement <code>new</code> with <code>Forward<ArgsType>(Args)...</code> — perfect forwarding — to construct the element directly in the container's storage. This avoids the temporary → move → destroy cycle that <code>Add(TempObj)</code> incurs. For types with non-trivial constructors or heap-backed members, Emplace saves one constructor invocation, one move constructor invocation, and one destructor invocation.</p><p><code>MoveTempIfPossible</code> exists because container templates don't know in advance whether the caller passed an lvalue or rvalue. The <code>static_assert</code>s in <code>MoveTemp</code> would break generic container code that legitimately receives both. The \"IfPossible\" variant trusts overload resolution: if a move constructor exists for the deduced type, it fires; if not (const, no move ctor), the copy constructor is selected.</p><p><hr></p><p><h2 id="performance-before-after">Performance: Before/After</h2></p><p><pre><code class="language-cpp"><span class="syn-comment">// A moderately expensive type</span>
+<span class="syn-kw">struct</span> FInventorySlot
+{
+ <span class="syn-type">FName</span> ItemId;
+ <span class="syn-type">TArray</span>`&lt;FStatModifier&gt;` Modifiers;  <span class="syn-comment">// heap-allocated</span>
+ <span class="syn-type">TMap</span>`&lt;<span class="syn-type">FName</span>, <span class="syn-kw">float</span>&gt;` Properties;    <span class="syn-comment">// heap-allocated</span>
+};</p><p><span class="syn-comment">// ❌ BEFORE: 2 deep copies of the TArray + 2 deep copies of the TMap</span>
+<span class="syn-type">TArray</span>`&lt;FInventorySlot&gt;` Slots;
+FInventorySlot Slot = BuildSlot();
+Slots.Add(Slot);                       <span class="syn-comment">// Copy #1 of everything</span>
+Slots.Add(FInventorySlot(Slot));       <span class="syn-comment">// Copy into temporary + Move into array</span>
+                                    <span class="syn-comment">// = 1 deep copy of TArray/TMap (moved) + 1 destruction of temp's husks</span></p><p><span class="syn-comment">// ✅ AFTER: Emplace + MoveTemp</span>
+<span class="syn-type">TArray</span>`&lt;FInventorySlot&gt;` Slots;
+FInventorySlot Slot = BuildSlot();
+Slots.Emplace(MoveTemp(Slot));         <span class="syn-comment">// Move: just pointer theft, 0 heap allocation</span>
+Slots.Emplace(BuildSlot());            <span class="syn-comment">// RVO + Emplace: object constructed directly in array</span></code></pre></p><p><hr></p><p><h2 id="ue-macros-on-movetemp">UE Macros on MoveTemp</h2></p><p><pre><code class="language-cpp">UE_INTRINSIC_CAST UE_REWRITE <span class="syn-kw">constexpr</span> ...</code></pre></p><p><table><tr><th>Macro</th><th>Meaning</th></tr><tr><td><code>UE_INTRINSIC_CAST</code></td><td>Marks the function as a cast-like intrinsic for the compiler — helps optimization</td></tr><tr><td><code>UE_REWRITE</code></td><td>UE-specific optimization hint for the HLSL-like cross-compiler system</td></tr><tr><td><code>constexpr</code></td><td>Evaluable at compile time (though moves typically happen at runtime)</td></tr><tr><td><code>noexcept</code></td><td>Guarantees no exception — required for <code>TArray</code> move constructors to be used in <code>std::vector</code>-like growth</td></tr></table>
+<hr></p><p><h2 id="quick-reference">Quick Reference</h2></p><p><pre><code class="language-">Need to hand ownership of an object to a function?
+ → Pass MoveTemp(Obj) — function takes T&amp;&amp;</p><p>Need to construct directly in a container?
+ → Arr.Emplace(Args...), Map.Emplace(Key, Value)</p><p>Need to add an existing object to a container?
+ → Arr.Add(MoveTemp(Obj))  // one move</p><p>Need to get-or-create in a map?
+ → Map.FindOrAdd(Key)  // default-constructs if missing</p><p>Returning a local from a function?
+ → return Obj;  // NEVER return MoveTemp(Obj)</p><p>Passing to a template where you don't know if it's lvalue/rvalue?
+ → MoveTempIfPossible(Obj)  // used internally by containers</p><p>Need a guaranteed copy (never move)?
+ → CopyTemp(Obj)  // no std:: equivalent</p><p>Perfect-forwarding in your own templates?
+ → Forward`&lt;T&gt;`(Obj)  // preserves value category</code></pre></p><p><hr></p><p><h2 id="exercises-test-your-understanding">Exercises — Test Your Understanding</h2></p><p><ol><li>Why is MoveTemp<code><T></code> stricter than std::move? What does it prevent?</li><li>When using Emplace vs Add on TArray? What performance difference?</li><li>What does UE_INTRINSIC_CAST do? When would you use it?</li><li>Write a move constructor for a UE struct using MoveTemp for its members.</li></ol>
+<h2 id="see-also">See Also</h2></p><p><ul><li><code>MoveTemp</code> source: <code>Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h</code> (lines 524-539)</li><li><code>MoveTempIfPossible</code> source: <code>Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h</code> (lines 541-552)</li><li><code>CopyTemp</code> / <code>CopyTempIfNecessary</code> source: <code>Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h</code> (lines 554-587)</li><li><code>Forward</code> source: <code>Engine/Source/Runtime/Core/Public/Templates/UnrealTemplate.h</code> (lines 590-603)</li><li><code>TArray::Emplace</code> source: <code>Engine/Source/Runtime/Core/Public/Containers/Array.h</code> (lines 2812-2856)</li><li><code>TArray::Add</code> (rvalue + const ref) source: <code>Engine/Source/Runtime/Core/Public/Containers/Array.h</code> (lines 2948-2965)</li><li><code>TArray::Push</code> source: <code>Engine/Source/Runtime/Core/Public/Containers/Array.h</code> (lines 1463-1479)</li><li><code>TMap::Add</code> / <code>Emplace</code> / <code>FindOrAdd</code> source: <code>Engine/Source/Runtime/Core/Public/Containers/Map.h.inl</code> (lines 323-627)</li><li>C++ Reference: <a href="https://en.cppreference.com/w/cpp/language/move_constructor" target="_blank" rel="noopener">Move constructors</a>, <a href="https://en.cppreference.com/w/cpp/language/reference" target="_blank" rel="noopener">Rvalue references</a></li></ul></p>
