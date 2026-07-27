@@ -67,6 +67,10 @@ var ExercisesEngine = (function() {
   function saveProgress(progress) {
     try {
       localStorage.setItem(LS_KEY, JSON.stringify(progress));
+      // Trigger Gist sync if user has token
+      if (typeof Storage !== 'undefined' && Storage.getGistToken && Storage.getGistToken()) {
+        Storage.syncToGist();
+      }
     } catch(e) {
       // storage full — silent fail
     }

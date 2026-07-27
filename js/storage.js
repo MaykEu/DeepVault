@@ -189,6 +189,10 @@ var Storage = {
       bookmarks: this.getAll().bookmarks || [],
       recent: this.getRecent(),
       theme: localStorage.getItem('deepvault_theme') || 'midnight',
+      exerciseProgress: (function(){
+        try { return JSON.parse(localStorage.getItem('deepvault-exercises')); }
+        catch(e) { return null; }
+      })(),
       readStatus: (function(){
         var result = {};
         for (var i = 0; i < localStorage.length; i++) {
@@ -249,6 +253,10 @@ var Storage = {
         this.save({ attempts: merged, bookmarks: bm, recent: remote.recent || local.recent || [] });
         // Restore theme
         if (remote.theme) localStorage.setItem('deepvault_theme', remote.theme);
+        // Restore exercise progress
+        if (remote.exerciseProgress) {
+          localStorage.setItem('deepvault-exercises', JSON.stringify(remote.exerciseProgress));
+        }
         // Restore read status
         if (remote.readStatus) {
           for (var rk in remote.readStatus) {
