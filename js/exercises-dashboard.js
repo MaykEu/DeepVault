@@ -342,6 +342,14 @@ var ExercisesUI = (function() {
     switch(visual.type) {
       case 'right-triangle':
         return _renderRightTriangle(visual, params);
+      case 'unit-circle':
+        return _renderUnitCircle(visual, params);
+      case 'vector-2d':
+        return _renderVector2D(visual, params);
+      case 'reflection':
+        return _renderReflection(visual, params);
+      case 'fov-cone':
+        return _renderFOVCone(visual, params);
       default:
         return '';
     }
@@ -402,6 +410,146 @@ var ExercisesUI = (function() {
       svg += '<text x="' + (x1+28) + '" y="' + (y1-10) + '" fill="var(--accent,#58a6ff)" font-size="13" font-family="sans-serif" font-style="italic">' + angleLabel + '</text>';
     }
     
+    svg += '</svg>';
+    return svg;
+  }
+
+  function _renderUnitCircle(vis, params) {
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
+      return s;
+    }
+    var angleVal = lbl('angle');
+    var radiusVal = lbl('radius') || '1';
+    var pointLabel = lbl('pointLabel');
+    var cx = 140, cy = 100, r = 70;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200" style="width:100%;max-width:280px;display:block;margin:0 auto;">';
+    // Axes
+    svg += '<line x1="30" y1="' + cy + '" x2="250" y2="' + cy + '" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="4 3"/>';
+    svg += '<line x1="' + cx + '" y1="10" x2="' + cx + '" y2="190" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="4 3"/>';
+    // Circle
+    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="rgba(88,166,255,0.05)" stroke="var(--text-secondary)" stroke-width="1.5"/>';
+    // Radius line
+    var ang = parseFloat(angleVal) || 45;
+    var rad = ang * Math.PI / 180;
+    var px = cx + r * Math.cos(rad);
+    var py = cy - r * Math.sin(rad);
+    svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + px + '" y2="' + py + '" stroke="var(--accent,#58a6ff)" stroke-width="1.5"/>';
+    svg += '<circle cx="' + px + '" cy="' + py + '" r="3" fill="var(--accent,#58a6ff)"/>';
+    // Angle arc from 0 to angle
+    var arcR = 20;
+    var ax = cx + arcR, ay = cy;
+    svg += '<path d="M' + ax + ',' + ay + ' A' + arcR + ',' + arcR + ' 0 ' + (ang > 180 ? 1 : 0) + ',1 ' + (cx + arcR*Math.cos(rad)) + ',' + (cy - arcR*Math.sin(rad)) + '" fill="none" stroke="var(--accent,#58a6ff)" stroke-width="1.2"/>';
+    // Labels
+    if (angleVal) svg += '<text x="' + (cx+arcR+10) + '" y="' + (cy-arcR/2) + '" fill="var(--accent,#58a6ff)" font-size="12" font-family="sans-serif" font-style="italic">' + angleVal + '°</text>';
+    if (pointLabel) svg += '<text x="' + (px+8) + '" y="' + (py-6) + '" fill="var(--text-primary)" font-size="11" font-family="sans-serif">' + pointLabel + '</text>';
+    svg += '<text x="' + (cx+5) + '" y="' + (cy-5) + '" fill="var(--text-muted)" font-size="10" font-family="sans-serif">' + radiusVal + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function _renderVector2D(vis, params) {
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
+      return s;
+    }
+    var fromLabel = lbl('fromLabel') || 'A';
+    var toLabel = lbl('toLabel') || 'B';
+    var resultLabel = lbl('resultLabel');
+    var sw = 280, sh = 160;
+    // Fixed origin near center-left
+    var ox = 60, oy = 100;
+    var tx = 210, ty = 50;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:280px;display:block;margin:0 auto;">';
+    // Grid hint
+    svg += '<rect x="20" y="20" width="' + (sw-40) + '" height="' + (sh-40) + '" fill="none" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3 3" rx="4"/>';
+    // Arrow
+    svg += '<line x1="' + ox + '" y1="' + oy + '" x2="' + tx + '" y2="' + ty + '" stroke="var(--accent,#58a6ff)" stroke-width="2"/>';
+    svg += '<polygon points="' + (tx-6) + ',' + (ty-3) + ' ' + tx + ',' + ty + ' ' + (tx-3) + ',' + (ty-6) + '" fill="var(--accent,#58a6ff)"/>';
+    // Component lines
+    svg += '<line x1="' + ox + '" y1="' + oy + '" x2="' + tx + '" y2="' + oy + '" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="4 2"/>';
+    svg += '<line x1="' + tx + '" y1="' + oy + '" x2="' + tx + '" y2="' + ty + '" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="4 2"/>';
+    // Points
+    svg += '<circle cx="' + ox + '" cy="' + oy + '" r="3" fill="var(--text-primary)"/>';
+    svg += '<circle cx="' + tx + '" cy="' + ty + '" r="3" fill="var(--accent,#58a6ff)"/>';
+    // Labels
+    svg += '<text x="' + (ox-10) + '" y="' + (oy+16) + '" fill="var(--text-primary)" font-size="12" font-family="sans-serif" font-weight="600">' + fromLabel + '</text>';
+    svg += '<text x="' + (tx+6) + '" y="' + (ty-6) + '" fill="var(--accent,#58a6ff)" font-size="12" font-family="sans-serif" font-weight="600">' + toLabel + '</text>';
+    if (resultLabel) svg += '<text x="' + ((ox+tx)/2) + '" y="' + ((oy+ty)/2-8) + '" text-anchor="middle" fill="var(--accent,#58a6ff)" font-size="11" font-family="sans-serif">' + resultLabel + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function _renderReflection(vis, params) {
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
+      return s;
+    }
+    var incomingLabel = lbl('incoming') || 'V';
+    var outgoingLabel = lbl('outgoing') || 'R';
+    var normalLabel = lbl('normal') || 'N';
+    var sw = 280, sh = 170;
+    var wx1 = 60, wy1 = 120, wx2 = 220, wy2 = 120; // wall
+    var mx = 140, my = 120; // hit point
+    var ix = 100, iy = 40;  // incoming from
+    var ox = 185, oy = 40;  // outgoing to
+    var nx = mx, ny = my - 50; // normal upward
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:280px;display:block;margin:0 auto;">';
+    // Wall
+    svg += '<line x1="' + wx1 + '" y1="' + wy1 + '" x2="' + wx2 + '" y2="' + wy2 + '" stroke="var(--text-primary)" stroke-width="2.5"/>';
+    // Normal (dashed)
+    svg += '<line x1="' + mx + '" y1="' + my + '" x2="' + nx + '" y2="' + ny + '" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="5 3"/>';
+    // Incoming arrow
+    svg += '<line x1="' + ix + '" y1="' + iy + '" x2="' + mx + '" y2="' + my + '" stroke="#f85149" stroke-width="1.8"/>';
+    svg += '<polygon points="' + (mx-5) + ',' + (my-3) + ' ' + mx + ',' + my + ' ' + (mx-3) + ',' + (my-5) + '" fill="#f85149"/>';
+    // Outgoing arrow
+    svg += '<line x1="' + mx + '" y1="' + my + '" x2="' + ox + '" y2="' + oy + '" stroke="#3fb950" stroke-width="1.8"/>';
+    svg += '<polygon points="' + (ox-5) + ',' + (oy-3) + ' ' + ox + ',' + oy + ' ' + (ox-3) + ',' + (oy-5) + '" fill="#3fb950"/>';
+    // Labels
+    svg += '<text x="' + (ix-26) + '" y="' + (iy+4) + '" fill="#f85149" font-size="11" font-family="sans-serif" font-weight="600">' + incomingLabel + '</text>';
+    svg += '<text x="' + (ox+4) + '" y="' + (oy-4) + '" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="600">' + outgoingLabel + '</text>';
+    svg += '<text x="' + (nx+4) + '" y="' + (ny+4) + '" fill="var(--text-muted)" font-size="11" font-family="sans-serif">' + normalLabel + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function _renderFOVCone(vis, params) {
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
+      return s;
+    }
+    var sw = 280, sh = 180;
+    var cx = 80, cy = 100; // guard position
+    var fx = 200, fy = 100; // forward direction endpoint
+    var coneAngle = parseFloat(lbl('coneAngle')) || 30;
+    var halfRad = coneAngle * Math.PI / 360;
+    var r = 140;
+    var targetLabel = lbl('targetLabel');
+    var tx = parseFloat(lbl('tx')) || 190;
+    var ty = parseFloat(lbl('ty')) || 60;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:280px;display:block;margin:0 auto;">';
+    // FOV cone
+    var dx = fx - cx, dy = fy - cy;
+    var baseAngle = Math.atan2(dy, dx);
+    var a1 = baseAngle - halfRad, a2 = baseAngle + halfRad;
+    svg += '<path d="M' + cx + ',' + cy + ' L' + (cx+r*Math.cos(a1)) + ',' + (cy+r*Math.sin(a1)) + ' A' + r + ',' + r + ' 0 0,1 ' + (cx+r*Math.cos(a2)) + ',' + (cy+r*Math.sin(a2)) + ' Z" fill="rgba(88,166,255,0.06)" stroke="var(--accent,#58a6ff)" stroke-width="1" stroke-dasharray="6 3"/>';
+    // Forward line
+    svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + fx + '" y2="' + fy + '" stroke="var(--accent,#58a6ff)" stroke-width="1.5"/>';
+    svg += '<polygon points="' + (fx-6) + ',' + (fy-3) + ' ' + fx + ',' + fy + ' ' + (fx-3) + ',' + (fy-6) + '" fill="var(--accent,#58a6ff)"/>';
+    // Guard
+    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="var(--text-primary)"/>';
+    // Target
+    svg += '<circle cx="' + tx + '" cy="' + ty + '" r="4" fill="' + (lbl('inCone') === 'yes' ? '#3fb950' : '#f85149') + '"/>';
+    if (targetLabel) svg += '<text x="' + (tx+8) + '" y="' + (ty-6) + '" fill="var(--text-primary)" font-size="11" font-family="sans-serif">' + targetLabel + '</text>';
+    svg += '<text x="' + (cx-12) + '" y="' + (cy+16) + '" fill="var(--text-primary)" font-size="11" font-family="sans-serif">Guard</text>';
     svg += '</svg>';
     return svg;
   }
