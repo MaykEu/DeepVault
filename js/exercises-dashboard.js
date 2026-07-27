@@ -210,7 +210,7 @@ var ExercisesUI = (function() {
         if (vis && vis.type === 'coordinate-3d') {
           var graphDiv = document.getElementById('ex-3d-' + _graphId);
           if (graphDiv) {
-            if (typeof window.render3DScene === 'function') {
+            if (typeof window.render3DGraph === 'function') {
               try {
                 var resolvedParams = qData.question.params || {};
                 var pts = vis.points || [];
@@ -243,7 +243,7 @@ var ExercisesUI = (function() {
               return { from: a.from, to: a.to, label: a.label || '' };
             });
             
-            window.render3DScene(graphDiv, pointData, arrowData);
+            window.render3DGraph(graphDiv, pointData, arrowData);
             _graphId++;
               } catch(e) {
                 console.error('Three.js render failed:', e);
@@ -252,6 +252,40 @@ var ExercisesUI = (function() {
             } else {
               console.warn('window.render3DScene not available');
               graphDiv.innerHTML = '<p style="color:#888;padding:12px;">3D renderer loading...</p>';
+            }
+          }
+        } else if (vis && vis.type === 'fov-cone-3d') {
+          var fovDiv = document.getElementById('ex-3d-' + _graphId);
+          if (fovDiv) {
+            if (typeof window.render3DFOVCone === 'function') {
+              try {
+                var rp = qData.question.params || {};
+                function rcf(e) {
+                  var s = String(e);
+                  for (var p in rp) s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), rp[p]);
+                  var n = parseFloat(s);
+                  if (!isNaN(n) && String(n) === s.trim()) return n;
+                  try { var v = Function('return (' + s + ')')(); if (!isNaN(v)) return v; } catch(_) {}
+                  return parseFloat(s) || 0;
+                }
+                window.render3DFOVCone(fovDiv, {
+                  gx: rcf(vis.guard ? vis.guard.x : '0'),
+                  gy: rcf(vis.guard ? vis.guard.y : '0'),
+                  gz: rcf(vis.guard ? vis.guard.z : '0'),
+                  fx: rcf(vis.forward ? vis.forward.x : '0'),
+                  fy: rcf(vis.forward ? vis.forward.y : '0'),
+                  fz: rcf(vis.forward ? vis.forward.z : '0'),
+                  tx: rcf(vis.target ? vis.target.x : '0'),
+                  ty: rcf(vis.target ? vis.target.y : '0'),
+                  tz: rcf(vis.target ? vis.target.z : '0'),
+                  coneAngle: vis.coneAngle || '60',
+                  guardLabel: vis.guardLabel || 'Guard',
+                  targetLabel: vis.targetLabel || 'E'
+                });
+                _graphId++;
+              } catch(e) {
+                console.error('FOV cone render failed:', e);
+              }
             }
           }
         }
@@ -406,6 +440,7 @@ var ExercisesUI = (function() {
       case 'fov-cone':
         return _renderFOVCone(visual, params);
       case 'coordinate-3d':
+      case 'fov-cone-3d':
         return '<div class="ex-visual-wrap"><div class="ex-3d-graph" id="ex-3d-' + _graphId + '"></div></div>';
       default:
         return '';

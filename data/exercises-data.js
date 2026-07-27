@@ -7228,9 +7228,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7255,9 +7271,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7282,9 +7314,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7309,9 +7357,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7336,9 +7400,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7363,9 +7443,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7390,9 +7486,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
@@ -7417,9 +7529,25 @@ var EXERCISES_DATA = {
                 "If dot > {{threshold}}, the player is within the guard's vision cone."
               ],
               "visual": {
-                "type": "fov-cone",
+                "type": "fov-cone-3d",
                 "coneAngle": "60",
-                "targetLabel": "T"
+                "targetLabel": "P",
+                "guard": {
+                  "x": "0",
+                  "y": "0",
+                  "z": "0"
+                },
+                "forward": {
+                  "x": "{{fx}}",
+                  "y": "{{fy}}",
+                  "z": "{{fz}}"
+                },
+                "target": {
+                  "x": "{{ex}}",
+                  "y": "{{ey}}",
+                  "z": "{{ez}}"
+                },
+                "guardLabel": "Guard"
               }
             },
             {
