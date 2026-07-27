@@ -299,17 +299,6 @@
       "Replication Property Registration"
     ]
   },
-  "ue-networking": {
-    "": [
-      "GAS Networking & Prediction",
-      "Iris Filtering & Prioritization",
-      "Iris Replication System Overview",
-      "Network Roles",
-      "PushModel & Dirty Marking",
-      "RPCs in Unreal Engine",
-      "RepNotifies & OnRep"
-    ]
-  },
   "big-o": {
     "": [
       "04 \u2014 Sorting Algorithms",

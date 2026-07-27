@@ -62,8 +62,8 @@ js/data.js          ← GENERATED — never edit manually
 
 ## Current Stats (updated 2026-07-28)
 
-- 231 notes across 6 categories
-- 208 quizzes, 4,050 questions (100% UE Core coverage)
+- 224 notes across 5 categories
+- 202 quizzes, 4,018 questions (100% UE Core coverage)
 - 2 extracted JS modules: code-highlight.js + wiki-link.js
 - Scroll memory v2: deduplicated listeners, periodic save, safer restore
 - Quiz: numeric equivalence (.5=0.5, 1e3=1000) + per-note poolSize

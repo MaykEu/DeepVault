@@ -17,13 +17,13 @@ const FOLDER_ICONS = {
 
 // Build Learning Path grid HTML — dynamic icons + colors
 function buildLPGrid() {
-  var ids = ['computer-systems','cpp-fundamentals','game-math','ue-core','ue-networking','big-o'];
+  var ids = ['computer-systems','cpp-fundamentals','game-math','ue-core','big-o'];
   var meta = {
     'computer-systems':'Hardware → OS → Concurrency',
     'cpp-fundamentals':'Variables → OOP → Modern C++',
     'game-math':'Trig → Collision → Rendering → Physics',
     'ue-core':'UHT → Casting → Containers → Pointers',
-    'ue-networking':'Roles → RPCs → Replication → Iris',
+    
     'big-o':'Big O → Sorting → Graphs → DP'
   };
   var html = '<div class="lp-grid">';
