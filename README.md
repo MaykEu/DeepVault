@@ -36,16 +36,19 @@ Everything stays on your device — no accounts, no servers, no tracking.
 | 📱 **Mobile** | Responsive design works on phones |
 | 📂 **Subfolders** | Collapsible groups mirror your Obsidian vault structure |
 | ⭐ **Bookmarks** | Bookmark notes for quick access under a dedicated tab |
+| 🎮 **Practice** | 705 game-math exercises across 26 levels — vectors + trigonometry with randomized parameters, mastery-gated progression, SVG diagrams, and scratch pad |
 
 ## Architecture
 
 ```
-data/               ← 5 independent JSON source files
+data/               ← 7 independent JSON/JS source files
 ├── notes.json      ← Note content (vault → convert.py)
 ├── quizzes.json    ← Quiz questions (safe to edit)
 ├── folders.json    ← Folder structure
 ├── projects.json   ← Project notes (vault → convert.py)
-└── reference.json  ← Glossary, Guide, Learning Paths
+├── reference.json  ← Glossary, Guide, Learning Paths
+├── exercises.json  ← Game math exercise templates (325+ questions per topic)
+└── exercises-data.js ← Generated JS variable (exercise data loaded via <script>)
 
 build.py            ← Combines sources → js/data.js (validates first)
 quiz-cli.py         ← Safe quiz management (add, verify, backup)
@@ -53,8 +56,8 @@ test.js             ← Smoke tests (syntax, CSS, quiz format)
 convert.py          ← Vault → data/*.json converter
 index.html          ← Double-click to launch
 favicon.svg         ← Site icon
-css/                ← base.css + layout.css + components.css
-js/                 ← 13 vanilla JS files + generated data.js
+css/                ← base.css + layout.css + components.css + exercises.css
+js/                 ← 16 vanilla JS files + generated data.js
 Obsidian/           ← Bundled Obsidian vault (source of truth for all content)
 SKILL.md            ← Full AI contributor reference
 ```

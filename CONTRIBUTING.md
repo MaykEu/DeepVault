@@ -5,12 +5,14 @@ Thanks for wanting to help! Here's how.
 ## How It Works
 
 ```
-data/                    ← 5 independent JSON source files
+data/                    ← 7 independent JSON/JS source files
 ├── notes.json           ← Note content (vault → convert.py)
 ├── quizzes.json         ← Quiz questions (safe to edit)
 ├── folders.json         ← Folder structure
 ├── projects.json        ← Project notes (vault → convert.py)
-└── reference.json       ← Glossary, Guide, Learning Paths
+├── reference.json       ← Glossary, Guide, Learning Paths
+├── exercises.json       ← Game math exercise templates
+└── exercises-data.js    ← Generated JS variable (exercise data)
 
 python build.py          ← Combines sources → js/data.js (validates first)
 index.html               ← Double-click to launch
@@ -111,6 +113,42 @@ See the full guide in [README.md](README.md#add-a-brand-new-category). Short ver
 ### 5. Improve Documentation
 
 Fix typos, improve explanations, add examples. Update the Obsidian vault source, then run `python build.py`.
+
+### 6. Add Game Math Exercises
+
+The exercise system is separate from quizzes — it's a mastery-gated practice system for game math.
+
+**Architecture:**
+```
+data/exercises.json       ← Question templates with randomized parameters
+data/exercises-data.js    ← Generated JS variable (load via <script>)
+js/exercises-engine.js    ← Core engine (validation, streak, levels, localStorage)
+js/exercises-dashboard.js ← UI (dashboard cards, topic page, practice session, results)
+css/exercises.css         ← All exercise styling
+```
+
+**Template format (in `data/exercises.json`):**
+```json
+{
+  "id": "vec-l1-001",
+  "level": 1,
+  "params": {"p1x": "randint(-30,30)", "p1y": "randint(-30,30)"},
+  "scenario": "Player A at ({{p1x}}, {{p1y}})... What is the vector FROM A TO B?",
+  "solution": "[p2x - p1x, p2y - p1y]",
+  "answerType": "vector3d",
+  "hints": ["Subtract B's coordinates from A's.", "B - A, component by component."],
+  "visual": {"type": "vector-2d", "fromLabel": "A", "toLabel": "B"}
+}
+```
+
+**Rules:**
+- Formula NEVER appears in the scenario — only in hints or solution
+- Use game dev / engine / 3D software contexts, not abstract math
+- Every template must have 2-3 progressive hints
+- Available visual types: `right-triangle`, `unit-circle`, `vector-2d`, `reflection`, `fov-cone`
+- Available answer types: `vector3d`, `scalar_magnitude`, `scalar_degrees`, `scalar_dot`, `yes_no`, `left_right`, `cw_ccw`
+- After editing `exercises.json`, regenerate `exercises-data.js` with `python -c "import json; ..."`
+- See `SKILL.md` § Exercise System for the full reference
 
 ## Pull Request Process
 
