@@ -557,73 +557,95 @@ var ExercisesUI = (function() {
   }
 
   function _renderCoordinate3D(vis, params) {
-    function lbl(key) {
-      if (!vis[key]) return '';
-      var s = vis[key];
-      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
-      return s;
-    }
+    // ── Projection ──────────────────────────────────────────────
+    // UE convention: X=forward (red), Y=right (green), Z=up (blue)
+    // Oblique projection with scale for readability
+    var KS = 6.5;  // pixels per unit
+    var ox = 250, oy = 240;  // origin in SVG space
     
-    // Isometric projection: X=forward (red), Y=right (green), Z=up (blue) — UE convention
     function project(x, y, z) {
-      var scale = 5.5;   // pixels per coordinate unit
-      var sx = 210 + (x - y) * scale * 0.75;
-      var sy = 160 - z * scale - (x + y) * scale * 0.3;
+      var sx = ox + (x - y) * KS * 0.7;
+      var sy = oy - z * KS - (x + y) * KS * 0.35;
       return [sx, sy];
     }
     
-    var sw = 460, sh = 340;
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:500px;height:auto;display:block;margin:0 auto;">';
+    var sw = 500, sh = 400;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:520px;height:auto;display:block;margin:0 auto;">';
     
-    // Background grid on XZ plane (ground plane)
-    for (var g = -12; g <= 12; g += 6) {
-      var g1 = project(g, -12, 0), g2 = project(g, 12, 0);
-      svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.5"/>';
-      g1 = project(-12, g, 0); g2 = project(12, g, 0);
-      svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.5"/>';
-    }
-    
-    // Axes — extend across most of the canvas
-    var axLen = 20;
-    var xEnd = project(axLen, 0, 0), yEnd = project(0, axLen, 0), zEnd = project(0, 0, axLen);
-    var orig = project(0, 0, 0);
-    
-    // X axis (red — forward)
-    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + xEnd[0].toFixed(0) + '" y2="' + xEnd[1].toFixed(0) + '" stroke="#f85149" stroke-width="2.2"/>';
-    svg += '<text x="' + (xEnd[0]+6).toFixed(0) + '" y="' + (xEnd[1]-4).toFixed(0) + '" fill="#f85149" font-size="13" font-family="sans-serif" font-weight="700">X</text>';
-    
-    // Y axis (green — right)  
-    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + yEnd[0].toFixed(0) + '" y2="' + yEnd[1].toFixed(0) + '" stroke="#3fb950" stroke-width="2.2"/>';
-    svg += '<text x="' + (yEnd[0]+6).toFixed(0) + '" y="' + (yEnd[1]-4).toFixed(0) + '" fill="#3fb950" font-size="13" font-family="sans-serif" font-weight="700">Y</text>';
-    
-    // Z axis (blue — up)
-    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + zEnd[0].toFixed(0) + '" y2="' + zEnd[1].toFixed(0) + '" stroke="#58a6ff" stroke-width="2.2"/>';
-    svg += '<text x="' + (zEnd[0]+6).toFixed(0) + '" y="' + (zEnd[1]-4).toFixed(0) + '" fill="#58a6ff" font-size="13" font-family="sans-serif" font-weight="700">Z</text>';
-    
-    // Origin dot
-    svg += '<circle cx="' + orig[0].toFixed(0) + '" cy="' + orig[1].toFixed(0) + '" r="3.5" fill="var(--text-primary)"/>';
-    
-    // Points
-    var points = vis.points || [];
-    var pointCoords = [];
-    
-    // Helper: resolve a coordinate value (handles expressions like "10 + -7")
+    // ── Helper: resolve coordinate expressions ──────────────────
     function resolveCoord(expr) {
       var s = String(expr);
-      // Interpolate any remaining {{param}} markers
       for (var p in params) {
         s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]);
       }
-      // Try simple number first
       var n = parseFloat(s);
       if (!isNaN(n) && String(n) === s.trim()) return n;
-      // Try evaluating as math expression
       try {
         var val = Function('return (' + s + ')')();
         if (!isNaN(val)) return val;
       } catch(e) {}
       return parseFloat(s) || 0;
     }
+    
+    // ── Grid on all 3 planes (XZ=ground, XY=side, YZ=side) ─────
+    var gridRange = 12, gridStep = 2;
+    for (var g = -gridRange; g <= gridRange; g += gridStep) {
+      if (g === 0) continue;
+      // XZ plane — horizontal grid lines running parallel to X
+      var a = project(-gridRange, g, 0), b = project(gridRange, g, 0);
+      svg += '<line x1="' + a[0].toFixed(0) + '" y1="' + a[1].toFixed(0) + '" x2="' + b[0].toFixed(0) + '" y2="' + b[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.4" opacity="0.6"/>';
+      // XZ plane — lines running parallel to Y
+      a = project(g, -gridRange, 0); b = project(g, gridRange, 0);
+      svg += '<line x1="' + a[0].toFixed(0) + '" y1="' + a[1].toFixed(0) + '" x2="' + b[0].toFixed(0) + '" y2="' + b[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.4" opacity="0.6"/>';
+    }
+    
+    // ── Axes (positive direction only — drawn as solid rays) ────
+    var axLen = 12;
+    var orig = project(0, 0, 0);
+    var xPos = project(axLen, 0, 0), xNeg = project(-axLen, 0, 0);
+    var yPos = project(0, axLen, 0), yNeg = project(0, -axLen, 0);
+    var zPos = project(0, 0, axLen), zNeg = project(0, 0, -axLen);
+    
+    // Negative half-axes (dashed, subtle)
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + xNeg[0].toFixed(0) + '" y2="' + xNeg[1].toFixed(0) + '" stroke="#f85149" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>';
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + yNeg[0].toFixed(0) + '" y2="' + yNeg[1].toFixed(0) + '" stroke="#3fb950" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>';
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + zNeg[0].toFixed(0) + '" y2="' + zNeg[1].toFixed(0) + '" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/>';
+    
+    // Positive half-axes (solid, thick)
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + xPos[0].toFixed(0) + '" y2="' + xPos[1].toFixed(0) + '" stroke="#f85149" stroke-width="2.5" stroke-linecap="round"/>';
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + yPos[0].toFixed(0) + '" y2="' + yPos[1].toFixed(0) + '" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round"/>';
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + zPos[0].toFixed(0) + '" y2="' + zPos[1].toFixed(0) + '" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round"/>';
+    
+    // ── Tick marks and numbering on each positive axis ──────────
+    for (var t = 2; t <= 12; t += 2) {
+      var tickSize = 4;
+      // X axis ticks
+      var tx = project(t, 0, 0);
+      svg += '<line x1="' + tx[0].toFixed(0) + '" y1="' + (tx[1]-tickSize).toFixed(0) + '" x2="' + tx[0].toFixed(0) + '" y2="' + (tx[1]+tickSize).toFixed(0) + '" stroke="#f85149" stroke-width="1.2"/>';
+      svg += '<text x="' + tx[0].toFixed(0) + '" y="' + (tx[1]+14).toFixed(0) + '" text-anchor="middle" fill="#f85149" font-size="9" font-family="monospace">' + t + '</text>';
+      
+      // Y axis ticks
+      var ty = project(0, t, 0);
+      svg += '<line x1="' + (ty[0]-tickSize).toFixed(0) + '" y1="' + ty[1].toFixed(0) + '" x2="' + (ty[0]+tickSize).toFixed(0) + '" y2="' + ty[1].toFixed(0) + '" stroke="#3fb950" stroke-width="1.2"/>';
+      svg += '<text x="' + (ty[0]-10).toFixed(0) + '" y="' + (ty[1]+12).toFixed(0) + '" text-anchor="middle" fill="#3fb950" font-size="9" font-family="monospace">' + t + '</text>';
+      
+      // Z axis ticks
+      var tz = project(0, 0, t);
+      svg += '<line x1="' + (tz[0]-tickSize).toFixed(0) + '" y1="' + tz[1].toFixed(0) + '" x2="' + (tz[0]+tickSize).toFixed(0) + '" y2="' + tz[1].toFixed(0) + '" stroke="#58a6ff" stroke-width="1.2"/>';
+      svg += '<text x="' + (tz[0]-12).toFixed(0) + '" y="' + (tz[1]+3).toFixed(0) + '" text-anchor="end" fill="#58a6ff" font-size="9" font-family="monospace">' + t + '</text>';
+    }
+    
+    // ── Axis labels at tips ─────────────────────────────────────
+    svg += '<text x="' + (xPos[0]+8).toFixed(0) + '" y="' + (xPos[1]-6).toFixed(0) + '" fill="#f85149" font-size="14" font-family="sans-serif" font-weight="800">X</text>';
+    svg += '<text x="' + (yPos[0]+8).toFixed(0) + '" y="' + (yPos[1]-6).toFixed(0) + '" fill="#3fb950" font-size="14" font-family="sans-serif" font-weight="800">Y</text>';
+    svg += '<text x="' + (zPos[0]+8).toFixed(0) + '" y="' + (zPos[1]-6).toFixed(0) + '" fill="#58a6ff" font-size="14" font-family="sans-serif" font-weight="800">Z</text>';
+    
+    // ── Origin dot ──────────────────────────────────────────────
+    svg += '<circle cx="' + orig[0].toFixed(0) + '" cy="' + orig[1].toFixed(0) + '" r="4.5" fill="var(--text-primary)"/>';
+    
+    // ── Points ──────────────────────────────────────────────────
+    var points = vis.points || [];
+    var pointCoords = [];
     
     for (var pi = 0; pi < points.length; pi++) {
       var pt = points[pi];
@@ -634,7 +656,18 @@ var ExercisesUI = (function() {
       pointCoords.push({x: px, y: py, z: pz, sx: proj[0], sy: proj[1], label: pt.label || ''});
     }
     
-    // Arrows between points
+    // ── Drop lines to ground plane (XZ) for each point ──────────
+    for (var di = 0; di < pointCoords.length; di++) {
+      var dp = pointCoords[di];
+      if (dp.z !== 0) {
+        var ground = project(dp.x, dp.y, 0);
+        svg += '<line x1="' + dp.sx.toFixed(0) + '" y1="' + dp.sy.toFixed(0) + '" x2="' + ground[0].toFixed(0) + '" y2="' + ground[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 3" opacity="0.5"/>';
+        // Small dot on ground
+        svg += '<circle cx="' + ground[0].toFixed(0) + '" cy="' + ground[1].toFixed(0) + '" r="1.5" fill="var(--text-muted)" opacity="0.5"/>';
+      }
+    }
+    
+    // ── Arrows between points ───────────────────────────────────
     var arrows = vis.arrows || [];
     for (var ai = 0; ai < arrows.length; ai++) {
       var arr = arrows[ai];
@@ -642,44 +675,39 @@ var ExercisesUI = (function() {
       var to = pointCoords[arr.to];
       if (!from || !to) continue;
       
-      // Dashed component lines (drop to ground plane)
-      if (arr.showComponents) {
-        var g1 = project(from.x, from.y, 0);
-        var g2 = project(to.x, to.y, 0);
-        svg += '<line x1="' + from.sx.toFixed(0) + '" y1="' + from.sy.toFixed(0) + '" x2="' + g1[0].toFixed(0) + '" y2="' + g1[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
-        svg += '<line x1="' + to.sx.toFixed(0) + '" y1="' + to.sy.toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
-        svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
-      }
-      
-      // Main vector arrow
-      svg += '<line x1="' + from.sx.toFixed(0) + '" y1="' + from.sy.toFixed(0) + '" x2="' + to.sx.toFixed(0) + '" y2="' + to.sy.toFixed(0) + '" stroke="var(--accent,#d2991d)" stroke-width="2.5"/>';
+      // Main vector arrow (thick gold)
+      svg += '<line x1="' + from.sx.toFixed(0) + '" y1="' + from.sy.toFixed(0) + '" x2="' + to.sx.toFixed(0) + '" y2="' + to.sy.toFixed(0) + '" stroke="var(--accent,#d2991d)" stroke-width="3"/>';
       
       // Arrowhead
       var adx = to.sx - from.sx, ady = to.sy - from.sy;
       var alen = Math.sqrt(adx*adx + ady*ady);
-      if (alen > 0.1) {
+      if (alen > 0.5) {
         var ux = adx / alen, uy = ady / alen;
-        var ahs = 9;
-        svg += '<polygon points="' + (to.sx - ux*ahs + uy*4).toFixed(0) + ',' + (to.sy - uy*ahs - ux*4).toFixed(0) + ' ' + to.sx.toFixed(0) + ',' + to.sy.toFixed(0) + ' ' + (to.sx - ux*ahs - uy*4).toFixed(0) + ',' + (to.sy - uy*ahs + ux*4).toFixed(0) + '" fill="var(--accent,#d2991d)"/>';
+        var ahs = 11;
+        svg += '<polygon points="' + (to.sx - ux*ahs + uy*5).toFixed(0) + ',' + (to.sy - uy*ahs - ux*5).toFixed(0) + ' ' + to.sx.toFixed(0) + ',' + to.sy.toFixed(0) + ' ' + (to.sx - ux*ahs - uy*5).toFixed(0) + ',' + (to.sy - uy*ahs + ux*5).toFixed(0) + '" fill="var(--accent,#d2991d)"/>';
       }
       
       if (arr.label) {
-        var mx = (from.sx + to.sx) / 2, my = (from.sy + to.sy) / 2 - 10;
-        svg += '<text x="' + mx.toFixed(0) + '" y="' + my.toFixed(0) + '" text-anchor="middle" fill="var(--accent,#d2991d)" font-size="12" font-family="sans-serif" font-weight="600">' + arr.label + '</text>';
+        var mx = (from.sx + to.sx) / 2, my = (from.sy + to.sy) / 2 - 12;
+        svg += '<text x="' + mx.toFixed(0) + '" y="' + my.toFixed(0) + '" text-anchor="middle" fill="var(--accent,#d2991d)" font-size="13" font-family="sans-serif" font-weight="700">' + arr.label + '</text>';
       }
     }
     
-    // Point dots and labels
+    // ── Point dots and labels ───────────────────────────────────
     for (var pi2 = 0; pi2 < pointCoords.length; pi2++) {
       var pc = pointCoords[pi2];
-      var isB = pi2 === 1; // highlight point B
-      svg += '<circle cx="' + pc.sx.toFixed(0) + '" cy="' + pc.sy.toFixed(0) + '" r="5" fill="' + (isB ? 'var(--accent,#d2991d)' : 'var(--text-primary)') + '" stroke="var(--bg-primary)" stroke-width="1.5"/>';
+      var isB = pi2 === 1; // highlight the second point
+      var dotColor = isB ? 'var(--accent,#d2991d)' : 'var(--text-primary)';
+      
+      svg += '<circle cx="' + pc.sx.toFixed(0) + '" cy="' + pc.sy.toFixed(0) + '" r="6" fill="' + dotColor + '" stroke="var(--bg-primary)" stroke-width="2"/>';
+      
       if (pc.label) {
-        svg += '<text x="' + (pc.sx+8).toFixed(0) + '" y="' + (pc.sy-6).toFixed(0) + '" fill="' + (isB ? 'var(--accent,#d2991d)' : 'var(--text-primary)') + '" font-size="13" font-family="sans-serif" font-weight="700">' + pc.label + '</text>';
+        svg += '<text x="' + (pc.sx+10).toFixed(0) + '" y="' + (pc.sy-8).toFixed(0) + '" fill="' + dotColor + '" font-size="14" font-family="sans-serif" font-weight="800">' + pc.label + '</text>';
       }
-      // Show coordinates
-      var coordStr = '(' + pc.x.toFixed(1) + ', ' + pc.y.toFixed(1) + ', ' + pc.z.toFixed(1) + ')';
-      svg += '<text x="' + (pc.sx+8).toFixed(0) + '" y="' + (pc.sy+12).toFixed(0) + '" fill="var(--text-muted)" font-size="10" font-family="monospace">' + coordStr + '</text>';
+      
+      // Coordinate annotation
+      var coordStr = '(' + pc.x.toFixed(0) + ', ' + pc.y.toFixed(0) + ', ' + pc.z.toFixed(0) + ')';
+      svg += '<text x="' + (pc.sx+10).toFixed(0) + '" y="' + (pc.sy+10).toFixed(0) + '" fill="var(--text-muted)" font-size="11" font-family="monospace">' + coordStr + '</text>';
     }
     
     svg += '</svg>';

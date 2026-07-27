@@ -14,12 +14,12 @@
               "id": "vec-l1-001",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -59,12 +59,12 @@
               "id": "vec-l1-002",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -104,12 +104,12 @@
               "id": "vec-l1-003",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -149,12 +149,12 @@
               "id": "vec-l1-004",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -194,12 +194,12 @@
               "id": "vec-l1-005",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -239,12 +239,12 @@
               "id": "vec-l1-006",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -284,12 +284,12 @@
               "id": "vec-l1-007",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -329,12 +329,12 @@
               "id": "vec-l1-008",
               "level": 1,
               "params": {
-                "p1x": "randint(-30, 30)",
-                "p1y": "randint(-30, 30)",
-                "p1z": "randint(-30, 30)",
-                "p2x": "randint(-30, 30)",
-                "p2y": "randint(-30, 30)",
-                "p2z": "randint(-30, 30)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "Two players are in a 3D arena. Player A is at ({{p1x}}, {{p1y}}, {{p1z}}) and Player B is at ({{p2x}}, {{p2y}}, {{p2z}}). What is the vector FROM Player A TO Player B?",
               "solution": "[p2x - p1x, p2y - p1y, p2z - p1z]",
@@ -374,12 +374,12 @@
               "id": "vec-l1-009",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -419,12 +419,12 @@
               "id": "vec-l1-010",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -464,12 +464,12 @@
               "id": "vec-l1-011",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -509,12 +509,12 @@
               "id": "vec-l1-012",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -554,12 +554,12 @@
               "id": "vec-l1-013",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -599,12 +599,12 @@
               "id": "vec-l1-014",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -644,12 +644,12 @@
               "id": "vec-l1-015",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -689,12 +689,12 @@
               "id": "vec-l1-016",
               "level": 1,
               "params": {
-                "start_x": "randint(-20, 20)",
-                "start_y": "randint(-20, 20)",
-                "start_z": "randint(-20, 20)",
-                "dx": "randint(-15, 15)",
-                "dy": "randint(-15, 15)",
-                "dz": "randint(-15, 15)"
+                "start_x": "randint(-12,12)",
+                "start_y": "randint(-12,12)",
+                "start_z": "randint(-12,12)",
+                "dx": "randint(-12,12)",
+                "dy": "randint(-12,12)",
+                "dz": "randint(-12,12)"
               },
               "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
@@ -734,12 +734,12 @@
               "id": "vec-l1-017",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -772,12 +772,12 @@
               "id": "vec-l1-018",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -810,12 +810,12 @@
               "id": "vec-l1-019",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -848,12 +848,12 @@
               "id": "vec-l1-020",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -886,12 +886,12 @@
               "id": "vec-l1-021",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -924,12 +924,12 @@
               "id": "vec-l1-022",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -962,12 +962,12 @@
               "id": "vec-l1-023",
               "level": 1,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "Two allies want to meet exactly halfway. Ally A is at ({{ax}}, {{ay}}, {{az}}). Ally B is at ({{bx}}, {{by}}, {{bz}}). What position should they meet at?",
               "solution": "[(ax + bx) / 2, (ay + by) / 2, (az + bz) / 2]",
@@ -1000,9 +1000,9 @@
               "id": "vec-l1-024",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1059,9 +1059,9 @@
               "id": "vec-l1-025",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1118,9 +1118,9 @@
               "id": "vec-l1-026",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1177,9 +1177,9 @@
               "id": "vec-l1-027",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1236,9 +1236,9 @@
               "id": "vec-l1-028",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1295,9 +1295,9 @@
               "id": "vec-l1-029",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1354,9 +1354,9 @@
               "id": "vec-l1-030",
               "level": 1,
               "params": {
-                "p1x": "randint(-20, 20)",
-                "p1y": "randint(-20, 20)",
-                "p1z": "randint(-20, 20)",
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
                 "v1x": "randint(-10, 10)",
                 "v1y": "randint(-10, 10)",
                 "v1z": "randint(-10, 10)",
@@ -1419,12 +1419,12 @@
               "id": "vec-l2-001",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1464,12 +1464,12 @@
               "id": "vec-l2-002",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1509,12 +1509,12 @@
               "id": "vec-l2-003",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1554,12 +1554,12 @@
               "id": "vec-l2-004",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1599,12 +1599,12 @@
               "id": "vec-l2-005",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1644,12 +1644,12 @@
               "id": "vec-l2-006",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1689,12 +1689,12 @@
               "id": "vec-l2-007",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1734,12 +1734,12 @@
               "id": "vec-l2-008",
               "level": 2,
               "params": {
-                "p1x": "randint(-50, 50)",
-                "p1y": "randint(-50, 50)",
-                "p1z": "randint(-50, 50)",
-                "p2x": "randint(-50, 50)",
-                "p2y": "randint(-50, 50)",
-                "p2z": "randint(-50, 50)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A player at ({{p1x}}, {{p1y}}, {{p1z}}) needs to reach an objective at ({{p2x}}, {{p2y}}, {{p2z}}). What is the straight-line distance between them? Round to 2 decimals.",
               "solution": "sqrt((p2x - p1x)**2 + (p2y - p1y)**2 + (p2z - p1z)**2)",
@@ -1779,12 +1779,12 @@
               "id": "vec-l2-009",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -1826,12 +1826,12 @@
               "id": "vec-l2-010",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -1873,12 +1873,12 @@
               "id": "vec-l2-011",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -1920,12 +1920,12 @@
               "id": "vec-l2-012",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -1967,12 +1967,12 @@
               "id": "vec-l2-013",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -2014,12 +2014,12 @@
               "id": "vec-l2-014",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -2061,12 +2061,12 @@
               "id": "vec-l2-015",
               "level": 2,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "ex": "randint(-30, 30)",
-                "ey": "randint(-30, 30)",
-                "ez": "randint(-30, 30)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
                 "reach": "randint(5, 30, 5)"
               },
               "scenario": "A melee weapon has a reach of {{reach}} meters. The player is at ({{px}}, {{py}}, {{pz}}) and an enemy is at ({{ex}}, {{ey}}, {{ez}}). Is the enemy within melee range? (Answer 'yes' or 'no')",
@@ -2108,15 +2108,15 @@
               "id": "vec-l2-016",
               "level": 2,
               "params": {
-                "px": "randint(-40, 40)",
-                "py": "randint(-40, 40)",
-                "pz": "randint(-40, 40)",
-                "ax": "randint(-40, 40)",
-                "ay": "randint(-40, 40)",
-                "az": "randint(-40, 40)",
-                "bx": "randint(-40, 40)",
-                "by": "randint(-40, 40)",
-                "bz": "randint(-40, 40)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) can grab one medkit. Medkit A is at ({{ax}}, {{ay}}, {{az}}) and Medkit B is at ({{bx}}, {{by}}, {{bz}}). Which medkit is closer to the player? Answer 'A' or 'B'.",
               "solution": "((ax - px)**2 + (ay - py)**2 + (az - pz)**2) < ((bx - px)**2 + (by - py)**2 + (bz - pz)**2) ? 'A' : 'B'",
@@ -2150,15 +2150,15 @@
               "id": "vec-l2-017",
               "level": 2,
               "params": {
-                "px": "randint(-40, 40)",
-                "py": "randint(-40, 40)",
-                "pz": "randint(-40, 40)",
-                "ax": "randint(-40, 40)",
-                "ay": "randint(-40, 40)",
-                "az": "randint(-40, 40)",
-                "bx": "randint(-40, 40)",
-                "by": "randint(-40, 40)",
-                "bz": "randint(-40, 40)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) can grab one medkit. Medkit A is at ({{ax}}, {{ay}}, {{az}}) and Medkit B is at ({{bx}}, {{by}}, {{bz}}). Which medkit is closer to the player? Answer 'A' or 'B'.",
               "solution": "((ax - px)**2 + (ay - py)**2 + (az - pz)**2) < ((bx - px)**2 + (by - py)**2 + (bz - pz)**2) ? 'A' : 'B'",
@@ -2192,15 +2192,15 @@
               "id": "vec-l2-018",
               "level": 2,
               "params": {
-                "px": "randint(-40, 40)",
-                "py": "randint(-40, 40)",
-                "pz": "randint(-40, 40)",
-                "ax": "randint(-40, 40)",
-                "ay": "randint(-40, 40)",
-                "az": "randint(-40, 40)",
-                "bx": "randint(-40, 40)",
-                "by": "randint(-40, 40)",
-                "bz": "randint(-40, 40)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) can grab one medkit. Medkit A is at ({{ax}}, {{ay}}, {{az}}) and Medkit B is at ({{bx}}, {{by}}, {{bz}}). Which medkit is closer to the player? Answer 'A' or 'B'.",
               "solution": "((ax - px)**2 + (ay - py)**2 + (az - pz)**2) < ((bx - px)**2 + (by - py)**2 + (bz - pz)**2) ? 'A' : 'B'",
@@ -2234,15 +2234,15 @@
               "id": "vec-l2-019",
               "level": 2,
               "params": {
-                "px": "randint(-40, 40)",
-                "py": "randint(-40, 40)",
-                "pz": "randint(-40, 40)",
-                "ax": "randint(-40, 40)",
-                "ay": "randint(-40, 40)",
-                "az": "randint(-40, 40)",
-                "bx": "randint(-40, 40)",
-                "by": "randint(-40, 40)",
-                "bz": "randint(-40, 40)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) can grab one medkit. Medkit A is at ({{ax}}, {{ay}}, {{az}}) and Medkit B is at ({{bx}}, {{by}}, {{bz}}). Which medkit is closer to the player? Answer 'A' or 'B'.",
               "solution": "((ax - px)**2 + (ay - py)**2 + (az - pz)**2) < ((bx - px)**2 + (by - py)**2 + (bz - pz)**2) ? 'A' : 'B'",
@@ -2276,15 +2276,15 @@
               "id": "vec-l2-020",
               "level": 2,
               "params": {
-                "px": "randint(-40, 40)",
-                "py": "randint(-40, 40)",
-                "pz": "randint(-40, 40)",
-                "ax": "randint(-40, 40)",
-                "ay": "randint(-40, 40)",
-                "az": "randint(-40, 40)",
-                "bx": "randint(-40, 40)",
-                "by": "randint(-40, 40)",
-                "bz": "randint(-40, 40)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) can grab one medkit. Medkit A is at ({{ax}}, {{ay}}, {{az}}) and Medkit B is at ({{bx}}, {{by}}, {{bz}}). Which medkit is closer to the player? Answer 'A' or 'B'.",
               "solution": "((ax - px)**2 + (ay - py)**2 + (az - pz)**2) < ((bx - px)**2 + (by - py)**2 + (bz - pz)**2) ? 'A' : 'B'",
@@ -2318,13 +2318,13 @@
               "id": "vec-l2-021",
               "level": 2,
               "params": {
-                "gx": "randint(-30, 30)",
-                "gy": "randint(-30, 30)",
-                "gz": "randint(-30, 30)",
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "radius": "randint(6, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "radius": "randint(6,12)"
               },
               "scenario": "A grenade detonates at ({{gx}}, {{gy}}, {{gz}}) with a blast radius of {{radius}} meters. The player is at ({{px}}, {{py}}, {{pz}}). Is the player caught in the blast? (Answer 'yes' or 'no')",
               "solution": "sqrt((px - gx)**2 + (py - gy)**2 + (pz - gz)**2) <= radius ? 'yes' : 'no'",
@@ -2365,13 +2365,13 @@
               "id": "vec-l2-022",
               "level": 2,
               "params": {
-                "gx": "randint(-30, 30)",
-                "gy": "randint(-30, 30)",
-                "gz": "randint(-30, 30)",
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "radius": "randint(6, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "radius": "randint(6,12)"
               },
               "scenario": "A grenade detonates at ({{gx}}, {{gy}}, {{gz}}) with a blast radius of {{radius}} meters. The player is at ({{px}}, {{py}}, {{pz}}). Is the player caught in the blast? (Answer 'yes' or 'no')",
               "solution": "sqrt((px - gx)**2 + (py - gy)**2 + (pz - gz)**2) <= radius ? 'yes' : 'no'",
@@ -2412,13 +2412,13 @@
               "id": "vec-l2-023",
               "level": 2,
               "params": {
-                "gx": "randint(-30, 30)",
-                "gy": "randint(-30, 30)",
-                "gz": "randint(-30, 30)",
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "radius": "randint(6, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "radius": "randint(6,12)"
               },
               "scenario": "A grenade detonates at ({{gx}}, {{gy}}, {{gz}}) with a blast radius of {{radius}} meters. The player is at ({{px}}, {{py}}, {{pz}}). Is the player caught in the blast? (Answer 'yes' or 'no')",
               "solution": "sqrt((px - gx)**2 + (py - gy)**2 + (pz - gz)**2) <= radius ? 'yes' : 'no'",
@@ -2459,13 +2459,13 @@
               "id": "vec-l2-024",
               "level": 2,
               "params": {
-                "gx": "randint(-30, 30)",
-                "gy": "randint(-30, 30)",
-                "gz": "randint(-30, 30)",
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "radius": "randint(6, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "radius": "randint(6,12)"
               },
               "scenario": "A grenade detonates at ({{gx}}, {{gy}}, {{gz}}) with a blast radius of {{radius}} meters. The player is at ({{px}}, {{py}}, {{pz}}). Is the player caught in the blast? (Answer 'yes' or 'no')",
               "solution": "sqrt((px - gx)**2 + (py - gy)**2 + (pz - gz)**2) <= radius ? 'yes' : 'no'",
@@ -2506,13 +2506,13 @@
               "id": "vec-l2-025",
               "level": 2,
               "params": {
-                "gx": "randint(-30, 30)",
-                "gy": "randint(-30, 30)",
-                "gz": "randint(-30, 30)",
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "radius": "randint(6, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "radius": "randint(6,12)"
               },
               "scenario": "A grenade detonates at ({{gx}}, {{gy}}, {{gz}}) with a blast radius of {{radius}} meters. The player is at ({{px}}, {{py}}, {{pz}}). Is the player caught in the blast? (Answer 'yes' or 'no')",
               "solution": "sqrt((px - gx)**2 + (py - gy)**2 + (pz - gz)**2) <= radius ? 'yes' : 'no'",
@@ -2553,12 +2553,12 @@
               "id": "vec-l2-026",
               "level": 2,
               "params": {
-                "x1": "randint(-20, 20)",
-                "y1": "randint(-20, 20)",
-                "z1": "randint(-20, 20)",
-                "x2": "randint(-20, 20)",
-                "y2": "randint(-20, 20)",
-                "z2": "randint(-20, 20)",
+                "x1": "randint(-12,12)",
+                "y1": "randint(-12,12)",
+                "z1": "randint(-12,12)",
+                "x2": "randint(-12,12)",
+                "y2": "randint(-12,12)",
+                "z2": "randint(-12,12)",
                 "time": "randfloat(1, 10, 1)"
               },
               "scenario": "A character runs from ({{x1}}, {{y1}}, {{z1}}) to ({{x2}}, {{y2}}, {{z2}}) in {{time}} seconds. What is their speed in units per second? Round to 2 decimals.",
@@ -2599,12 +2599,12 @@
               "id": "vec-l2-027",
               "level": 2,
               "params": {
-                "x1": "randint(-20, 20)",
-                "y1": "randint(-20, 20)",
-                "z1": "randint(-20, 20)",
-                "x2": "randint(-20, 20)",
-                "y2": "randint(-20, 20)",
-                "z2": "randint(-20, 20)",
+                "x1": "randint(-12,12)",
+                "y1": "randint(-12,12)",
+                "z1": "randint(-12,12)",
+                "x2": "randint(-12,12)",
+                "y2": "randint(-12,12)",
+                "z2": "randint(-12,12)",
                 "time": "randfloat(1, 10, 1)"
               },
               "scenario": "A character runs from ({{x1}}, {{y1}}, {{z1}}) to ({{x2}}, {{y2}}, {{z2}}) in {{time}} seconds. What is their speed in units per second? Round to 2 decimals.",
@@ -2645,12 +2645,12 @@
               "id": "vec-l2-028",
               "level": 2,
               "params": {
-                "x1": "randint(-20, 20)",
-                "y1": "randint(-20, 20)",
-                "z1": "randint(-20, 20)",
-                "x2": "randint(-20, 20)",
-                "y2": "randint(-20, 20)",
-                "z2": "randint(-20, 20)",
+                "x1": "randint(-12,12)",
+                "y1": "randint(-12,12)",
+                "z1": "randint(-12,12)",
+                "x2": "randint(-12,12)",
+                "y2": "randint(-12,12)",
+                "z2": "randint(-12,12)",
                 "time": "randfloat(1, 10, 1)"
               },
               "scenario": "A character runs from ({{x1}}, {{y1}}, {{z1}}) to ({{x2}}, {{y2}}, {{z2}}) in {{time}} seconds. What is their speed in units per second? Round to 2 decimals.",
@@ -2691,12 +2691,12 @@
               "id": "vec-l2-029",
               "level": 2,
               "params": {
-                "x1": "randint(-20, 20)",
-                "y1": "randint(-20, 20)",
-                "z1": "randint(-20, 20)",
-                "x2": "randint(-20, 20)",
-                "y2": "randint(-20, 20)",
-                "z2": "randint(-20, 20)",
+                "x1": "randint(-12,12)",
+                "y1": "randint(-12,12)",
+                "z1": "randint(-12,12)",
+                "x2": "randint(-12,12)",
+                "y2": "randint(-12,12)",
+                "z2": "randint(-12,12)",
                 "time": "randfloat(1, 10, 1)"
               },
               "scenario": "A character runs from ({{x1}}, {{y1}}, {{z1}}) to ({{x2}}, {{y2}}, {{z2}}) in {{time}} seconds. What is their speed in units per second? Round to 2 decimals.",
@@ -2737,12 +2737,12 @@
               "id": "vec-l2-030",
               "level": 2,
               "params": {
-                "x1": "randint(-20, 20)",
-                "y1": "randint(-20, 20)",
-                "z1": "randint(-20, 20)",
-                "x2": "randint(-20, 20)",
-                "y2": "randint(-20, 20)",
-                "z2": "randint(-20, 20)",
+                "x1": "randint(-12,12)",
+                "y1": "randint(-12,12)",
+                "z1": "randint(-12,12)",
+                "x2": "randint(-12,12)",
+                "y2": "randint(-12,12)",
+                "z2": "randint(-12,12)",
                 "time": "randfloat(1, 10, 1)"
               },
               "scenario": "A character runs from ({{x1}}, {{y1}}, {{z1}}) to ({{x2}}, {{y2}}, {{z2}}) in {{time}} seconds. What is their speed in units per second? Round to 2 decimals.",
@@ -3133,9 +3133,9 @@
               "id": "vec-l3-017",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3176,9 +3176,9 @@
               "id": "vec-l3-018",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3219,9 +3219,9 @@
               "id": "vec-l3-019",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3262,9 +3262,9 @@
               "id": "vec-l3-020",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3305,9 +3305,9 @@
               "id": "vec-l3-021",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3348,9 +3348,9 @@
               "id": "vec-l3-022",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3391,9 +3391,9 @@
               "id": "vec-l3-023",
               "level": 3,
               "params": {
-                "vx": "randint(-15, 15)",
-                "vy": "randint(-15, 15)",
-                "vz": "randint(-15, 15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "mult": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies their speed by {{mult}}. What is their new velocity vector?",
@@ -3644,9 +3644,9 @@
               "id": "vec-l3-s06",
               "level": 3,
               "params": {
-                "vx": "randint(-20,20)",
-                "vy": "randint(-20,20)",
-                "vz": "randint(-20,20)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "factor": "randfloat(0.1,0.8,1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies speed by {{factor}}. What is the new velocity? Round to 1 decimal.",
@@ -3686,9 +3686,9 @@
               "id": "vec-l3-s07",
               "level": 3,
               "params": {
-                "vx": "randint(-20,20)",
-                "vy": "randint(-20,20)",
-                "vz": "randint(-20,20)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "factor": "randfloat(0.1,0.8,1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies speed by {{factor}}. What is the new velocity? Round to 1 decimal.",
@@ -3728,9 +3728,9 @@
               "id": "vec-l3-s08",
               "level": 3,
               "params": {
-                "vx": "randint(-20,20)",
-                "vy": "randint(-20,20)",
-                "vz": "randint(-20,20)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "factor": "randfloat(0.1,0.8,1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies speed by {{factor}}. What is the new velocity? Round to 1 decimal.",
@@ -3770,9 +3770,9 @@
               "id": "vec-l3-s09",
               "level": 3,
               "params": {
-                "vx": "randint(-20,20)",
-                "vy": "randint(-20,20)",
-                "vz": "randint(-20,20)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "factor": "randfloat(0.1,0.8,1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies speed by {{factor}}. What is the new velocity? Round to 1 decimal.",
@@ -3812,9 +3812,9 @@
               "id": "vec-l3-s10",
               "level": 3,
               "params": {
-                "vx": "randint(-20,20)",
-                "vy": "randint(-20,20)",
-                "vz": "randint(-20,20)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "factor": "randfloat(0.1,0.8,1)"
               },
               "scenario": "A player's velocity is ({{vx}}, {{vy}}, {{vz}}). They enter a slow zone that multiplies speed by {{factor}}. What is the new velocity? Round to 1 decimal.",
@@ -4070,12 +4070,12 @@
               "id": "vec-l4-001",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4115,12 +4115,12 @@
               "id": "vec-l4-002",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4160,12 +4160,12 @@
               "id": "vec-l4-003",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4205,12 +4205,12 @@
               "id": "vec-l4-004",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4250,12 +4250,12 @@
               "id": "vec-l4-005",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4295,12 +4295,12 @@
               "id": "vec-l4-006",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4340,12 +4340,12 @@
               "id": "vec-l4-007",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4385,12 +4385,12 @@
               "id": "vec-l4-008",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4430,12 +4430,12 @@
               "id": "vec-l4-009",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4475,12 +4475,12 @@
               "id": "vec-l4-010",
               "level": 4,
               "params": {
-                "px": "randint(-30, 30)",
-                "py": "randint(-30, 30)",
-                "pz": "randint(-30, 30)",
-                "tx": "randint(-30, 30)",
-                "ty": "randint(-30, 30)",
-                "tz": "randint(-30, 30)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A player at ({{px}}, {{py}}, {{pz}}) wants to move toward a target at ({{tx}}, {{ty}}, {{tz}}). What is the UNIT direction vector pointing from the player to the target? Round each component to 3 decimals.",
               "solution": "let dx = tx - px; let dy = ty - py; let dz = tz - pz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4520,12 +4520,12 @@
               "id": "vec-l4-011",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4565,12 +4565,12 @@
               "id": "vec-l4-012",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4610,12 +4610,12 @@
               "id": "vec-l4-013",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4655,12 +4655,12 @@
               "id": "vec-l4-014",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4700,12 +4700,12 @@
               "id": "vec-l4-015",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4745,12 +4745,12 @@
               "id": "vec-l4-016",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4790,12 +4790,12 @@
               "id": "vec-l4-017",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4835,12 +4835,12 @@
               "id": "vec-l4-018",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4880,12 +4880,12 @@
               "id": "vec-l4-019",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -4925,12 +4925,12 @@
               "id": "vec-l4-020",
               "level": 4,
               "params": {
-                "gx": "randint(-20, 20)",
-                "gy": "randint(-20, 20)",
-                "gz": "randint(-20, 20)",
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)"
+                "gx": "randint(-12,12)",
+                "gy": "randint(-12,12)",
+                "gz": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)"
               },
               "scenario": "A turret at ({{gx}}, {{gy}}, {{gz}}) aims at a crosshair position ({{cx}}, {{cy}}, {{cz}}). What is the normalized direction the projectile should fly? Round to 3 decimals per component.",
               "solution": "let dx = cx - gx; let dy = cy - gy; let dz = cz - gz; let mag = sqrt(dx*dx + dy*dy + dz*dz); [dx/mag, dy/mag, dz/mag]",
@@ -5396,9 +5396,9 @@
               "id": "vec-l5-v01",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5416,9 +5416,9 @@
               "id": "vec-l5-v02",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5436,9 +5436,9 @@
               "id": "vec-l5-v03",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5456,9 +5456,9 @@
               "id": "vec-l5-v04",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5476,9 +5476,9 @@
               "id": "vec-l5-v05",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5496,9 +5496,9 @@
               "id": "vec-l5-v06",
               "level": 5,
               "params": {
-                "px": "randint(-20,20)",
-                "py": "randint(-20,20)",
-                "pz": "randint(-20,20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "ox": "randint(-10,10)",
                 "oy": "randint(-10,10)",
                 "oz": "randint(-10,10)"
@@ -5516,12 +5516,12 @@
               "id": "vec-l5-v07",
               "level": 5,
               "params": {
-                "p1x": "randint(-20,20)",
-                "p1y": "randint(-20,20)",
-                "p1z": "randint(-20,20)",
-                "p2x": "randint(-20,20)",
-                "p2y": "randint(-20,20)",
-                "p2z": "randint(-20,20)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A bullet has a Position of ({{p1x}}, {{p1y}}, {{p1z}}) and a Velocity of ({{p2x}}, {{p2y}}, {{p2z}}). Which one is the DIRECTION vector \u2014 Position or Velocity? (Answer 'position' or 'velocity')",
               "solution": "'velocity'",
@@ -5536,12 +5536,12 @@
               "id": "vec-l5-v08",
               "level": 5,
               "params": {
-                "p1x": "randint(-20,20)",
-                "p1y": "randint(-20,20)",
-                "p1z": "randint(-20,20)",
-                "p2x": "randint(-20,20)",
-                "p2y": "randint(-20,20)",
-                "p2z": "randint(-20,20)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A bullet has a Position of ({{p1x}}, {{p1y}}, {{p1z}}) and a Velocity of ({{p2x}}, {{p2y}}, {{p2z}}). Which one is the DIRECTION vector \u2014 Position or Velocity? (Answer 'position' or 'velocity')",
               "solution": "'velocity'",
@@ -5556,12 +5556,12 @@
               "id": "vec-l5-v09",
               "level": 5,
               "params": {
-                "p1x": "randint(-20,20)",
-                "p1y": "randint(-20,20)",
-                "p1z": "randint(-20,20)",
-                "p2x": "randint(-20,20)",
-                "p2y": "randint(-20,20)",
-                "p2z": "randint(-20,20)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A bullet has a Position of ({{p1x}}, {{p1y}}, {{p1z}}) and a Velocity of ({{p2x}}, {{p2y}}, {{p2z}}). Which one is the DIRECTION vector \u2014 Position or Velocity? (Answer 'position' or 'velocity')",
               "solution": "'velocity'",
@@ -5576,12 +5576,12 @@
               "id": "vec-l5-v10",
               "level": 5,
               "params": {
-                "p1x": "randint(-20,20)",
-                "p1y": "randint(-20,20)",
-                "p1z": "randint(-20,20)",
-                "p2x": "randint(-20,20)",
-                "p2y": "randint(-20,20)",
-                "p2z": "randint(-20,20)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A bullet has a Position of ({{p1x}}, {{p1y}}, {{p1z}}) and a Velocity of ({{p2x}}, {{p2y}}, {{p2z}}). Which one is the DIRECTION vector \u2014 Position or Velocity? (Answer 'position' or 'velocity')",
               "solution": "'velocity'",
@@ -5596,12 +5596,12 @@
               "id": "vec-l5-v11",
               "level": 5,
               "params": {
-                "p1x": "randint(-20,20)",
-                "p1y": "randint(-20,20)",
-                "p1z": "randint(-20,20)",
-                "p2x": "randint(-20,20)",
-                "p2y": "randint(-20,20)",
-                "p2z": "randint(-20,20)"
+                "p1x": "randint(-12,12)",
+                "p1y": "randint(-12,12)",
+                "p1z": "randint(-12,12)",
+                "p2x": "randint(-12,12)",
+                "p2y": "randint(-12,12)",
+                "p2z": "randint(-12,12)"
               },
               "scenario": "A bullet has a Position of ({{p1x}}, {{p1y}}, {{p1z}}) and a Velocity of ({{p2x}}, {{p2y}}, {{p2z}}). Which one is the DIRECTION vector \u2014 Position or Velocity? (Answer 'position' or 'velocity')",
               "solution": "'velocity'",
@@ -5616,9 +5616,9 @@
               "id": "vec-l5-v12",
               "level": 5,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "dx": "randint(-8,8)",
                 "dy": "randint(-8,8)",
                 "dz": "randint(-8,8)"
@@ -5636,9 +5636,9 @@
               "id": "vec-l5-v13",
               "level": 5,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "dx": "randint(-8,8)",
                 "dy": "randint(-8,8)",
                 "dz": "randint(-8,8)"
@@ -5656,9 +5656,9 @@
               "id": "vec-l5-v14",
               "level": 5,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "dx": "randint(-8,8)",
                 "dy": "randint(-8,8)",
                 "dz": "randint(-8,8)"
@@ -5676,9 +5676,9 @@
               "id": "vec-l5-v15",
               "level": 5,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "dx": "randint(-8,8)",
                 "dy": "randint(-8,8)",
                 "dz": "randint(-8,8)"
@@ -5747,12 +5747,12 @@
               "id": "vec-l5-v19",
               "level": 5,
               "params": {
-                "ex": "randint(-15,15)",
-                "ey": "randint(-15,15)",
-                "ez": "randint(-15,15)",
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "Enemy at ({{ex}}, {{ey}}, {{ez}}). Player at ({{px}}, {{py}}, {{pz}}). The result of 'enemy - player' is a ___. (Answer 'position' or 'direction')",
               "solution": "'direction'",
@@ -5767,12 +5767,12 @@
               "id": "vec-l5-v20",
               "level": 5,
               "params": {
-                "ex": "randint(-15,15)",
-                "ey": "randint(-15,15)",
-                "ez": "randint(-15,15)",
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "ez": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "Enemy at ({{ex}}, {{ey}}, {{ez}}). Player at ({{px}}, {{py}}, {{pz}}). The result of 'enemy - player' is a ___. (Answer 'position' or 'direction')",
               "solution": "'direction'",
@@ -5793,12 +5793,12 @@
               "id": "vec-l6-009",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -5832,12 +5832,12 @@
               "id": "vec-l6-010",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -5871,12 +5871,12 @@
               "id": "vec-l6-011",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -5910,12 +5910,12 @@
               "id": "vec-l6-012",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -5949,12 +5949,12 @@
               "id": "vec-l6-013",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -5988,12 +5988,12 @@
               "id": "vec-l6-014",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -6027,12 +6027,12 @@
               "id": "vec-l6-015",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -6066,12 +6066,12 @@
               "id": "vec-l6-016",
               "level": 6,
               "params": {
-                "ax": "randint(-20, 20)",
-                "ay": "randint(-20, 20)",
-                "az": "randint(-20, 20)",
-                "bx": "randint(-20, 20)",
-                "by": "randint(-20, 20)",
-                "bz": "randint(-20, 20)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.1, 0.9, 1)"
               },
               "scenario": "A character at ({{ax}}, {{ay}}, {{az}}) is moving toward ({{bx}}, {{by}}, {{bz}}). They stop when they are {{t}} of the way there (t = {{t}}). Where are they? Round each component to 1 decimal.",
@@ -6105,12 +6105,12 @@
               "id": "vec-l6-024",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6143,12 +6143,12 @@
               "id": "vec-l6-025",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6181,12 +6181,12 @@
               "id": "vec-l6-026",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6219,12 +6219,12 @@
               "id": "vec-l6-027",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6257,12 +6257,12 @@
               "id": "vec-l6-028",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6295,12 +6295,12 @@
               "id": "vec-l6-029",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6333,12 +6333,12 @@
               "id": "vec-l6-030",
               "level": 6,
               "params": {
-                "ax": "randint(-30, 30)",
-                "ay": "randint(-30, 30)",
-                "az": "randint(-30, 30)",
-                "bx": "randint(-30, 30)",
-                "by": "randint(-30, 30)",
-                "bz": "randint(-30, 30)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{ax}}, {{ay}}, {{az}}) follows a player at ({{bx}}, {{by}}, {{bz}}). Each frame the camera moves 25% closer to the player. What is the camera's new position after one frame? Round to 1 decimal.",
               "solution": "[ax + (bx - ax) * 0.25, ay + (by - ay) * 0.25, az + (bz - az) * 0.25]",
@@ -6371,12 +6371,12 @@
               "id": "vec-l6-l01",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6409,12 +6409,12 @@
               "id": "vec-l6-l02",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6447,12 +6447,12 @@
               "id": "vec-l6-l03",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6485,12 +6485,12 @@
               "id": "vec-l6-l04",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6523,12 +6523,12 @@
               "id": "vec-l6-l05",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6561,12 +6561,12 @@
               "id": "vec-l6-l06",
               "level": 6,
               "params": {
-                "ax": "randint(-30,30)",
-                "ay": "randint(-30,30)",
-                "az": "randint(-30,30)",
-                "bx": "randint(-30,30)",
-                "by": "randint(-30,30)",
-                "bz": "randint(-30,30)",
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "bz": "randint(-12,12)",
                 "t": "randfloat(0.15,0.85,2)"
               },
               "scenario": "A character at A({{ax}}, {{ay}}, {{az}}) wants to reach B({{bx}}, {{by}}, {{bz}}). They teleport {{t}} of the way there. Where do they land? Round to 1 decimal.",
@@ -6599,12 +6599,12 @@
               "id": "vec-l6-l07",
               "level": 6,
               "params": {
-                "cx": "randint(-20,20)",
+                "cx": "randint(-12,12)",
                 "cy": "randint(-10,10)",
-                "cz": "randint(-20,20)",
-                "px": "randint(-20,20)",
+                "cz": "randint(-12,12)",
+                "px": "randint(-12,12)",
                 "py": "randint(-10,10)",
-                "pz": "randint(-20,20)",
+                "pz": "randint(-12,12)",
                 "pct": "randint(15,40,5)"
               },
               "scenario": "A smooth camera at ({{cx}}, {{cy}}, {{cz}}) follows a player at ({{px}}, {{py}}, {{pz}}). Each frame it moves {{pct}}% closer. After one frame, where is the camera? Round to 1 decimal.",
@@ -6644,12 +6644,12 @@
               "id": "vec-l6-l08",
               "level": 6,
               "params": {
-                "cx": "randint(-20,20)",
+                "cx": "randint(-12,12)",
                 "cy": "randint(-10,10)",
-                "cz": "randint(-20,20)",
-                "px": "randint(-20,20)",
+                "cz": "randint(-12,12)",
+                "px": "randint(-12,12)",
                 "py": "randint(-10,10)",
-                "pz": "randint(-20,20)",
+                "pz": "randint(-12,12)",
                 "pct": "randint(15,40,5)"
               },
               "scenario": "A smooth camera at ({{cx}}, {{cy}}, {{cz}}) follows a player at ({{px}}, {{py}}, {{pz}}). Each frame it moves {{pct}}% closer. After one frame, where is the camera? Round to 1 decimal.",
@@ -6689,12 +6689,12 @@
               "id": "vec-l6-l09",
               "level": 6,
               "params": {
-                "cx": "randint(-20,20)",
+                "cx": "randint(-12,12)",
                 "cy": "randint(-10,10)",
-                "cz": "randint(-20,20)",
-                "px": "randint(-20,20)",
+                "cz": "randint(-12,12)",
+                "px": "randint(-12,12)",
                 "py": "randint(-10,10)",
-                "pz": "randint(-20,20)",
+                "pz": "randint(-12,12)",
                 "pct": "randint(15,40,5)"
               },
               "scenario": "A smooth camera at ({{cx}}, {{cy}}, {{cz}}) follows a player at ({{px}}, {{py}}, {{pz}}). Each frame it moves {{pct}}% closer. After one frame, where is the camera? Round to 1 decimal.",
@@ -6734,12 +6734,12 @@
               "id": "vec-l6-l10",
               "level": 6,
               "params": {
-                "cx": "randint(-20,20)",
+                "cx": "randint(-12,12)",
                 "cy": "randint(-10,10)",
-                "cz": "randint(-20,20)",
-                "px": "randint(-20,20)",
+                "cz": "randint(-12,12)",
+                "px": "randint(-12,12)",
                 "py": "randint(-10,10)",
-                "pz": "randint(-20,20)",
+                "pz": "randint(-12,12)",
                 "pct": "randint(15,40,5)"
               },
               "scenario": "A smooth camera at ({{cx}}, {{cy}}, {{cz}}) follows a player at ({{px}}, {{py}}, {{pz}}). Each frame it moves {{pct}}% closer. After one frame, where is the camera? Round to 1 decimal.",
@@ -6779,12 +6779,12 @@
               "id": "vec-l6-l11",
               "level": 6,
               "params": {
-                "cx": "randint(-20,20)",
+                "cx": "randint(-12,12)",
                 "cy": "randint(-10,10)",
-                "cz": "randint(-20,20)",
-                "px": "randint(-20,20)",
+                "cz": "randint(-12,12)",
+                "px": "randint(-12,12)",
                 "py": "randint(-10,10)",
-                "pz": "randint(-20,20)",
+                "pz": "randint(-12,12)",
                 "pct": "randint(15,40,5)"
               },
               "scenario": "A smooth camera at ({{cx}}, {{cy}}, {{cz}}) follows a player at ({{px}}, {{py}}, {{pz}}). Each frame it moves {{pct}}% closer. After one frame, where is the camera? Round to 1 decimal.",
@@ -6824,9 +6824,9 @@
               "id": "vec-l6-l12",
               "level": 6,
               "params": {
-                "vx": "randint(-15,15)",
-                "vy": "randint(-15,15)",
-                "vz": "randint(-15,15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "damp": "randfloat(0.7,0.95,2)",
                 "frames": "randint(2,4)"
               },
@@ -6867,9 +6867,9 @@
               "id": "vec-l6-l13",
               "level": 6,
               "params": {
-                "vx": "randint(-15,15)",
-                "vy": "randint(-15,15)",
-                "vz": "randint(-15,15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "damp": "randfloat(0.7,0.95,2)",
                 "frames": "randint(2,4)"
               },
@@ -6910,9 +6910,9 @@
               "id": "vec-l6-l14",
               "level": 6,
               "params": {
-                "vx": "randint(-15,15)",
-                "vy": "randint(-15,15)",
-                "vz": "randint(-15,15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "damp": "randfloat(0.7,0.95,2)",
                 "frames": "randint(2,4)"
               },
@@ -6953,9 +6953,9 @@
               "id": "vec-l6-l15",
               "level": 6,
               "params": {
-                "vx": "randint(-15,15)",
-                "vy": "randint(-15,15)",
-                "vz": "randint(-15,15)",
+                "vx": "randint(-12,12)",
+                "vy": "randint(-12,12)",
+                "vz": "randint(-12,12)",
                 "damp": "randfloat(0.7,0.95,2)",
                 "frames": "randint(2,4)"
               },
@@ -7608,9 +7608,9 @@
               "id": "vec-l7-024",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -7634,9 +7634,9 @@
               "id": "vec-l7-025",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -7660,9 +7660,9 @@
               "id": "vec-l7-026",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -7686,9 +7686,9 @@
               "id": "vec-l7-027",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -7712,9 +7712,9 @@
               "id": "vec-l7-028",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -7738,9 +7738,9 @@
               "id": "vec-l7-029",
               "level": 7,
               "params": {
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "vx": "randint(-10, 10)",
                 "vy": "randint(-10, 10)",
                 "vz": "randint(-10, 10)"
@@ -8196,12 +8196,12 @@
               "id": "vec-l8-011",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8226,12 +8226,12 @@
               "id": "vec-l8-012",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8256,12 +8256,12 @@
               "id": "vec-l8-013",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8286,12 +8286,12 @@
               "id": "vec-l8-014",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8316,12 +8316,12 @@
               "id": "vec-l8-015",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8346,12 +8346,12 @@
               "id": "vec-l8-016",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8376,12 +8376,12 @@
               "id": "vec-l8-017",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8406,12 +8406,12 @@
               "id": "vec-l8-018",
               "level": 8,
               "params": {
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)",
-                "px": "randint(-20, 20)",
-                "py": "randint(-20, 20)",
-                "pz": "randint(-20, 20)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)",
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)"
@@ -8632,12 +8632,12 @@
               "id": "vec-l8-026",
               "level": 8,
               "params": {
-                "sx": "randint(-20, 20)",
-                "sy": "randint(-20, 20)",
-                "sz": "randint(-20, 20)",
-                "lx": "randint(-20, 20)",
-                "ly": "randint(-20, 20)",
-                "lz": "randint(-20, 20)",
+                "sx": "randint(-12,12)",
+                "sy": "randint(-12,12)",
+                "sz": "randint(-12,12)",
+                "lx": "randint(-12,12)",
+                "ly": "randint(-12,12)",
+                "lz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)",
@@ -8663,12 +8663,12 @@
               "id": "vec-l8-027",
               "level": 8,
               "params": {
-                "sx": "randint(-20, 20)",
-                "sy": "randint(-20, 20)",
-                "sz": "randint(-20, 20)",
-                "lx": "randint(-20, 20)",
-                "ly": "randint(-20, 20)",
-                "lz": "randint(-20, 20)",
+                "sx": "randint(-12,12)",
+                "sy": "randint(-12,12)",
+                "sz": "randint(-12,12)",
+                "lx": "randint(-12,12)",
+                "ly": "randint(-12,12)",
+                "lz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)",
@@ -8694,12 +8694,12 @@
               "id": "vec-l8-028",
               "level": 8,
               "params": {
-                "sx": "randint(-20, 20)",
-                "sy": "randint(-20, 20)",
-                "sz": "randint(-20, 20)",
-                "lx": "randint(-20, 20)",
-                "ly": "randint(-20, 20)",
-                "lz": "randint(-20, 20)",
+                "sx": "randint(-12,12)",
+                "sy": "randint(-12,12)",
+                "sz": "randint(-12,12)",
+                "lx": "randint(-12,12)",
+                "ly": "randint(-12,12)",
+                "lz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)",
@@ -8725,12 +8725,12 @@
               "id": "vec-l8-029",
               "level": 8,
               "params": {
-                "sx": "randint(-20, 20)",
-                "sy": "randint(-20, 20)",
-                "sz": "randint(-20, 20)",
-                "lx": "randint(-20, 20)",
-                "ly": "randint(-20, 20)",
-                "lz": "randint(-20, 20)",
+                "sx": "randint(-12,12)",
+                "sy": "randint(-12,12)",
+                "sz": "randint(-12,12)",
+                "lx": "randint(-12,12)",
+                "ly": "randint(-12,12)",
+                "lz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)",
@@ -8756,12 +8756,12 @@
               "id": "vec-l8-030",
               "level": 8,
               "params": {
-                "sx": "randint(-20, 20)",
-                "sy": "randint(-20, 20)",
-                "sz": "randint(-20, 20)",
-                "lx": "randint(-20, 20)",
-                "ly": "randint(-20, 20)",
-                "lz": "randint(-20, 20)",
+                "sx": "randint(-12,12)",
+                "sy": "randint(-12,12)",
+                "sz": "randint(-12,12)",
+                "lx": "randint(-12,12)",
+                "ly": "randint(-12,12)",
+                "lz": "randint(-12,12)",
                 "fx": "randint(-10, 10)",
                 "fy": "randint(-10, 10)",
                 "fz": "randint(-10, 10)",
@@ -8787,15 +8787,15 @@
               "id": "vec-l8-031",
               "level": 8,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "az": "randint(-15, 15)",
-                "e1x": "randint(-15, 15)",
-                "e1y": "randint(-15, 15)",
-                "e1z": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
-                "e2z": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "e1x": "randint(-12,12)",
+                "e1y": "randint(-12,12)",
+                "e1z": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
+                "e2z": "randint(-12,12)"
               },
               "scenario": "An ally at ({{ax}}, {{ay}}, {{az}}) aims at enemy 1 at ({{e1x}}, {{e1y}}, {{e1z}}), then swings to aim at enemy 2 at ({{e2x}}, {{e2y}}, {{e2z}}). What is the angle (in degrees) between the two aim directions? Round to 1 decimal.",
               "solution": "let d1x = e1x - ax; let d1y = e1y - ay; let d1z = e1z - az; let d2x = e2x - ax; let d2y = e2y - ay; let d2z = e2z - az; let d = d1x*d2x + d1y*d2y + d1z*d2z; let m1 = sqrt(d1x*d1x + d1y*d1y + d1z*d1z); let m2 = sqrt(d2x*d2x + d2y*d2y + d2z*d2z); let c = d/(m1*m2); let cClamped = max(-1, min(1, c)); acos(cClamped) * 180 / PI",
@@ -8817,15 +8817,15 @@
               "id": "vec-l8-032",
               "level": 8,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "az": "randint(-15, 15)",
-                "e1x": "randint(-15, 15)",
-                "e1y": "randint(-15, 15)",
-                "e1z": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
-                "e2z": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "e1x": "randint(-12,12)",
+                "e1y": "randint(-12,12)",
+                "e1z": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
+                "e2z": "randint(-12,12)"
               },
               "scenario": "An ally at ({{ax}}, {{ay}}, {{az}}) aims at enemy 1 at ({{e1x}}, {{e1y}}, {{e1z}}), then swings to aim at enemy 2 at ({{e2x}}, {{e2y}}, {{e2z}}). What is the angle (in degrees) between the two aim directions? Round to 1 decimal.",
               "solution": "let d1x = e1x - ax; let d1y = e1y - ay; let d1z = e1z - az; let d2x = e2x - ax; let d2y = e2y - ay; let d2z = e2z - az; let d = d1x*d2x + d1y*d2y + d1z*d2z; let m1 = sqrt(d1x*d1x + d1y*d1y + d1z*d1z); let m2 = sqrt(d2x*d2x + d2y*d2y + d2z*d2z); let c = d/(m1*m2); let cClamped = max(-1, min(1, c)); acos(cClamped) * 180 / PI",
@@ -8847,15 +8847,15 @@
               "id": "vec-l8-033",
               "level": 8,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "az": "randint(-15, 15)",
-                "e1x": "randint(-15, 15)",
-                "e1y": "randint(-15, 15)",
-                "e1z": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
-                "e2z": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "e1x": "randint(-12,12)",
+                "e1y": "randint(-12,12)",
+                "e1z": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
+                "e2z": "randint(-12,12)"
               },
               "scenario": "An ally at ({{ax}}, {{ay}}, {{az}}) aims at enemy 1 at ({{e1x}}, {{e1y}}, {{e1z}}), then swings to aim at enemy 2 at ({{e2x}}, {{e2y}}, {{e2z}}). What is the angle (in degrees) between the two aim directions? Round to 1 decimal.",
               "solution": "let d1x = e1x - ax; let d1y = e1y - ay; let d1z = e1z - az; let d2x = e2x - ax; let d2y = e2y - ay; let d2z = e2z - az; let d = d1x*d2x + d1y*d2y + d1z*d2z; let m1 = sqrt(d1x*d1x + d1y*d1y + d1z*d1z); let m2 = sqrt(d2x*d2x + d2y*d2y + d2z*d2z); let c = d/(m1*m2); let cClamped = max(-1, min(1, c)); acos(cClamped) * 180 / PI",
@@ -8877,15 +8877,15 @@
               "id": "vec-l8-034",
               "level": 8,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "az": "randint(-15, 15)",
-                "e1x": "randint(-15, 15)",
-                "e1y": "randint(-15, 15)",
-                "e1z": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
-                "e2z": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "e1x": "randint(-12,12)",
+                "e1y": "randint(-12,12)",
+                "e1z": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
+                "e2z": "randint(-12,12)"
               },
               "scenario": "An ally at ({{ax}}, {{ay}}, {{az}}) aims at enemy 1 at ({{e1x}}, {{e1y}}, {{e1z}}), then swings to aim at enemy 2 at ({{e2x}}, {{e2y}}, {{e2z}}). What is the angle (in degrees) between the two aim directions? Round to 1 decimal.",
               "solution": "let d1x = e1x - ax; let d1y = e1y - ay; let d1z = e1z - az; let d2x = e2x - ax; let d2y = e2y - ay; let d2z = e2z - az; let d = d1x*d2x + d1y*d2y + d1z*d2z; let m1 = sqrt(d1x*d1x + d1y*d1y + d1z*d1z); let m2 = sqrt(d2x*d2x + d2y*d2y + d2z*d2z); let c = d/(m1*m2); let cClamped = max(-1, min(1, c)); acos(cClamped) * 180 / PI",
@@ -8907,15 +8907,15 @@
               "id": "vec-l8-035",
               "level": 8,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "az": "randint(-15, 15)",
-                "e1x": "randint(-15, 15)",
-                "e1y": "randint(-15, 15)",
-                "e1z": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
-                "e2z": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "az": "randint(-12,12)",
+                "e1x": "randint(-12,12)",
+                "e1y": "randint(-12,12)",
+                "e1z": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
+                "e2z": "randint(-12,12)"
               },
               "scenario": "An ally at ({{ax}}, {{ay}}, {{az}}) aims at enemy 1 at ({{e1x}}, {{e1y}}, {{e1z}}), then swings to aim at enemy 2 at ({{e2x}}, {{e2y}}, {{e2z}}). What is the angle (in degrees) between the two aim directions? Round to 1 decimal.",
               "solution": "let d1x = e1x - ax; let d1y = e1y - ay; let d1z = e1z - az; let d2x = e2x - ax; let d2y = e2y - ay; let d2z = e2z - az; let d = d1x*d2x + d1y*d2y + d1z*d2z; let m1 = sqrt(d1x*d1x + d1y*d1y + d1z*d1z); let m2 = sqrt(d2x*d2x + d2y*d2y + d2z*d2z); let c = d/(m1*m2); let cClamped = max(-1, min(1, c)); acos(cClamped) * 180 / PI",
@@ -9083,9 +9083,9 @@
               "id": "vec-l9-c06",
               "level": 9,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "A point in Blender (Z-up, Y-forward, X-right) is ({{px}}, {{py}}, {{pz}}). Convert to Unreal Engine coordinates (Z-up, X-forward, Y-right). Round to 1 decimal.",
               "solution": "[-py, px, pz]",
@@ -9111,9 +9111,9 @@
               "id": "vec-l9-c07",
               "level": 9,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "A point in Blender (Z-up, Y-forward, X-right) is ({{px}}, {{py}}, {{pz}}). Convert to Unreal Engine coordinates (Z-up, X-forward, Y-right). Round to 1 decimal.",
               "solution": "[-py, px, pz]",
@@ -9139,9 +9139,9 @@
               "id": "vec-l9-c08",
               "level": 9,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "A point in Blender (Z-up, Y-forward, X-right) is ({{px}}, {{py}}, {{pz}}). Convert to Unreal Engine coordinates (Z-up, X-forward, Y-right). Round to 1 decimal.",
               "solution": "[-py, px, pz]",
@@ -9167,9 +9167,9 @@
               "id": "vec-l9-c09",
               "level": 9,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "A point in Blender (Z-up, Y-forward, X-right) is ({{px}}, {{py}}, {{pz}}). Convert to Unreal Engine coordinates (Z-up, X-forward, Y-right). Round to 1 decimal.",
               "solution": "[-py, px, pz]",
@@ -9195,9 +9195,9 @@
               "id": "vec-l9-c10",
               "level": 9,
               "params": {
-                "px": "randint(-15,15)",
-                "py": "randint(-15,15)",
-                "pz": "randint(-15,15)"
+                "px": "randint(-12,12)",
+                "py": "randint(-12,12)",
+                "pz": "randint(-12,12)"
               },
               "scenario": "A point in Blender (Z-up, Y-forward, X-right) is ({{px}}, {{py}}, {{pz}}). Convert to Unreal Engine coordinates (Z-up, X-forward, Y-right). Round to 1 decimal.",
               "solution": "[-py, px, pz]",
@@ -9836,12 +9836,12 @@
               "id": "vec-l10-011",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9863,12 +9863,12 @@
               "id": "vec-l10-012",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9890,12 +9890,12 @@
               "id": "vec-l10-013",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9917,12 +9917,12 @@
               "id": "vec-l10-014",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9944,12 +9944,12 @@
               "id": "vec-l10-015",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9971,12 +9971,12 @@
               "id": "vec-l10-016",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -9998,12 +9998,12 @@
               "id": "vec-l10-017",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -10025,12 +10025,12 @@
               "id": "vec-l10-018",
               "level": 10,
               "params": {
-                "ax": "randint(-15, 15)",
-                "ay": "randint(-15, 15)",
-                "bx": "randint(-15, 15)",
-                "by": "randint(-15, 15)",
-                "cx": "randint(-15, 15)",
-                "cy": "randint(-15, 15)"
+                "ax": "randint(-12,12)",
+                "ay": "randint(-12,12)",
+                "bx": "randint(-12,12)",
+                "by": "randint(-12,12)",
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)"
               },
               "scenario": "A path goes from point A ({{ax}}, {{ay}}) to B ({{bx}}, {{by}}) to C ({{cx}}, {{cy}}). Using the cross product of AB and BC, is the turn at B clockwise or counter-clockwise? (2D, z-component of AB \u00d7 BC)",
               "solution": "let abx = bx - ax; let aby = by - ay; let bcx = cx - bx; let bcy = cy - by; (abx * bcy - aby * bcx) > 0 ? 'counter-clockwise' : ((abx * bcy - aby * bcx) < 0 ? 'clockwise' : 'zero')",
@@ -10223,8 +10223,8 @@
                 "fx": "randint(-8, 8)",
                 "fy": "randint(-8, 8)",
                 "fz": "0",
-                "tx": "randint(-15, 15)",
-                "ty": "randint(-15, 15)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
                 "tz": "0"
               },
               "scenario": "An AI agent faces direction ({{fx}}, {{fy}}, 0). A target is at relative offset ({{tx}}, {{ty}}, 0). Should the agent turn LEFT or RIGHT to face the target? (Use z-component of cross product).",
@@ -10250,8 +10250,8 @@
                 "fx": "randint(-8, 8)",
                 "fy": "randint(-8, 8)",
                 "fz": "0",
-                "tx": "randint(-15, 15)",
-                "ty": "randint(-15, 15)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
                 "tz": "0"
               },
               "scenario": "An AI agent faces direction ({{fx}}, {{fy}}, 0). A target is at relative offset ({{tx}}, {{ty}}, 0). Should the agent turn LEFT or RIGHT to face the target? (Use z-component of cross product).",
@@ -10277,8 +10277,8 @@
                 "fx": "randint(-8, 8)",
                 "fy": "randint(-8, 8)",
                 "fz": "0",
-                "tx": "randint(-15, 15)",
-                "ty": "randint(-15, 15)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
                 "tz": "0"
               },
               "scenario": "An AI agent faces direction ({{fx}}, {{fy}}, 0). A target is at relative offset ({{tx}}, {{ty}}, 0). Should the agent turn LEFT or RIGHT to face the target? (Use z-component of cross product).",
@@ -10304,8 +10304,8 @@
                 "fx": "randint(-8, 8)",
                 "fy": "randint(-8, 8)",
                 "fz": "0",
-                "tx": "randint(-15, 15)",
-                "ty": "randint(-15, 15)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
                 "tz": "0"
               },
               "scenario": "An AI agent faces direction ({{fx}}, {{fy}}, 0). A target is at relative offset ({{tx}}, {{ty}}, 0). Should the agent turn LEFT or RIGHT to face the target? (Use z-component of cross product).",
@@ -10331,8 +10331,8 @@
                 "fx": "randint(-8, 8)",
                 "fy": "randint(-8, 8)",
                 "fz": "0",
-                "tx": "randint(-15, 15)",
-                "ty": "randint(-15, 15)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
                 "tz": "0"
               },
               "scenario": "An AI agent faces direction ({{fx}}, {{fy}}, 0). A target is at relative offset ({{tx}}, {{ty}}, 0). Should the agent turn LEFT or RIGHT to face the target? (Use z-component of cross product).",
@@ -10355,10 +10355,10 @@
               "id": "vec-l10-031",
               "level": 10,
               "params": {
-                "ex": "randint(-15, 15)",
-                "ey": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
                 "px": "randint(-10, 10)",
                 "py": "randint(-10, 10)"
               },
@@ -10382,10 +10382,10 @@
               "id": "vec-l10-032",
               "level": 10,
               "params": {
-                "ex": "randint(-15, 15)",
-                "ey": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
                 "px": "randint(-10, 10)",
                 "py": "randint(-10, 10)"
               },
@@ -10409,10 +10409,10 @@
               "id": "vec-l10-033",
               "level": 10,
               "params": {
-                "ex": "randint(-15, 15)",
-                "ey": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
                 "px": "randint(-10, 10)",
                 "py": "randint(-10, 10)"
               },
@@ -10436,10 +10436,10 @@
               "id": "vec-l10-034",
               "level": 10,
               "params": {
-                "ex": "randint(-15, 15)",
-                "ey": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
                 "px": "randint(-10, 10)",
                 "py": "randint(-10, 10)"
               },
@@ -10463,10 +10463,10 @@
               "id": "vec-l10-035",
               "level": 10,
               "params": {
-                "ex": "randint(-15, 15)",
-                "ey": "randint(-15, 15)",
-                "e2x": "randint(-15, 15)",
-                "e2y": "randint(-15, 15)",
+                "ex": "randint(-12,12)",
+                "ey": "randint(-12,12)",
+                "e2x": "randint(-12,12)",
+                "e2y": "randint(-12,12)",
                 "px": "randint(-10, 10)",
                 "py": "randint(-10, 10)"
               },
@@ -10913,7 +10913,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -10954,7 +10954,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -10995,7 +10995,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11036,7 +11036,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11077,7 +11077,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11118,7 +11118,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11159,7 +11159,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11200,7 +11200,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11241,7 +11241,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -11282,7 +11282,7 @@
                 "by": "0",
                 "bz": "randint(-10, 10)",
                 "cx": "randint(-10, 10)",
-                "cy": "randint(1, 10)",
+                "cy": "randint(1,10)",
                 "cz": "randint(-10, 10)"
               },
               "scenario": "A floor triangle has vertices: A({{ax}}, {{ay}}, {{az}}), B({{bx}}, {{by}}, {{bz}}), C({{cx}}, {{cy}}, {{cz}}). Compute the normalized surface normal (unit normal). Round to 3 decimals.",
@@ -12003,7 +12003,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12027,7 +12027,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12051,7 +12051,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12075,7 +12075,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12099,7 +12099,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12123,7 +12123,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12147,7 +12147,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12171,7 +12171,7 @@
               "level": 12,
               "params": {
                 "vx": "randint(-10, 10)",
-                "vy": "randint(-15, -2)",
+                "vy": "randint(-12,-2)",
                 "vz": "randint(-10, 10)"
               },
               "scenario": "A ball is thrown with velocity ({{vx}}, {{vy}}, {{vz}}) and hits the ground (normal = (0, 1, 0)). Assuming perfect bounce, what is the reflected velocity? Round to 1 decimal.",
@@ -12389,7 +12389,7 @@
                 "nx": "randint(-5, 5)",
                 "ny": "randint(-5, 5)",
                 "nz": "randint(-5, 5)",
-                "jump": "randint(5, 15)"
+                "jump": "randint(5,12)"
               },
               "scenario": "A player collides with a wall (normal = ({{nx}}, {{ny}}, {{nz}})) while moving at velocity ({{px}}, {{py}}, {{pz}}). They perform a wall jump, launching off with {{jump}} m/s in the direction of the normal. The sliding velocity is V - (V\u00b7N)*N (removing the part going into the wall). What is their total new velocity (slide + jump * normal)? Round to 1 decimal.",
               "solution": "let d = px*nx + py*ny + pz*nz; let m = nx*nx + ny*ny + nz*nz; let s = d / m; let sx = px - s*nx; let sy = py - s*ny; let sz = pz - s*nz; [sx + jump*nx/sqrt(m), sy + jump*ny/sqrt(m), sz + jump*nz/sqrt(m)]",
@@ -12417,7 +12417,7 @@
                 "nx": "randint(-5, 5)",
                 "ny": "randint(-5, 5)",
                 "nz": "randint(-5, 5)",
-                "jump": "randint(5, 15)"
+                "jump": "randint(5,12)"
               },
               "scenario": "A player collides with a wall (normal = ({{nx}}, {{ny}}, {{nz}})) while moving at velocity ({{px}}, {{py}}, {{pz}}). They perform a wall jump, launching off with {{jump}} m/s in the direction of the normal. The sliding velocity is V - (V\u00b7N)*N (removing the part going into the wall). What is their total new velocity (slide + jump * normal)? Round to 1 decimal.",
               "solution": "let d = px*nx + py*ny + pz*nz; let m = nx*nx + ny*ny + nz*nz; let s = d / m; let sx = px - s*nx; let sy = py - s*ny; let sz = pz - s*nz; [sx + jump*nx/sqrt(m), sy + jump*ny/sqrt(m), sz + jump*nz/sqrt(m)]",
@@ -12445,7 +12445,7 @@
                 "nx": "randint(-5, 5)",
                 "ny": "randint(-5, 5)",
                 "nz": "randint(-5, 5)",
-                "jump": "randint(5, 15)"
+                "jump": "randint(5,12)"
               },
               "scenario": "A player collides with a wall (normal = ({{nx}}, {{ny}}, {{nz}})) while moving at velocity ({{px}}, {{py}}, {{pz}}). They perform a wall jump, launching off with {{jump}} m/s in the direction of the normal. The sliding velocity is V - (V\u00b7N)*N (removing the part going into the wall). What is their total new velocity (slide + jump * normal)? Round to 1 decimal.",
               "solution": "let d = px*nx + py*ny + pz*nz; let m = nx*nx + ny*ny + nz*nz; let s = d / m; let sx = px - s*nx; let sy = py - s*ny; let sz = pz - s*nz; [sx + jump*nx/sqrt(m), sy + jump*ny/sqrt(m), sz + jump*nz/sqrt(m)]",
@@ -12473,7 +12473,7 @@
                 "nx": "randint(-5, 5)",
                 "ny": "randint(-5, 5)",
                 "nz": "randint(-5, 5)",
-                "jump": "randint(5, 15)"
+                "jump": "randint(5,12)"
               },
               "scenario": "A player collides with a wall (normal = ({{nx}}, {{ny}}, {{nz}})) while moving at velocity ({{px}}, {{py}}, {{pz}}). They perform a wall jump, launching off with {{jump}} m/s in the direction of the normal. The sliding velocity is V - (V\u00b7N)*N (removing the part going into the wall). What is their total new velocity (slide + jump * normal)? Round to 1 decimal.",
               "solution": "let d = px*nx + py*ny + pz*nz; let m = nx*nx + ny*ny + nz*nz; let s = d / m; let sx = px - s*nx; let sy = py - s*ny; let sz = pz - s*nz; [sx + jump*nx/sqrt(m), sy + jump*ny/sqrt(m), sz + jump*nz/sqrt(m)]",
@@ -12501,7 +12501,7 @@
                 "nx": "randint(-5, 5)",
                 "ny": "randint(-5, 5)",
                 "nz": "randint(-5, 5)",
-                "jump": "randint(5, 15)"
+                "jump": "randint(5,12)"
               },
               "scenario": "A player collides with a wall (normal = ({{nx}}, {{ny}}, {{nz}})) while moving at velocity ({{px}}, {{py}}, {{pz}}). They perform a wall jump, launching off with {{jump}} m/s in the direction of the normal. The sliding velocity is V - (V\u00b7N)*N (removing the part going into the wall). What is their total new velocity (slide + jump * normal)? Round to 1 decimal.",
               "solution": "let d = px*nx + py*ny + pz*nz; let m = nx*nx + ny*ny + nz*nz; let s = d / m; let sx = px - s*nx; let sy = py - s*ny; let sz = pz - s*nz; [sx + jump*nx/sqrt(m), sy + jump*ny/sqrt(m), sz + jump*nz/sqrt(m)]",
@@ -13212,7 +13212,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13244,7 +13244,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13276,7 +13276,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13308,7 +13308,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13340,7 +13340,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13372,7 +13372,7 @@
                 "gy": "-1",
                 "gz": "0",
                 "nx": "randint(-5, 5)",
-                "ny": "randint(1, 8)",
+                "ny": "randint(1,8)",
                 "nz": "randint(-5, 5)"
               },
               "scenario": "Gravity pulls straight down: (0, -9.8, 0). A character stands on a slope with normal ({{nx}}, {{ny}}, {{nz}}). How much of gravity pulls the character DOWN the slope? Give the magnitude (a positive scalar). Round to 2 decimals.\n(Hint: The force down the slope = |gravity - projection of gravity onto normal|).",
@@ -13624,12 +13624,12 @@
               "id": "vec-l13-029",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13669,12 +13669,12 @@
               "id": "vec-l13-030",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13714,12 +13714,12 @@
               "id": "vec-l13-031",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13759,12 +13759,12 @@
               "id": "vec-l13-032",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13804,12 +13804,12 @@
               "id": "vec-l13-033",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13849,12 +13849,12 @@
               "id": "vec-l13-034",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
@@ -13894,12 +13894,12 @@
               "id": "vec-l13-035",
               "level": 13,
               "params": {
-                "cx": "randint(-20, 20)",
-                "cy": "randint(-20, 20)",
-                "cz": "randint(-20, 20)",
-                "tx": "randint(-20, 20)",
-                "ty": "randint(-20, 20)",
-                "tz": "randint(-20, 20)"
+                "cx": "randint(-12,12)",
+                "cy": "randint(-12,12)",
+                "cz": "randint(-12,12)",
+                "tx": "randint(-12,12)",
+                "ty": "randint(-12,12)",
+                "tz": "randint(-12,12)"
               },
               "scenario": "A camera at ({{cx}}, {{cy}}, {{cz}}) looks at a target at ({{tx}}, {{ty}}, {{tz}}). Decompose the camera-to-target vector into HORIZONTAL (y-component = 0) and VERTICAL components. Give the horizontal component vector. Round to 1 decimal.",
               "solution": "let dx = tx - cx; [dx, 0, tz - cz]",
