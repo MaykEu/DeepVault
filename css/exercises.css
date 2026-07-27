@@ -221,6 +221,8 @@
 .ex-3d-btn:hover { background: rgba(88,166,255,0.1); border-color: #58a6ff; }
 .ex-3d-btn-clear:hover { border-color: #f85149; background: rgba(248,81,73,0.1); }
 
+.ex-3d-graph { min-height: 200px; }
+
 /* ── Visual Diagrams ────────────────────────────────────────── */
 
 .ex-visual-wrap {
