@@ -1,6 +1,17 @@
 const QuizEngine = {
   state: null,
-  questionsPerQuiz: 7,  // draw N from shuffled pool; if pool < N, show all
+  questionsPerQuiz: 7,  // default: draw up to 7 from shuffled pool; per-quiz poolSize in QUIZ_DATA overrides
+
+  /**
+   * Get the configured questionsPerQuiz for a specific note.
+   * Reads QUIZ_DATA[noteName].poolSize if available, otherwise falls back to default.
+   */
+  getPoolSize(noteName) {
+    if (QUIZ_DATA && QUIZ_DATA[noteName] && typeof QUIZ_DATA[noteName].poolSize === 'number') {
+      return QUIZ_DATA[noteName].poolSize;
+    }
+    return this.questionsPerQuiz;
+  },
 
   render(container, folderId, noteName) {
     const data = QUIZ_DATA[noteName];
@@ -58,7 +69,8 @@ const QuizEngine = {
     if (reviewQuestions && reviewQuestions.length > 0) {
       questions = reviewQuestions;
     } else {
-      const drawCount = Math.min(this.questionsPerQuiz, data.questions.length);
+      var poolSize = this.getPoolSize ? this.getPoolSize(noteName) : this.questionsPerQuiz;
+      const drawCount = Math.min(poolSize, data.questions.length);
       questions = this.shuffle([...data.questions]).slice(0, drawCount);
     // Shuffle options for each MC question to avoid length bias
     for (var qi = 0; qi < questions.length; qi++) {
@@ -225,9 +237,14 @@ const QuizEngine = {
       s.answers[s.currentIndex] = answer;
       const ansLower = answer.replace(/\s/g,'').toLowerCase();
       const corrLower = String(q.correctAnswer || '').replace(/\s/g,'').toLowerCase();
-      // Exact match or acceptable answers
+      // Exact match or acceptable answers (with numeric equivalence)
       var correct = ansLower === corrLower
-        || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.replace(/\s/g,'').toLowerCase() === ansLower; }));
+        || (q.acceptableAnswers && q.acceptableAnswers.some(function(a) { return a.replace(/\s/g,'').toLowerCase() === ansLower; }))
+        || (function(a, c) {
+          // Numeric equivalence: accept ".5" for "0.5", "1e3" for "1000", "2.0" for "2", etc.
+          var na = parseFloat(a), nc = parseFloat(c);
+          return !isNaN(na) && !isNaN(nc) && na === nc && String(a).replace(/\s/g,'') !== '' && String(c).replace(/\s/g,'') !== '';
+        })(ansLower, corrLower);
       // Keyword match: user input contains most key words from correct answer
       if (!correct && corrLower.length > 10) {
         var keywords = corrLower.split(/[\s,;—\-]+/).filter(function(w) { return w.length > 2; });

@@ -1,3 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════════
+   layout.css — Page Layout & App Shell
+   
+   Contains:
+   - App header / navbar
+   - Main content area
+   - Learn page sidebar + article layout
+   - Search results dropdown
+   - Mobile responsive rules (768px breakpoint)
+   ═══════════════════════════════════════════════════════════════════ */
 .app-header {
   display: flex;
   align-items: center;

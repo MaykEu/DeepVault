@@ -1,3 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════════
+   base.css — CSS Custom Properties & Reset
+   
+   Contains:
+   - :root CSS variables (colors, spacing, fonts, radius)
+   - Theme variants (midnight, dark, light, amoled)
+   - Base element styles (body, headings, links, code)
+   - Scrollbar customization
+   - Print styles
+   ═══════════════════════════════════════════════════════════════════ */
 :root, [data-theme="midnight"] {
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;

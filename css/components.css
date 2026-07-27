@@ -1,3 +1,16 @@
+/* ═══════════════════════════════════════════════════════════════════
+   components.css — Reusable UI Components
+   
+   Contains:
+   - Folder cards (dashboard grid)
+   - Note cards (topic hub list)
+   - Topic hub: tabs, groups, headers
+   - Learn page: back links, TOC, wiki links, callouts
+   - Code syntax highlighting colors (syn-* classes)
+   - Quiz UI: questions, options, feedback, summary
+   - Buttons, badges, progress bars, bookmarks
+   - Theme dropdown
+   ═══════════════════════════════════════════════════════════════════ */
 /* Folder card */
 .folder-card {
   background: var(--bg-secondary); border: 1px solid var(--border);

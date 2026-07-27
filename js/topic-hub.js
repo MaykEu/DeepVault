@@ -15,7 +15,7 @@ const TopicHub = {
       var n = notes[i];
       if (projectNotes.indexOf(n) !== -1) {
         projectList.push(n);
-      } else if (quizNotes.indexOf(n) !== -1 || n.indexOf('Overview') !== -1 || n.indexOf('Chapter Summary') !== -1) {
+      } else if (quizNotes.indexOf(n) !== -1 || n.indexOf('Overview') !== -1 || n.indexOf('Chapter Summary') !== -1) { // LINE 18 — authoritative Study/Guide split. See noteCard() line ~276 for card-level safety net.
         studyList.push(n);
       } else {
         guideList.push(n);
@@ -34,30 +34,34 @@ const TopicHub = {
 
     var html = '<a href=\"javascript:void(0)\" class=\"back-link\" onclick=\"router.navigate(\'#/\')\">\u2190 Dashboard</a>';
 
-    // Folder header
-    html += '<div class=\"folder-header\">' +
-      '<div class=\"folder-header-top\">' +
-        '<span class="folder-header-icon">' + (FOLDER_ICONS[folder.id] || folder.icon) + '</span>' +
-        '<div class=\"folder-header-meta\">' +
-          '<h2 class=\"folder-header-title\">' + folder.name + '</h2>' +
-          '<span class=\"folder-header-stats\">' + quizNotes.length + ' graded modules \u00b7 ' + stats.completedNotes + ' completed</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class=\"folder-header-progress\">' +
-        '<div class=\"folder-header-progress-fill\" style=\"width:' + pct + '%\"></div>' +
-      '</div>' +
-      '<span class=\"folder-header-pct\">' + pct + '% complete</span>' +
-    '</div>';
+    // Folder header (array-join pattern — safe from missing-+ bugs)
+    html += [
+      '<div class="folder-header">',
+        '<div class="folder-header-top">',
+          '<span class="folder-header-icon">', FOLDER_ICONS[folder.id] || folder.icon, '</span>',
+          '<div class="folder-header-meta">',
+            '<h2 class="folder-header-title">', folder.name, '</h2>',
+            '<span class="folder-header-stats">', quizNotes.length, ' graded modules \u00b7 ', stats.completedNotes, ' completed</span>',
+          '</div>',
+        '</div>',
+        '<div class="folder-header-progress">',
+          '<div class="folder-header-progress-fill" style="width:', pct, '%"></div>',
+        '</div>',
+        '<span class="folder-header-pct">', pct, '% complete</span>',
+      '</div>'
+    ].join('');
 
-    // Tabs — Study, Guides, Projects (left) ... Bookmarks ⭐ (right)
-    html += '<div class="tabs">' +
-      '<div class="tabs-left">' +
-        '<button class="tab-btn' + (tab === 'quizzes' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'quizzes\')">📚 Study <span class="tab-count">' + studyList.length + '</span></button>' +
-        '<button class="tab-btn' + (tab === 'reference' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'reference\')">🧭 Guides <span class="tab-count">' + guideList.length + '</span></button>' +
-        '<button class="tab-btn' + (tab === 'projects' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'projects\')">🔨 Projects <span class="tab-count">' + projectList.length + '</span></button>' +
-      '</div>' +
-      '<button class="tab-btn tab-bookmark' + (tab === 'bookmarks' ? ' active' : '') + '" onclick="TopicHub.switchTab(\'' + folder.id + '\',\'bookmarks\')" title="Bookmarks">⭐</button>' +
-    '</div>';
+    // Tabs — Study, Guides, Projects (left) ... Bookmarks ⭐ (right) (array-join pattern)
+    html += [
+      '<div class="tabs">',
+        '<div class="tabs-left">',
+          '<button class="tab-btn', (tab === 'quizzes' ? ' active' : ''), '" onclick="TopicHub.switchTab(\'', folder.id, '\',\'quizzes\')">📚 Study <span class="tab-count">', studyList.length, '</span></button>',
+          '<button class="tab-btn', (tab === 'reference' ? ' active' : ''), '" onclick="TopicHub.switchTab(\'', folder.id, '\',\'reference\')">🧭 Guides <span class="tab-count">', guideList.length, '</span></button>',
+          '<button class="tab-btn', (tab === 'projects' ? ' active' : ''), '" onclick="TopicHub.switchTab(\'', folder.id, '\',\'projects\')">🔨 Projects <span class="tab-count">', projectList.length, '</span></button>',
+        '</div>',
+        '<button class="tab-btn tab-bookmark', (tab === 'bookmarks' ? ' active' : ''), '" onclick="TopicHub.switchTab(\'', folder.id, '\',\'bookmarks\')" title="Bookmarks">⭐</button>',
+      '</div>'
+    ].join('');
 
     // Bookmarks tab: flat list
     if (tab === 'bookmarks') {
@@ -282,7 +286,7 @@ const TopicHub = {
 
     var isGuide = quizNotes.indexOf(note) === -1;
     // Overviews and chapter summaries appear in Study tab even without quizzes
-    if (isGuide && (note.indexOf('Overview') !== -1 || note.indexOf('Chapter Summary') !== -1)) isGuide = false;
+    if (isGuide && (note.indexOf('Overview') !== -1 || note.indexOf('Chapter Summary') !== -1)) isGuide = false; // LINE ~276 — card-level safety net. See render() line 18 for the authoritative split.
     // Numbering: find position within the current active group
     var prefix = '';
     if (!isGuide && typeof gIdx === 'number' && gIdx >= 0) {
