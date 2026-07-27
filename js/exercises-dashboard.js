@@ -158,6 +158,9 @@ var ExercisesUI = (function() {
       // Scenario
       html += '<div class="ex-scenario">' + q.question.scenario + '</div>';
       
+      // Scratch pad — work through the problem here
+      html += '<textarea id="ex-scratch" class="ex-scratch" placeholder="Work through your solution here... (scratch pad)" rows="4"></textarea>';
+      
       // Input area
       html += '<div class="ex-input-area">' +
         '<input type="text" id="ex-answer" class="ex-answer-input" placeholder="Your answer..." autofocus onkeydown="if(event.key===\'Enter\')ExercisesUI.submitCurrentAnswer()">' +

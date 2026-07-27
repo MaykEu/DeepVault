@@ -189,7 +189,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -210,7 +210,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -231,7 +231,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -252,7 +252,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -273,7 +273,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -294,7 +294,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -315,7 +315,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -336,7 +336,7 @@
                 "dy": "randint(-15, 15)",
                 "dz": "randint(-15, 15)"
               },
-              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} meters east, {{dy}} meters up, and {{dz}} meters north. What is their new position?",
+              "scenario": "A character leaves camp at ({{start_x}}, {{start_y}}, {{start_z}}) and walks {{dx}} units along X (forward), {{dy}} units along Y (right), and {{dz}} units along Z (up). What is their new position?",
               "solution": "[start_x + dx, start_y + dy, start_z + dz]",
               "answerType": "vector3d",
               "units": "",
@@ -6296,7 +6296,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6313,7 +6313,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6330,7 +6330,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6347,7 +6347,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6364,7 +6364,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6381,7 +6381,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6398,7 +6398,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
@@ -6415,7 +6415,7 @@
                 "speed": "randint(5, 30, 5)",
                 "angle": "randint(15, 75, 5)"
               },
-              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the positive x-axis (measured counter-clockwise). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
+              "scenario": "A player runs at {{speed}} m/s at an angle of {{angle}}\u00b0 from the X-axis (forward direction). Decompose their velocity into x and y components. Give as (vx, vy, 0). Round to 2 decimals.",
               "solution": "[speed * cos(angle * PI / 180), speed * sin(angle * PI / 180), 0]",
               "answerType": "vector3d",
               "units": "",
