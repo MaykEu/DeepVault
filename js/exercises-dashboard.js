@@ -205,14 +205,15 @@ var ExercisesUI = (function() {
       
       // Render Three.js 3D scene if this question uses coordinate-3d
       var qData = ExercisesEngine.getCurrentQuestion();
-      if (qData && qData.question._template && qData.question._template.params) {
+      if (qData && qData.question._template) {
         var vis = qData.question._template.visual;
         if (vis && vis.type === 'coordinate-3d') {
           var graphDiv = document.getElementById('ex-3d-' + _graphId);
-          if (graphDiv && window.render3DScene) {
-            // Build points and arrows from the visual config + resolved params
-            var resolvedParams = qData.question.params || {};
-            var pts = vis.points || [];
+          if (graphDiv) {
+            if (typeof window.render3DScene === 'function') {
+              try {
+                var resolvedParams = qData.question.params || {};
+                var pts = vis.points || [];
             var pointData = [];
             
             function resolveCoord(expr) {
@@ -244,6 +245,14 @@ var ExercisesUI = (function() {
             
             window.render3DScene(graphDiv, pointData, arrowData);
             _graphId++;
+              } catch(e) {
+                console.error('Three.js render failed:', e);
+                graphDiv.innerHTML = '<p style="color:#f85149;padding:12px;">3D render error: ' + e.message + '</p>';
+              }
+            } else {
+              console.warn('window.render3DScene not available');
+              graphDiv.innerHTML = '<p style="color:#888;padding:12px;">3D renderer loading...</p>';
+            }
           }
         }
       }
