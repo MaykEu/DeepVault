@@ -166,6 +166,11 @@ var ExercisesUI = (function() {
       // Scenario
       html += '<div class="ex-scenario">' + q.question.scenario + '</div>';
       
+      // Visual diagram (if question has one)
+      if (q.question._template && q.question._template.visual) {
+        html += '<div class="ex-visual-wrap">' + _renderVisual(q.question._template.visual, q.question.params) + '</div>';
+      }
+      
       // Scratch pad — work through the problem here
       html += '<textarea id="ex-scratch" class="ex-scratch" placeholder="Work through your solution here... (scratch pad)" rows="4"></textarea>';
       
@@ -318,6 +323,74 @@ var ExercisesUI = (function() {
   function _getTopicFromSession() {
     // Try to extract from URL or from the last session
     return 'vectors'; // default
+  }
+
+  // ── Visual Renderer ────────────────────────────────────────────
+  function _renderVisual(visual, params) {
+    if (!visual || !visual.type) return '';
+    
+    switch(visual.type) {
+      case 'right-triangle':
+        return _renderRightTriangle(visual, params);
+      default:
+        return '';
+    }
+  }
+  
+  function _renderRightTriangle(vis, params) {
+    // Interpolate any {{param}} values in the labels
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) {
+        s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]);
+      }
+      return s;
+    }
+    
+    var adj = lbl('adjacent');
+    var opp = lbl('opposite');
+    var hyp = lbl('hypotenuse');
+    var angleLabel = lbl('angleLabel');
+    
+    var sw = 280, sh = 190;
+    var x1 = 40, y1 = 170;   // bottom-left
+    var x2 = 230, y2 = 170;  // bottom-right (right angle)
+    var x3 = 230, y3 = 35;   // top-right
+    
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:280px;display:block;margin:0 auto;">';
+    
+    // Triangle fill (subtle)
+    svg += '<polygon points="' + x1 + ',' + y1 + ' ' + x2 + ',' + y2 + ' ' + x3 + ',' + y3 + '" fill="rgba(88,166,255,0.06)" stroke="var(--text-secondary)" stroke-width="2" stroke-linejoin="round"/>';
+    
+    // Right angle marker (small square)
+    var sq = 10;
+    svg += '<polyline points="' + (x2-sq) + ',' + y2 + ' ' + (x2-sq) + ',' + (y2-sq) + ' ' + x2 + ',' + (y2-sq) + '" fill="none" stroke="var(--text-muted)" stroke-width="1.2"/>';
+    
+    // Angle arc at bottom-left
+    svg += '<path d="M' + (x1+18) + ',' + y1 + ' A18,18 0 0,1 ' + (x1+18*Math.cos(Math.atan2(y3-y1,x3-x1))) + ',' + (y1-18*Math.sin(Math.atan2(y3-y1,x3-x1))) + '" fill="none" stroke="var(--accent,#58a6ff)" stroke-width="1.5"/>';
+    
+    // Side labels
+    if (adj) {
+      svg += '<text x="' + ((x1+x2)/2) + '" y="' + (y1+20) + '" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-family="sans-serif">' + adj + '</text>';
+    }
+    if (opp) {
+      svg += '<text x="' + (x2+14) + '" y="' + ((y2+y3)/2+5) + '" fill="var(--text-primary)" font-size="12" font-family="sans-serif">' + opp + '</text>';
+    }
+    if (hyp) {
+      // Along the hypotenuse — position text near the middle, offset perpendicularly
+      var mx = (x1+x3)/2 - 22;
+      var my = (y1+y3)/2 - 6;
+      svg += '<text x="' + mx + '" y="' + my + '" fill="var(--text-primary)" font-size="12" font-family="sans-serif">' + hyp + '</text>';
+    }
+    
+    // Angle label (theta) near the angle arc
+    if (angleLabel) {
+      svg += '<text x="' + (x1+28) + '" y="' + (y1-10) + '" fill="var(--accent,#58a6ff)" font-size="13" font-family="sans-serif" font-style="italic">' + angleLabel + '</text>';
+    }
+    
+    svg += '</svg>';
+    return svg;
   }
 
   // ── Public API ─────────────────────────────────────────────────

@@ -11,6 +11,8 @@ const FOLDER_ICONS = {
   "_learning-path": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="12 2 22 12 12 22 2 12"/><circle cx="12" cy="12" r="3"/></svg>',
 
   "_vectors": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="1.5"/><line x1="5" y1="19" x2="19" y2="5"/><polyline points="14 5.5 19 5 14 9"/></svg>',
+
+  "_trigonometry": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 20 20 20 20 6"/><line x1="4" y1="20" x2="20" y2="6"/><rect x="17" y="17" width="3" height="3"/><path d="M6 18 a2 2 0 0 1 1.4 -1.9"/></svg>',
 };
 
 // Build Learning Path grid HTML — dynamic icons + colors

@@ -8708,6 +8708,665 @@
           ]
         }
       ]
+    },
+    "trigonometry": {
+      "id": "trigonometry",
+      "name": "Trigonometry",
+      "icon": "\ud83d\udcd0",
+      "description": "Angles, triangles, and circular functions \u2014 the math behind rotation, aiming, and camera orbits.",
+      "levels": [
+        {
+          "level": 1,
+          "title": "Right Triangle Basics",
+          "questions": [
+            {
+              "id": "trig-l1-001",
+              "level": 1,
+              "params": {
+                "adj": "3",
+                "opp": "4"
+              },
+              "scenario": "A player stands 3m from a wall. The wall is 4m tall. What is the straight-line distance from the player's feet to the top of the wall? Round to 2 decimals.",
+              "solution": "sqrt(3*3 + 4*4)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "This is a right triangle. Use the Pythagorean theorem: c\u00b2 = a\u00b2 + b\u00b2.",
+                "c\u00b2 = 3\u00b2 + 4\u00b2 = 9 + 16 = 25.",
+                "c = sqrt(25). Compute and round."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "3m",
+                "opposite": "4m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-002",
+              "level": 1,
+              "params": {
+                "adj": "6",
+                "opp": "7"
+              },
+              "scenario": "A player stands 6m from a wall. The wall is 7m tall. What is the straight-line distance from the player's feet to the top of the wall? Round to 2 decimals.",
+              "solution": "sqrt(6*6 + 7*7)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "This is a right triangle. Use the Pythagorean theorem: c\u00b2 = a\u00b2 + b\u00b2.",
+                "c\u00b2 = 6\u00b2 + 7\u00b2 = 36 + 49 = 85.",
+                "c = sqrt(85). Compute and round."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "6m",
+                "opposite": "7m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-003",
+              "level": 1,
+              "params": {
+                "adj": "9",
+                "opp": "10"
+              },
+              "scenario": "A player stands 9m from a wall. The wall is 10m tall. What is the straight-line distance from the player's feet to the top of the wall? Round to 2 decimals.",
+              "solution": "sqrt(9*9 + 10*10)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "This is a right triangle. Use the Pythagorean theorem: c\u00b2 = a\u00b2 + b\u00b2.",
+                "c\u00b2 = 9\u00b2 + 10\u00b2 = 81 + 100 = 181.",
+                "c = sqrt(181). Compute and round."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "9m",
+                "opposite": "10m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-004",
+              "level": 1,
+              "params": {
+                "adj": "9",
+                "opp": "13"
+              },
+              "scenario": "A player stands 9m from a wall. The wall is 13m tall. What is the straight-line distance from the player's feet to the top of the wall? Round to 2 decimals.",
+              "solution": "sqrt(9*9 + 13*13)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "This is a right triangle. Use the Pythagorean theorem: c\u00b2 = a\u00b2 + b\u00b2.",
+                "c\u00b2 = 9\u00b2 + 13\u00b2 = 81 + 169 = 250.",
+                "c = sqrt(250). Compute and round."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "9m",
+                "opposite": "13m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-005",
+              "level": 1,
+              "params": {
+                "adj": "5",
+                "opp": "7"
+              },
+              "scenario": "A ladder leans against a wall. Its base is 5m from the wall, and it reaches 7m up. How long is the ladder? Round to 2 decimals.",
+              "solution": "sqrt(5*5 + 7*7)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ladder, ground, wall form a right triangle. Ladder = hypotenuse.",
+                "Ladder\u00b2 = 5\u00b2 + 7\u00b2 = 25 + 49.",
+                "Ladder = sqrt(74)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "5m",
+                "opposite": "7m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-006",
+              "level": 1,
+              "params": {
+                "adj": "8",
+                "opp": "11"
+              },
+              "scenario": "A ladder leans against a wall. Its base is 8m from the wall, and it reaches 11m up. How long is the ladder? Round to 2 decimals.",
+              "solution": "sqrt(8*8 + 11*11)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ladder, ground, wall form a right triangle. Ladder = hypotenuse.",
+                "Ladder\u00b2 = 8\u00b2 + 11\u00b2 = 64 + 121.",
+                "Ladder = sqrt(185)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "8m",
+                "opposite": "11m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-007",
+              "level": 1,
+              "params": {
+                "adj": "11",
+                "opp": "15"
+              },
+              "scenario": "A ladder leans against a wall. Its base is 11m from the wall, and it reaches 15m up. How long is the ladder? Round to 2 decimals.",
+              "solution": "sqrt(11*11 + 15*15)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ladder, ground, wall form a right triangle. Ladder = hypotenuse.",
+                "Ladder\u00b2 = 11\u00b2 + 15\u00b2 = 121 + 225.",
+                "Ladder = sqrt(346)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "11m",
+                "opposite": "15m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-008",
+              "level": 1,
+              "params": {
+                "adj": "14",
+                "opp": "19"
+              },
+              "scenario": "A ladder leans against a wall. Its base is 14m from the wall, and it reaches 19m up. How long is the ladder? Round to 2 decimals.",
+              "solution": "sqrt(14*14 + 19*19)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ladder, ground, wall form a right triangle. Ladder = hypotenuse.",
+                "Ladder\u00b2 = 14\u00b2 + 19\u00b2 = 196 + 361.",
+                "Ladder = sqrt(557)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "14m",
+                "opposite": "19m",
+                "hypotenuse": "?",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-009",
+              "level": 1,
+              "params": {
+                "hyp": "10",
+                "known": "6"
+              },
+              "scenario": "A character fires a grappling hook. The hook travels 10m in a straight line and lands 6m higher than the character. How far HORIZONTALLY is the character from the target point? Round to 2 decimals.",
+              "solution": "sqrt(10*10 - 6*6)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "The grappling line is the hypotenuse. Height = opposite side. Horizontal = adjacent.",
+                "adj\u00b2 = hyp\u00b2 - opp\u00b2 = 10\u00b2 - 6\u00b2 = 100 - 36.",
+                "adj = sqrt(64)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "6m",
+                "hypotenuse": "10m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-010",
+              "level": 1,
+              "params": {
+                "hyp": "15",
+                "known": "8"
+              },
+              "scenario": "A character fires a grappling hook. The hook travels 15m in a straight line and lands 8m higher than the character. How far HORIZONTALLY is the character from the target point? Round to 2 decimals.",
+              "solution": "sqrt(15*15 - 8*8)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "The grappling line is the hypotenuse. Height = opposite side. Horizontal = adjacent.",
+                "adj\u00b2 = hyp\u00b2 - opp\u00b2 = 15\u00b2 - 8\u00b2 = 225 - 64.",
+                "adj = sqrt(161)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "8m",
+                "hypotenuse": "15m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-011",
+              "level": 1,
+              "params": {
+                "hyp": "20",
+                "known": "10"
+              },
+              "scenario": "A character fires a grappling hook. The hook travels 20m in a straight line and lands 10m higher than the character. How far HORIZONTALLY is the character from the target point? Round to 2 decimals.",
+              "solution": "sqrt(20*20 - 10*10)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "The grappling line is the hypotenuse. Height = opposite side. Horizontal = adjacent.",
+                "adj\u00b2 = hyp\u00b2 - opp\u00b2 = 20\u00b2 - 10\u00b2 = 400 - 100.",
+                "adj = sqrt(300)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "10m",
+                "hypotenuse": "20m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-012",
+              "level": 1,
+              "params": {
+                "hyp": "25",
+                "known": "12"
+              },
+              "scenario": "A character fires a grappling hook. The hook travels 25m in a straight line and lands 12m higher than the character. How far HORIZONTALLY is the character from the target point? Round to 2 decimals.",
+              "solution": "sqrt(25*25 - 12*12)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "The grappling line is the hypotenuse. Height = opposite side. Horizontal = adjacent.",
+                "adj\u00b2 = hyp\u00b2 - opp\u00b2 = 25\u00b2 - 12\u00b2 = 625 - 144.",
+                "adj = sqrt(481)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "12m",
+                "hypotenuse": "25m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-013",
+              "level": 1,
+              "params": {
+                "hyp": "13",
+                "known": "5"
+              },
+              "scenario": "A ramp is 13m long (the surface you walk on). It rises 5m vertically. What is the horizontal span of the ramp? Round to 2 decimals.",
+              "solution": "sqrt(13*13 - 5*5)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ramp surface = hypotenuse, rise = opposite, span = adjacent.",
+                "span\u00b2 = 13\u00b2 - 5\u00b2.",
+                "span = sqrt(144)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "5m",
+                "hypotenuse": "13m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-014",
+              "level": 1,
+              "params": {
+                "hyp": "20",
+                "known": "8"
+              },
+              "scenario": "A ramp is 20m long (the surface you walk on). It rises 8m vertically. What is the horizontal span of the ramp? Round to 2 decimals.",
+              "solution": "sqrt(20*20 - 8*8)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ramp surface = hypotenuse, rise = opposite, span = adjacent.",
+                "span\u00b2 = 20\u00b2 - 8\u00b2.",
+                "span = sqrt(336)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "8m",
+                "hypotenuse": "20m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-015",
+              "level": 1,
+              "params": {
+                "hyp": "27",
+                "known": "11"
+              },
+              "scenario": "A ramp is 27m long (the surface you walk on). It rises 11m vertically. What is the horizontal span of the ramp? Round to 2 decimals.",
+              "solution": "sqrt(27*27 - 11*11)",
+              "answerType": "scalar_magnitude",
+              "units": "m",
+              "hints": [
+                "Ramp surface = hypotenuse, rise = opposite, span = adjacent.",
+                "span\u00b2 = 27\u00b2 - 11\u00b2.",
+                "span = sqrt(608)."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "?",
+                "opposite": "11m",
+                "hypotenuse": "27m",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-016",
+              "level": 1,
+              "params": {},
+              "scenario": "A player on the ground looks up at a drone. The line of sight is 20m. The drone is 12m above ground. The horizontal distance is 16m. Relative to the ground angle: which side is 12m? Answer 'adjacent', 'opposite', or 'hypotenuse'.",
+              "solution": "'opposite'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "The angle is at the player's feet, between ground and line of sight.",
+                "12m is the vertical side opposite the angle.",
+                "Answer: opposite."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "angleLabel": "\u03b8",
+                "adjacent": "16m",
+                "opposite": "?",
+                "hypotenuse": "20m"
+              }
+            },
+            {
+              "id": "trig-l1-017",
+              "level": 1,
+              "params": {},
+              "scenario": "Same scenario: line of sight 20m, height 12m, horizontal 16m. Which side is 20m?",
+              "solution": "'hypotenuse'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "The line of sight is the longest side, across from the right angle.",
+                "The hypotenuse is always opposite the right angle.",
+                "Answer: hypotenuse."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "angleLabel": "\u03b8",
+                "adjacent": "16m",
+                "opposite": "12m",
+                "hypotenuse": "?"
+              }
+            },
+            {
+              "id": "trig-l1-018",
+              "level": 1,
+              "params": {},
+              "scenario": "Same scenario: line of sight 20m, height 12m, horizontal 16m. Which side is 16m?",
+              "solution": "'adjacent'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "16m is the ground distance \u2014 the side next to the angle.",
+                "Adjacent = the side touching the angle that's not the hypotenuse.",
+                "Answer: adjacent."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "angleLabel": "\u03b8",
+                "adjacent": "?",
+                "opposite": "12m",
+                "hypotenuse": "20m"
+              }
+            },
+            {
+              "id": "trig-l1-019",
+              "level": 1,
+              "params": {},
+              "scenario": "A character stands at the base of a cliff. They look up at a 30\u00b0 angle at a rope hanging from the top. The cliff is 20m tall. Relative to the 30\u00b0 angle at the character's position: the 20m cliff is which side?",
+              "solution": "'opposite'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "The angle is at the character's position, looking up.",
+                "The cliff height is across from the angle = opposite.",
+                "Answer: opposite."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "angleLabel": "\u03b8",
+                "adjacent": "16m",
+                "opposite": "?",
+                "hypotenuse": "20m"
+              }
+            },
+            {
+              "id": "trig-l1-020",
+              "level": 1,
+              "params": {},
+              "scenario": "Same cliff scenario: the distance from the character to the cliff base along the ground is 35m. Relative to the 30\u00b0 angle: the 35m is which side?",
+              "solution": "'adjacent'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "The ground distance is along the side touching the angle.",
+                "Adjacent = the side next to the angle (not the hypotenuse).",
+                "Answer: adjacent."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "angleLabel": "\u03b8",
+                "adjacent": "?",
+                "opposite": "12m",
+                "hypotenuse": "20m"
+              }
+            },
+            {
+              "id": "trig-l1-021",
+              "level": 1,
+              "params": {
+                "a": "3",
+                "b": "4",
+                "c": "5"
+              },
+              "scenario": "Do the sides 3m, 4m, and 5m form a valid right triangle? (Answer 'yes' or 'no')",
+              "solution": "3*3 + 4*4 == 5*5 ? 'yes' : 'no'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "Check: a\u00b2 + b\u00b2 = 3\u00b2 + 4\u00b2 = 9 + 16 = 25.",
+                "c\u00b2 = 5\u00b2 = 25.",
+                "25 == 25. This is a valid right triangle."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "3",
+                "opposite": "4",
+                "hypotenuse": "5",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-022",
+              "level": 1,
+              "params": {
+                "a": "6",
+                "b": "8",
+                "c": "10"
+              },
+              "scenario": "Do the sides 6m, 8m, and 10m form a valid right triangle? (Answer 'yes' or 'no')",
+              "solution": "6*6 + 8*8 == 10*10 ? 'yes' : 'no'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "Check: a\u00b2 + b\u00b2 = 6\u00b2 + 8\u00b2 = 36 + 64 = 100.",
+                "c\u00b2 = 10\u00b2 = 100.",
+                "100 == 100. This is a valid right triangle."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "6",
+                "opposite": "8",
+                "hypotenuse": "10",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-023",
+              "level": 1,
+              "params": {
+                "a": "9",
+                "b": "12",
+                "c": "15"
+              },
+              "scenario": "Do the sides 9m, 12m, and 15m form a valid right triangle? (Answer 'yes' or 'no')",
+              "solution": "9*9 + 12*12 == 15*15 ? 'yes' : 'no'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "Check: a\u00b2 + b\u00b2 = 9\u00b2 + 12\u00b2 = 81 + 144 = 225.",
+                "c\u00b2 = 15\u00b2 = 225.",
+                "225 == 225. This is a valid right triangle."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "9",
+                "opposite": "12",
+                "hypotenuse": "15",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-024",
+              "level": 1,
+              "params": {
+                "a": "12",
+                "b": "16",
+                "c": "20"
+              },
+              "scenario": "Do the sides 12m, 16m, and 20m form a valid right triangle? (Answer 'yes' or 'no')",
+              "solution": "12*12 + 16*16 == 20*20 ? 'yes' : 'no'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "Check: a\u00b2 + b\u00b2 = 12\u00b2 + 16\u00b2 = 144 + 256 = 400.",
+                "c\u00b2 = 20\u00b2 = 400.",
+                "400 == 400. This is a valid right triangle."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "12",
+                "opposite": "16",
+                "hypotenuse": "20",
+                "angleLabel": "?"
+              }
+            },
+            {
+              "id": "trig-l1-025",
+              "level": 1,
+              "params": {
+                "a": "15",
+                "b": "20",
+                "c": "25"
+              },
+              "scenario": "Do the sides 15m, 20m, and 25m form a valid right triangle? (Answer 'yes' or 'no')",
+              "solution": "15*15 + 20*20 == 25*25 ? 'yes' : 'no'",
+              "answerType": "yes_no",
+              "units": "",
+              "hints": [
+                "Check: a\u00b2 + b\u00b2 = 15\u00b2 + 20\u00b2 = 225 + 400 = 625.",
+                "c\u00b2 = 25\u00b2 = 625.",
+                "625 == 625. This is a valid right triangle."
+              ],
+              "visual": {
+                "type": "right-triangle",
+                "adjacent": "15",
+                "opposite": "20",
+                "hypotenuse": "25",
+                "angleLabel": "?"
+              }
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "title": "Sine & Cosine",
+          "questions": []
+        },
+        {
+          "level": 3,
+          "title": "Tangent & Slope",
+          "questions": []
+        },
+        {
+          "level": 4,
+          "title": "Inverse Trig Functions",
+          "questions": []
+        },
+        {
+          "level": 5,
+          "title": "The Unit Circle",
+          "questions": []
+        },
+        {
+          "level": 6,
+          "title": "Radians & Degrees",
+          "questions": []
+        },
+        {
+          "level": 7,
+          "title": "Angular Velocity",
+          "questions": []
+        },
+        {
+          "level": 8,
+          "title": "Vector Decomposition",
+          "questions": []
+        },
+        {
+          "level": 9,
+          "title": "Law of Sines & Cosines",
+          "questions": []
+        },
+        {
+          "level": 10,
+          "title": "Polar Coordinates",
+          "questions": []
+        },
+        {
+          "level": 11,
+          "title": "Wave Functions",
+          "questions": []
+        },
+        {
+          "level": 12,
+          "title": "3D Spherical Coordinates",
+          "questions": []
+        }
+      ]
     }
   }
 }
