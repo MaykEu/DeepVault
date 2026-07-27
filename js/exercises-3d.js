@@ -116,11 +116,15 @@ window.render3DScene = function(containerEl, points, arrows) {
         isB ? '#d2991d' : '#ffffff', 2.0));
     }
     
-    // Coordinate annotation
+    // Coordinate annotation — positioned above the point, offset toward camera
     var coord = '(' + pt.x.toFixed(0) + ', ' + pt.y.toFixed(0) + ', ' + pt.z.toFixed(0) + ')';
-    scene.add(makeLabel(coord,
-      new THREE.Vector3(pt.x + 0.6, pt.z - 0.6, pt.y),
-      '#777777', 3.5));
+    var coordSprite = makeLabel(coord,
+      new THREE.Vector3(pt.x + 0.8, pt.z + 0.8, pt.y),
+      '#999999', 4.0);
+    coordSprite.material.depthTest = false;
+    coordSprite.material.depthWrite = false;
+    coordSprite.renderOrder = 999;
+    scene.add(coordSprite);
   }
   
   // ── Arrows between points ────────────────────────────────────
