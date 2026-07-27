@@ -31,10 +31,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -58,10 +76,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -85,10 +121,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -112,10 +166,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -139,10 +211,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -166,10 +256,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -193,10 +301,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -220,10 +346,28 @@ var EXERCISES_DATA = {
                 "The result is ({{p2x}} - ({{p1x}}), {{p2y}} - ({{p1y}}), {{p2z}} - ({{p1z}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -247,10 +391,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -274,10 +436,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -301,10 +481,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -328,10 +526,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -355,10 +571,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -382,10 +616,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -409,10 +661,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -436,10 +706,28 @@ var EXERCISES_DATA = {
                 "Final position: ({{start_x}} + ({{dx}}), {{start_y}} + ({{dy}}), {{start_z}} + ({{dz}}))."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "\u0394"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{start_x}}",
+                    "y": "{{start_y}}",
+                    "z": "{{start_z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{start_x}} + {{dx}}",
+                    "y": "{{start_y}} + {{dy}}",
+                    "z": "{{start_z}} + {{dz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u0394"
+                  }
+                ]
               }
             },
             {
@@ -463,10 +751,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -490,10 +789,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -517,10 +827,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -544,10 +865,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -571,10 +903,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -598,10 +941,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -625,10 +979,21 @@ var EXERCISES_DATA = {
                 "Midpoint: (({{ax}} + {{bx}})/2, ({{ay}} + {{by}})/2, ({{az}} + {{bz}})/2)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "Mid"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -655,10 +1020,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -685,10 +1079,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -715,10 +1138,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -745,10 +1197,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -775,10 +1256,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -805,10 +1315,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             },
             {
@@ -835,10 +1374,39 @@ var EXERCISES_DATA = {
                 "Final: ({{p1x}}+{{v1x}}+{{v2x}}, {{p1y}}+{{v1y}}+{{v2y}}, {{p1z}}+{{v1z}}+{{v2z}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "A\u2192B"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Start",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "Mid",
+                    "x": "{{p1x}} + {{v1x}}",
+                    "y": "{{p1y}} + {{v1y}}",
+                    "z": "{{p1z}} + {{v1z}}"
+                  },
+                  {
+                    "label": "End",
+                    "x": "{{p1x}} + {{v1x}} + {{v2x}}",
+                    "y": "{{p1y}} + {{v1y}} + {{v2y}}",
+                    "z": "{{p1z}} + {{v1z}} + {{v2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "v1"
+                  },
+                  {
+                    "from": 1,
+                    "to": 2,
+                    "label": "v2"
+                  }
+                ]
               }
             }
           ]
@@ -868,10 +1436,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -895,10 +1481,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -922,10 +1526,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -949,10 +1571,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -976,10 +1616,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -1003,10 +1661,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -1030,10 +1706,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -1057,10 +1751,28 @@ var EXERCISES_DATA = {
                 "d = sqrt(dx^2 + dy^2 + dz^2). Compute and round to 2 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "A",
-                "toLabel": "B",
-                "resultLabel": "d=?"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{p1x}}",
+                    "y": "{{p1y}}",
+                    "z": "{{p1z}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{p2x}}",
+                    "y": "{{p2y}}",
+                    "z": "{{p2z}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "A\u2192B"
+                  }
+                ]
               }
             },
             {
@@ -1083,7 +1795,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-010",
@@ -1105,7 +1842,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-011",
@@ -1127,7 +1889,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-012",
@@ -1149,7 +1936,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-013",
@@ -1171,7 +1983,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-014",
@@ -1193,7 +2030,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-015",
@@ -1215,7 +2077,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance between the two positions.",
                 "Compare the distance to the reach of {{reach}} meters.",
                 "If distance <= {{reach}}, the enemy is in range."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "E",
+                    "x": "{{ex}}",
+                    "y": "{{ey}}",
+                    "z": "{{ez}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-016",
@@ -1240,7 +2127,24 @@ var EXERCISES_DATA = {
                 "You can compare squared distances to avoid the square root.",
                 "The smaller distance (or squared distance) is the closer medkit."
               ],
-              "_enumValues": "['A','B','a','b']"
+              "_enumValues": "['A','B','a','b']",
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-017",
@@ -1265,7 +2169,24 @@ var EXERCISES_DATA = {
                 "You can compare squared distances to avoid the square root.",
                 "The smaller distance (or squared distance) is the closer medkit."
               ],
-              "_enumValues": "['A','B','a','b']"
+              "_enumValues": "['A','B','a','b']",
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-018",
@@ -1290,7 +2211,24 @@ var EXERCISES_DATA = {
                 "You can compare squared distances to avoid the square root.",
                 "The smaller distance (or squared distance) is the closer medkit."
               ],
-              "_enumValues": "['A','B','a','b']"
+              "_enumValues": "['A','B','a','b']",
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-019",
@@ -1315,7 +2253,24 @@ var EXERCISES_DATA = {
                 "You can compare squared distances to avoid the square root.",
                 "The smaller distance (or squared distance) is the closer medkit."
               ],
-              "_enumValues": "['A','B','a','b']"
+              "_enumValues": "['A','B','a','b']",
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-020",
@@ -1340,7 +2295,24 @@ var EXERCISES_DATA = {
                 "You can compare squared distances to avoid the square root.",
                 "The smaller distance (or squared distance) is the closer medkit."
               ],
-              "_enumValues": "['A','B','a','b']"
+              "_enumValues": "['A','B','a','b']",
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-021",
@@ -1362,7 +2334,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance from the grenade to the player.",
                 "If distance <= {{radius}}, the player is in the blast radius.",
                 "Compute sqrt((player.x - grenade.x)^2 + ...) and compare to {{radius}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "\ud83d\udca3",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-022",
@@ -1384,7 +2381,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance from the grenade to the player.",
                 "If distance <= {{radius}}, the player is in the blast radius.",
                 "Compute sqrt((player.x - grenade.x)^2 + ...) and compare to {{radius}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "\ud83d\udca3",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-023",
@@ -1406,7 +2428,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance from the grenade to the player.",
                 "If distance <= {{radius}}, the player is in the blast radius.",
                 "Compute sqrt((player.x - grenade.x)^2 + ...) and compare to {{radius}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "\ud83d\udca3",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-024",
@@ -1428,7 +2475,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance from the grenade to the player.",
                 "If distance <= {{radius}}, the player is in the blast radius.",
                 "Compute sqrt((player.x - grenade.x)^2 + ...) and compare to {{radius}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "\ud83d\udca3",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-025",
@@ -1450,7 +2522,32 @@ var EXERCISES_DATA = {
                 "Calculate the distance from the grenade to the player.",
                 "If distance <= {{radius}}, the player is in the blast radius.",
                 "Compute sqrt((player.x - grenade.x)^2 + ...) and compare to {{radius}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "\ud83d\udca3",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d=?",
+                    "showComponents": true
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-026",
@@ -1472,7 +2569,31 @@ var EXERCISES_DATA = {
                 "Speed = distance / time.",
                 "First compute the distance between start and end.",
                 "Then divide by {{time}} seconds."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{x1}}",
+                    "y": "{{y1}}",
+                    "z": "{{z1}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{x2}}",
+                    "y": "{{y2}}",
+                    "z": "{{z2}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-027",
@@ -1494,7 +2615,31 @@ var EXERCISES_DATA = {
                 "Speed = distance / time.",
                 "First compute the distance between start and end.",
                 "Then divide by {{time}} seconds."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{x1}}",
+                    "y": "{{y1}}",
+                    "z": "{{z1}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{x2}}",
+                    "y": "{{y2}}",
+                    "z": "{{z2}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-028",
@@ -1516,7 +2661,31 @@ var EXERCISES_DATA = {
                 "Speed = distance / time.",
                 "First compute the distance between start and end.",
                 "Then divide by {{time}} seconds."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{x1}}",
+                    "y": "{{y1}}",
+                    "z": "{{z1}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{x2}}",
+                    "y": "{{y2}}",
+                    "z": "{{z2}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-029",
@@ -1538,7 +2707,31 @@ var EXERCISES_DATA = {
                 "Speed = distance / time.",
                 "First compute the distance between start and end.",
                 "Then divide by {{time}} seconds."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{x1}}",
+                    "y": "{{y1}}",
+                    "z": "{{z1}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{x2}}",
+                    "y": "{{y2}}",
+                    "z": "{{z2}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l2-030",
@@ -1560,7 +2753,31 @@ var EXERCISES_DATA = {
                 "Speed = distance / time.",
                 "First compute the distance between start and end.",
                 "Then divide by {{time}} seconds."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{x1}}",
+                    "y": "{{y1}}",
+                    "z": "{{z1}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{x2}}",
+                    "y": "{{y2}}",
+                    "z": "{{z2}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "d"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -1587,10 +2804,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1612,10 +2847,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1637,10 +2890,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1662,10 +2933,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1687,10 +2976,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1712,10 +3019,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1737,10 +3062,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1762,10 +3105,28 @@ var EXERCISES_DATA = {
                 "Unit direction: (dx/|d|, dy/|d|, dz/|d|). Velocity: multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1787,10 +3148,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1812,10 +3191,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1837,10 +3234,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1862,10 +3277,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1887,10 +3320,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1912,10 +3363,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1937,10 +3406,28 @@ var EXERCISES_DATA = {
                 "Component-wise: ({{vx}}*{{mult}}, {{vy}}*{{mult}}, {{vz}}*{{mult}})."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -1961,10 +3448,28 @@ var EXERCISES_DATA = {
                 "Unit direction = (dx/|d|, dy/|d|, dz/|d|). Then multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -1985,10 +3490,28 @@ var EXERCISES_DATA = {
                 "Unit direction = (dx/|d|, dy/|d|, dz/|d|). Then multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -2009,10 +3532,28 @@ var EXERCISES_DATA = {
                 "Unit direction = (dx/|d|, dy/|d|, dz/|d|). Then multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -2033,10 +3574,28 @@ var EXERCISES_DATA = {
                 "Unit direction = (dx/|d|, dy/|d|, dz/|d|). Then multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -2057,10 +3616,28 @@ var EXERCISES_DATA = {
                 "Unit direction = (dx/|d|, dy/|d|, dz/|d|). Then multiply each by {{speed}}."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Dir",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "Vel",
+                    "x": "{{dx}} / mag * {{speed}}",
+                    "y": "{{dy}} / mag * {{speed}}",
+                    "z": "{{dz}} / mag * {{speed}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7speed"
+                  }
+                ]
               }
             },
             {
@@ -2081,10 +3658,28 @@ var EXERCISES_DATA = {
                 "New velocity = old_velocity \u00d7 {{factor}}, component by component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "V'",
+                    "x": "{{vx}} * {{factor}}",
+                    "y": "{{vy}} * {{factor}}",
+                    "z": "{{vz}} * {{factor}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{factor}}"
+                  }
+                ]
               }
             },
             {
@@ -2105,10 +3700,28 @@ var EXERCISES_DATA = {
                 "New velocity = old_velocity \u00d7 {{factor}}, component by component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "V'",
+                    "x": "{{vx}} * {{factor}}",
+                    "y": "{{vy}} * {{factor}}",
+                    "z": "{{vz}} * {{factor}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{factor}}"
+                  }
+                ]
               }
             },
             {
@@ -2129,10 +3742,28 @@ var EXERCISES_DATA = {
                 "New velocity = old_velocity \u00d7 {{factor}}, component by component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "V'",
+                    "x": "{{vx}} * {{factor}}",
+                    "y": "{{vy}} * {{factor}}",
+                    "z": "{{vz}} * {{factor}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{factor}}"
+                  }
+                ]
               }
             },
             {
@@ -2153,10 +3784,28 @@ var EXERCISES_DATA = {
                 "New velocity = old_velocity \u00d7 {{factor}}, component by component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "V'",
+                    "x": "{{vx}} * {{factor}}",
+                    "y": "{{vy}} * {{factor}}",
+                    "z": "{{vz}} * {{factor}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{factor}}"
+                  }
+                ]
               }
             },
             {
@@ -2177,10 +3826,28 @@ var EXERCISES_DATA = {
                 "New velocity = old_velocity \u00d7 {{factor}}, component by component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "V'",
+                    "x": "{{vx}} * {{factor}}",
+                    "y": "{{vy}} * {{factor}}",
+                    "z": "{{vz}} * {{factor}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{factor}}"
+                  }
+                ]
               }
             },
             {
@@ -2201,10 +3868,28 @@ var EXERCISES_DATA = {
                 "Scaling a vector just multiplies every component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "D",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "D'",
+                    "x": "{{dx}} * {{scalar}}",
+                    "y": "{{dy}} * {{scalar}}",
+                    "z": "{{dz}} * {{scalar}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{scalar}}"
+                  }
+                ]
               }
             },
             {
@@ -2225,10 +3910,28 @@ var EXERCISES_DATA = {
                 "Scaling a vector just multiplies every component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "D",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "D'",
+                    "x": "{{dx}} * {{scalar}}",
+                    "y": "{{dy}} * {{scalar}}",
+                    "z": "{{dz}} * {{scalar}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{scalar}}"
+                  }
+                ]
               }
             },
             {
@@ -2249,10 +3952,28 @@ var EXERCISES_DATA = {
                 "Scaling a vector just multiplies every component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "D",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "D'",
+                    "x": "{{dx}} * {{scalar}}",
+                    "y": "{{dy}} * {{scalar}}",
+                    "z": "{{dz}} * {{scalar}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{scalar}}"
+                  }
+                ]
               }
             },
             {
@@ -2273,10 +3994,28 @@ var EXERCISES_DATA = {
                 "Scaling a vector just multiplies every component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "D",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "D'",
+                    "x": "{{dx}} * {{scalar}}",
+                    "y": "{{dy}} * {{scalar}}",
+                    "z": "{{dz}} * {{scalar}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{scalar}}"
+                  }
+                ]
               }
             },
             {
@@ -2297,10 +4036,28 @@ var EXERCISES_DATA = {
                 "Scaling a vector just multiplies every component."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "D",
+                    "x": "{{dx}}",
+                    "y": "{{dy}}",
+                    "z": "{{dz}}"
+                  },
+                  {
+                    "label": "D'",
+                    "x": "{{dx}} * {{scalar}}",
+                    "y": "{{dy}} * {{scalar}}",
+                    "z": "{{dz}} * {{scalar}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00d7{{scalar}}"
+                  }
+                ]
               }
             }
           ]
@@ -2330,10 +4087,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2357,10 +4132,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2384,10 +4177,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2411,10 +4222,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2438,10 +4267,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2465,10 +4312,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2492,10 +4357,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2519,10 +4402,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2546,10 +4447,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2573,10 +4492,28 @@ var EXERCISES_DATA = {
                 "Normalized vector = (dx/|d|, dy/|d|, dz/|d|). Round to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  },
+                  {
+                    "label": "T",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "dir"
+                  }
+                ]
               }
             },
             {
@@ -2600,10 +4537,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2627,10 +4582,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2654,10 +4627,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2681,10 +4672,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2708,10 +4717,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2735,10 +4762,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2762,10 +4807,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2789,10 +4852,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2816,10 +4897,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2843,10 +4942,28 @@ var EXERCISES_DATA = {
                 "Each component of the unit vector rounded to 3 decimals."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "G",
+                    "x": "{{gx}}",
+                    "y": "{{gy}}",
+                    "z": "{{gz}}"
+                  },
+                  {
+                    "label": "C",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u00fb"
+                  }
+                ]
               }
             },
             {
@@ -2867,10 +4984,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -2891,10 +5026,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -2915,10 +5068,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -2939,10 +5110,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -2963,10 +5152,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -2987,10 +5194,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -3011,10 +5236,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -3035,10 +5278,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -3059,10 +5320,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             },
             {
@@ -3083,10 +5362,28 @@ var EXERCISES_DATA = {
                 "The result is a unit vector pointing in the wind's direction."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "Start",
-                "toLabel": "End",
-                "resultLabel": "v"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
               }
             }
           ]
@@ -3512,7 +5809,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-010",
@@ -3534,7 +5848,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-011",
@@ -3556,7 +5887,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-012",
@@ -3578,7 +5926,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-013",
@@ -3600,7 +5965,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-014",
@@ -3622,7 +6004,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-015",
@@ -3644,7 +6043,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-016",
@@ -3666,7 +6082,24 @@ var EXERCISES_DATA = {
                 "Linear interpolation: position = A + (B - A) * t.",
                 "t = {{t}} means they've covered {{t}} of the distance.",
                 "x: {{ax}} + ({{bx}} - ({{ax}})) * {{t}}, same for y and z."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-024",
@@ -3687,7 +6120,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-025",
@@ -3708,7 +6158,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-026",
@@ -3729,7 +6196,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-027",
@@ -3750,7 +6234,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-028",
@@ -3771,7 +6272,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-029",
@@ -3792,7 +6310,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-030",
@@ -3813,7 +6348,24 @@ var EXERCISES_DATA = {
                 "Smooth follow: camera = camera + (player - camera) * 0.25.",
                 "This moves the camera 25% of the way toward the player each frame.",
                 "Apply lerp with t=0.25 to each component."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l01",
@@ -3834,7 +6386,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l02",
@@ -3855,7 +6424,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l03",
@@ -3876,7 +6462,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l04",
@@ -3897,7 +6500,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l05",
@@ -3918,7 +6538,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l06",
@@ -3939,7 +6576,24 @@ var EXERCISES_DATA = {
               "hints": [
                 "Lerp: P = A + (B - A) \u00d7 t.",
                 "t = {{t}} means covering {{t}} of the gap from A toward B."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l07",
@@ -3960,7 +6614,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Camera lerps: camera += (player - camera) \u00d7 t.",
                 "t = {{pct}}/100 = {{pct/100}}. That fraction of the gap is closed each frame."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Plyr",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u2192"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l08",
@@ -3981,7 +6659,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Camera lerps: camera += (player - camera) \u00d7 t.",
                 "t = {{pct}}/100 = {{pct/100}}. That fraction of the gap is closed each frame."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Plyr",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u2192"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l09",
@@ -4002,7 +6704,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Camera lerps: camera += (player - camera) \u00d7 t.",
                 "t = {{pct}}/100 = {{pct/100}}. That fraction of the gap is closed each frame."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Plyr",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u2192"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l10",
@@ -4023,7 +6749,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Camera lerps: camera += (player - camera) \u00d7 t.",
                 "t = {{pct}}/100 = {{pct/100}}. That fraction of the gap is closed each frame."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Plyr",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u2192"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l11",
@@ -4044,7 +6794,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Camera lerps: camera += (player - camera) \u00d7 t.",
                 "t = {{pct}}/100 = {{pct/100}}. That fraction of the gap is closed each frame."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Plyr",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "\u2192"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l12",
@@ -4063,7 +6837,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Each frame: v = v \u00d7 {{damp}}. After {{frames}} frames: v = v \u00d7 {{damp}}^{{frames}}.",
                 "Multiply each component by {{damp}}^{{frames}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l13",
@@ -4082,7 +6880,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Each frame: v = v \u00d7 {{damp}}. After {{frames}} frames: v = v \u00d7 {{damp}}^{{frames}}.",
                 "Multiply each component by {{damp}}^{{frames}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l14",
@@ -4101,7 +6923,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Each frame: v = v \u00d7 {{damp}}. After {{frames}} frames: v = v \u00d7 {{damp}}^{{frames}}.",
                 "Multiply each component by {{damp}}^{{frames}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l6-l15",
@@ -4120,7 +6966,31 @@ var EXERCISES_DATA = {
               "hints": [
                 "Each frame: v = v \u00d7 {{damp}}. After {{frames}} frames: v = v \u00d7 {{damp}}^{{frames}}.",
                 "Multiply each component by {{damp}}^{{frames}}."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{vx}}",
+                    "y": "{{vy}}",
+                    "z": "{{vz}}"
+                  },
+                  {
+                    "label": "\u00fb",
+                    "x": "{{vx}} / |V|",
+                    "y": "{{vy}} / |V|",
+                    "z": "{{vz}} / |V|"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "normalize"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -4149,9 +7019,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4175,9 +7045,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4201,9 +7071,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4227,9 +7097,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4253,9 +7123,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4279,9 +7149,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4305,9 +7175,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4331,9 +7201,9 @@ var EXERCISES_DATA = {
                 "dot = fx*ex + fy*ey + fz*ez. Sign tells you front (+) or behind (-)."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
               }
             },
             {
@@ -4571,7 +7441,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-018",
@@ -4592,7 +7467,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-019",
@@ -4613,7 +7493,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-020",
@@ -4634,7 +7519,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-021",
@@ -4655,7 +7545,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-022",
@@ -4676,7 +7571,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-023",
@@ -4697,7 +7597,12 @@ var EXERCISES_DATA = {
                 "Dot product of two facing directions tells you alignment.",
                 "If both face the same direction (dot > 0.5), the attacker is behind the defender.",
                 "Compute dot and compare to 0.5."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-024",
@@ -4718,7 +7623,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-025",
@@ -4739,7 +7649,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-026",
@@ -4760,7 +7675,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-027",
@@ -4781,7 +7701,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-028",
@@ -4802,7 +7727,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-029",
@@ -4823,7 +7753,12 @@ var EXERCISES_DATA = {
                 "Compute the absolute dot product of the normal and velocity.",
                 "If |dot| < 0.3, the movement is mostly parallel to the surface (sliding).",
                 "If |dot| is large, the movement is pushing into or away from the surface."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-030",
@@ -4844,7 +7779,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-031",
@@ -4865,7 +7805,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-032",
@@ -4886,7 +7831,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-033",
@@ -4907,7 +7857,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-034",
@@ -4928,7 +7883,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             },
             {
               "id": "vec-l7-035",
@@ -4949,7 +7909,12 @@ var EXERCISES_DATA = {
                 "Dot product of two velocity vectors: if negative, they're moving in opposite directions.",
                 "A negative dot means the angle between them is > 90\u00b0, so they approach each other.",
                 "Calculate dot = v1x*v2x + v1y*v2y + v1z*v2z. Negative = toward each other."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B"
+              }
             }
           ]
         },
@@ -4976,7 +7941,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-002",
@@ -4997,7 +7968,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-003",
@@ -5018,7 +7995,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-004",
@@ -5039,7 +8022,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-005",
@@ -5060,7 +8049,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-006",
@@ -5081,7 +8076,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-007",
@@ -5102,7 +8103,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-008",
@@ -5123,7 +8130,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-009",
@@ -5144,7 +8157,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-010",
@@ -5165,7 +8184,13 @@ var EXERCISES_DATA = {
                 "Angle between vectors: theta = arccos((A\u00b7B) / (|A|*|B|)).",
                 "Compute dot product, then divide by product of magnitudes.",
                 "Then use arccos and convert from radians to degrees (multiply by 180/PI)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-011",
@@ -5191,9 +8216,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5220,9 +8246,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5249,9 +8276,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5278,9 +8306,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5307,9 +8336,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5336,9 +8366,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5365,9 +8396,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5394,9 +8426,10 @@ var EXERCISES_DATA = {
                 "Angle = arccos(dot(facing, target_dir) / (|facing| * |target_dir|))."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5421,9 +8454,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5448,9 +8482,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5475,9 +8510,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5502,9 +8538,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5529,9 +8566,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5556,9 +8594,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5583,9 +8622,10 @@ var EXERCISES_DATA = {
                 "If angle <= {{arc/2}}\u00b0, the target gets hit."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5613,9 +8653,10 @@ var EXERCISES_DATA = {
                 "If angle <= half the hearing cone ({{cone}}\u00b0/2 = {{cone/2}}\u00b0), the sound is heard."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5643,9 +8684,10 @@ var EXERCISES_DATA = {
                 "If angle <= half the hearing cone ({{cone}}\u00b0/2 = {{cone/2}}\u00b0), the sound is heard."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5673,9 +8715,10 @@ var EXERCISES_DATA = {
                 "If angle <= half the hearing cone ({{cone}}\u00b0/2 = {{cone/2}}\u00b0), the sound is heard."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5703,9 +8746,10 @@ var EXERCISES_DATA = {
                 "If angle <= half the hearing cone ({{cone}}\u00b0/2 = {{cone/2}}\u00b0), the sound is heard."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5733,9 +8777,10 @@ var EXERCISES_DATA = {
                 "If angle <= half the hearing cone ({{cone}}\u00b0/2 = {{cone/2}}\u00b0), the sound is heard."
               ],
               "visual": {
-                "type": "fov-cone",
-                "coneAngle": "60",
-                "targetLabel": "T"
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
               }
             },
             {
@@ -5760,7 +8805,13 @@ var EXERCISES_DATA = {
                 "Find direction vectors from ally to each enemy.",
                 "Then compute the angle between those two direction vectors.",
                 "Angle = arccos(dot(dir1, dir2) / (|dir1| * |dir2|))."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-032",
@@ -5784,7 +8835,13 @@ var EXERCISES_DATA = {
                 "Find direction vectors from ally to each enemy.",
                 "Then compute the angle between those two direction vectors.",
                 "Angle = arccos(dot(dir1, dir2) / (|dir1| * |dir2|))."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-033",
@@ -5808,7 +8865,13 @@ var EXERCISES_DATA = {
                 "Find direction vectors from ally to each enemy.",
                 "Then compute the angle between those two direction vectors.",
                 "Angle = arccos(dot(dir1, dir2) / (|dir1| * |dir2|))."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-034",
@@ -5832,7 +8895,13 @@ var EXERCISES_DATA = {
                 "Find direction vectors from ally to each enemy.",
                 "Then compute the angle between those two direction vectors.",
                 "Angle = arccos(dot(dir1, dir2) / (|dir1| * |dir2|))."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             },
             {
               "id": "vec-l8-035",
@@ -5856,7 +8925,13 @@ var EXERCISES_DATA = {
                 "Find direction vectors from ally to each enemy.",
                 "Then compute the angle between those two direction vectors.",
                 "Angle = arccos(dot(dir1, dir2) / (|dir1| * |dir2|))."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "A",
+                "toLabel": "B",
+                "resultLabel": "\u03b8"
+              }
             }
           ]
         },
@@ -5881,10 +8956,15 @@ var EXERCISES_DATA = {
                 "cross = (fy\u00d7uz - fz\u00d7uy, fz\u00d7ux - fx\u00d7uz, fx\u00d7uy - fy\u00d7ux)."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -5904,10 +8984,15 @@ var EXERCISES_DATA = {
                 "cross = (fy\u00d7uz - fz\u00d7uy, fz\u00d7ux - fx\u00d7uz, fx\u00d7uy - fy\u00d7ux)."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -5927,10 +9012,15 @@ var EXERCISES_DATA = {
                 "cross = (fy\u00d7uz - fz\u00d7uy, fz\u00d7ux - fx\u00d7uz, fx\u00d7uy - fy\u00d7ux)."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -5950,10 +9040,15 @@ var EXERCISES_DATA = {
                 "cross = (fy\u00d7uz - fz\u00d7uy, fz\u00d7ux - fx\u00d7uz, fx\u00d7uy - fy\u00d7ux)."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -5973,10 +9068,15 @@ var EXERCISES_DATA = {
                 "cross = (fy\u00d7uz - fz\u00d7uy, fz\u00d7ux - fx\u00d7uz, fx\u00d7uy - fy\u00d7ux)."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -5996,10 +9096,15 @@ var EXERCISES_DATA = {
                 "X_UE = -Y_Blender, Y_UE = X_Blender, Z stays the same."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ]
               }
             },
             {
@@ -6019,10 +9124,15 @@ var EXERCISES_DATA = {
                 "X_UE = -Y_Blender, Y_UE = X_Blender, Z stays the same."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ]
               }
             },
             {
@@ -6042,10 +9152,15 @@ var EXERCISES_DATA = {
                 "X_UE = -Y_Blender, Y_UE = X_Blender, Z stays the same."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ]
               }
             },
             {
@@ -6065,10 +9180,15 @@ var EXERCISES_DATA = {
                 "X_UE = -Y_Blender, Y_UE = X_Blender, Z stays the same."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ]
               }
             },
             {
@@ -6088,10 +9208,15 @@ var EXERCISES_DATA = {
                 "X_UE = -Y_Blender, Y_UE = X_Blender, Z stays the same."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P",
+                    "x": "{{px}}",
+                    "y": "{{py}}",
+                    "z": "{{pz}}"
+                  }
+                ]
               }
             },
             {
@@ -6117,10 +9242,21 @@ var EXERCISES_DATA = {
                 "If y > 0, the normal points upward."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -6146,10 +9282,21 @@ var EXERCISES_DATA = {
                 "If y > 0, the normal points upward."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -6175,10 +9322,21 @@ var EXERCISES_DATA = {
                 "If y > 0, the normal points upward."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -6204,10 +9362,21 @@ var EXERCISES_DATA = {
                 "If y > 0, the normal points upward."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
               }
             },
             {
@@ -6227,10 +9396,15 @@ var EXERCISES_DATA = {
                 "cross((0,0,1), ({{fx}},{{fy}},{{fz}})). Then normalize."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -6250,10 +9424,15 @@ var EXERCISES_DATA = {
                 "cross((0,0,1), ({{fx}},{{fy}},{{fz}})). Then normalize."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -6273,10 +9452,15 @@ var EXERCISES_DATA = {
                 "cross((0,0,1), ({{fx}},{{fy}},{{fz}})). Then normalize."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -6299,10 +9483,15 @@ var EXERCISES_DATA = {
                 "Compare to ({{rx}}, {{ry}}, 0) within 0.5 per component."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -6325,10 +9514,15 @@ var EXERCISES_DATA = {
                 "Compare to ({{rx}}, {{ry}}, 0) within 0.5 per component."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -6351,10 +9545,15 @@ var EXERCISES_DATA = {
                 "Compare to ({{rx}}, {{ry}}, 0) within 0.5 per component."
               ],
               "visual": {
-                "type": "reflection",
-                "incoming": "V",
-                "outgoing": "R",
-                "normal": "N"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             }
           ]
@@ -6382,7 +9581,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-002",
@@ -6403,7 +9608,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-003",
@@ -6424,7 +9635,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-004",
@@ -6445,7 +9662,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-005",
@@ -6466,7 +9689,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-006",
@@ -6487,7 +9716,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-007",
@@ -6508,7 +9743,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-008",
@@ -6529,7 +9770,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-009",
@@ -6550,7 +9797,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-010",
@@ -6571,7 +9824,13 @@ var EXERCISES_DATA = {
                 "Cross product in 2D: z-component = fx * dy - fy * dx.",
                 "If z > 0, the vector is to the left. If z < 0, to the right.",
                 "Compute {{fx}} * {{dy}} - {{fy}} * {{dx}}. Sign tells the side."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-011",
@@ -6592,7 +9851,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-012",
@@ -6613,7 +9878,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-013",
@@ -6634,7 +9905,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-014",
@@ -6655,7 +9932,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-015",
@@ -6676,7 +9959,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-016",
@@ -6697,7 +9986,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-017",
@@ -6718,7 +10013,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-018",
@@ -6739,7 +10040,13 @@ var EXERCISES_DATA = {
                 "Vector AB = B - A. Vector BC = C - B.",
                 "Cross product z = ABx * BCy - ABy * BCx.",
                 "Positive z = counter-clockwise turn. Negative z = clockwise turn."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-019",
@@ -6757,7 +10064,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-020",
@@ -6775,7 +10088,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-021",
@@ -6793,7 +10112,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-022",
@@ -6811,7 +10136,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-023",
@@ -6829,7 +10160,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-024",
@@ -6847,7 +10184,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-025",
@@ -6865,7 +10208,13 @@ var EXERCISES_DATA = {
                 "In 2D, rotating a vector 90\u00b0 clockwise: (x, y) \u2192 (y, -x).",
                 "Right = rotate forward 90\u00b0 clockwise: (fy, -fx).",
                 "Then normalize: divide by sqrt(fy^2 + (-fx)^2)."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-026",
@@ -6886,7 +10235,13 @@ var EXERCISES_DATA = {
                 "Cross product z = facing.x * target.y - facing.y * target.x.",
                 "If cross z > 0, target is to the left \u2014 turn left.",
                 "If cross z < 0, target is to the right \u2014 turn right."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-027",
@@ -6907,7 +10262,13 @@ var EXERCISES_DATA = {
                 "Cross product z = facing.x * target.y - facing.y * target.x.",
                 "If cross z > 0, target is to the left \u2014 turn left.",
                 "If cross z < 0, target is to the right \u2014 turn right."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-028",
@@ -6928,7 +10289,13 @@ var EXERCISES_DATA = {
                 "Cross product z = facing.x * target.y - facing.y * target.x.",
                 "If cross z > 0, target is to the left \u2014 turn left.",
                 "If cross z < 0, target is to the right \u2014 turn right."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-029",
@@ -6949,7 +10316,13 @@ var EXERCISES_DATA = {
                 "Cross product z = facing.x * target.y - facing.y * target.x.",
                 "If cross z > 0, target is to the left \u2014 turn left.",
                 "If cross z < 0, target is to the right \u2014 turn right."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-030",
@@ -6970,7 +10343,13 @@ var EXERCISES_DATA = {
                 "Cross product z = facing.x * target.y - facing.y * target.x.",
                 "If cross z > 0, target is to the left \u2014 turn left.",
                 "If cross z < 0, target is to the right \u2014 turn right."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-031",
@@ -6991,7 +10370,13 @@ var EXERCISES_DATA = {
                 "Forward = Enemy A - Player. Direction to B = Enemy B - Player.",
                 "Cross product z = forward.x * B.y - forward.y * B.x.",
                 "Sign tells whether B is to the left or right of A."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-032",
@@ -7012,7 +10397,13 @@ var EXERCISES_DATA = {
                 "Forward = Enemy A - Player. Direction to B = Enemy B - Player.",
                 "Cross product z = forward.x * B.y - forward.y * B.x.",
                 "Sign tells whether B is to the left or right of A."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-033",
@@ -7033,7 +10424,13 @@ var EXERCISES_DATA = {
                 "Forward = Enemy A - Player. Direction to B = Enemy B - Player.",
                 "Cross product z = forward.x * B.y - forward.y * B.x.",
                 "Sign tells whether B is to the left or right of A."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-034",
@@ -7054,7 +10451,13 @@ var EXERCISES_DATA = {
                 "Forward = Enemy A - Player. Direction to B = Enemy B - Player.",
                 "Cross product z = forward.x * B.y - forward.y * B.x.",
                 "Sign tells whether B is to the left or right of A."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             },
             {
               "id": "vec-l10-035",
@@ -7075,7 +10478,13 @@ var EXERCISES_DATA = {
                 "Forward = Enemy A - Player. Direction to B = Enemy B - Player.",
                 "Cross product z = forward.x * B.y - forward.y * B.x.",
                 "Sign tells whether B is to the left or right of A."
-              ]
+              ],
+              "visual": {
+                "type": "vector-2d",
+                "fromLabel": "F",
+                "toLabel": "E",
+                "resultLabel": "z=?"
+              }
             }
           ]
         },
@@ -7105,7 +10514,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-002",
@@ -7129,7 +10555,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-003",
@@ -7153,7 +10596,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-004",
@@ -7177,7 +10637,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-005",
@@ -7201,7 +10678,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-006",
@@ -7225,7 +10719,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-007",
@@ -7249,7 +10760,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-008",
@@ -7273,7 +10801,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-009",
@@ -7297,7 +10842,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-010",
@@ -7321,7 +10883,24 @@ var EXERCISES_DATA = {
                 "Compute edge vectors: AB = B - A, AC = C - A.",
                 "Cross product: normal = AB \u00d7 AC.",
                 "cross = (ABy*ACz - ABz*ACy, ABz*ACx - ABx*ACz, ABx*ACy - ABy*ACx)."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-011",
@@ -7345,7 +10924,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-012",
@@ -7369,7 +10965,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-013",
@@ -7393,7 +11006,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-014",
@@ -7417,7 +11047,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-015",
@@ -7441,7 +11088,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-016",
@@ -7465,7 +11129,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-017",
@@ -7489,7 +11170,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-018",
@@ -7513,7 +11211,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-019",
@@ -7537,7 +11252,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-020",
@@ -7561,7 +11293,24 @@ var EXERCISES_DATA = {
                 "Compute edges AB and AC, then cross product.",
                 "Normalize the resulting normal: divide by its magnitude.",
                 "The y-component of the normal tells you how steep the floor is."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-021",
@@ -7585,7 +11334,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-022",
@@ -7609,7 +11375,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-023",
@@ -7633,7 +11416,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-024",
@@ -7657,7 +11457,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-025",
@@ -7681,7 +11498,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-026",
@@ -7705,7 +11539,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-027",
@@ -7729,7 +11580,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-028",
@@ -7753,7 +11621,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-029",
@@ -7777,7 +11662,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             },
             {
               "id": "vec-l11-030",
@@ -7801,7 +11703,24 @@ var EXERCISES_DATA = {
                 "Wall normal = cross product of two edge vectors on the wall.",
                 "Pick W1\u2192W2 and W1\u2192W3 as the edges, compute cross product.",
                 "Normalize the result to get the unit normal."
-              ]
+              ],
+              "visual": {
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "A",
+                    "x": "{{ax}}",
+                    "y": "{{ay}}",
+                    "z": "{{az}}"
+                  },
+                  {
+                    "label": "B",
+                    "x": "{{bx}}",
+                    "y": "{{by}}",
+                    "z": "{{bz}}"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -8763,10 +12682,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8786,10 +12710,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8809,10 +12738,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8832,10 +12766,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8855,10 +12794,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8878,10 +12822,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8901,10 +12850,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8924,10 +12878,15 @@ var EXERCISES_DATA = {
                 "Then: vx = {{speed}} * cos({{angle}}\u00b0), vy = {{speed}} * sin({{angle}}\u00b0)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "V",
+                    "x": "{{speed}}\u00d7cos({{angle}}\u00b0)",
+                    "y": "{{speed}}\u00d7sin({{angle}}\u00b0)",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -8951,10 +12910,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -8978,10 +12955,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9005,10 +13000,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9032,10 +13045,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9059,10 +13090,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9086,10 +13135,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9113,10 +13180,28 @@ var EXERCISES_DATA = {
                 "This is what remains when you strip away the part going into the surface."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "M",
+                    "x": "{{mx}}",
+                    "y": "{{my}}",
+                    "z": "{{mz}}"
+                  },
+                  {
+                    "label": "\u2225",
+                    "x": "{{mx}} - proj_x",
+                    "y": "{{my}} - proj_y",
+                    "z": "{{mz}} - proj_z"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "along"
+                  }
+                ]
               }
             },
             {
@@ -9140,10 +13225,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9167,10 +13257,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9194,10 +13289,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9221,10 +13321,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9248,10 +13353,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9275,10 +13385,15 @@ var EXERCISES_DATA = {
                 "Compute slide = gravity - (gravity\u00b7N)/(N\u00b7N) * N, then get its magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "P1",
+                    "x": "0",
+                    "y": "0",
+                    "z": "0"
+                  }
+                ]
               }
             },
             {
@@ -9302,10 +13417,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9329,10 +13449,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9356,10 +13481,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9383,10 +13513,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9410,10 +13545,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9437,10 +13577,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9464,10 +13609,15 @@ var EXERCISES_DATA = {
                 "Normalize by dividing by the magnitude."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "F",
+                    "x": "{{fx}}",
+                    "y": "{{fy}}",
+                    "z": "{{fz}}"
+                  }
+                ]
               }
             },
             {
@@ -9491,10 +13641,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9518,10 +13686,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9545,10 +13731,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9572,10 +13776,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9599,10 +13821,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9626,10 +13866,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             },
             {
@@ -9653,10 +13911,28 @@ var EXERCISES_DATA = {
                 "Horizontal: (dx, 0, dz)."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "",
-                "toLabel": "",
-                "resultLabel": "comp"
+                "type": "coordinate-3d",
+                "points": [
+                  {
+                    "label": "Cam",
+                    "x": "{{cx}}",
+                    "y": "{{cy}}",
+                    "z": "{{cz}}"
+                  },
+                  {
+                    "label": "Tgt",
+                    "x": "{{tx}}",
+                    "y": "{{ty}}",
+                    "z": "{{tz}}"
+                  }
+                ],
+                "arrows": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "look"
+                  }
+                ]
               }
             }
           ]
@@ -14841,10 +19117,10 @@ var EXERCISES_DATA = {
                 "x = 10.0, y = 0.5."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14863,10 +19139,10 @@ var EXERCISES_DATA = {
                 "x = 4.0, y = -3.0."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14885,10 +19161,10 @@ var EXERCISES_DATA = {
                 "x = -1.8, y = 3.6."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14907,10 +19183,10 @@ var EXERCISES_DATA = {
                 "x = 4.8, y = 1.4."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14929,10 +19205,10 @@ var EXERCISES_DATA = {
                 "x = 10.5, y = 7.6."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14951,10 +19227,10 @@ var EXERCISES_DATA = {
                 "x = -9.8, y = 16.3."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14973,10 +19249,10 @@ var EXERCISES_DATA = {
                 "x = 10.5, y = -3.4."
               ],
               "visual": {
-                "type": "unit-circle",
-                "angle": "{{theta}}",
-                "radius": "{{r}}",
-                "pointLabel": "(x,y)"
+                "type": "vector-2d",
+                "fromLabel": "O",
+                "toLabel": "P",
+                "resultLabel": "\u03b8?"
               }
             },
             {
@@ -14995,10 +19271,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(81) = 9.0m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(0,-9)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15017,10 +19293,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(125) = 11.2m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(2,-11)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15039,10 +19315,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(260) = 16.1m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(8,14)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15061,10 +19337,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(178) = 13.3m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(13,3)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15083,10 +19359,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(9) = 3.0m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(3,0)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15105,10 +19381,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(164) = 12.8m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(-8,10)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {
@@ -15127,10 +19403,10 @@ var EXERCISES_DATA = {
                 "r = sqrt(100) = 10.0m."
               ],
               "visual": {
-                "type": "vector-2d",
-                "fromLabel": "(0,0)",
-                "toLabel": "(0,10)",
-                "resultLabel": "r?"
+                "type": "unit-circle",
+                "angle": "{{theta}}",
+                "radius": "{{r}}",
+                "pointLabel": "(x,y)"
               }
             },
             {

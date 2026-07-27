@@ -350,6 +350,8 @@ var ExercisesUI = (function() {
         return _renderReflection(visual, params);
       case 'fov-cone':
         return _renderFOVCone(visual, params);
+      case 'coordinate-3d':
+        return _renderCoordinate3D(visual, params);
       default:
         return '';
     }
@@ -550,6 +552,136 @@ var ExercisesUI = (function() {
     svg += '<circle cx="' + tx + '" cy="' + ty + '" r="4" fill="' + (lbl('inCone') === 'yes' ? '#3fb950' : '#f85149') + '"/>';
     if (targetLabel) svg += '<text x="' + (tx+8) + '" y="' + (ty-6) + '" fill="var(--text-primary)" font-size="11" font-family="sans-serif">' + targetLabel + '</text>';
     svg += '<text x="' + (cx-12) + '" y="' + (cy+16) + '" fill="var(--text-primary)" font-size="11" font-family="sans-serif">Guard</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  function _renderCoordinate3D(vis, params) {
+    function lbl(key) {
+      if (!vis[key]) return '';
+      var s = vis[key];
+      for (var p in params) { s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]); }
+      return s;
+    }
+    
+    // Isometric projection: X=forward (red), Y=right (green), Z=up (blue) — UE convention
+    function project(x, y, z) {
+      var scale = 3.2;   // pixels per coordinate unit
+      var sx = 150 + (x - y) * scale * 0.75;
+      var sy = 120 - z * scale - (x + y) * scale * 0.3;
+      return [sx, sy];
+    }
+    
+    var sw = 340, sh = 240;
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + sw + ' ' + sh + '" style="width:100%;max-width:350px;height:auto;display:block;margin:0 auto;">';
+    
+    // Background grid on XZ plane (ground plane)
+    for (var g = -10; g <= 10; g += 5) {
+      var g1 = project(g, -10, 0), g2 = project(g, 10, 0);
+      svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.4"/>';
+      g1 = project(-10, g, 0); g2 = project(10, g, 0);
+      svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--border)" stroke-width="0.4"/>';
+    }
+    
+    // Axes — extend across most of the canvas
+    var axLen = 16;
+    var xEnd = project(axLen, 0, 0), yEnd = project(0, axLen, 0), zEnd = project(0, 0, axLen);
+    var orig = project(0, 0, 0);
+    
+    // X axis (red — forward)
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + xEnd[0].toFixed(0) + '" y2="' + xEnd[1].toFixed(0) + '" stroke="#f85149" stroke-width="1.8"/>';
+    svg += '<text x="' + (xEnd[0]+5).toFixed(0) + '" y="' + (xEnd[1]-3).toFixed(0) + '" fill="#f85149" font-size="11" font-family="sans-serif" font-weight="700">X</text>';
+    
+    // Y axis (green — right)  
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + yEnd[0].toFixed(0) + '" y2="' + yEnd[1].toFixed(0) + '" stroke="#3fb950" stroke-width="1.8"/>';
+    svg += '<text x="' + (yEnd[0]+5).toFixed(0) + '" y="' + (yEnd[1]-3).toFixed(0) + '" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="700">Y</text>';
+    
+    // Z axis (blue — up)
+    svg += '<line x1="' + orig[0].toFixed(0) + '" y1="' + orig[1].toFixed(0) + '" x2="' + zEnd[0].toFixed(0) + '" y2="' + zEnd[1].toFixed(0) + '" stroke="#58a6ff" stroke-width="1.8"/>';
+    svg += '<text x="' + (zEnd[0]+5).toFixed(0) + '" y="' + (zEnd[1]-3).toFixed(0) + '" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="700">Z</text>';
+    
+    // Origin dot
+    svg += '<circle cx="' + orig[0].toFixed(0) + '" cy="' + orig[1].toFixed(0) + '" r="2.5" fill="var(--text-primary)"/>';
+    
+    // Points
+    var points = vis.points || [];
+    var pointCoords = [];
+    
+    // Helper: resolve a coordinate value (handles expressions like "10 + -7")
+    function resolveCoord(expr) {
+      var s = String(expr);
+      // Interpolate any remaining {{param}} markers
+      for (var p in params) {
+        s = s.replace(new RegExp('\\{\\{' + p + '\\}\\}', 'g'), params[p]);
+      }
+      // Try simple number first
+      var n = parseFloat(s);
+      if (!isNaN(n) && String(n) === s.trim()) return n;
+      // Try evaluating as math expression
+      try {
+        var val = Function('return (' + s + ')')();
+        if (!isNaN(val)) return val;
+      } catch(e) {}
+      return parseFloat(s) || 0;
+    }
+    
+    for (var pi = 0; pi < points.length; pi++) {
+      var pt = points[pi];
+      var px = resolveCoord(pt.x);
+      var py = resolveCoord(pt.y);
+      var pz = resolveCoord(pt.z);
+      var proj = project(px, py, pz);
+      pointCoords.push({x: px, y: py, z: pz, sx: proj[0], sy: proj[1], label: pt.label || ''});
+    }
+    
+    // Arrows between points
+    var arrows = vis.arrows || [];
+    for (var ai = 0; ai < arrows.length; ai++) {
+      var arr = arrows[ai];
+      var from = pointCoords[arr.from];
+      var to = pointCoords[arr.to];
+      if (!from || !to) continue;
+      
+      // Dashed component lines (drop to ground plane)
+      if (arr.showComponents) {
+        var g1 = project(from.x, from.y, 0);
+        var g2 = project(to.x, to.y, 0);
+        svg += '<line x1="' + from.sx.toFixed(0) + '" y1="' + from.sy.toFixed(0) + '" x2="' + g1[0].toFixed(0) + '" y2="' + g1[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
+        svg += '<line x1="' + to.sx.toFixed(0) + '" y1="' + to.sy.toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
+        svg += '<line x1="' + g1[0].toFixed(0) + '" y1="' + g1[1].toFixed(0) + '" x2="' + g2[0].toFixed(0) + '" y2="' + g2[1].toFixed(0) + '" stroke="var(--text-muted)" stroke-width="0.6" stroke-dasharray="3 2"/>';
+      }
+      
+      // Main vector arrow
+      svg += '<line x1="' + from.sx.toFixed(0) + '" y1="' + from.sy.toFixed(0) + '" x2="' + to.sx.toFixed(0) + '" y2="' + to.sy.toFixed(0) + '" stroke="var(--accent,#d2991d)" stroke-width="2"/>';
+      
+      // Arrowhead
+      var adx = to.sx - from.sx, ady = to.sy - from.sy;
+      var alen = Math.sqrt(adx*adx + ady*ady);
+      if (alen > 0.1) {
+        var ux = adx / alen, uy = ady / alen;
+        var ahs = 7;
+        svg += '<polygon points="' + (to.sx - ux*ahs + uy*3).toFixed(0) + ',' + (to.sy - uy*ahs - ux*3).toFixed(0) + ' ' + to.sx.toFixed(0) + ',' + to.sy.toFixed(0) + ' ' + (to.sx - ux*ahs - uy*3).toFixed(0) + ',' + (to.sy - uy*ahs + ux*3).toFixed(0) + '" fill="var(--accent,#d2991d)"/>';
+      }
+      
+      if (arr.label) {
+        var mx = (from.sx + to.sx) / 2, my = (from.sy + to.sy) / 2 - 8;
+        svg += '<text x="' + mx.toFixed(0) + '" y="' + my.toFixed(0) + '" text-anchor="middle" fill="var(--accent,#d2991d)" font-size="10" font-family="sans-serif" font-weight="600">' + arr.label + '</text>';
+      }
+    }
+    
+    // Point dots and labels
+    for (var pi2 = 0; pi2 < pointCoords.length; pi2++) {
+      var pc = pointCoords[pi2];
+      var isB = pi2 === 1; // highlight point B
+      svg += '<circle cx="' + pc.sx.toFixed(0) + '" cy="' + pc.sy.toFixed(0) + '" r="3.5" fill="' + (isB ? 'var(--accent,#d2991d)' : 'var(--text-primary)') + '" stroke="var(--bg-primary)" stroke-width="1"/>';
+      if (pc.label) {
+        svg += '<text x="' + (pc.sx+6).toFixed(0) + '" y="' + (pc.sy-5).toFixed(0) + '" fill="' + (isB ? 'var(--accent,#d2991d)' : 'var(--text-primary)') + '" font-size="11" font-family="sans-serif" font-weight="600">' + pc.label + '</text>';
+      }
+      // Show coordinates
+      var coordStr = '(' + pc.x + ', ' + pc.y + ', ' + pc.z + ')';
+      svg += '<text x="' + (pc.sx+6).toFixed(0) + '" y="' + (pc.sy+10).toFixed(0) + '" fill="var(--text-muted)" font-size="9" font-family="sans-serif">' + coordStr + '</text>';
+    }
+    
     svg += '</svg>';
     return svg;
   }
