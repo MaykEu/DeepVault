@@ -35,7 +35,7 @@ var ExercisesUI = (function() {
       var pct = t.totalAnswered > 0 ? Math.round(t.totalCorrect / t.totalAnswered * 100) : 0;
       
       html += '<div class="folder-card ex-card" style="--card-accent:#d2991d" onclick="router.navigate(\'#/practice/' + t.id + '\')">' +
-        '<div class="folder-icon">' + (t.icon || '📐') + '</div>' +
+        '<div class="folder-icon">' + (FOLDER_ICONS['_' + t.id] || t.icon || '📐') + '</div>' +
         '<div class="folder-name">' + t.name + '</div>' +
         '<div class="folder-meta">' + lvLabel + (pct > 0 ? ' · ' + pct + '% accuracy' : '') + '</div>' +
         '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">' + stars + '</div>' +
@@ -63,7 +63,7 @@ var ExercisesUI = (function() {
     
     // Header
     html += '<div class="ex-topic-header">' +
-      '<div class="ex-topic-icon">' + (meta.icon || '📐') + '</div>' +
+      '<div class="ex-topic-icon">' + (FOLDER_ICONS['_' + meta.id] || meta.icon || '📐') + '</div>' +
       '<div>' +
         '<h1 class="ex-topic-title">' + meta.name + '</h1>' +
         '<p class="ex-topic-desc">' + (meta.description || '') + '</p>' +
